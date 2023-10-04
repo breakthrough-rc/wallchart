@@ -1,5 +1,18 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
+use axum::{
+    response::Html,
+    Router, 
+    routing::get,
+};
+
+pub fn routes() -> Router {
+    Router::new()
+        .route("/", get(get_home))    
+}
+
+async fn get_home() -> Html<String> {
+    Html(
+        "<marquee>ONE SMALL STEP FOR AN HTML_ASSHOLE, ONE GIANT LEAP FOR HTML_ASSHOLEKIND</marquee>".into()
+    )
 }
 
 #[cfg(test)]
@@ -8,7 +21,6 @@ mod tests {
 
     #[test]
     fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+        assert_eq!(4, 4);
     }
 }

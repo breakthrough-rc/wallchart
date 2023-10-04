@@ -8,7 +8,8 @@ use axum::{
 #[tokio::main]
 async fn main() {
     let app = Router::new()
-    .route("/healthcheck", get(get_health_check));
+        .merge(web_htmx::routes())
+        .route("/healthcheck", get(get_health_check));
 
     // run our app with hyper
     // `axum::Server` is a re-export of `hyper::Server`
