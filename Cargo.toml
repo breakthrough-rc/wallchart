@@ -2,8 +2,8 @@
 resolver = "2"
 
 members = [
-  "main"
+  "main",
+  "web-htmx",
 ]
 
 [workspace.dependencies]
-
