@@ -1,5 +1,14 @@
 # WallChart for Y'all
 
+## Installing/Running
+```
+// First time you need to build the client (until automated, also should do on git pull)
+./build-client.sh
+
+// Run w. cargo
+cargo run
+```
+
 ## MiroBoard
 This board contains our stories, kanban board and all other supplemental material.
 https://miro.com/app/board/uXjVNffAsKM=/?share_link_id=874499028180

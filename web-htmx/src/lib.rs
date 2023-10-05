@@ -31,7 +31,7 @@ struct WelcomeProps {
 fn Welcome(props: WelcomeProps) -> String {
     html! { 
         <main>    
-            <h1 class={"text-xl"}>{ props.title }</h1>
+            <h1 class={"text-xl text-slate-600"}>{ props.title }</h1>
             { props.children }
         </main>
     }

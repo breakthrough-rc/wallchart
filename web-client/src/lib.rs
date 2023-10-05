@@ -1,4 +1,6 @@
+use std::time::{SystemTime, UNIX_EPOCH};
 use axum::Router;
+use once_cell::sync::Lazy;
 use tower_http::services::ServeDir;
 use rscx::{component, html, props};
 
@@ -22,6 +24,15 @@ pub struct HtmlLayoutProps {
     children: String,
 }
 
+// TEMP HACK! Used to bust cache on client scripts and stylesheets.
+// @TODO! Get hash of each build file and use that.
+static TS: Lazy<u128> = Lazy::new(|| {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .as_millis()
+});
+
 #[component]
 pub fn HtmlLayout(props: HtmlLayoutProps) -> String {
     html! {
@@ -31,13 +42,13 @@ pub fn HtmlLayout(props: HtmlLayoutProps) -> String {
                 <meta charset="utf-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <title>{props.head_title}</title>
-                <link href="/client/common.css" rel="stylesheet" />
+                <link href={format!("/client/common.css?ts={}", *TS)} rel="stylesheet" />
                 {props.head_links}
                 {props.head_scripts}
             </head>
             <body>
                 {props.children}
-                <script src="/client/common.js"></script>
+                <script src={format!("/client/common.js?ts={}", *TS)}></script>
             </body>
         </html>
     }
