@@ -30,8 +30,8 @@ struct WelcomeProps {
 #[component]
 fn Welcome(props: WelcomeProps) -> String {
     html! { 
-        <main>
-            <h1>{ props.title }</h1>
+        <main>    
+            <h1 class={"text-xl"}>{ props.title }</h1>
             { props.children }
         </main>
     }
@@ -56,7 +56,7 @@ async fn get_home() -> Html<String> {
                 <marquee>
                     "I didn't think so!"
                 </marquee>
-                <button hx-get="/htmx" hx-swap="outerHTML">Click me!</button>
+                <button class={"bg-slate-200 p-3 rounded-full"} hx-get="/htmx" hx-swap="outerHTML">Click me!</button>
             </Welcome>
         </HtmlLayout>
     })
