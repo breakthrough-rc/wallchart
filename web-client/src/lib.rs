@@ -31,6 +31,7 @@ pub fn HtmlLayout(props: HtmlLayoutProps) -> String {
                 <meta charset="utf-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <title>{props.head_title}</title>
+                <link href="/client/common.css" rel="stylesheet" />
                 {props.head_links}
                 {props.head_scripts}
             </head>

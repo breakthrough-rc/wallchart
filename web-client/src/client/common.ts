@@ -1,3 +1,3 @@
 import "./controls.ts";
 
-console.log("Hello client side world via Bun!");
+console.log("Hello World client side world via Bun!");
