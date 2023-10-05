@@ -1,8 +1,4 @@
-use axum::{
-    // response::Html,
-    Router, 
-    // routing::get,
-};
+use axum::Router;
 use tower_http::services::ServeDir;
 use rscx::{component, html, props};
 
@@ -13,6 +9,9 @@ pub fn routes() -> Router {
 
 #[props]
 pub struct HtmlLayoutProps {
+    #[builder(setter(into), default = "Yall Chart".to_string())]
+    head_title: String,
+
     #[builder(default)]
     head_links: String,
 
@@ -27,13 +26,16 @@ pub struct HtmlLayoutProps {
 pub fn HtmlLayout(props: HtmlLayoutProps) -> String {
     html! {
         <!DOCTYPE html>
-        <html>
+        <html lang="en">
             <head>
+                <meta charset="utf-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <title>{props.head_title}</title>
                 {props.head_links}
                 {props.head_scripts}
             </head>
             <body>
-                { props.children }
+                {props.children}
                 <script src="/client/common.js"></script>
             </body>
         </html>
