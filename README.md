@@ -1,7 +1,7 @@
 # WallChart for Y'all
 
 ## Installing/Running
-```
+```bash
 // First time you need to build the client (until automated, also should do on git pull)
 ./build-client.sh
 

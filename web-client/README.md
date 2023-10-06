@@ -22,3 +22,9 @@ Additionally, we need to ensure that node/npm/bun packages have been installed. 
 
 An alternative approach would be to leverage git hooks (post-merge) to bun install if package.json has changed.
 Since git hooks are not checked in, it would require either a manual step or hooking into cargo build to auto setup git hooks.
+
+You can manually build the js and css (and watch) w/ the following commands
+```shell
+bun build ./src/client/common.js --outdir ./out --watch
+bunx tailwindcss -i ./src/client/common.css -o ./out/common.css --watch
+```
