@@ -9,6 +9,8 @@ use web_client::{
     HtmlLayout,
 };
 
+pub mod livereload;
+
 pub fn routes() -> Router {
     Router::new()
         .route("/", get(get_home))

@@ -1078,7 +1078,6 @@ dependencies = [
  "rscx",
  "serde",
  "serde_json",
- "sha2",
  "sha256",
  "tokio",
  "tower-http",
@@ -1089,10 +1088,13 @@ name = "web-htmx"
 version = "0.1.0"
 dependencies = [
  "axum",
+ "http",
+ "once_cell",
  "rscx",
  "serde",
  "serde_json",
  "tokio",
+ "tower-livereload",
  "web-client",
 ]
 

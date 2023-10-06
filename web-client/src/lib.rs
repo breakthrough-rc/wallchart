@@ -9,6 +9,10 @@ pub fn routes() -> Router {
         .nest_service("/", ServeDir::new("web-client/out"))
 }
 
+pub fn live_reload() -> () {
+    
+}
+
 #[props]
 pub struct HtmlLayoutProps {
     #[builder(setter(into), default = "Yall Chart".to_string())]

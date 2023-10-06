@@ -7,8 +7,11 @@ edition = "2021"
 
 [dependencies]
 axum = { workspace = true }
+http = { workspace = true }
+once_cell = { workspace = true }
+rscx = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 tokio = { workspace = true, features = ["full"] }
-rscx = { workspace = true }
+tower-livereload = { workspace = true }
 web-client = { path = "../web-client" }
