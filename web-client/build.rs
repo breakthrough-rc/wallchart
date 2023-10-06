@@ -55,5 +55,5 @@ fn write_hash_to_out(out_dir: &str, hash: &str) {
 
 fn hash_package_json() -> String {
     let bytes = fs::read("package.json").unwrap();
-    sha256::digest(&bytes)
+    sha256::digest(bytes)
 }
