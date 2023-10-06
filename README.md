@@ -2,11 +2,15 @@
 
 ## Installing/Running
 ```bash
-// First time you need to build the client (until automated, also should do on git pull)
-./build-client.sh
-
-// Run w. cargo
 cargo run
+```
+
+You can also leverage `cargo-watch`
+```bash
+cargo install cargo-watch
+
+# Then you can do the following
+cargo watch -x run
 ```
 
 ## MiroBoard
