@@ -8,5 +8,6 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
-  }
+  },
+  "custom": "700"
 }

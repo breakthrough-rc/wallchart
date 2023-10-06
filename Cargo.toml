@@ -12,8 +12,10 @@ axum = { version = "0.6.20" }
 once_cell = { version = "1.18.0" }
 serde = { version = "1.0.188" }
 serde_json = { version = "1.0.107" }
+sha2 = { version = "0.10.8" }
 tokio = { version = "1.32.0" }
 tower = { version = "0.4.13" }
 tower-http = { version = "0.4.4" }
 tower-livereload = { version = "0.8.1" }
 rscx = { version = "0.1.11" }
+sha256 = { version = "1.4.0" }
