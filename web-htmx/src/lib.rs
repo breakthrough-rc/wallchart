@@ -4,12 +4,11 @@ use axum::{
     routing::get,
 };
 use rscx::{component, html, props};
-use web_client::{
-    routes as client_routes,
-    HtmlLayout,
-};
+use page::PageLayout;
+use web_client::routes as client_routes;
 
 pub mod livereload;
+pub mod page;
 
 pub fn routes() -> Router {
     Router::new()
@@ -19,8 +18,6 @@ pub fn routes() -> Router {
 }
 
 #[props]
-/// mark a struct with #[props] to use it as props in a component.
-/// #[builder] can customize single props, marking them as option or setting a default value.
 struct WelcomeProps {
     #[builder(setter(into), default = "Welcome!".to_string())]
     title: String,
@@ -32,35 +29,29 @@ struct WelcomeProps {
 #[component]
 fn Welcome(props: WelcomeProps) -> String {
     html! { 
-        <main>    
-            <h1 class={"text-xl text-slate-600"}>{ props.title }</h1>
-            { props.children }
-        </main>
+        <h1 class="text-xl text-slate-600">{props.title}</h1>
+        {props.children}
     }
 }
 
 async fn get_home() -> Html<String> {
     Html(html! {
-        <HtmlLayout
-            head_scripts={
-                html! {
-                    <script 
-                        src="https://unpkg.com/htmx.org@1.9.5" 
-                        integrity="sha384-xcuj3WpfgjlKF+FXhSQFQ0ZNr39ln+hwjN3npfM9VBnUskLolQAcN80McRIVOPuO" 
-                        crossorigin="anonymous"
-                    ></script>
-                }
-            }
-        >
+        <PageLayout>
             <Welcome 
                 title="Yall Ready for This?"
             >
                 <marquee>
                     "I didn't think so!"
                 </marquee>
-                <button class={"bg-slate-200 p-3 rounded-full"} hx-get="/htmx" hx-swap="outerHTML">Click me!</button>
+                <button 
+                    class="bg-slate-200 p-3 rounded-full" 
+                    hx-get="/htmx" 
+                    hx-swap="outerHTML"
+                >
+                    Click me!
+                </button>
             </Welcome>
-        </HtmlLayout>
+        </PageLayout>
     })
 }
 
