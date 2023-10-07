@@ -6,7 +6,10 @@ use std::{
 };
 
 fn main() {
-    println!("Building client scripts");
+    println!("cargo:rerun-if-changed=src/client");
+    println!("cargo:rerun-if-changed=../web-htmx/src");
+
+    println!("Building client scripts {:?}", std::time::SystemTime::now());
 
     let out_dir = env::var("OUT_DIR").unwrap();
     let hash = hash_package_json();
