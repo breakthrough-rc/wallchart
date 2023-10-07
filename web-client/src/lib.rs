@@ -9,9 +9,14 @@ pub fn routes() -> Router {
         .nest_service("/", ServeDir::new("web-client/out"))
 }
 
-pub fn live_reload() -> () {
-    
-}
+// TEMP HACK! Used to bust cache on client scripts and stylesheets.
+// @TODO! Get hash of each build file and use that.
+static TS: Lazy<u128> = Lazy::new(|| {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .as_millis()
+});
 
 #[props]
 pub struct HtmlLayoutProps {
@@ -27,15 +32,6 @@ pub struct HtmlLayoutProps {
     #[builder(default)]
     children: String,
 }
-
-// TEMP HACK! Used to bust cache on client scripts and stylesheets.
-// @TODO! Get hash of each build file and use that.
-static TS: Lazy<u128> = Lazy::new(|| {
-    SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap()
-        .as_millis()
-});
 
 #[component]
 pub fn HtmlLayout(props: HtmlLayoutProps) -> String {
