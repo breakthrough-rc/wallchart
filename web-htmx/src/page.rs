@@ -3,12 +3,19 @@ use web_client::HtmlLayout;
 
 #[props]
 pub struct PageLayoutProps {
+    #[builder(default=false)]
+    partial: bool,
+
     #[builder(default)]
     children: String,
 }
 
 #[component]
 pub fn PageLayout(props: PageLayoutProps) -> String {
+    if props.partial {
+        return props.children;
+    }
+
     html! {
         <HtmlLayout
             head_scripts={
