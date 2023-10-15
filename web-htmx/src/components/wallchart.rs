@@ -1,4 +1,4 @@
-use rscx::{component, html, props, CollectFragment};
+use rscx::{component, html, props, CollectFragment, CollectFragmentAsync};
 
 pub struct Worksite {
     pub id: String,
@@ -63,42 +63,69 @@ pub fn Wallchart(props: WallchartProps) -> String {
                    </tr>
                  </thead>
                  <tbody class="bg-white">
-                  { props
-                    .worksite
-                    .locations
-                    .into_iter()
-                    .map(|location| location
-                      .shifts
-                      .into_iter()
-                      .map(|shift| html! {
-
-                   <tr class="border-t border-gray-200">
-                     <th colspan="3" scope="colgroup" class="bg-gray-50 py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
-                       {location.name.clone()} - {shift.name}
-                     </th>
-                   </tr>
-                    { shift
-                      .workers
-                      .into_iter()
-                      .map(|worker| html! {
-                   <tr class="border-t border-gray-300">
-                     <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">{worker.name}</td>
-                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{worker.last_assessment.value}</td>
-                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{worker.tags.into_iter().map(|tag| tag.icon).collect_fragment()}</td>
-                   </tr>
-                      })
-                      .collect_fragment()
-      }
-      })
-                      .collect_fragment()
-                      )
-                    .collect_fragment()
-                  }
+                   { props
+                     .worksite
+                     .locations
+                     .into_iter()
+                     .map(|location| async move { location
+                       .shifts
+                       .into_iter()
+                       .map(|shift| async { html! {
+                           <tr class="border-t border-gray-200">
+                             <th colspan="3" scope="colgroup" class="bg-gray-50 py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
+                               {location.name.clone()} - {shift.name.clone()}
+                             </th>
+                           </tr>
+                           <ShiftRows shift=shift/>
+                       }})
+                       .collect_fragment_async()
+                       .await
+                     })
+                     .collect_fragment_async()
+                     .await
+                 }
                  </tbody>
                </table>
              </div>
            </div>
          </div>
        </div>
+    }
+}
+
+#[props]
+pub struct ShiftRowsProps {
+    #[builder(setter(into))]
+    shift: Shift,
+}
+
+#[component]
+pub fn ShiftRows(props: ShiftRowsProps) -> String {
+    props
+        .shift
+        .workers
+        .into_iter()
+        .map(|worker| async {
+            html! {
+              <WorkerRow worker=worker/>
+            }
+        })
+        .collect_fragment_async()
+        .await
+}
+#[props]
+pub struct WorkerRowProps {
+    #[builder(setter(into))]
+    worker: Worker,
+}
+
+#[component]
+pub fn WorkerRow(props: WorkerRowProps) -> String {
+    html! {
+       <tr class="border-t border-gray-300">
+         <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">{props.worker.name}</td>
+         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{props.worker.last_assessment.value}</td>
+         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{props.worker.tags.into_iter().map(|tag| tag.icon).collect_fragment()}</td>
+       </tr>
     }
 }
