@@ -1,4 +1,4 @@
-use rscx::{component, html, props};
+use rscx::{component, html, props, CollectFragment};
 
 pub struct Worksite {
     pub id: String,
@@ -48,7 +48,7 @@ pub fn Wallchart(props: WallchartProps) -> String {
        <div class="px-4 sm:px-6 lg:px-8">
          <div class="sm:flex sm:items-center">
            <div class="sm:flex-auto">
-             <h1 class="text-base font-semibold leading-6 text-gray-900">Dunder Mifflin</h1>
+             <h1 class="text-base font-semibold leading-6 text-gray-900">{props.worksite.name}</h1>
            </div>
          </div>
          <div class="mt-8 flow-root">
@@ -63,6 +63,7 @@ pub fn Wallchart(props: WallchartProps) -> String {
                    </tr>
                  </thead>
                  <tbody class="bg-white">
+                  {props.worksite.locations.into_iter().map(|location| html! { <tr><p>{location.name}</p></tr> }).collect_fragment()}
                    <tr class="border-t border-gray-200">
                      <th colspan="3" scope="colgroup" class="bg-gray-50 py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
                        Office - Day
