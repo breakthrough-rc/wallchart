@@ -1,22 +1,21 @@
-use axum::{
-    response::Html,
-    Router, 
-    routing::get,
-    http::HeaderMap, 
-};
-use rscx::{component, html, props};
+use axum::{http::HeaderMap, response::Html, routing::get, Router};
 use page::PageLayout;
+use pages::wallchart::get_wallchart_page;
+use rscx::{component, html, props};
 use web_client::routes as client_routes;
 
 pub mod livereload;
 pub mod page;
+pub mod pages;
+pub mod resources;
 
 pub fn routes() -> Router {
     Router::new()
         .route("/", get(get_home))
+        .route("/wallchart", get(get_wallchart_page))
         .route("/test-render", get(get_test_render))
         .route("/htmx", get(htmx_test))
-        .nest_service("/client", client_routes())   
+        .nest_service("/client", client_routes())
 }
 
 #[props]
@@ -30,7 +29,7 @@ struct WelcomeProps {
 
 #[component]
 fn Welcome(props: WelcomeProps) -> String {
-    html! { 
+    html! {
         <h1 class="text-xl text-slate-600">{props.title}</h1>
         {props.children}
     }
@@ -39,24 +38,24 @@ fn Welcome(props: WelcomeProps) -> String {
 async fn get_home() -> Html<String> {
     Html(html! {
         <PageLayout>
-            <Welcome 
+            <Welcome
                 title="Yall Ready for This?"
             >
                 <marquee>
                     "I didn't think so!"
                 </marquee>
-                <button 
-                    class="bg-slate-200 p-3 rounded-full" 
-                    hx-get="/htmx" 
+                <button
+                    class="bg-slate-200 p-3 rounded-full"
+                    hx-get="/htmx"
                     hx-swap="outerHTML"
                 >
                     Click me!
                 </button>
                 <div>
-                    <h2>"Testing rendering"</h2>
+                    <h2>"Test rendering"</h2>
                     <ul class="list-disc list-inside">
                         <li>
-                            <a 
+                            <a
                                 class="text-blue-600 hover:underline"
                                 href="/test-render"
                             >
@@ -64,9 +63,9 @@ async fn get_home() -> Html<String> {
                             </a>
                         </li>
                         <li>
-                            <a 
+                            <a
                                 class="text-blue-600 hover:underline"
-                                hx-get="/test-render" 
+                                hx-get="/test-render"
                                 hx-target=".partial-rendered-content"
                             >
                                 "See a partial render."
@@ -74,8 +73,8 @@ async fn get_home() -> Html<String> {
                         </li>
                     </ul>
                     <div class="text-sm italic partial-rendered-content"></div>
-                        
-                </div>    
+
+                </div>
             </Welcome>
         </PageLayout>
     })
@@ -98,9 +97,9 @@ async fn get_test_render(headers: HeaderMap) -> Html<String> {
                     you should see the full render (header and footer)."
                 </p>
                 <p>
-                    "If this is being pulled in from an htmx request 
+                    "If this is being pulled in from an htmx request
                     we should just see the `section` tag only."
-                </p>    
+                </p>
             </section>
         </PageLayout>
     })
