@@ -4,6 +4,7 @@ use pages::wallchart::get_wallchart_page;
 use rscx::{component, html, props};
 use web_client::routes as client_routes;
 
+pub mod components;
 pub mod livereload;
 pub mod page;
 pub mod pages;
