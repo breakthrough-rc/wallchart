@@ -1,12 +1,11 @@
-use std::time::{SystemTime, UNIX_EPOCH};
 use axum::Router;
 use once_cell::sync::Lazy;
-use tower_http::services::ServeDir;
 use rscx::{component, html, props};
+use std::time::{SystemTime, UNIX_EPOCH};
+use tower_http::services::ServeDir;
 
 pub fn routes() -> Router {
-    Router::new()
-        .nest_service("/", ServeDir::new("web-client/out"))
+    Router::new().nest_service("/", ServeDir::new("web-client/out"))
 }
 
 // TEMP HACK! Used to bust cache on client scripts and stylesheets.
@@ -27,7 +26,7 @@ pub struct HtmlLayoutProps {
     head_links: String,
 
     #[builder(default)]
-    head_scripts: String,    
+    head_scripts: String,
 
     #[builder(default)]
     children: String,

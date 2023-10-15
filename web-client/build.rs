@@ -1,9 +1,4 @@
-use std::{
-    env,
-    process::Command,
-    fs,
-    io::Write,
-};
+use std::{env, fs, io::Write, process::Command};
 
 fn main() {
     println!("cargo:rerun-if-changed=src/client");
@@ -16,7 +11,7 @@ fn main() {
 
     let should_bun_install = match read_hash_from_out(&out_dir) {
         Ok(old_hash) => old_hash != hash,
-        Err(_) => true
+        Err(_) => true,
     };
 
     if should_bun_install {
@@ -31,8 +26,8 @@ fn exec_bun_install() {
     let output = Command::new("sh")
         .args(["-c", "bun install"])
         .output()
-        .expect("failed to execute `bun install`"); 
-    
+        .expect("failed to execute `bun install`");
+
     println!("{:?}", output);
 }
 

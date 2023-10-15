@@ -1,13 +1,6 @@
+use axum::{response::IntoResponse, routing::get, Router};
 use std::net::SocketAddr;
-use axum::{
-    response::IntoResponse,
-    Router, 
-    routing::get,
-};
-use web_htmx::{
-    livereload,
-    routes as web_routes,
-};
+use web_htmx::{livereload, routes as web_routes};
 
 #[tokio::main]
 async fn main() {
@@ -16,7 +9,7 @@ async fn main() {
         .route("/healthcheck", get(get_health_check));
 
     #[cfg(debug_assertions)]
-    let app = app.layer(livereload::layer());  
+    let app = app.layer(livereload::layer());
 
     // run our app with hyper
     // `axum::Server` is a re-export of `hyper::Server`

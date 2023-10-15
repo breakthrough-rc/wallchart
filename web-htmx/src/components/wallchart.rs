@@ -113,6 +113,7 @@ pub fn ShiftRows(props: ShiftRowsProps) -> String {
         .collect_fragment_async()
         .await
 }
+
 #[props]
 pub struct WorkerRowProps {
     #[builder(setter(into))]
