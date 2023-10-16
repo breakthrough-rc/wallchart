@@ -75,6 +75,9 @@ pub fn Wallchart(props: WallchartProps) -> String {
                              <th colspan="3" scope="colgroup" class="bg-gray-50 py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
                                {location.name.clone()} - {shift.name.clone()}
                              </th>
+                             <th colspan="3" scope="colgroup" class="bg-gray-50 py-2 pl-4 pr-3 text-right text-sm font-semibold text-gray-900 sm:pl-3">
+                             <a href="/workers/new">"Create New Worker"</a>
+                             </th>
                            </tr>
                            <ShiftRows shift=shift/>
                        }})
