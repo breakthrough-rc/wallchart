@@ -15,26 +15,29 @@ impl RemoveWorkerFromShift {
         id: String,
         shift_id: String,
         worker_id: String,
-    ) -> Result<Worksite, GetWorksiteFailure> {
+    ) -> Result<Worksite, RemoveWorkerFromShiftFailure> {
         let worksite = self
             .worksite_repository
             .get_worksite(id.clone())
             .await
-            .map_err(|e| GetWorksiteFailure::Unknown(e.to_string()))?;
+            .map_err(|e| RemoveWorkerFromShiftFailure::Unknown(e.to_string()))?
+            .ok_or(RemoveWorkerFromShiftFailure::NotFound)?;
 
         let (updated_worksite, events) = remove_worker(&worksite, shift_id, worker_id);
 
         self.worksite_repository
-            .save(id, events)
+            .save(id, &updated_worksite, events)
             .await
-            .map_err(|e| GetWorksiteFailure::Unknown(e.to_string()))?;
+            .map_err(|e| RemoveWorkerFromShiftFailure::Unknown(e.to_string()))?;
 
         Ok(updated_worksite)
     }
 }
 
 #[derive(Error, Debug, PartialEq)]
-pub enum GetWorksiteFailure {
+pub enum RemoveWorkerFromShiftFailure {
+    #[error("Worksite does not exist")]
+    NotFound,
     #[error("Something went wrong")]
     Unknown(String),
 }

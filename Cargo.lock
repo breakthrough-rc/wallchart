@@ -383,6 +383,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "in-memory-worksite-repository"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "usecases",
+]
+
+[[package]]
 name = "itoa"
 version = "1.0.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"

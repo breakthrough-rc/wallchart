@@ -10,7 +10,7 @@ pub struct GetWorksite {
 }
 
 impl GetWorksite {
-    async fn get_worksite(&self, id: String) -> Result<Worksite, GetWorksiteFailure> {
+    async fn get_worksite(&self, id: String) -> Result<Option<Worksite>, GetWorksiteFailure> {
         self.worksite_repository
             .get_worksite(id)
             .await
