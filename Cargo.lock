@@ -383,6 +383,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "in-memory-worksite-repository"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "usecases",
+]
+
+[[package]]
 name = "itoa"
 version = "1.0.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -415,12 +426,14 @@ name = "main"
 version = "0.1.0"
 dependencies = [
  "axum",
+ "in-memory-worksite-repository",
  "serde",
  "serde_json",
  "tokio",
  "tower",
  "tower-http",
  "tower-livereload",
+ "usecases",
  "web-htmx",
 ]
 
@@ -1124,6 +1137,7 @@ dependencies = [
  "serde_json",
  "tokio",
  "tower-livereload",
+ "usecases",
  "web-client",
 ]
 

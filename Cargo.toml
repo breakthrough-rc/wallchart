@@ -1,7 +1,13 @@
 [workspace]
 resolver = "2"
 
-members = ["main", "web-client", "web-htmx", "worksite/usecases"]
+members = [
+  "main",
+  "web-client",
+  "web-htmx",
+  "worksite/usecases",
+  "worksite/adapters/in-memory-worksite-repository",
+]
 
 [workspace.dependencies]
 async-trait = { version = "0.1.73" }
@@ -21,4 +27,3 @@ tower-livereload = { version = "0.8.1" }
 tracing = { version = "0.1.37" }
 tracing-subscriber = { version = "0.3.17" }
 uuid = { version = "1.4.1" }
-

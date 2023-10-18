@@ -5,12 +5,13 @@ use thiserror::Error;
 use crate::models::Worksite;
 use crate::ports::worksite_repository::WorksiteRepository;
 
+#[derive(Clone)]
 pub struct GetWorksite {
-    worksite_repository: Arc<dyn WorksiteRepository>,
+    pub worksite_repository: Arc<dyn WorksiteRepository>,
 }
 
 impl GetWorksite {
-    async fn get_worksite(&self, id: String) -> Result<Worksite, GetWorksiteFailure> {
+    pub async fn get_worksite(&self, id: String) -> Result<Option<Worksite>, GetWorksiteFailure> {
         self.worksite_repository
             .get_worksite(id)
             .await
