@@ -5,12 +5,13 @@ use thiserror::Error;
 use crate::models::{Location, Shift, Worksite};
 use crate::ports::worksite_repository::WorksiteRepository;
 
+#[derive(Clone)]
 pub struct RemoveWorkerFromShift {
-    worksite_repository: Arc<dyn WorksiteRepository>,
+    pub worksite_repository: Arc<dyn WorksiteRepository>,
 }
 
 impl RemoveWorkerFromShift {
-    async fn remove_worker_from_shift(
+    pub async fn remove_worker_from_shift(
         &self,
         id: String,
         shift_id: String,

@@ -4,7 +4,7 @@ use thiserror::Error;
 use crate::{models::Worksite, remove_worker_from_shift::Event};
 
 #[async_trait]
-pub trait WorksiteRepository {
+pub trait WorksiteRepository: Send + Sync + 'static {
     async fn get_worksite(&self, id: String) -> Result<Option<Worksite>, RepositoryFailure>;
     /**
      * NOTE: temporarily, we save the entire worksite as a snapshot, just to save time

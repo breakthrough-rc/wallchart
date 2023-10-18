@@ -2,6 +2,7 @@ use axum::{http::HeaderMap, response::Html, routing::get, Router};
 use page::PageLayout;
 use pages::{wallchart::get_wallchart_page, workers::get_workers_new_page};
 use rscx::{component, html, props};
+use state::WebHtmxState;
 use web_client::routes as client_routes;
 
 pub mod components;
@@ -9,8 +10,9 @@ pub mod livereload;
 pub mod page;
 pub mod pages;
 pub mod resources;
+pub mod state;
 
-pub fn routes() -> Router {
+pub fn routes(state: WebHtmxState) -> Router {
     Router::new()
         .route("/", get(get_home))
         .route("/wallchart", get(get_wallchart_page))
@@ -18,6 +20,7 @@ pub fn routes() -> Router {
         .route("/test-render", get(get_test_render))
         .route("/htmx", get(htmx_test))
         .nest_service("/client", client_routes())
+        .with_state(state)
 }
 
 #[props]

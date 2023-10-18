@@ -11,6 +11,20 @@ pub struct InMemoryWorksiteRepository {
     pub worksites: Arc<RwLock<Vec<Worksite>>>,
 }
 
+impl InMemoryWorksiteRepository {
+    pub fn empty() -> Self {
+        Self {
+            worksites: Arc::new(RwLock::new(vec![])),
+        }
+    }
+
+    pub fn with(worksites: Vec<Worksite>) -> Self {
+        Self {
+            worksites: Arc::new(RwLock::new(worksites)),
+        }
+    }
+}
+
 #[async_trait]
 impl WorksiteRepository for InMemoryWorksiteRepository {
     async fn get_worksite(&self, id: String) -> Result<Option<Worksite>, RepositoryFailure> {

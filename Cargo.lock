@@ -426,12 +426,14 @@ name = "main"
 version = "0.1.0"
 dependencies = [
  "axum",
+ "in-memory-worksite-repository",
  "serde",
  "serde_json",
  "tokio",
  "tower",
  "tower-http",
  "tower-livereload",
+ "usecases",
  "web-htmx",
 ]
 
@@ -1135,6 +1137,7 @@ dependencies = [
  "serde_json",
  "tokio",
  "tower-livereload",
+ "usecases",
  "web-client",
 ]
 
