@@ -36,7 +36,7 @@ impl WorksiteRepository for InMemoryWorksiteRepository {
         &self,
         id: String,
         worksite: &Worksite,
-        events: Vec<Event>,
+        _events: Vec<Event>,
     ) -> Result<(), RepositoryFailure> {
         let mut worksites = self.worksites.write().await;
         worksites.retain(|w| w.id != id);

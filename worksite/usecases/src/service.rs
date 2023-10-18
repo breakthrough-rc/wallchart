@@ -11,11 +11,11 @@ pub struct WorksiteService {
 }
 
 impl WorksiteService {
-    async fn get_worksite(&self, id: String) -> Result<Option<Worksite>, GetWorksiteFailure> {
+    pub async fn get_worksite(&self, id: String) -> Result<Option<Worksite>, GetWorksiteFailure> {
         self.get_worksite.get_worksite(id).await
     }
 
-    async fn remove_worker_from_shift(
+    pub async fn remove_worker_from_shift(
         &self,
         id: String,
         shift_id: String,

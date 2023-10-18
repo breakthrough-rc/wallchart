@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use thiserror::Error;
 
-use crate::models::{Location, Shift, Worksite};
+use crate::models::Worksite;
 use crate::ports::worksite_repository::WorksiteRepository;
 
 #[derive(Clone)]
