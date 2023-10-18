@@ -1,6 +1,7 @@
-use axum::{http::HeaderMap, response::Html, routing::get, Router};
+use axum::{http::HeaderMap, response::Html, routing::{get, delete}, Router};
 use page::PageLayout;
 use pages::{wallchart::get_wallchart_page, workers::get_workers_new_page};
+use resources::worksite::delete_worker_from_shift;
 use rscx::{component, html, props};
 use state::WebHtmxState;
 use web_client::routes as client_routes;
@@ -16,6 +17,7 @@ pub fn routes(state: WebHtmxState) -> Router {
     Router::new()
         .route("/", get(get_home))
         .route("/wallchart", get(get_wallchart_page))
+        .route("/worksites/:worksite_id/locations/:location_id/shifts/:shift_id/workers/:worker_id", delete(delete_worker_from_shift))
         .route("/workers/new", get(get_workers_new_page))
         .route("/test-render", get(get_test_render))
         .route("/htmx", get(htmx_test))
