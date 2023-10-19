@@ -100,20 +100,26 @@ pub struct WorkerRowProps {
 #[component]
 pub fn WorkerRow(props: WorkerRowProps) -> String {
     html! {
-      <tr class="border-t border-gray-300">
+      <tr class="border-t border-gray-300" data-loading-states>
           <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">{props.worker.name}</td>
           <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{props.worker.last_assessment.value}</td>
           <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{props.worker.tags.into_iter().map(|tag| tag.icon).collect_fragment()}</td>
           <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-              <button 
-                type="button" 
-                hx-delete={format!("{}/workers/{}", props.shift_path, props.worker.id)} 
-                class="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                hx-swap="outerHTML swap:1s" 
+              <button
+                type="button"
+                hx-delete={format!("{}/workers/{}", props.shift_path, props.worker.id)}
+                class="text-center inline-flex items-center rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:bg-gray-50 disabled:shadow-none disabled:cursor-not-allowed disabled:text-gray-500"
+                hx-swap="outerHTML swap:1s"
                 hx-target="closest tr"
+                data-loading-disable
               >
+                  <div
+                       class="inline-flex animate-spin mr-2 items-center justify-center rounded-full w-4 h-4 bg-gradient-to-tr from-gray-500 to-white"
+                  >
+                        <span class="inline h-3 w-3 rounded-full bg-white hover:bg-gray-50"></span>
+                  </div>
                   Remove
-                </button>
+              </button>
           </td>
       </tr>
     }

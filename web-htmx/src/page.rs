@@ -25,13 +25,14 @@ pub fn PageLayout(props: PageLayoutProps) -> String {
                         integrity="sha384-xcuj3WpfgjlKF+FXhSQFQ0ZNr39ln+hwjN3npfM9VBnUskLolQAcN80McRIVOPuO"
                         crossorigin="anonymous"
                     ></script>
+                    <script src="https://unpkg.com/htmx.org/dist/ext/loading-states.js"></script>
                 }
         }
         >
             <header class="bg-slate-200 border-y border-b-indigo-500">
                 <h1>Yall Chart</h1>
             </header>
-            <main>
+            <main hx-ext="loading-states">
                 {props.children}
             </main>
             <footer class="text-xs">
