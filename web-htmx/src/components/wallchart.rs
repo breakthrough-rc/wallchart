@@ -106,15 +106,15 @@ pub fn WorkerRow(props: WorkerRowProps) -> String {
           <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{props.worker.tags.into_iter().map(|tag| tag.icon).collect_fragment()}</td>
           <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
               <button
-                type="button"
-                hx-delete={format!("{}/workers/{}", props.shift_path, props.worker.id)}
-                class="text-center inline-flex items-center rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:bg-gray-50 disabled:shadow-none disabled:cursor-not-allowed disabled:text-gray-500"
-                hx-swap="outerHTML swap:1s"
-                hx-target="closest tr"
-                data-loading-disable
+                  type="button"
+                  hx-delete={format!("{}/workers/{}", props.shift_path, props.worker.id)}
+                  class="text-center inline-flex items-center rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:bg-gray-50 disabled:shadow-none disabled:cursor-not-allowed disabled:text-gray-500"
+                  hx-swap="outerHTML swap:1s"
+                  hx-target="closest tr"
+                  data-loading-disable
               >
                   <div
-                       class="inline-flex animate-spin mr-2 items-center justify-center rounded-full w-4 h-4 bg-gradient-to-tr from-gray-500 to-white"
+                      class="htmx-indicator inline-flex animate-spin mr-2 items-center justify-center rounded-full w-4 h-4 bg-gradient-to-tr from-gray-500 to-white"
                   >
                         <span class="inline h-3 w-3 rounded-full bg-white hover:bg-gray-50"></span>
                   </div>

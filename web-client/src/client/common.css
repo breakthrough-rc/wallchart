@@ -8,12 +8,10 @@ tr.htmx-swapping td {
 }
 
 .htmx-indicator{
-    opacity:0;
-    transition: opacity 500ms ease-in;
+    display: none;
+    transition-duration: 500ms;
 }
 .htmx-request .htmx-indicator{
-    opacity:1
-}
-.htmx-request.htmx-indicator{
-    opacity:1
+    display: inherit;
+    opacity: 1
 }
