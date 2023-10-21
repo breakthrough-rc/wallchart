@@ -21,7 +21,7 @@ One concrete example is being able to leverage the [TailwindUI component library
 * Controls will be written in vanilla TypeScript inside the `web-client` package. No framework or library is required.
 * To hook into css animations and transitions we will use the [el-transition npm package](https://www.npmjs.com/package/el-transition). This package will allow us to declaratively set classes for `enter, enter to, enter from, leave, leave to, and leave from` hooks when applying css transitions.
 * Expose API on `window.YcControls` for client and server components to listen and trigger events and access global control APIs.
-* Leverage the standard DOM event system via [CustomEvents](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent), similar to HTMX, for controls to communicate and to trigger behavior (show, hide, and custom behaviors). This includes listening to HTMX event and republishing or directly using API on `YcControls`.
+* Leverage the standard DOM event system via [CustomEvents](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent), similar to HTMX, for controls to communicate and to trigger behavior (show, hide, and custom behaviors). This includes listening to HTMX event and republishing or directly using API on `YcControls`. Additional an `events` module will expose `on` and `trigger` methods that wrap document.body event methods.
 
 ### Controls will be defined in the `web-client` package 
 The `web-client` package will be the home for client side custom controls (The term `custom control` here means an HTML element, which is rendered by a server side or client side component, that has been enhanced with additional behavior and functionality).
@@ -39,15 +39,21 @@ We should monitor how JavaScript is written in the `web-htmx` package - If a lot
 
 This control will simply `console.log` a message.
 
-```typescript
+Here's an example of using the global API `YcControls` to trigger an event from your Rust server component.
+```tsx
 // Inside web-htmx package...
 // Code that triggers the event. This could be declared in rsx component in Rust.
-<button onclick="YcControls.trigger('yc:fooRequest', { foo: 'baz' })";
+<button onclick="YcControls.trigger('yc:fooRequest', { foo: 'baz' })">
   Click to see `foo` work its magic!
 </button>
+```
 
+Here's a module that exposes the Foo control.
+
+```typescript
 // Inside `web-client`` package
 // Foo control in /src/client/controls/Foo.ts
+import events from "./events";
 import { ControlRegistry } from "./registery";
 
 type FooRequest = {
@@ -59,10 +65,9 @@ function init(registry: ControlRegistry) {
   // This exposes a global fn on `window.YcControls.fooLog`
   registry.registerGlobalApi({ fooLog });
 
-  document.body.addEventListener("yc:fooRequest", (ev: Event) => {
-    const request = (ev as CustomEvent<FooRequest>).detail;
-    log(request);
-  };
+  // Using the events object (which wraps document.body.addEventListener)
+  // Using `on` over addEventListener` is helpful as it gives your your CustomEvent detail object as first param.
+  events.on("yc:fooRequest", fooLog);
 }
 
 function fooLog(request: FooRequest) {
@@ -89,3 +94,6 @@ The decision to define controls w/o a framework might not scale. We migh need st
 If we find his to be true in the future, we should look at the web component standard and libraries that provide sugar for defining components such as [HybridJs](https://hybrids.js.org/#/) and [Lit](https://lit.dev/).
 
 Additionally or alternatively, if we find the Vanilla TS approach not scaling, we might want to explore a library like [AlpineJs](https://alpinejs.dev/) for defining controls.
+
+### Premature sugar for DOM
+The `event` module wraps `document.body.addEventListener` and `document.body.dispatchEvent`. As this decision has been made quite early in the project history, we might find we have made the wrong abstraction or create additional indirection. Even HTMX has created on, off, trigger methods on the global HTMX object, so most likely we are fine. If we find we need to break the abstraction, we should reconsider or even remove this module.

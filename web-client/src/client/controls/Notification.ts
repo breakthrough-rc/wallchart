@@ -1,3 +1,4 @@
+import events from "./events";
 import { ControlRegistry } from "./registery";
 
 type ErrorNotificationRequest = {
@@ -25,8 +26,7 @@ const Notifications = {
   },
 
   init() {
-    document.body.addEventListener("yc:notificationRequest", (ev: Event) => {
-      const request = (ev as CustomEvent<NotificationRequest>).detail;
+    events.on("yc:notificationRequest", (request: NotificationRequest) => {
       switch (request.kind) {
         case "ERROR":
           Notifications.showError(request);
