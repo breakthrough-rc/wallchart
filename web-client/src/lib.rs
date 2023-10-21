@@ -64,29 +64,6 @@ fn NotificationLiveRegion() -> String {
             <template id="tpl-error-notification">
                 <ErrorNotification />
             </template>
-            <script>{
-                "
-                htmx.on('htmx:sendError', function(error) {
-                    const notificationRequestEvent = new CustomEvent('yc:notificationRequest', {
-                        detail: {
-                            kind: 'ERROR',
-                            message: 'Network Error',
-                        },
-                    });
-                    document.body.dispatchEvent(notificationRequestEvent);
-                });                
-
-                htmx.on('htmx:responseError', function(error) {
-                    const notificationRequestEvent = new CustomEvent('yc:notificationRequest', {
-                        detail: {
-                            kind: 'ERROR',
-                            message: error.detail.xhr.responseText || 'Unknown error',
-                        },
-                    });
-                    document.body.dispatchEvent(notificationRequestEvent);
-                });
-                "
-            }</script>
         </div>
     }
 }

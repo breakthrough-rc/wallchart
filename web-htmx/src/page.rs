@@ -38,6 +38,17 @@ pub fn PageLayout(props: PageLayoutProps) -> String {
             <footer class="text-xs">
                 <small>{"2023 &copy; Yall Chart"}</small>
             </footer>
+            <script>{
+                "
+                htmx.on('htmx:sendError', function() {
+                    window.showErrorNotification('Network Error!');
+                });                
+
+                htmx.on('htmx:responseError', function(error) {
+                    window.showErrorNotification(error.detail.xhr.responseText || 'Unknown error');
+                });
+                "
+            }</script>
         </HtmlLayout>
     }
 }
