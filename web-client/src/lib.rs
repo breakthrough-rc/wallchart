@@ -53,7 +53,7 @@ pub fn HtmlLayout(props: HtmlLayoutProps) -> String {
         </html>
     }
 }
-
+// TEST!
 #[component]
 fn NotificationLiveRegion() -> String {
     html! {
@@ -66,20 +66,24 @@ fn NotificationLiveRegion() -> String {
             </template>
             <script>{
                 "
-                const liveRegion = document.getElementById('notification-live-region');
-                liveRegion.addEventListener('click', function(event) {
-                    const node = event.target;
-                    if (node.hasAttribute('data-notification-close')) {
-                        liveRegion.querySelector(':scope > section').innerHTML = '';
-                    }
-                });
+                htmx.on('htmx:sendError', function(error) {
+                    const notificationRequestEvent = new CustomEvent('yc:notificationRequest', {
+                        detail: {
+                            kind: 'ERROR',
+                            message: 'Network Error',
+                        },
+                    });
+                    document.body.dispatchEvent(notificationRequestEvent);
+                });                
 
                 htmx.on('htmx:responseError', function(error) {
-                    const errorMessage = error.detail.xhr.responseText || 'Unknown error';
-                    const tpl = document.getElementById('tpl-error-notification');
-                    const notification = tpl.content.cloneNode(true);
-                    notification.querySelector('[data-error-message]').textContent = errorMessage;
-                    liveRegion.querySelector(':scope > section').appendChild(notification);
+                    const notificationRequestEvent = new CustomEvent('yc:notificationRequest', {
+                        detail: {
+                            kind: 'ERROR',
+                            message: error.detail.xhr.responseText || 'Unknown error',
+                        },
+                    });
+                    document.body.dispatchEvent(notificationRequestEvent);
                 });
                 "
             }</script>

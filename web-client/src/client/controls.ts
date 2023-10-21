@@ -36,6 +36,19 @@ const Notifications = {
   },
 
   appendNotification(notification: HTMLElement) {
+    const button = notification.querySelector("button[data-notification-close]");
+    if (!button) throw new Error("Could not find notification close button.");
+
+    const id = `notification-${Date.now()}`;
+    (notification.firstElementChild as HTMLElement).setAttribute("id", id);
+
+    const removeNotification = () => {
+      Notifications.content.removeChild(document.getElementById(id) as HTMLElement);
+      button.removeEventListener("click", removeNotification);
+    };
+
+    button.addEventListener("click", removeNotification);
+
     Notifications.content.appendChild(notification);
   },
 
@@ -54,6 +67,13 @@ const Notifications = {
 
 function init() {
   Notifications.init();
+
+  (window as any).showTestErrorNotification = () => {
+    Notifications.showError({
+      kind: "ERROR",
+      message: "Test Error Message",
+    });
+  };
 }
 
 export default {
