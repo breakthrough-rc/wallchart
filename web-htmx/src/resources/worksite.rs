@@ -19,16 +19,16 @@ pub async fn delete_worker_from_shift(
         worker_id, shift_id, worksite_id, location_id,
     );
 
-    (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        "TEST! Hardcode error to test notification!!!",
-    )
-    // panic!("Hardcode error to test notification!");
+    let result = worksite_service
+        .remove_worker_from_shift(worksite_id, shift_id, worker_id)
+        .await;
 
-    // worksite_service
-    //     .remove_worker_from_shift(worksite_id, shift_id, worker_id)
-    //     .await
-    //     .unwrap();
-
-    // "".to_string()
+    match result {
+        Ok(_) => "".into_response(),
+        Err(_) => (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            "Error deleting worker from shift",
+        )
+            .into_response(),
+    }
 }
