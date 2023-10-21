@@ -2,5 +2,8 @@
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "rust-lang.rust-analyzer",
   "js/ts.implicitProjectConfig.checkJs": true,
-  "js/ts.implicitProjectConfig.target": "ESNext"
+  "js/ts.implicitProjectConfig.target": "ESNext",
+  "[typescript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  }
 }
