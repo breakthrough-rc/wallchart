@@ -1,3 +1,5 @@
+import { ControlRegistry } from "./registery";
+
 type ErrorNotificationRequest = {
   kind: 'ERROR',
   message: string,
@@ -66,17 +68,17 @@ const Notifications = {
   },
 };
 
-function init() {
+function init(registry: ControlRegistry) {
   Notifications.init();
 
-  (window as any).YcControls = {
+  registry.registerGlobalApi({
     showErrorNotification(message: string) {
       Notifications.showError({
         kind: "ERROR",
         message,
       });
     },
-  };
+  });
 }
 
 export default {
