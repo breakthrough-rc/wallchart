@@ -3,6 +3,7 @@
   "module": "index.ts",
   "type": "module",
   "devDependencies": {
+    "@types/web": "^0.0.117",
     "bun-types": "latest",
     "tailwindcss": "^3.3.3"
   },

@@ -1,3 +1,8 @@
-(window as any).FooControl = () => {
-  alert('Give up control!');
+const Notifications = {
+  init() {
+    document.body.addEventListener('click', () => {
+
+    }
+  },
 };
+
