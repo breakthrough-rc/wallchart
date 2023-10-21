@@ -1,22 +1,11 @@
 import registry from "./controls/registery";
+import events from "./controls/events";
 import Notifications from "./controls/Notification";
-
-type YcEventDetail = any;
-
-/**
- * event name should begin with prefix `yc:`
- */
-function trigger(event: string, detail: YcEventDetail = {}) {
-  document.body.dispatchEvent(new CustomEvent(event, { detail }));
-}
 
 function init() {
   registry.init();
 
-  registry.registerGlobalApi({
-    trigger,
-  });
-
+  events.init(registry);
   Notifications.init(registry);
 }
 
