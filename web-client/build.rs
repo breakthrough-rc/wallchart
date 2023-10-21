@@ -20,6 +20,7 @@ fn main() {
     }
 
     exec_build_js_and_css();
+    println!("Built client scripts {:?}", std::time::SystemTime::now());
 }
 
 fn exec_bun_install() {
@@ -33,7 +34,7 @@ fn exec_bun_install() {
 
 fn exec_build_js_and_css() {
     let output = Command::new("sh")
-        .args(["-c", "bunx tailwindcss -i ./src/client/common.css -o ./out/common.css && bun build ./src/client/common.js"])
+        .args(["-c", "bunx tailwindcss -i ./src/client/common.css -o ./out/common.css && bun build ./src/client/common.js --outdir ./out"])
         .output()
         .expect("failed to execute tailwind and bun build process");
 
