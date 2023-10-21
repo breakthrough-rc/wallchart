@@ -30,6 +30,7 @@ const Notifications = {
           Notifications.showError(request);
           break;
         case "GENERIC":
+          console.warn("Generic notification request not implemented yet.");
           break;
       }
     });
@@ -68,11 +69,13 @@ const Notifications = {
 function init() {
   Notifications.init();
 
-  (window as any).showTestErrorNotification = () => {
-    Notifications.showError({
-      kind: "ERROR",
-      message: "Test Error Message",
-    });
+  (window as any).YcControls = {
+    showErrorNotification(message: string) {
+      Notifications.showError({
+        kind: "ERROR",
+        message,
+      });
+    },
   };
 }
 

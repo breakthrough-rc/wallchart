@@ -41,11 +41,13 @@ pub fn PageLayout(props: PageLayoutProps) -> String {
             <script>{
                 "
                 htmx.on('htmx:sendError', function() {
-                    window.showErrorNotification('Network Error!');
+                    YcControls.showErrorNotification('Network Error!');
                 });                
 
                 htmx.on('htmx:responseError', function(error) {
-                    window.showErrorNotification(error.detail.xhr.responseText || 'Unknown error');
+                    YcControls.showErrorNotification(
+                        error.detail.xhr.responseText || 'Unknown error'
+                    );
                 });
                 "
             }</script>
