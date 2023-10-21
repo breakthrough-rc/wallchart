@@ -9,5 +9,8 @@
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
-  "custom": "700"
+  "custom": "700",
+  "dependencies": {
+    "el-transition": "^0.0.7"
+  }
 }
