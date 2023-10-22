@@ -83,17 +83,17 @@ export default {
 
 The descisions outlined in this ADR might work for simple use cases and errs on the side of a simpler more light-weight approach. We might find use cases that require more complex interactions or state management to name a few. We also could see a lot of overhead needed to write common DOM interactions.
 
-### Not All BeSpoke JavaScript Might Not Be a Control
+### Not All Bespoke JavaScript Might Not Be a Control
 This decision does not provide any support other than what is exposed on `YcControls` global object for writting JavaScript when writing Rust server side components. 
 
 If we find the code can not be abstracted into a web-client control, and the bespoke JavaScript is a valid use case, we might want to look a library such as [hyperscript](https://hyperscript.org/) to enforce a declarative, readable, conscise syntax for common custom client side behavior inside our Rust components.
 
 ### Vanilla TypeScript Controls
-The decision to define controls w/o a framework might not scale. We migh need state management or need to support more complex behaviors.
+The decision to define controls w/o a framework might not scale. We might need state management or need to support more complex behaviors.
 
 If we find his to be true in the future, we should look at the web component standard and libraries that provide sugar for defining components such as [HybridJs](https://hybrids.js.org/#/) and [Lit](https://lit.dev/).
 
-Additionally or alternatively, if we find the Vanilla TS approach not scaling, we might want to explore a library like [AlpineJs](https://alpinejs.dev/) for defining controls.
+Additionally, if the Vanilla TS approach is not scaling, we might want to explore a library like [AlpineJs](https://alpinejs.dev/) for defining controls.
 
 ### Premature sugar for DOM
 The `event` module wraps `document.body.addEventListener` and `document.body.dispatchEvent`. As this decision has been made quite early in the project history, we might find we have made the wrong abstraction or create additional indirection. Even HTMX has created on, off, trigger methods on the global HTMX object, so most likely we are fine. If we find we need to break the abstraction, we should reconsider or even remove this module.
