@@ -68,10 +68,67 @@ fn NotificationLiveRegion() -> String {
     }
 }
 
+#[props]
+#[derive(Debug)]
+pub struct TransitionProps {
+    #[builder(default)]
+    show: bool,
+
+    #[builder(default)]
+    enter: String,
+
+    #[builder(default)]
+    enter_from: String,
+
+    #[builder(default)]
+    enter_to: String,
+
+    #[builder(default)]
+    leave: String,
+
+    #[builder(default)]
+    leave_from: String,
+
+    #[builder(default)]
+    leave_to: String,
+
+    #[builder(default)]
+    class: String,
+
+    #[builder(default)]
+    children: String,
+}
+
+#[component]
+pub fn Transition(props: TransitionProps) -> String {
+    // Currently transition component only supports div as root element.
+    html! {
+        <div
+            class={format!("hidden {}", props.class)}
+            data-transition-enter={props.enter}
+            data-transition-enter-start={props.enter_from}
+            data-transition-enter-end={props.enter_to}
+            data-transition-leave={props.leave}
+            data-transition-leave-start={props.leave_from}
+            data-transition-leave-end={props.leave_to}
+        >
+            {props.children}
+        </div>
+    }
+}
+
 #[component]
 pub fn ErrorNotification() -> String {
     html! {
-        <div class="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+        <Transition
+            class="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5".into()
+            enter="transform ease-out duration-300 transition".into()
+            enter_from="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2".into()
+            enter_to="translate-y-0 opacity-100 sm:translate-x-0".into()
+            leave="transition ease-in duration-300".into()
+            leave_from="opacity-100".into()
+            leave_to="opacity-0".into()
+        >
             <div class="p-4">
                 <div class="flex items-start">
                 <div class="flex-shrink-0">
@@ -93,7 +150,7 @@ pub fn ErrorNotification() -> String {
                 </div>
                 </div>
             </div>
-        </div>
+        </Transition>
     }
 }
 

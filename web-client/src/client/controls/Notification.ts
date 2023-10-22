@@ -1,5 +1,7 @@
 import events from "./events";
 import { ControlRegistry } from "./registery";
+// @ts-ignore
+import { enter, leave } from 'el-transition';
 
 type ErrorNotificationRequest = {
   kind: 'ERROR',
@@ -42,17 +44,20 @@ const Notifications = {
     const button = notification.querySelector("button[data-notification-close]");
     if (!button) throw new Error("Could not find notification close button.");
 
-    const id = `notification-${Date.now()}`;
-    (notification.firstElementChild as HTMLElement).setAttribute("id", id);
+    // Fragments don't provide a reference to the node appended to the DOM
+    // Cloning the childnodes array and pulling the first item to obtain a reference.
+    const [notificationNode] = [...notification.childNodes];
 
-    const removeNotification = () => {
-      Notifications.content.removeChild(document.getElementById(id) as HTMLElement);
+    const removeNotification = async () => {
+      await leave(notificationNode);
+      Notifications.content.removeChild(notificationNode);
       button.removeEventListener("click", removeNotification);
     };
 
     button.addEventListener("click", removeNotification);
 
     Notifications.content.appendChild(notification);
+    enter(notificationNode);
   },
 
   showError(request: ErrorNotificationRequest) {
