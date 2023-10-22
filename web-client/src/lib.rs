@@ -53,7 +53,7 @@ pub fn HtmlLayout(props: HtmlLayoutProps) -> String {
         </html>
     }
 }
-// TEST!
+
 #[component]
 fn NotificationLiveRegion() -> String {
     html! {
