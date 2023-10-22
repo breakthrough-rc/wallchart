@@ -72,9 +72,6 @@ fn NotificationLiveRegion() -> String {
 #[derive(Debug)]
 pub struct TransitionProps {
     #[builder(default)]
-    show: bool,
-
-    #[builder(default)]
     enter: String,
 
     #[builder(default)]

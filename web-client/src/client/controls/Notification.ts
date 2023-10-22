@@ -1,7 +1,6 @@
 import events from "./events";
 import { ControlRegistry } from "./registery";
-// @ts-ignore
-import { enter, leave } from 'el-transition';
+import Transition from "./Transition";
 
 type ErrorNotificationRequest = {
   kind: 'ERROR',
@@ -40,27 +39,28 @@ const Notifications = {
     });
   },
 
-  appendNotification(notification: HTMLElement) {
+  async appendNotification(notification: HTMLElement) {
     const button = notification.querySelector("button[data-notification-close]");
     if (!button) throw new Error("Could not find notification close button.");
 
     // Fragments don't provide a reference to the node appended to the DOM
     // Cloning the childnodes array and pulling the first item to obtain a reference.
-    const [notificationNode] = [...notification.childNodes];
+    const [notificationElement] = [...notification.children];
+    const transition = Transition.create(notificationElement);
 
     const removeNotification = async () => {
-      await leave(notificationNode);
-      Notifications.content.removeChild(notificationNode);
+      await transition.leave();
+      Notifications.content.removeChild(notificationElement);
       button.removeEventListener("click", removeNotification);
     };
 
     button.addEventListener("click", removeNotification);
 
     Notifications.content.appendChild(notification);
-    enter(notificationNode);
+    await transition.enter();
   },
 
-  showError(request: ErrorNotificationRequest) {
+  async showError(request: ErrorNotificationRequest) {
     const tpl = document.getElementById("tpl-error-notification") as HTMLTemplateElement;
     if (!tpl) throw new Error("Can not show ErrorNotification. Element with id `tpl-error-notification` not found.");
 
@@ -69,7 +69,7 @@ const Notifications = {
     if (!messageElement) throw new Error("Could not find element with attribute `data-error-message` in template.");
 
     messageElement.textContent = request.message || "Unknown error";
-    Notifications.appendNotification(notification);
+    return Notifications.appendNotification(notification);
   },
 };
 
