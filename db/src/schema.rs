@@ -25,8 +25,7 @@ diesel::table! {
 }
 
 diesel::table! {
-    shift_assignments (id) {
-        id -> Text,
+    shift_assignments (shift_id, worker_id) {
         shift_id -> Text,
         worker_id -> Text,
     }
@@ -36,13 +35,12 @@ diesel::table! {
     shifts (id) {
         id -> Text,
         name -> Text,
-        loction_id -> Text,
+        location_id -> Text,
     }
 }
 
 diesel::table! {
-    tags (id) {
-        id -> Text,
+    tags (activity_id, worker_id) {
         activity_id -> Text,
         worker_id -> Text,
     }
@@ -67,7 +65,7 @@ diesel::joinable!(assessments -> workers (worker_id));
 diesel::joinable!(locations -> worksites (worksite_id));
 diesel::joinable!(shift_assignments -> shifts (shift_id));
 diesel::joinable!(shift_assignments -> workers (worker_id));
-diesel::joinable!(shifts -> locations (loction_id));
+diesel::joinable!(shifts -> locations (location_id));
 diesel::joinable!(tags -> activities (activity_id));
 diesel::joinable!(tags -> workers (worker_id));
 

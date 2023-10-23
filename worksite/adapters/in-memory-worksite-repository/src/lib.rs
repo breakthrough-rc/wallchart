@@ -4,7 +4,6 @@ use async_trait::async_trait;
 use tokio::sync::RwLock;
 use usecases::models::Worksite;
 use usecases::ports::worksite_repository::{RepositoryFailure, WorksiteRepository};
-use usecases::remove_worker_from_shift::Event;
 
 #[derive(Clone, Debug)]
 pub struct InMemoryWorksiteRepository {

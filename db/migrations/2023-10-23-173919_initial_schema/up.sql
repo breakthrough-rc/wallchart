@@ -12,7 +12,7 @@ create table if not exists locations (
 create table if not exists shifts (
   id text primary key,
   name text not null,
-  loction_id text references locations not null
+  location_id text references locations not null
 );
 
 create table if not exists workers (
@@ -22,9 +22,9 @@ create table if not exists workers (
 );
 
 create table if not exists shift_assignments (
-  id text primary key,
   shift_id text references shifts not null,
-  worker_id text references workers not null
+  worker_id text references workers not null,
+  primary key(shift_id, worker_id)
 );
 
 create table if not exists assessments (
@@ -40,8 +40,8 @@ create table if not exists activities (
 );
 
 create table if not exists tags (
-  id text primary key,
   activity_id text references activities not null,
-  worker_id text references workers not null
+  worker_id text references workers not null,
+  primary key(activity_id, worker_id)
 );
 
