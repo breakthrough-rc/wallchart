@@ -32,12 +32,7 @@ impl WorksiteRepository for InMemoryWorksiteRepository {
         Ok(worksites.iter().find(|w| w.id == id).map(|w| w.to_owned()))
     }
 
-    async fn save(
-        &self,
-        id: String,
-        worksite: &Worksite,
-        _events: Vec<Event>,
-    ) -> Result<(), RepositoryFailure> {
+    async fn save(&self, id: String, worksite: &Worksite) -> Result<(), RepositoryFailure> {
         let mut worksites = self.worksites.write().await;
         worksites.retain(|w| w.id != id);
         worksites.push(worksite.to_owned());
