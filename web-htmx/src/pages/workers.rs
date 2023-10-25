@@ -1,22 +1,11 @@
-
+use axum::extract;
 use axum::response::Html;
-use axum::{
-    extract::{self, State},
-    response::IntoResponse,
-};
 use rscx::html;
 
-use crate::components::wallchart;
-use crate::{
-    page::PageLayout,
-};
+use crate::page::PageLayout;
 
 pub async fn get_workers_new_page(
-    extract::Path((wallchart_id, location_id, shift_id)): extract::Path<(
-        String,
-        String,
-        String,
-    )>,
+    extract::Path((wallchart_id, location_id, shift_id)): extract::Path<(String, String, String)>,
 ) -> Html<String> {
     Html(html! {
         <PageLayout>
@@ -37,12 +26,13 @@ pub async fn get_workers_new_page(
 }
 
 pub async fn post_workers_new_page(
-    extract::Path((wallchart_id, location_id, shift_id)): extract::Path<(
-        String,
-        String,
-        String,
-    )>,
+    extract::Path((wallchart_id, location_id, shift_id)): extract::Path<(String, String, String)>,
 ) -> Html<String> {
+    println!(
+        "wallchart_id: {}, location_id: {}, shift_id: {}",
+        wallchart_id, location_id, shift_id
+    );
+
     Html(html! {
         <div>Hi</div>
     })
