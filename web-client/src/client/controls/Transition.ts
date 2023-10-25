@@ -1,5 +1,5 @@
 // @ts-ignore
-import { enter, leave } from 'el-transition';
+import { enter, leave } from "el-transition";
 
 function create(node: Element) {
   return {
