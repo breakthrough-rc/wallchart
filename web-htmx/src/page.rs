@@ -1,3 +1,4 @@
+use crate::components::logo::Logo;
 use rscx::{component, html, props};
 use web_client::HtmlLayout;
 
@@ -30,6 +31,9 @@ pub fn PageLayout(props: PageLayoutProps) -> String {
         }
         >
             <header class="bg-slate-200 border-y border-b-indigo-500">
+                <div style="padding: 10px; width: 100px;">
+                    <Logo />
+                </div>
                 <h1>Yall Chart</h1>
             </header>
             <main hx-ext="loading-states">
