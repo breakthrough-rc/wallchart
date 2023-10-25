@@ -12,6 +12,8 @@ pub trait WorksiteRepository: Send + Sync + 'static {
 
 #[derive(Error, Debug, PartialEq)]
 pub enum RepositoryFailure {
+    #[error("Failed to get connection from pool")]
+    FailedToGetConnectionFromPool,
     #[error("Something went wrong")]
     Unknown(String),
 }
