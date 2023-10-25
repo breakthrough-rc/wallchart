@@ -4,6 +4,9 @@ use web_client::HtmlLayout;
 
 #[props]
 pub struct PageLayoutProps {
+    #[builder(default = "Page".into())]
+    title: String,
+
     #[builder(default = false)]
     partial: bool,
 
@@ -30,7 +33,7 @@ pub fn PageLayout(props: PageLayoutProps) -> String {
                 }
             }
         >
-            <AppShell>
+            <AppShell title=props.title>
                 <main hx-ext="loading-states">
                     {props.children}
                 </main>

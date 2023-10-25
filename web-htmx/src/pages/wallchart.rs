@@ -14,10 +14,10 @@ pub async fn get_wallchart_page(
         .unwrap();
 
     Html(html! {
-    <PageLayout>
-        <div class="my-4">
-            <Wallchart worksite=worksite/>
-        </div>
-    </PageLayout>
+        <PageLayout title="Wallchart".into()>
+            <div class="my-4">
+                <Wallchart worksite=worksite/>
+            </div>
+        </PageLayout>
     })
 }
