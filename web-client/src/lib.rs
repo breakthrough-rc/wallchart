@@ -5,7 +5,7 @@ use server::transition::Transition;
 use std::time::{SystemTime, UNIX_EPOCH};
 use tower_http::services::ServeDir;
 
-mod server;
+pub mod server;
 
 pub fn routes() -> Router {
     Router::new().nest_service("/", ServeDir::new("web-client/out"))
