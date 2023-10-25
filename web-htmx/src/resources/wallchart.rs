@@ -7,20 +7,20 @@ use axum::{
 };
 use serde::Deserialize;
 
-pub fn {{snakeCase resource_name}}_routes(state: WebHtmxState) -> Router {
+pub fn wallchart_routes(state: WebHtmxState) {
     Router::new()
-        .route("/{{kebabCase resource_name}}", get(get_{{snakeCase resource_name}}s).post(post_{{snakeCase resource_name}}s))
-        .route("/{{kebabCase resource_name}}/:id", get(get_{{snakeCase resource_name}}).delete(delete_{{snakeCase resource_name}}))
+        .route("/wallchart", get(get_wallcharts).post(post_wallcharts))
+        .route("/wallchart/:id", get(get_wallchart).delete(delete_wallchart))
         .with_state(state)
 }
 
-async fn get_{{snakeCase resource_name}}s(
+async fn get_wallcharts(
     State(WebHtmxState { worksite_service }): State<WebHtmxState>,
 ) -> impl IntoResponse {
   todo!()
 }
 
-async fn get_{{snakeCase resource_name}}(
+async fn get_wallchart(
     extract::Path((id)): extract::Path<(
         String,
     )>,
@@ -35,14 +35,14 @@ struct ExampleForm {
     bar: String,
 }
 
-async fn post_{{snakeCase resource_name}}s(
+async fn post_wallcharts(
     State(WebHtmxState { worksite_service }): State<WebHtmxState>,
     Form(example_form): Form<ExampleForm>,
 ) -> impl IntoResponse {
   todo!()
 }
 
-async fn delete_{{snakeCase resource_name}}(
+async fn delete_wallchart(
     extract::Path((id)): extract::Path<(
         String,
     )>,
