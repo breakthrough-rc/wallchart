@@ -1,0 +1,17 @@
+{
+  "name": "wallchart",
+  "version": "1.0.0",
+  "description": "Created exclusively for dev tools (plop mostly)",
+  "type": "module",
+  "directories": {
+    "doc": "doc"
+  },
+  "scripts": {
+    "plop": "plop"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "plop": "^4.0.0"
+  }
+}
