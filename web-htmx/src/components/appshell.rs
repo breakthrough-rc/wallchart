@@ -1,5 +1,5 @@
 use crate::components::logo::Logo;
-use rscx::{component, html, props};
+use rscx::{component, html, props, CollectFragment};
 use web_client::server::transition::Transition;
 
 #[props]
@@ -15,8 +15,8 @@ pub struct AppShellProps {
 pub fn AppShell(props: AppShellProps) -> String {
     html! {
         <div class="min-h-full">
-            <Nav />
-            <MainContent title=props.title>
+            <Nav title=props.title.clone() />
+            <MainContent title=props.title.clone()>
                 {props.children}
             </MainContent>
         </div>
@@ -50,8 +50,22 @@ fn MainContent(props: MainContentProps) -> String {
     }
 }
 
+#[props]
+pub struct NavProps {
+    #[builder(default)]
+    title: String,
+}
+
 #[component]
-fn Nav() -> String {
+fn Nav(props: NavProps) -> String {
+    let nav_links = [
+        ("Wallchart", "/wallchart"),
+        ("Workers", "/workers"),
+        ("Report", "/report"),
+    ];
+
+    let profile_links = [("Your Profile", "#"), ("Settings", "#"), ("Sign out", "#")];
+
     html! {
         <nav class="border-b border-gray-200 bg-white">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -65,10 +79,30 @@ fn Nav() -> String {
                             // <img class="hidden h-8 w-auto lg:block" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company" />
                         </div>
                         <div class="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
-                            // Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                            <a href="#" class="border-indigo-500 text-gray-900 inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium" aria-current="page">Wallchart</a>
-                            <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium">Workers</a>
-                            <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium">Report</a>
+                            {
+                                nav_links
+                                    .into_iter()
+                                    .map(|(label, href)| {
+                                        let is_current = label == props.title;
+                                        let link_css = "inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium";
+                                        let link_css = if is_current {
+                                            format!("border-indigo-500 text-gray-900 {}", link_css)
+                                        } else {
+                                            format!("border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 {}", link_css)
+                                        };
+
+                                        html! {
+                                            <a
+                                                href=href
+                                                class=link_css
+                                                aria-current=if is_current { "page" } else { "" }
+                                            >
+                                                {label}
+                                            </a>
+                                        }
+                                    })
+                                    .collect_fragment()
+                            }
                         </div>
                     </div>
                     <div class="hidden sm:ml-6 sm:flex sm:items-center">
@@ -80,7 +114,7 @@ fn Nav() -> String {
                             </svg>
                         </button>
 
-                        <ProfileDropdown />
+                        <ProfileDropdown links=profile_links />
                     </div>
 
                     <div class="-mr-2 flex items-center sm:hidden">
@@ -106,11 +140,30 @@ fn Nav() -> String {
             // Mobile menu, show/hide based on menu state.
             <div class="sm:hidden" id="mobile-menu">
                 <div class="space-y-1 pb-3 pt-2">
-                    // Current: "border-indigo-500 bg-indigo-50 text-indigo-700", Default: "border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800"
-                    <a href="#" class="border-indigo-500 bg-indigo-50 text-indigo-700 block border-l-4 py-2 pl-3 pr-4 text-base font-medium" aria-current="page">Dashboard</a>
-                    <a href="#" class="border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800 block border-l-4 py-2 pl-3 pr-4 text-base font-medium">Team</a>
-                    <a href="#" class="border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800 block border-l-4 py-2 pl-3 pr-4 text-base font-medium">Projects</a>
-                    <a href="#" class="border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800 block border-l-4 py-2 pl-3 pr-4 text-base font-medium">Calendar</a>
+                    {
+                        nav_links
+                            .into_iter()
+                            .map(|(label, href)| {
+                                let is_current = label == props.title;
+                                let link_css = "block border-l-4 py-2 pl-3 pr-4 text-base font-medium";
+                                let link_css = if is_current {
+                                    format!("border-indigo-500 bg-indigo-50 text-indigo-700 {}", link_css)
+                                } else {
+                                    format!("border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800 {}", link_css)
+                                };
+
+                                html! {
+                                    <a
+                                        href=href
+                                        class=link_css
+                                        aria-current=if is_current { "page" } else { "" }
+                                    >
+                                        {label}
+                                    </a>
+                                }
+                            })
+                            .collect_fragment()
+                    }
                 </div>
 
                 <div class="border-t border-gray-200 pb-3 pt-4">
@@ -131,9 +184,14 @@ fn Nav() -> String {
                         </button>
                     </div>
                     <div class="mt-3 space-y-1">
-                        <a href="#" class="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800">Your Profile</a>
-                        <a href="#" class="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800">Settings</a>
-                        <a href="#" class="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800">Sign out</a>
+                        {
+                            profile_links
+                                .into_iter()
+                                .map(|(label, href)| html! {
+                                    <a href=href class="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800">{label}</a>
+                                })
+                                .collect_fragment()
+                        }
                     </div>
                 </div>
             </div>
@@ -141,8 +199,15 @@ fn Nav() -> String {
     }
 }
 
+// TODO! Fix links type to allow dynamic number of links.
+#[props]
+struct ProfileDropdownProps {
+    #[builder(default)]
+    links: [(&'static str, &'static str); 3],
+}
+
 #[component]
-fn ProfileDropdown() -> String {
+fn ProfileDropdown(props: ProfileDropdownProps) -> String {
     html! {
         <div class="relative ml-3">
             <div>
@@ -167,9 +232,15 @@ fn ProfileDropdown() -> String {
                 leave_to="transform opacity-0 scale-95".into()
             >
                 // Active: "bg-gray-100", Not Active: "
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Your Profile</a>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-1">Settings</a>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</a>
+                {
+                    props.links
+                        .into_iter()
+                        .enumerate()
+                        .map(|(i, (label, href))| html! {
+                            <a href=href class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id={format!("user-menu-item-{}", i)}>{label}</a>
+                        })
+                        .collect_fragment()
+                }
             </Transition>
         </div>
     }
