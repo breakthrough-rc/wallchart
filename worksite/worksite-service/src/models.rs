@@ -40,6 +40,7 @@ pub struct Tag {
     pub icon: String,
 }
 
+#[derive(Debug, Clone)]
 pub enum Event {
     WorksiteCreated { id: String, name: String },
     LocationAdded { id: String, name: String },
