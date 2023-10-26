@@ -17,7 +17,7 @@ export default function(plop) {
       },
       {
         path: 'web-htmx/src/components.rs',
-        pattern: /(\/\/ PLOP COMPONENT MOD)/g,
+        pattern: /(\/\/##PLOP COMPONENT MOD##)/g,
         template: '$1\npub mod {{snakeCase component_name}};',
         type: 'modify',
       }
@@ -41,19 +41,19 @@ export default function(plop) {
       },
       {
         path: 'web-htmx/src/resources.rs',
-        pattern: /(\/\/ PLOP RESOURCE MOD HOOK)/g,
+        pattern: /(\/\/##PLOP RESOURCE MOD HOOK##)/g,
         template: '$1\npub mod {{snakeCase resource_name}};',
         type: 'modify',
       },
       {
         path: 'web-htmx/src/lib.rs',
-        pattern: /(\/\/ PLOP USE RESOURCE HOOK)/g,
+        pattern: /(\/\/##PLOP USE RESOURCE HOOK##)/g,
         template: '$1\nuse resources::{{snakeCase resource_name}}::{{snakeCase resource_name}}_routes;',
         type: 'modify',
       },
       {
         path: 'web-htmx/src/lib.rs',
-        pattern: /(\/\/ PLOP MERGE ROUTE HOOK)/g,
+        pattern: /(\/\/##PLOP MERGE ROUTE HOOK##)/g,
         template: '$1\n.merge({{snakeCase resource_name}}_routes(state))',
         type: 'modify',
       }

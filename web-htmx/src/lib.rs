@@ -9,7 +9,7 @@ use pages::{
     wallchart::get_wallchart_page,
     workers::{get_workers_new_page, post_workers_new_page},
 };
-// PLOP USE RESOURCE HOOK
+//##PLOP USE RESOURCE HOOK##
 use resources::worksite::delete_worker_from_shift;
 use rscx::{component, html, props};
 use state::WebHtmxState;
@@ -38,7 +38,7 @@ pub fn routes(state: WebHtmxState) -> Router {
         .route("/htmx", get(htmx_test))
         .nest_service("/client", client_routes())
         .with_state(state.clone())
-    // PLOP MERGE ROUTE HOOK
+    //##PLOP MERGE ROUTE HOOK##
 }
 
 #[props]

@@ -1,2 +1,2 @@
-// PLOP RESOURCE MOD HOOK
+//##PLOP RESOURCE MOD HOOK##
 pub mod worksite;
