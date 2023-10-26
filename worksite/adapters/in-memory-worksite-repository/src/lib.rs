@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use tokio::sync::RwLock;
-use worksite_service::models::Worksite;
+use worksite_service::models::{Event, Worksite};
 use worksite_service::ports::worksite_repository::{RepositoryFailure, WorksiteRepository};
 
 #[derive(Clone, Debug)]
@@ -31,10 +31,11 @@ impl WorksiteRepository for InMemoryWorksiteRepository {
         Ok(worksites.iter().find(|w| w.id == id).map(|w| w.to_owned()))
     }
 
-    async fn save(&self, id: String, worksite: &Worksite) -> Result<(), RepositoryFailure> {
-        let mut worksites = self.worksites.write().await;
-        worksites.retain(|w| w.id != id);
-        worksites.push(worksite.to_owned());
+    async fn save(&self, id: String, events: Vec<Event>) -> Result<(), RepositoryFailure> {
+        // let mut worksites = self.worksites.write().await;
+        // worksites.retain(|w| w.id != id);
+        // worksites.push(worksite.to_owned());
+        // TODO, make this actually work
         Ok(())
     }
 }

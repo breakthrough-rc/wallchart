@@ -7,7 +7,7 @@ use diesel::prelude::*;
 use diesel::OptionalExtension;
 use diesel_async::scoped_futures::ScopedFutureExt;
 use diesel_async::RunQueryDsl;
-use worksite_service::models::Assessment;
+use worksite_service::models::{Assessment, Event};
 use worksite_service::{
     models::Worksite,
     ports::worksite_repository::{RepositoryFailure, WorksiteRepository},
@@ -92,7 +92,7 @@ impl WorksiteRepository for DieselWorksiteRepository {
         Ok(Some(to_worksite(worksite, grouped_locations)))
     }
 
-    async fn save(&self, id: String, worksite: &Worksite) -> Result<(), RepositoryFailure> {
+    async fn save(&self, id: String, events: Vec<Event>) -> Result<(), RepositoryFailure> {
         // TODOs: Should this be a single transaction?
         let conn = &mut self
             .pg_pool
@@ -100,24 +100,24 @@ impl WorksiteRepository for DieselWorksiteRepository {
             .await
             .map_err(|_| RepositoryFailure::FailedToGetConnectionFromPool)?;
 
-        let worksite_record = WorksiteRecord {
-            id: worksite.id.clone(),
-            name: worksite.name.clone(),
-        };
+        // let worksite_record = WorksiteRecord {
+        //     id: worksite.id.clone(),
+        //     name: worksite.name.clone(),
+        // };
+        //
+        // // 1 - Upsert worksite record
+        // diesel::insert_into(worksites::table)
+        //     .values(&worksite_record)
+        //     .on_conflict(worksites::id)
+        //     .do_update()
+        //     .set(&worksite_record)
+        //     .returning(WorksiteRecord::as_returning())
+        //     .get_result(conn)
+        //     .await
+        //     .map_err(|e| RepositoryFailure::Unknown(e.to_string()))?;
 
-        // 1 - Upsert worksite record
-        diesel::insert_into(worksites::table)
-            .values(&worksite_record)
-            .on_conflict(worksites::id)
-            .do_update()
-            .set(&worksite_record)
-            .returning(WorksiteRecord::as_returning())
-            .get_result(conn)
-            .await
-            .map_err(|e| RepositoryFailure::Unknown(e.to_string()))?;
-        
         // 2 - Upsert location records as a group
-        
+
         // 3 - Remove any locations that are no longer in the worksite
         // 4 - Upsert shift records as a group
         // 5 - Remove any shifts that are no longer in the worksite (via a location)
