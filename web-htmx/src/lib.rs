@@ -74,6 +74,12 @@ async fn get_home() -> Html<String> {
                 >
                     Click me!
                 </button>
+                <button
+                    class="bg-slate-200 ml-4 p-3 rounded-full"
+                    onclick="YcControls.showErrorNotification('This is an error notification.')"
+                >
+                    Show Error Notification
+                </button>
                 <div>
                     <h2>"Test rendering"</h2>
                     <ul class="list-disc list-inside">
