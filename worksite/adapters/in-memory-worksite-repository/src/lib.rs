@@ -3,7 +3,7 @@ use std::sync::Arc;
 use async_trait::async_trait;
 use nonempty::NonEmpty;
 use tokio::sync::RwLock;
-use worksite_service::models::{Event, Worksite};
+use worksite_service::models::{Event, Location, Worksite};
 use worksite_service::ports::worksite_repository::{RepositoryFailure, WorksiteRepository};
 
 #[derive(Clone, Debug)]
@@ -54,21 +54,49 @@ fn apply_event(worksite: Worksite, event: &Event) -> Worksite {
     let ignore = worksite.clone();
     match event {
         Event::WorksiteCreated { id: _, name: _ } => ignore,
-        Event::LocationAdded { id, name } => todo!(),
+        Event::LocationAdded { id, name } => {
+            let location = Location {
+                id: id.clone(),
+                name: name.clone(),
+                shifts: vec![],
+            };
+
+            Worksite {
+                locations: vec![vec![location], worksite.locations].concat(),
+                ..worksite
+            }
+        }
+
         Event::ShiftAdded {
             id,
             location_id,
             name,
         } => todo!(),
+
         Event::WorkerCreated { id, name } => todo!(),
+
         Event::ShiftAssigned {
             shift_id,
             worker_id,
         } => todo!(),
+
         Event::ShiftUnassigned {
             shift_id,
             worker_id,
-        } => todo!(),
+        } => {
+            let mut updated_worksite = worksite.to_owned();
+
+            // TODO: learn how to do this immutably
+            updated_worksite.locations.iter_mut().for_each(|location| {
+                location.shifts.iter_mut().for_each(|shift| {
+                    if &shift.id == shift_id {
+                        shift.workers.retain(|worker| &worker.id != worker_id)
+                    }
+                })
+            });
+
+            updated_worksite
+        }
     }
 }
 
