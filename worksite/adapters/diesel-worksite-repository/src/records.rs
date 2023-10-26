@@ -4,17 +4,19 @@ use db::schema::{
 use diesel::prelude::Associations;
 use diesel::{
     prelude::{Identifiable, Queryable},
-    Selectable,
+    AsChangeset, Insertable, Selectable,
 };
 
-#[derive(Queryable, Selectable, Identifiable, PartialEq, Debug)]
+#[derive(Queryable, Selectable, Insertable, AsChangeset, Identifiable, PartialEq, Debug)]
 #[diesel(table_name = worksites)]
 pub struct WorksiteRecord {
     pub id: String,
     pub name: String,
 }
 
-#[derive(Queryable, Selectable, Identifiable, Associations, Debug, PartialEq)]
+#[derive(
+    Queryable, Selectable, Insertable, AsChangeset, Identifiable, Associations, Debug, PartialEq,
+)]
 #[diesel(belongs_to(WorksiteRecord, foreign_key=worksite_id))]
 #[diesel(table_name = locations)]
 pub struct LocationRecord {
@@ -23,7 +25,9 @@ pub struct LocationRecord {
     pub worksite_id: String,
 }
 
-#[derive(Queryable, Selectable, Identifiable, Associations, Debug, PartialEq)]
+#[derive(
+    Queryable, Selectable, Insertable, AsChangeset, Identifiable, Associations, Debug, PartialEq,
+)]
 #[diesel(belongs_to(LocationRecord, foreign_key=location_id))]
 #[diesel(table_name = shifts)]
 pub struct ShiftRecord {
@@ -32,7 +36,7 @@ pub struct ShiftRecord {
     pub location_id: String,
 }
 
-#[derive(Queryable, Selectable, Identifiable, Debug, PartialEq)]
+#[derive(Queryable, Selectable, Insertable, AsChangeset, Identifiable, Debug, PartialEq)]
 #[diesel(table_name = workers)]
 pub struct WorkerRecord {
     pub id: String,
@@ -40,16 +44,18 @@ pub struct WorkerRecord {
     pub last_name: String,
 }
 
-#[derive(Queryable, Selectable, Identifiable, Associations, Debug, PartialEq)]
+#[derive(
+    Queryable, Selectable, Insertable, AsChangeset, Identifiable, Associations, Debug, PartialEq,
+)]
 #[diesel(belongs_to(WorkerRecord, foreign_key=worker_id))]
 #[diesel(table_name = assessments)]
 pub struct AssessmentRecord {
     pub id: String,
-    pub value: String,
+    pub value: i32,
     pub worker_id: String,
 }
 
-#[derive(Queryable, Selectable, Identifiable, Debug, PartialEq)]
+#[derive(Queryable, Selectable, Insertable, AsChangeset, Identifiable, Debug, PartialEq)]
 #[diesel(table_name = activities)]
 pub struct ActivityRecord {
     pub id: String,
@@ -57,7 +63,7 @@ pub struct ActivityRecord {
     pub icon: String,
 }
 
-#[derive(Identifiable, Selectable, Queryable, Associations, Debug)]
+#[derive(Identifiable, Selectable, Queryable, Insertable, Associations, Debug)]
 #[diesel(belongs_to(ShiftRecord, foreign_key=shift_id))]
 #[diesel(belongs_to(WorkerRecord, foreign_key=worker_id))]
 #[diesel(table_name = shift_assignments)]
@@ -67,7 +73,7 @@ pub struct ShiftAssignmentRecord {
     pub worker_id: String,
 }
 
-#[derive(Identifiable, Selectable, Queryable, Associations, Debug)]
+#[derive(Identifiable, Selectable, Queryable, Insertable, Associations, Debug)]
 #[diesel(belongs_to(ActivityRecord, foreign_key=activity_id))]
 #[diesel(belongs_to(WorkerRecord, foreign_key=worker_id))]
 #[diesel(table_name = tags)]
