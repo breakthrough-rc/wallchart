@@ -84,18 +84,8 @@ fn apply_event(worksite: Worksite, event: &Event) -> Worksite {
             shift_id,
             worker_id,
         } => {
-            let mut updated_worksite = worksite.to_owned();
-
-            // TODO: learn how to do this immutably
-            updated_worksite.locations.iter_mut().for_each(|location| {
-                location.shifts.iter_mut().for_each(|shift| {
-                    if &shift.id == shift_id {
-                        shift.workers.retain(|worker| &worker.id != worker_id)
-                    }
-                })
-            });
-
-            updated_worksite
+            let (state, _) = worksite.remove_worker(shift_id.to_owned(), worker_id.to_owned());
+            state
         }
     }
 }
@@ -137,4 +127,3 @@ fn get_or_create_worksite(
     };
     Ok((worksite, remaining_events))
 }
-
