@@ -34,27 +34,42 @@ impl WorksiteRepository for InMemoryWorksiteRepository {
 
     async fn save(&self, id: String, events: NonEmpty<Event>) -> Result<(), RepositoryFailure> {
         let mut worksites = self.worksites.write().await;
-        // Get the worksite if it already exists
-        let maybe_worksite = worksites.iter().find(|w| w.id == id);
 
-        // Three cases here:
-        // 1 - The worksite already exists, so just return it and all of the remaining events to be
-        //   applied
-        // 2 - The worksite does not exist but the first event creates the worksite, so create the
-        //   new worksite and return the remaining events
-        // 3 - The worksite does not exist and the first event is not creating the worksite =>
-        //   error.
+        let maybe_worksite = worksites.iter().find(|w| w.id == id);
         let (worksite, remaining_events) = get_or_create_worksite(maybe_worksite, events)?;
         let worksite = apply_events(worksite, remaining_events);
 
         worksites.retain(|w| w.id != id);
         worksites.push(worksite.to_owned());
+
         Ok(())
     }
 }
 
 fn apply_events(worksite: Worksite, events: Vec<Event>) -> Worksite {
-    todo!()
+    events.iter().fold(worksite, apply_event)
+}
+
+fn apply_event(worksite: Worksite, event: &Event) -> Worksite {
+    let ignore = worksite.clone();
+    match event {
+        Event::WorksiteCreated { id: _, name: _ } => ignore,
+        Event::LocationAdded { id, name } => todo!(),
+        Event::ShiftAdded {
+            id,
+            location_id,
+            name,
+        } => todo!(),
+        Event::WorkerCreated { id, name } => todo!(),
+        Event::ShiftAssigned {
+            shift_id,
+            worker_id,
+        } => todo!(),
+        Event::ShiftUnassigned {
+            shift_id,
+            worker_id,
+        } => todo!(),
+    }
 }
 
 fn get_or_create_worksite(

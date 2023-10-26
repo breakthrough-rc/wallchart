@@ -42,10 +42,29 @@ pub struct Tag {
 
 #[derive(Debug, Clone)]
 pub enum Event {
-    WorksiteCreated { id: String, name: String },
-    LocationAdded { id: String, name: String },
-    ShiftAdded { id: String, name: String },
-    WorkerCreated { id: String, name: String },
-    ShiftAssigned { shift_id: String, worker_id: String },
-    ShiftUnassigned { shift_id: String, worker_id: String },
+    WorksiteCreated {
+        id: String,
+        name: String,
+    },
+    LocationAdded {
+        id: String,
+        name: String,
+    },
+    ShiftAdded {
+        id: String,
+        location_id: String,
+        name: String,
+    },
+    WorkerCreated {
+        id: String,
+        name: String,
+    },
+    ShiftAssigned {
+        shift_id: String,
+        worker_id: String,
+    },
+    ShiftUnassigned {
+        shift_id: String,
+        worker_id: String,
+    },
 }
