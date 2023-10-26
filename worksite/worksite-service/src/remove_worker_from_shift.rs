@@ -2,8 +2,9 @@ use std::sync::Arc;
 
 use thiserror::Error;
 
-use crate::models::Worksite;
+use crate::models::{Event, Worksite};
 use crate::ports::worksite_repository::WorksiteRepository;
+use nonempty::{nonempty, NonEmpty};
 
 #[derive(Clone)]
 pub struct RemoveWorkerFromShift {
@@ -24,10 +25,10 @@ impl RemoveWorkerFromShift {
             .map_err(|e| RemoveWorkerFromShiftFailure::Unknown(e.to_string()))?
             .ok_or(RemoveWorkerFromShiftFailure::NotFound)?;
 
-        let updated_worksite = remove_worker(&worksite, shift_id, worker_id);
+        let (updated_worksite, events) = remove_worker(&worksite, shift_id, worker_id);
 
         self.worksite_repository
-            .save(id, &updated_worksite)
+            .save(id, events)
             .await
             .map_err(|e| RemoveWorkerFromShiftFailure::Unknown(e.to_string()))?;
 
@@ -43,23 +44,16 @@ pub enum RemoveWorkerFromShiftFailure {
     Unknown(String),
 }
 
-#[derive(Debug, PartialEq)]
-pub enum Event {
-    WorkerRemoved(WorkerRemovedData),
-}
-
-#[derive(Debug, PartialEq)]
-pub struct WorkerRemovedData {
-    worker_id: String,
-    shift_id: String,
-}
-
 /**
 * Removes the given worker from the given shift.
 *
 * This function won't fail and will treat the worker/shift not existing as a trivial success.
 */
-pub fn remove_worker(worksite: &Worksite, shift_id: String, worker_id: String) -> Worksite {
+pub fn remove_worker(
+    worksite: &Worksite,
+    shift_id: String,
+    worker_id: String,
+) -> (Worksite, NonEmpty<Event>) {
     let mut updated_worksite = worksite.to_owned();
 
     updated_worksite.locations.iter_mut().for_each(|location| {
@@ -70,5 +64,11 @@ pub fn remove_worker(worksite: &Worksite, shift_id: String, worker_id: String) -
         })
     });
 
-    updated_worksite
+    (
+        updated_worksite,
+        nonempty![Event::ShiftUnassigned {
+            shift_id,
+            worker_id,
+        }],
+    )
 }
