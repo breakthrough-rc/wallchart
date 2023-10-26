@@ -12,7 +12,7 @@ pub fn Logo() -> String {
                 <defs>
                     <style>
                         {
-                          ".cls-1{fill:none;stroke:#060061;stroke-miterlimit:10;stroke-width:1.91px;}"
+                          ".cls-1{fill:none;stroke:#6366F1;stroke-miterlimit:10;stroke-width:1.91px;}"
                         }
                     </style>
                 </defs>
