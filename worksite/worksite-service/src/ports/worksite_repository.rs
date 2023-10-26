@@ -1,4 +1,5 @@
 use async_trait::async_trait;
+use nonempty::NonEmpty;
 use thiserror::Error;
 
 use crate::models::{Event, Worksite};
@@ -7,7 +8,7 @@ use crate::models::{Event, Worksite};
 pub trait WorksiteRepository: Send + Sync + 'static {
     async fn get_worksite(&self, id: String) -> Result<Option<Worksite>, RepositoryFailure>;
 
-    async fn save(&self, id: String, events: Vec<Event>) -> Result<(), RepositoryFailure>;
+    async fn save(&self, id: String, events: NonEmpty<Event>) -> Result<(), RepositoryFailure>;
 }
 
 #[derive(Error, Debug, PartialEq)]

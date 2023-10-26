@@ -288,6 +288,7 @@ dependencies = [
  "db",
  "diesel",
  "diesel-async",
+ "nonempty",
  "serde",
  "thiserror",
  "tracing",
@@ -614,6 +615,7 @@ name = "in-memory-worksite-repository"
 version = "0.1.0"
 dependencies = [
  "async-trait",
+ "nonempty",
  "thiserror",
  "tokio",
  "tracing",
@@ -761,6 +763,12 @@ dependencies = [
  "wasi",
  "windows-sys",
 ]
+
+[[package]]
+name = "nonempty"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "aeaf4ad7403de93e699c191202f017118df734d3850b01e13a3a8b2e6953d3c9"
 
 [[package]]
 name = "num-traits"
@@ -1842,6 +1850,7 @@ name = "worksite-service"
 version = "0.1.0"
 dependencies = [
  "async-trait",
+ "nonempty",
  "thiserror",
  "tokio",
  "tracing",

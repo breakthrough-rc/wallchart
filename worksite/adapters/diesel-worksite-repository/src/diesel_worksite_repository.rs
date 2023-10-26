@@ -7,6 +7,7 @@ use diesel::prelude::*;
 use diesel::OptionalExtension;
 use diesel_async::scoped_futures::ScopedFutureExt;
 use diesel_async::RunQueryDsl;
+use nonempty::NonEmpty;
 use worksite_service::models::{Assessment, Event};
 use worksite_service::{
     models::Worksite,
@@ -92,7 +93,7 @@ impl WorksiteRepository for DieselWorksiteRepository {
         Ok(Some(to_worksite(worksite, grouped_locations)))
     }
 
-    async fn save(&self, id: String, events: Vec<Event>) -> Result<(), RepositoryFailure> {
+    async fn save(&self, id: String, events: NonEmpty<Event>) -> Result<(), RepositoryFailure> {
         // TODOs: Should this be a single transaction?
         let conn = &mut self
             .pg_pool

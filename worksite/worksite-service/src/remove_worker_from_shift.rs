@@ -4,6 +4,7 @@ use thiserror::Error;
 
 use crate::models::{Event, Worksite};
 use crate::ports::worksite_repository::WorksiteRepository;
+use nonempty::{nonempty, NonEmpty};
 
 #[derive(Clone)]
 pub struct RemoveWorkerFromShift {
@@ -52,7 +53,7 @@ pub fn remove_worker(
     worksite: &Worksite,
     shift_id: String,
     worker_id: String,
-) -> (Worksite, Vec<Event>) {
+) -> (Worksite, NonEmpty<Event>) {
     let mut updated_worksite = worksite.to_owned();
 
     updated_worksite.locations.iter_mut().for_each(|location| {
@@ -65,7 +66,7 @@ pub fn remove_worker(
 
     (
         updated_worksite,
-        vec![Event::ShiftUnassigned {
+        nonempty![Event::ShiftUnassigned {
             shift_id,
             worker_id,
         }],
