@@ -5,13 +5,19 @@ members = [
   "main",
   "web-client",
   "web-htmx",
+  "db",
   "worksite/usecases",
   "worksite/adapters/in-memory-worksite-repository",
+  "worksite/adapters/diesel-worksite-repository",
 ]
 
 [workspace.dependencies]
 async-trait = { version = "0.1.73" }
 axum = { version = "0.6.20" }
+chrono = { version = "0.4.31" }
+diesel = { version = "2.1.3", features = ["postgres", "chrono"] }
+diesel-async = { version = "0.4.1" }
+diesel_migrations = { version = "2.1.0" }
 http = { version = "0.2.9" }
 once_cell = { version = "1.18.0" }
 rscx = { version = "0.1.11" }
