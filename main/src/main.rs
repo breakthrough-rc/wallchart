@@ -1,13 +1,13 @@
 use axum::{response::IntoResponse, routing::get, Router};
 use in_memory_worksite_repository::InMemoryWorksiteRepository;
 use std::{net::SocketAddr, sync::Arc};
-use usecases::{
+use web_htmx::{livereload, routes as web_routes, state::WebHtmxState};
+use worksite_service::{
     get_worksite::GetWorksite,
     models::{Assessment, Location, Shift, Tag, Worker, Worksite},
     remove_worker_from_shift::RemoveWorkerFromShift,
     service::WorksiteService,
 };
-use web_htmx::{livereload, routes as web_routes, state::WebHtmxState};
 
 #[tokio::main]
 async fn main() {

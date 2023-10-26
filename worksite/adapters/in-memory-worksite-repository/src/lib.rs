@@ -2,8 +2,8 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use tokio::sync::RwLock;
-use usecases::models::Worksite;
-use usecases::ports::worksite_repository::{RepositoryFailure, WorksiteRepository};
+use worksite_service::models::Worksite;
+use worksite_service::ports::worksite_repository::{RepositoryFailure, WorksiteRepository};
 
 #[derive(Clone, Debug)]
 pub struct InMemoryWorksiteRepository {

@@ -291,8 +291,8 @@ dependencies = [
  "serde",
  "thiserror",
  "tracing",
- "usecases",
  "uuid",
+ "worksite-service",
 ]
 
 [[package]]
@@ -617,7 +617,7 @@ dependencies = [
  "thiserror",
  "tokio",
  "tracing",
- "usecases",
+ "worksite-service",
 ]
 
 [[package]]
@@ -679,8 +679,8 @@ dependencies = [
  "tower",
  "tower-http",
  "tower-livereload",
- "usecases",
  "web-htmx",
+ "worksite-service",
 ]
 
 [[package]]
@@ -1585,17 +1585,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1dd624098567895118886609431a7c3b8f516e41d30e0643f03d94592a147e36"
 
 [[package]]
-name = "usecases"
-version = "0.1.0"
-dependencies = [
- "async-trait",
- "thiserror",
- "tokio",
- "tracing",
- "uuid",
-]
-
-[[package]]
 name = "utf8-width"
 version = "0.1.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1718,8 +1707,8 @@ dependencies = [
  "serde_json",
  "tokio",
  "tower-livereload",
- "usecases",
  "web-client",
+ "worksite-service",
 ]
 
 [[package]]
@@ -1846,6 +1835,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a3b801d0e0a6726477cc207f60162da452f3a95adb368399bef20a946e06f65c"
 dependencies = [
  "memchr",
+]
+
+[[package]]
+name = "worksite-service"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "uuid",
 ]
 
 [[package]]

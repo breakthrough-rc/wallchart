@@ -7,8 +7,8 @@ use diesel::prelude::*;
 use diesel::OptionalExtension;
 use diesel_async::scoped_futures::ScopedFutureExt;
 use diesel_async::RunQueryDsl;
-use usecases::models::Assessment;
-use usecases::{
+use worksite_service::models::Assessment;
+use worksite_service::{
     models::Worksite,
     ports::worksite_repository::{RepositoryFailure, WorksiteRepository},
 };
@@ -143,7 +143,7 @@ fn to_worksite(
                     .map(|(shift, workers)| {
                         let workers = workers
                             .into_iter()
-                            .map(|worker| usecases::models::Worker {
+                            .map(|worker| worksite_service::models::Worker {
                                 id: worker.id,
                                 name: worker.first_name + " " + &worker.last_name,
                                 last_assessment: Assessment {
@@ -154,7 +154,7 @@ fn to_worksite(
                             })
                             .collect();
 
-                        usecases::models::Shift {
+                        worksite_service::models::Shift {
                             id: shift.id,
                             name: shift.name,
                             workers,
@@ -162,7 +162,7 @@ fn to_worksite(
                     })
                     .collect();
 
-                usecases::models::Location {
+                worksite_service::models::Location {
                     id: location.id,
                     name: location.name,
                     shifts,

@@ -6,7 +6,7 @@ members = [
   "web-client",
   "web-htmx",
   "db",
-  "worksite/usecases",
+  "worksite/worksite-service",
   "worksite/adapters/in-memory-worksite-repository",
   "worksite/adapters/diesel-worksite-repository",
 ]

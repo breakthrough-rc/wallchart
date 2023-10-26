@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use usecases::service::WorksiteService;
+use worksite_service::service::WorksiteService;
 
 #[derive(Clone)]
 pub struct WebHtmxState {

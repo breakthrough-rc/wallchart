@@ -1,5 +1,5 @@
 use rscx::{component, html, props, CollectFragment, CollectFragmentAsync};
-use usecases::models::{Shift, Worker, Worksite};
+use worksite_service::models::{Shift, Worker, Worksite};
 
 #[props]
 pub struct WallchartProps {
