@@ -43,15 +43,14 @@ const Notifications = {
   async appendNotification(notification: HTMLElement) {
     // Fragments don't provide a reference to DOM element, first child is actual element attached.
     const notificationElement = notification.firstElementChild!;
+
     const toggle = Toggle.attach(notificationElement as HTMLElement, {
-      toggleClosed() {
-        Notifications.content.removeChild(notificationElement);
-      },
-      toggleShouldCloseOnBodyClick: false,
+      toggleWillOpen: () => Notifications.content.appendChild(notification),
+      toggleClosed: () => Notifications.content.removeChild(notificationElement),
+      shouldToggleCloseOnBodyClick: false,
     });
 
-    Notifications.content.appendChild(notification);
-    toggle.open();
+    return await toggle.open();
   },
 
   async showError(request: ErrorNotificationRequest) {

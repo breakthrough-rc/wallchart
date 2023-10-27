@@ -35,7 +35,7 @@ fn exec_bun_install() {
 fn exec_build_js_and_css() {
     // TODO! Sourcemaps, minification, etc - handle differently for production.
     let output = Command::new("sh")
-        .args(["-c", "bunx tailwindcss -i ./src/client/common.css -o ./out/common.css && bun build ./src/client/common.js --outdir ./out --sourcemap=inline"])
+        .args(["-c", "bunx tailwindcss -i ./src/client/common.css -o ./out/common.css && bun build ./src/client/common.js --outdir ./out --sourcemap=external"])
         .output()
         .expect("failed to execute tailwind and bun build process");
 

@@ -4,15 +4,13 @@ import Transition from "./Transition";
 type ToggleState = "opened" | "closed";
 
 type ToggleDelegate = {
-  toggleClosed?: () => void,
+  toggleWillOpen?: () => void,
   toggleOpened?: () => void,
-  toggleShouldCloseOnBodyClick?: boolean,
+  toggleClosed?: () => void,
+  shouldToggleCloseOnBodyClick?: boolean,
 };
 
-const nullDelegate: ToggleDelegate = {
-  toggleClosed() { },
-  toggleOpened() { },
-};
+const nullDelegate: ToggleDelegate = {};
 
 // TODO! Support keyboard events
 // TODO! Add aria attributes
@@ -49,11 +47,13 @@ const Toggle_ = {
       }
     });
 
-    const shouldCloseOnBodyClick = delegate.toggleShouldCloseOnBodyClick ?? true;
+    const shouldCloseOnBodyClick = delegate.shouldToggleCloseOnBodyClick ?? true;
 
     const actions: Record<string, Function> = {
       async open() {
         state = "opened";
+        delegate.toggleWillOpen?.();
+
         await transition.enter();
 
         if (shouldCloseOnBodyClick) {
