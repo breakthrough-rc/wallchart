@@ -29,7 +29,7 @@ export default function (plop) {
       {
         type: "input",
         name: "resource_name",
-        message: "Resource name: ",
+        message: "Resource name (plural): ",
       },
     ],
     actions: [
