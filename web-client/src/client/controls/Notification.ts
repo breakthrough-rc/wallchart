@@ -1,7 +1,6 @@
 import events from "../events";
 import { ControlRegistry } from "../registery";
 import Toggle from "./Toggle";
-import Transition from "./Transition";
 
 type ErrorNotificationRequest = {
   kind: 'ERROR',
