@@ -94,38 +94,47 @@ impl WorksiteRepository for DieselWorksiteRepository {
     }
 
     async fn save(&self, id: String, events: NonEmpty<Event>) -> Result<(), RepositoryFailure> {
-        // TODOs: Should this be a single transaction?
+        // TODOs:
+        // - Should this be a single transaction?
+        //
         let conn = &mut self
             .pg_pool
             .get()
             .await
             .map_err(|_| RepositoryFailure::FailedToGetConnectionFromPool)?;
 
-        // let worksite_record = WorksiteRecord {
-        //     id: worksite.id.clone(),
-        //     name: worksite.name.clone(),
-        // };
-        //
-        // // 1 - Upsert worksite record
-        // diesel::insert_into(worksites::table)
-        //     .values(&worksite_record)
-        //     .on_conflict(worksites::id)
-        //     .do_update()
-        //     .set(&worksite_record)
-        //     .returning(WorksiteRecord::as_returning())
-        //     .get_result(conn)
-        //     .await
-        //     .map_err(|e| RepositoryFailure::Unknown(e.to_string()))?;
+        for event in events {
+            match event {
+                Event::WorksiteCreated { id: _, name: _ } => todo!(),
+                Event::LocationAdded { id, name } => todo!(),
+                Event::ShiftAdded {
+                    id,
+                    location_id,
+                    name,
+                } => todo!(),
+                Event::WorkerCreated { id, name } => todo!(),
+                Event::ShiftAssigned {
+                    shift_id,
+                    worker_id,
+                } => todo!(),
 
-        // 2 - Upsert location records as a group
+                Event::ShiftUnassigned {
+                    shift_id,
+                    worker_id,
+                } => {
+                    diesel::delete(
+                        shift_assignments::table
+                            .filter(shift_assignments::shift_id.eq(shift_id))
+                            .filter(shift_assignments::worker_id.eq(worker_id)),
+                    )
+                    .execute(conn)
+                    .await
+                    .map_err(|e| RepositoryFailure::Unknown(e.to_string()))?;
+                }
+            }
+        }
 
-        // 3 - Remove any locations that are no longer in the worksite
-        // 4 - Upsert shift records as a group
-        // 5 - Remove any shifts that are no longer in the worksite (via a location)
-        // 6 - Upsert worker records as a group
-        // 7 - Upsert worker shift assignments
-        // 8 - Remove any shift assignments not present in the worksite
-        todo!()
+        Ok(())
     }
 }
 
