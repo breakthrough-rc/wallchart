@@ -45,6 +45,14 @@ pub fn HtmlLayout(props: HtmlLayoutProps) -> String {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <title>{props.head_title}</title>
                 <link href={format!("/client/common.css?ts={}", *TS)} rel="stylesheet" />
+                <script>{
+                    "window.YcControls = {
+                        attachOnReadyQueue: [],
+                        attach: function(element) {
+                            this.attachOnReadyQueue.push(element);
+                        }
+                    };"
+                }</script>
                 {props.head_links}
                 {props.head_scripts}
             </head>
