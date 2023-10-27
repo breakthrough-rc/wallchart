@@ -74,7 +74,7 @@ fn Nav(props: NavProps) -> String {
                         <div class="flex flex-shrink-0 items-center">
                             // <img class="block h-8 w-auto lg:hidden" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company" />
                             <div class="h-8 w-8">
-                                <Logo />
+                                <a href="/"><Logo /></a>
                             </div>
                             // <img class="hidden h-8 w-auto lg:block" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company" />
                         </div>
