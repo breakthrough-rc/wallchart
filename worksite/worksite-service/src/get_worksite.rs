@@ -12,11 +12,13 @@ pub struct GetWorksite {
 
 #[derive(Clone, Debug)]
 pub struct GetWorksiteInput {
-    pub id: String
+    pub id: String,
 }
 
+pub type GetWorksiteOutput = Result<Option<Worksite>, GetWorksiteFailure>;
+
 impl GetWorksite {
-    pub async fn get_worksite(&self, input: GetWorksiteInput) -> Result<Option<Worksite>, GetWorksiteFailure> {
+    pub async fn get_worksite(&self, input: GetWorksiteInput) -> GetWorksiteOutput {
         self.worksite_repository
             .get_worksite(input.id)
             .await

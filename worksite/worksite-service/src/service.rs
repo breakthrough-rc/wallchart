@@ -1,5 +1,6 @@
 use crate::{
     get_worksite::{GetWorksite, GetWorksiteFailure, GetWorksiteInput},
+    //##PLOP INSERT COMMAND IMPORTS HOOK##
     models::Worksite,
     remove_worker_from_shift::{
         RemoveWorkerFromShift, RemoveWorkerFromShiftFailure, RemoveWorkerFromShiftInput,
@@ -8,11 +9,13 @@ use crate::{
 
 #[derive(Clone)]
 pub struct WorksiteService {
+    //##PLOP INSERT COMMAND HOOK##
     pub get_worksite: GetWorksite,
     pub remove_worker_from_shift: RemoveWorkerFromShift,
 }
 
 impl WorksiteService {
+    //##PLOP INSERT DELEGATE HOOK##
     pub async fn get_worksite(
         &self,
         input: GetWorksiteInput,
