@@ -47,6 +47,7 @@ pub fn Transition(props: TransitionProps) -> String {
         // TODO! Support tags other than div as root element.
         <div
             class={format!("hidden {}", props.class)}
+            data-yc-control="transition"
             data-transition-enter={props.enter}
             data-transition-enter-start={props.enter_from}
             data-transition-enter-end={props.enter_to}
