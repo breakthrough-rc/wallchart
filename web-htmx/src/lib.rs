@@ -6,11 +6,9 @@ use axum::{
 };
 use http::StatusCode;
 use page::PageLayout;
-use pages::{
-    wallchart::get_wallchart_page,
-    workers::{get_workers_new_page, post_workers_new_page},
-};
+use pages::wallchart::get_wallchart_page;
 //##PLOP USE RESOURCE HOOK##
+use resources::workers::workers_routes;
 use resources::worksite::delete_worker_from_shift;
 use rscx::{component, html, props};
 use state::WebHtmxState;
@@ -31,15 +29,12 @@ pub fn routes(state: WebHtmxState) -> Router {
             "/worksites/:worksite_id/locations/:location_id/shifts/:shift_id/workers/:worker_id",
             delete(delete_worker_from_shift),
         )
-        .route(
-            "/wallcharts/:wallchart_id/locations/:location_id/shifts/:shift_id/workers/new",
-            get(get_workers_new_page).post(post_workers_new_page),
-        )
         .route("/test-render", get(get_test_render))
         .route("/htmx", get(htmx_test))
         .nest_service("/client", client_routes())
         .fallback(fallback)
         .with_state(state.clone())
+        .merge(workers_routes(state))
     //##PLOP MERGE ROUTE HOOK##
 }
 
