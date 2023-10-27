@@ -1,5 +1,8 @@
+#![allow(unused_braces)]
+use super::opt_attrs::opt_attrs;
 use rscx::html;
 use rscx::{component, props};
+use std::collections::HashMap;
 
 #[props]
 #[derive(Debug)]
@@ -54,11 +57,12 @@ pub fn Transition(props: TransitionProps) -> String {
             data-transition-leave={props.leave}
             data-transition-leave-start={props.leave_from}
             data-transition-leave-end={props.leave_to}
-            // TODO! Do not render role and aria attributes if they are empty.
-            role=props.role
-            aria-orientation=props.aria_orientation
-            aria-labelledby=props.aria_labelledby
-            tabindex=props.tabindex
+            {opt_attrs(HashMap::from([
+                ("aria-orientation", props.aria_orientation),
+                ("aria-labelledby", props.aria_labelledby),
+                ("tabindex", props.tabindex),
+                ("role", props.role),
+            ]))}
         >
             {props.children}
         </div>
