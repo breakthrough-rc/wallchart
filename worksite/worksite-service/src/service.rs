@@ -1,7 +1,9 @@
 use crate::{
-    get_worksite::{GetWorksite, GetWorksiteFailure},
+    get_worksite::{GetWorksite, GetWorksiteFailure, GetWorksiteInput},
     models::Worksite,
-    remove_worker_from_shift::{RemoveWorkerFromShift, RemoveWorkerFromShiftFailure},
+    remove_worker_from_shift::{
+        RemoveWorkerFromShift, RemoveWorkerFromShiftFailure, RemoveWorkerFromShiftInput,
+    },
 };
 
 #[derive(Clone)]
@@ -11,18 +13,19 @@ pub struct WorksiteService {
 }
 
 impl WorksiteService {
-    pub async fn get_worksite(&self, id: String) -> Result<Option<Worksite>, GetWorksiteFailure> {
-        self.get_worksite.get_worksite(id).await
+    pub async fn get_worksite(
+        &self,
+        input: GetWorksiteInput,
+    ) -> Result<Option<Worksite>, GetWorksiteFailure> {
+        self.get_worksite.get_worksite(input).await
     }
 
     pub async fn remove_worker_from_shift(
         &self,
-        id: String,
-        shift_id: String,
-        worker_id: String,
+        input: RemoveWorkerFromShiftInput,
     ) -> Result<Worksite, RemoveWorkerFromShiftFailure> {
         self.remove_worker_from_shift
-            .remove_worker_from_shift(id, shift_id, worker_id)
+            .remove_worker_from_shift(input)
             .await
     }
 }

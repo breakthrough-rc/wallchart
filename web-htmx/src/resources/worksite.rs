@@ -4,6 +4,7 @@ use axum::{
     response::IntoResponse,
 };
 use http::StatusCode;
+use worksite_service::remove_worker_from_shift::RemoveWorkerFromShiftInput;
 
 pub async fn delete_worker_from_shift(
     extract::Path((worksite_id, location_id, shift_id, worker_id)): extract::Path<(
@@ -20,7 +21,11 @@ pub async fn delete_worker_from_shift(
     );
 
     let result = worksite_service
-        .remove_worker_from_shift(worksite_id, shift_id, worker_id)
+        .remove_worker_from_shift(RemoveWorkerFromShiftInput {
+            id: worksite_id,
+            shift_id,
+            worker_id,
+        })
         .await;
 
     match result {

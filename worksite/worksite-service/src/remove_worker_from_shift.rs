@@ -11,24 +11,29 @@ pub struct RemoveWorkerFromShift {
     pub worksite_repository: Arc<dyn WorksiteRepository>,
 }
 
+#[derive(Clone, Debug)]
+pub struct RemoveWorkerFromShiftInput {
+    pub id: String,
+    pub shift_id: String,
+    pub worker_id: String,
+}
+
 impl RemoveWorkerFromShift {
     pub async fn remove_worker_from_shift(
         &self,
-        id: String,
-        shift_id: String,
-        worker_id: String,
+        input: RemoveWorkerFromShiftInput,
     ) -> Result<Worksite, RemoveWorkerFromShiftFailure> {
         let worksite = self
             .worksite_repository
-            .get_worksite(id.clone())
+            .get_worksite(input.id.clone())
             .await
             .map_err(|e| RemoveWorkerFromShiftFailure::Unknown(e.to_string()))?
             .ok_or(RemoveWorkerFromShiftFailure::NotFound)?;
 
-        let (updated_worksite, events) = worksite.remove_worker(shift_id, worker_id);
+        let (updated_worksite, events) = worksite.remove_worker(input.shift_id, input.worker_id);
 
         self.worksite_repository
-            .save(id, events)
+            .save(input.id, events)
             .await
             .map_err(|e| RemoveWorkerFromShiftFailure::Unknown(e.to_string()))?;
 

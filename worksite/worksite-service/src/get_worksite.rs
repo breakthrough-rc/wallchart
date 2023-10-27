@@ -10,10 +10,15 @@ pub struct GetWorksite {
     pub worksite_repository: Arc<dyn WorksiteRepository>,
 }
 
+#[derive(Clone, Debug)]
+pub struct GetWorksiteInput {
+    pub id: String
+}
+
 impl GetWorksite {
-    pub async fn get_worksite(&self, id: String) -> Result<Option<Worksite>, GetWorksiteFailure> {
+    pub async fn get_worksite(&self, input: GetWorksiteInput) -> Result<Option<Worksite>, GetWorksiteFailure> {
         self.worksite_repository
-            .get_worksite(id)
+            .get_worksite(input.id)
             .await
             .map_err(|e| GetWorksiteFailure::Unknown(e.to_string()))
     }
