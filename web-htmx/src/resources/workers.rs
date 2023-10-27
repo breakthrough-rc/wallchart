@@ -1,12 +1,26 @@
-use axum::extract;
-use axum::response::Html;
+use crate::{page::PageLayout, state::WebHtmxState};
+use axum::{
+    extract::{self, State},
+    response::{Html, IntoResponse},
+    routing::get,
+    Form, Router,
+};
 use rscx::html;
+use serde::Deserialize;
 
-use crate::page::PageLayout;
+pub fn workers_routes(state: WebHtmxState) -> Router {
+    Router::new()
+        .route(
+            "/wallcharts/:worksite_id/locations/:location_id/shifts/:shift_id/workers/new",
+            get(get_worker_form).post(post_worker),
+        )
+        .with_state(state)
+}
 
-pub async fn get_workers_new_page(
+async fn get_worker_form(
     extract::Path((wallchart_id, location_id, shift_id)): extract::Path<(String, String, String)>,
-) -> Html<String> {
+    State(WebHtmxState { worksite_service }): State<WebHtmxState>,
+) -> impl IntoResponse {
     Html(html! {
         <PageLayout>
             <h3>New Worker</h3>
@@ -25,9 +39,17 @@ pub async fn get_workers_new_page(
     })
 }
 
-pub async fn post_workers_new_page(
+#[derive(Deserialize, Debug)]
+struct ExampleForm {
+    foo: String,
+    bar: String,
+}
+
+async fn post_worker(
+    State(WebHtmxState { worksite_service }): State<WebHtmxState>,
     extract::Path((wallchart_id, location_id, shift_id)): extract::Path<(String, String, String)>,
-) -> Html<String> {
+    // Form(example_form): Form<ExampleForm>,
+) -> impl IntoResponse {
     println!(
         "wallchart_id: {}, location_id: {}, shift_id: {}",
         wallchart_id, location_id, shift_id
