@@ -18,21 +18,29 @@ const Toggle_ = {
     element.querySelector("[data-toggle-action]")?.addEventListener("click", (event: Event) => {
       event.stopPropagation();
 
-      handleStateChange();
+      const actionKey = (event.target as HTMLElement).dataset.toggleAction;
+
+      if (actionKey && actionKey in actions) {
+        actions[actionKey]();
+      } else {
+        handleToggleStateChange();
+      }
     });
 
-    const open = () => {
-      state = "opened";
-      transition.enter();
+    const actions: Record<string, Function> = {
+      open() {
+        state = "opened";
+        transition.enter();
 
-      document.body.addEventListener("click", handleBodyClick);
-    };
+        document.body.addEventListener("click", handleBodyClick);
+      },
 
-    const close = () => {
-      state = "closed";
-      transition.leave();
+      close() {
+        state = "closed";
+        transition.leave();
 
-      document.body.removeEventListener("click", handleBodyClick);
+        document.body.removeEventListener("click", handleBodyClick);
+      },
     };
 
     const handleBodyClick = (event: Event) => {
@@ -41,17 +49,17 @@ const Toggle_ = {
         return false;
       }
 
-      handleStateChange();
+      actions.close();
     };
 
-    const handleStateChange = () => {
+    const handleToggleStateChange = () => {
       switch (state) {
         case "opened":
-          close();
+          actions.close();
           break;
 
         case "closed":
-          open();
+          actions.open();
           break;
       }
     };
