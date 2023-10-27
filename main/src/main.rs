@@ -3,6 +3,7 @@ use in_memory_worksite_repository::InMemoryWorksiteRepository;
 use std::{net::SocketAddr, sync::Arc};
 use web_htmx::{livereload, routes as web_routes, state::WebHtmxState};
 use worksite_service::{
+    assign_worker::AssignWorker,
     get_worksite::GetWorksite,
     models::{Assessment, Location, Shift, Tag, Worker, Worksite},
     remove_worker_from_shift::RemoveWorkerFromShift,
@@ -194,9 +195,13 @@ async fn main() {
     let remove_worker_from_shift = RemoveWorkerFromShift {
         worksite_repository: worksite_repository.clone(),
     };
+
+    let assign_worker = AssignWorker {};
+
     let worksite_service = WorksiteService {
         get_worksite,
         remove_worker_from_shift,
+        assign_worker,
     };
 
     // Create WebHtmxState
