@@ -1,5 +1,6 @@
 import events from "../events";
 import { ControlRegistry } from "../registery";
+import Toggle from "./Toggle";
 import Transition from "./Transition";
 
 type ErrorNotificationRequest = {
@@ -40,24 +41,17 @@ const Notifications = {
   },
 
   async appendNotification(notification: HTMLElement) {
-    const button = notification.querySelector("button[data-notification-close]");
-    if (!button) throw new Error("Could not find notification close button.");
-
-    // Fragments don't provide a reference to the node appended to the DOM
-    // Cloning the childnodes array and pulling the first item to obtain a reference.
-    const [notificationElement] = [...notification.children];
-    const transition = Transition.create(notificationElement);
-
-    const removeNotification = async () => {
-      await transition.leave();
-      Notifications.content.removeChild(notificationElement);
-      button.removeEventListener("click", removeNotification);
-    };
-
-    button.addEventListener("click", removeNotification);
+    // Fragments don't provide a reference to DOM element, first child is actual element attached.
+    const notificationElement = notification.firstElementChild!;
+    const toggle = Toggle.attach(notificationElement as HTMLElement, {
+      toggleClosed() {
+        Notifications.content.removeChild(notificationElement);
+      },
+      toggleShouldCloseOnBodyClick: false,
+    });
 
     Notifications.content.appendChild(notification);
-    await transition.enter();
+    toggle.open();
   },
 
   async showError(request: ErrorNotificationRequest) {

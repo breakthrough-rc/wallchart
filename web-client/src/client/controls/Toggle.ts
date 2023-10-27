@@ -3,19 +3,41 @@ import Transition from "./Transition";
 
 type ToggleState = "opened" | "closed";
 
+type ToggleDelegate = {
+  toggleClosed?: () => void,
+  toggleOpened?: () => void,
+  toggleShouldCloseOnBodyClick?: boolean,
+};
+
+const nullDelegate: ToggleDelegate = {
+  toggleClosed() { },
+  toggleOpened() { },
+};
+
 // TODO! Support keyboard events
 // TODO! Add aria attributes
 const Toggle_ = {
-  attach(element: HTMLElement) {
+  attach(element: HTMLElement, delegate: ToggleDelegate = nullDelegate) {
     let state: ToggleState = "closed";
 
     console.log("[Toggle::attach()]", element);
     element.dataset.ycControlAttached = "attached";
 
-    const transitionElement = element.querySelector("[data-yc-control=transition") as HTMLElement;
+    const transitionElement = (() => {
+      if (element.dataset.ycControl === "transition") {
+        return element;
+      } else {
+        return element.querySelector("[data-yc-control=transition") as HTMLElement;
+      }
+    })();
     const transition = Transition.create(transitionElement);
 
-    element.querySelector("[data-toggle-action]")?.addEventListener("click", (event: Event) => {
+    const actionElement = element.querySelector("[data-toggle-action]");
+    if (!actionElement) {
+      console.warn("Toggle control has no action element.", element);
+    }
+
+    actionElement?.addEventListener("click", (event: Event) => {
       event.stopPropagation();
 
       const actionKey = (event.target as HTMLElement).dataset.toggleAction;
@@ -27,19 +49,27 @@ const Toggle_ = {
       }
     });
 
-    const actions: Record<string, Function> = {
-      open() {
-        state = "opened";
-        transition.enter();
+    const shouldCloseOnBodyClick = delegate.toggleShouldCloseOnBodyClick ?? true;
 
-        document.body.addEventListener("click", handleBodyClick);
+    const actions: Record<string, Function> = {
+      async open() {
+        state = "opened";
+        await transition.enter();
+
+        if (shouldCloseOnBodyClick) {
+          document.body.addEventListener("click", handleBodyClick);
+        }
+        delegate.toggleOpened?.();
       },
 
-      close() {
+      async close() {
         state = "closed";
-        transition.leave();
+        await transition.leave();
 
-        document.body.removeEventListener("click", handleBodyClick);
+        if (shouldCloseOnBodyClick) {
+          document.body.removeEventListener("click", handleBodyClick);
+        }
+        delegate.toggleClosed?.();
       },
     };
 
@@ -63,6 +93,8 @@ const Toggle_ = {
           break;
       }
     };
+
+    return actions;
   },
 };
 
