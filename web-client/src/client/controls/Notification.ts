@@ -1,5 +1,5 @@
-import events from "./events";
-import { ControlRegistry } from "./registery";
+import events from "../events";
+import { ControlRegistry } from "../registery";
 import Transition from "./Transition";
 
 type ErrorNotificationRequest = {

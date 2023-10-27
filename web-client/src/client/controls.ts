@@ -1,5 +1,5 @@
-import registry from "./controls/registery";
-import events from "./controls/events";
+import registry from "./registery";
+import events from "./events";
 import Notifications from "./controls/Notification";
 import Toggle from "./controls/Toggle";
 

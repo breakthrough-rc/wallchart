@@ -1,4 +1,4 @@
-import { ControlRegistry } from "./registery";
+import { ControlRegistry } from "../registery";
 import Transition from "./Transition";
 
 type ToggleState = "opened" | "closed";
