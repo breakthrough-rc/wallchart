@@ -4,7 +4,7 @@ pub fn opt_attr(key: &str, val: String) -> String {
     if val.is_empty() {
         String::from("")
     } else {
-        format!("{}={}", key, val)
+        format!("{}=\"{}\"", key, val)
     }
 }
 
@@ -33,7 +33,15 @@ mod tests {
     fn test_opt_attr_with_non_empty_string() {
         assert_eq!(
             opt_attr("foo", String::from("baz")),
-            String::from("foo=baz")
+            String::from("foo=\"baz\"")
+        );
+    }
+
+    #[test]
+    fn test_opt_attr_with_string_with_spaces() {
+        assert_eq!(
+            opt_attr("foo", String::from("foo bar baz")),
+            String::from("foo=\"foo bar baz\"")
         );
     }
 
@@ -51,7 +59,7 @@ mod tests {
     fn test_opt_attrs_with_single_attribute_tuple() {
         assert_eq!(
             opt_attrs(HashMap::from([("foo", String::from("baz"))])),
-            String::from("foo=baz")
+            String::from("foo=\"baz\"")
         );
     }
 
@@ -59,12 +67,15 @@ mod tests {
     fn test_opt_attrs_with_multiple_attribute_tuple() {
         let attrs = opt_attrs(HashMap::from([
             ("foo", String::from("baz")),
-            ("bar", String::from("fuzz")),
+            ("bar", String::from("fuzz fuzz-baz")),
         ]));
 
         // Hashmap does not guarantee order, so asset each attribute individually
-        assert!(attrs.contains("foo=baz"));
-        assert!(attrs.contains("bar=fuzz"));
-        assert!(attrs == "foo=baz bar=fuzz" || attrs == "bar=fuzz foo=baz");
+        assert!(attrs.contains("foo=\"baz\""));
+        assert!(attrs.contains("bar=\"fuzz fuzz-baz\""));
+        assert!(
+            attrs == "foo=\"baz\" bar=\"fuzz fuzz-baz\""
+                || attrs == "bar=\"fuzz fuzz-baz\" foo=\"baz\""
+        );
     }
 }
