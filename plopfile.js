@@ -106,6 +106,15 @@ export default function (plop) {
       },
       {
         path: "{{kabobCase service_name}}/{{kabobCase service_name}}-service/src/service.rs",
+        pattern: /(\/\/##PLOP INSERT COMMAND INSTANTIATION HOOK##)/g,
+        template: `$1
+            {{snakeCase command_name}}: {{pascalCase command_name}} {
+              // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
+            },`,
+        type: "modify",
+      },
+      {
+        path: "{{kabobCase service_name}}/{{kabobCase service_name}}-service/src/service.rs",
         pattern: /(\/\/##PLOP INSERT DELEGATE HOOK##)/g,
         template: `$1
     pub async fn {{snakeCase command_name}}(
