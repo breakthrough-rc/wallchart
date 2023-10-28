@@ -1,10 +1,11 @@
+use std::sync::Arc;
+
 use crate::{
-    get_worksite::{GetWorksite, GetWorksiteFailure, GetWorksiteInput},
     //##PLOP INSERT COMMAND IMPORTS HOOK##
-    assign_worker::{
-      AssignWorker, AssignWorkerInput, AssignWorkerOutput, 
-    },
+    assign_worker::{AssignWorker, AssignWorkerInput, AssignWorkerOutput},
+    get_worksite::{GetWorksite, GetWorksiteFailure, GetWorksiteInput},
     models::Worksite,
+    ports::worksite_repository::{self, WorksiteRepository},
     remove_worker_from_shift::{
         RemoveWorkerFromShift, RemoveWorkerFromShiftFailure, RemoveWorkerFromShiftInput,
     },
@@ -19,11 +20,20 @@ pub struct WorksiteService {
 }
 
 impl WorksiteService {
+    pub fn new(worksite_repository: Arc<dyn WorksiteRepository>) -> Self {
+        Self {
+            //##PLOP INSERT COMMAND INSTANTIATION HOOK##
+            assign_worker: AssignWorker {},
+            get_worksite: GetWorksite {
+                worksite_repository: worksite_repository.clone(),
+            },
+            remove_worker_from_shift: RemoveWorkerFromShift {
+                worksite_repository: worksite_repository.clone(),
+            },
+        }
+    }
     //##PLOP INSERT DELEGATE HOOK##
-    pub async fn assign_worker(
-        &self,
-        input: AssignWorkerInput,
-    ) -> AssignWorkerOutput {
+    pub async fn assign_worker(&self, input: AssignWorkerInput) -> AssignWorkerOutput {
         self.assign_worker.assign_worker(input).await
     }
 
