@@ -670,6 +670,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b5e6163cb8c49088c2c36f57875e58ccd8c87c7427f7fbd50ea6710b2f3f2e8f"
 
 [[package]]
+name = "macros"
+version = "0.1.0"
+
+[[package]]
 name = "main"
 version = "0.1.0"
 dependencies = [
@@ -1709,6 +1713,7 @@ version = "0.1.0"
 dependencies = [
  "axum",
  "http",
+ "macros",
  "once_cell",
  "rscx",
  "serde",
