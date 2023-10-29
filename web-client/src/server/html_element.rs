@@ -35,7 +35,6 @@ pub fn HtmlElement(props: HtmlElementProps) -> String {
         ("role", props.role),
         ("onclick", props.onclick),
     ]));
-    let attrs = attrs.trim().to_string();
 
     format!(
         "<{} {}>{}</{}>",
@@ -45,10 +44,8 @@ pub fn HtmlElement(props: HtmlElementProps) -> String {
 
 #[cfg(test)]
 mod tests {
-    use rscx::html;
-
-    // Note this useful idiom: importing names from outer (for mod tests) scope.
     use super::*;
+    use rscx::html;
 
     #[tokio::test]
     async fn test_with_no_attrs() {
