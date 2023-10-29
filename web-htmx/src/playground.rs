@@ -2,6 +2,7 @@
 use crate::page::PageLayout;
 use axum::{response::Html, routing::get, Router};
 use http::HeaderMap;
+use macros::*;
 use rscx::{component, html, props};
 use web_client::server::html_element::HtmlElement;
 
@@ -48,12 +49,36 @@ fn MessageButton(props: MessageButtonProps) -> String {
     }
 }
 
+// This macro adds all standard HTML attributes for your component!
+html_attrs! {
+    pub struct SimpleElementProps {
+        #[builder(default)]
+        children: String,
+
+        #[builder(default="SIMPLE!".to_string())]
+        simple: String,
+    }
+}
+
+#[component]
+fn SimpleElement(props: SimpleElementProps) -> String {
+    html! {
+        <div class=props.class data-simple=props.simple data-tag=props.tag>
+            <p>I am foo, hear me roar!</p>
+            <div>{props.children}</div>
+        </div>
+    }
+}
+
 #[component]
 fn HtmlElementPlayground() -> String {
     html! {
         <section class="py-8">
             <h2 class="text-xl font-bold">"HtmlElement Playground"</h2>
             <div class="flex flex-col gap-4">
+                <SimpleElement class="font-bold".into() simple="YO".into()>
+                    Simple but not so simple.
+                </SimpleElement>
                 <FooButton />
                 <MessageButton message="This is a message from a button!".into()>
                     I am a MessageButton, click to see a message!
