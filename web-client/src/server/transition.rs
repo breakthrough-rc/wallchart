@@ -1,5 +1,5 @@
 #![allow(unused_braces)]
-use super::opt_attrs::opt_attrs;
+use super::html_element::HtmlElement;
 use rscx::html;
 use rscx::{component, props};
 use std::collections::HashMap;
@@ -42,29 +42,33 @@ pub struct TransitionProps {
 
     #[builder(default)]
     children: String,
+
+    #[builder(default=String::from("div"))]
+    tag: String,
 }
 
 #[component]
 pub fn Transition(props: TransitionProps) -> String {
     html! {
-        // TODO! Support tags other than div as root element.
-        <div
+        <HtmlElement
+            tag=props.tag
             class={format!("hidden {}", props.class)}
-            data-yc-control="transition"
-            data-transition-enter={props.enter}
-            data-transition-enter-start={props.enter_from}
-            data-transition-enter-end={props.enter_to}
-            data-transition-leave={props.leave}
-            data-transition-leave-start={props.leave_from}
-            data-transition-leave-end={props.leave_to}
-            {opt_attrs(HashMap::from([
-                ("aria-orientation", props.aria_orientation),
-                ("aria-labelledby", props.aria_labelledby),
-                ("tabindex", props.tabindex),
-                ("role", props.role),
-            ]))}
+            component_name="Transition".into()
+            aria_orientation=props.aria_orientation
+            aria_labelledby=props.aria_labelledby
+            role=props.role
+            tabindex=props.tabindex
+            data=HashMap::from([
+                ("yc-control", "transition".into()),
+                ("transition-enter", props.enter),
+                ("transition-enter-start", props.enter_from),
+                ("transition-enter-end", props.enter_to),
+                ("transition-leave", props.leave),
+                ("transition-leave-start", props.leave_from),
+                ("transition-leave-end", props.leave_to),
+            ])
         >
             {props.children}
-        </div>
+        </HtmlElement>
     }
 }

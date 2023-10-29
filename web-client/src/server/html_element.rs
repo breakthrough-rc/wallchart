@@ -11,10 +11,19 @@ pub struct HtmlElementProps {
     class: String,
 
     #[builder(default)]
+    onclick: String,
+
+    #[builder(default)]
     role: String,
 
     #[builder(default)]
-    onclick: String,
+    aria_orientation: String,
+
+    #[builder(default)]
+    aria_labelledby: String,
+
+    #[builder(default)]
+    tabindex: String,
 
     #[builder(default)]
     data: HashMap<&'static str, String>,
@@ -37,6 +46,9 @@ pub fn HtmlElement(props: HtmlElementProps) -> String {
         ("class", props.class),
         ("role", props.role),
         ("onclick", props.onclick),
+        ("aria-orientation", props.aria_orientation),
+        ("aria-labelledby", props.aria_labelledby),
+        ("tabindex", props.tabindex),
     ]));
 
     let data_attrs: String = props
@@ -52,7 +64,6 @@ pub fn HtmlElement(props: HtmlElementProps) -> String {
         .filter(|attr| !attr.is_empty())
         .collect::<Vec<String>>()
         .join(" ")
-        .trim()
         .to_string();
 
     format!(
