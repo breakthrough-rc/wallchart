@@ -1,41 +1,16 @@
 use super::opt_attrs::{opt_attr, opt_attrs};
+use macros::html_attrs;
 use rscx::{component, props};
 use std::collections::HashMap;
 
-#[props]
-pub struct HtmlElementProps {
-    #[builder(default)]
-    id: String,
+html_attrs! {
+    pub struct HtmlElementProps {
+        #[builder(default)]
+        children: String,
 
-    #[builder(default)]
-    class: String,
-
-    #[builder(default)]
-    onclick: String,
-
-    #[builder(default)]
-    role: String,
-
-    #[builder(default)]
-    aria_orientation: String,
-
-    #[builder(default)]
-    aria_labelledby: String,
-
-    #[builder(default)]
-    tabindex: String,
-
-    #[builder(default)]
-    data: HashMap<&'static str, String>,
-
-    #[builder(default)]
-    children: String,
-
-    #[builder(default=String::from("div"))]
-    tag: String,
-
-    #[builder(default=String::from("HtmlElement"))]
-    component_name: String,
+        #[builder(default=String::from("HtmlElement"))]
+        component_name: String,
+    }
 }
 
 #[component]
