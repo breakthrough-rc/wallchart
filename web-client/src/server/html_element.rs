@@ -1,4 +1,4 @@
-use super::opt_attrs::opt_attrs;
+use super::opt_attrs::{opt_attr, opt_attrs};
 use rscx::{component, props};
 use std::collections::HashMap;
 
@@ -15,6 +15,9 @@ pub struct HtmlElementProps {
 
     #[builder(default)]
     onclick: String,
+
+    #[builder(default)]
+    data: HashMap<&'static str, String>,
 
     #[builder(default)]
     children: String,
@@ -35,6 +38,22 @@ pub fn HtmlElement(props: HtmlElementProps) -> String {
         ("role", props.role),
         ("onclick", props.onclick),
     ]));
+
+    let data_attrs: String = props
+        .data
+        .into_iter()
+        .map(|(key, value)| opt_attr(format!("data-{}", key).as_str(), value))
+        .collect::<Vec<String>>()
+        .join(" ")
+        .to_string();
+
+    let attrs = vec![attrs, data_attrs]
+        .into_iter()
+        .filter(|attr| !attr.is_empty())
+        .collect::<Vec<String>>()
+        .join(" ")
+        .trim()
+        .to_string();
 
     format!(
         "<{} {}>{}</{}>",
@@ -79,6 +98,25 @@ mod tests {
         assert_eq!(
             html,
             String::from("<button data-rsx=\"HtmlElement\"><p>Paragraph text.</p></button>")
+        );
+    }
+
+    #[tokio::test]
+    async fn test_with_data_attributes() {
+        let html = html! {
+            <HtmlElement
+                tag="button".into()
+                data=HashMap::from([("foo", "baz".into())])
+            >
+                <h1>Header text.</h1>
+            </HtmlElement>
+        };
+
+        assert_eq!(
+            html,
+            String::from(
+                "<button data-rsx=\"HtmlElement\" data-foo=\"baz\"><h1>Header text.</h1></button>"
+            )
         );
     }
 }
