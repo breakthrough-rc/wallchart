@@ -1,11 +1,11 @@
 #![allow(unused_braces)]
+use macros::*;
+
 use crate::page::PageLayout;
 use axum::{response::Html, routing::get, Router};
 use http::HeaderMap;
 use rscx::{component, html, props};
 use web_client::server::html_element::HtmlElement;
-
-use macros::*;
 
 pub fn routes() -> Router {
     Router::new()
@@ -51,20 +51,31 @@ fn MessageButton(props: MessageButtonProps) -> String {
 }
 
 html_attrs! {
-    #[derive(Debug)]
     pub struct SimpleElementProps {
         #[builder(default)]
         children: String,
 
-        #[builder(default)]
+        #[builder(default="SIMPLE!".to_string())]
         simple: String,
     }
 }
 
+// #[props]
+// struct SimpleElementProps {
+//     #[builder(default)]
+//     children: String,
+
+//     #[builder(default = "SIMPLE!".to_string())]
+//     simple: String,
+
+//     #[builder(default)]
+//     class: String,
+// }
+
 #[component]
 fn SimpleElement(props: SimpleElementProps) -> String {
     html! {
-        <div class=props.class data-simple=props.simple>
+        <div class=props.class data-simple=props.simple data-tag=props.tag>
             <p>I am foo, hear me roar!</p>
             <div>{props.children}</div>
         </div>

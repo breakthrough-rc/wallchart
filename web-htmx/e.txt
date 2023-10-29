@@ -1,9 +1,9 @@
 pub mod playground {
     #![allow(unused_braces)]
+    use macros::*;
     use crate::page::PageLayout;
     use axum::{response::Html, routing::get, Router};
     use http::HeaderMap;
-    use macros::*;
     use rscx::{component, html, props};
     use web_client::server::html_element::HtmlElement;
     pub fn routes() -> Router {
@@ -289,12 +289,11 @@ See [`MessageButtonProps::builder()`] for more info.*/
     }
     #[builder(doc, crate_module_path = ::rscx::typed_builder)]
     pub struct SimpleElementProps {
-        ///HTML attrs ftw!
         #[builder(default)]
         class: String,
         #[builder(default)]
         children: String,
-        #[builder(default)]
+        #[builder(default = "SIMPLE!".to_string())]
         simple: String,
     }
     #[automatically_derived]
@@ -457,7 +456,7 @@ See [`SimpleElementProps::builder()`] for more info.*/
             );
             let simple = ::rscx::typed_builder::Optional::into_value(
                 simple,
-                || ::core::default::Default::default(),
+                || "SIMPLE!".to_string(),
             );
             #[allow(deprecated)]
             SimpleElementProps {
@@ -472,21 +471,6 @@ See [`SimpleElementProps::builder()`] for more info.*/
         type Builder = SimpleElementPropsBuilder;
         fn builder() -> Self::Builder {
             SimpleElementProps::builder()
-        }
-    }
-    #[automatically_derived]
-    impl ::core::fmt::Debug for SimpleElementProps {
-        fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
-            ::core::fmt::Formatter::debug_struct_field3_finish(
-                f,
-                "SimpleElementProps",
-                "class",
-                &self.class,
-                "children",
-                &self.children,
-                "simple",
-                &&self.simple,
-            )
         }
     }
     #[allow(non_snake_case)]
