@@ -16,6 +16,8 @@ pub fn opt_attrs(map: HashMap<&str, String>) -> String {
             .map(|(key, val)| opt_attr(key, val.to_string()))
             .collect::<Vec<String>>()
             .join(" ")
+            .trim()
+            .to_string()
     }
 }
 
@@ -53,6 +55,25 @@ mod tests {
     #[test]
     fn test_opt_attrs_with_empty_map_empty_array() {
         assert_eq!(opt_attrs(HashMap::from([])), String::from(""));
+    }
+
+    #[test]
+    fn test_opt_attrs_with_single_attr_that_is_empty() {
+        assert_eq!(
+            opt_attrs(HashMap::from([("foo", String::from(""))])),
+            String::from("")
+        );
+    }
+
+    #[test]
+    fn test_opt_attrs_with_multiple_attrs_that_are_empty() {
+        assert_eq!(
+            opt_attrs(HashMap::from([
+                ("foo", String::from("")),
+                ("baz", String::from("")),
+            ])),
+            String::from("")
+        );
     }
 
     #[test]
