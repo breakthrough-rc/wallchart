@@ -15,16 +15,12 @@ html_attrs! {
 
 #[component]
 pub fn HtmlElement(props: HtmlElementProps) -> String {
-    let attrs = opt_attrs(HashMap::from([
-        ("data-rsx", props.component_name),
-        ("id", props.id),
-        ("class", props.class),
-        ("role", props.role),
-        ("onclick", props.onclick),
-        ("aria-orientation", props.aria_orientation),
-        ("aria-labelledby", props.aria_labelledby),
-        ("tabindex", props.tabindex),
-    ]));
+    let attrs = opt_attrs(
+        HashMap::from([("data-rsx", props.component_name.clone())])
+            .into_iter()
+            .chain(props.html_attrs_to_hashmap())
+            .collect::<HashMap<&str, String>>(),
+    );
 
     let data_attrs: String = props
         .data
