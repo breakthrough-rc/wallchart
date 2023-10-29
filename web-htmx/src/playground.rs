@@ -5,6 +5,8 @@ use http::HeaderMap;
 use rscx::{component, html, props};
 use web_client::server::html_element::HtmlElement;
 
+use macros::*;
+
 pub fn routes() -> Router {
     Router::new()
         .route("/playground", get(get_playground))
@@ -48,12 +50,36 @@ fn MessageButton(props: MessageButtonProps) -> String {
     }
 }
 
+html_attrs! {
+    #[derive(Debug)]
+    pub struct SimpleElementProps {
+        #[builder(default)]
+        children: String,
+
+        #[builder(default)]
+        simple: String,
+    }
+}
+
+#[component]
+fn SimpleElement(props: SimpleElementProps) -> String {
+    html! {
+        <div class=props.class data-simple=props.simple>
+            <p>I am foo, hear me roar!</p>
+            <div>{props.children}</div>
+        </div>
+    }
+}
+
 #[component]
 fn HtmlElementPlayground() -> String {
     html! {
         <section class="py-8">
             <h2 class="text-xl font-bold">"HtmlElement Playground"</h2>
             <div class="flex flex-col gap-4">
+                <SimpleElement class="font-bold".into() simple="YO".into()>
+                    Simple but not so simple.
+                </SimpleElement>
                 <FooButton />
                 <MessageButton message="This is a message from a button!".into()>
                     I am a MessageButton, click to see a message!

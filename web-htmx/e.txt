@@ -1,0 +1,1009 @@
+pub mod playground {
+    #![allow(unused_braces)]
+    use crate::page::PageLayout;
+    use axum::{response::Html, routing::get, Router};
+    use http::HeaderMap;
+    use macros::*;
+    use rscx::{component, html, props};
+    use web_client::server::html_element::HtmlElement;
+    pub fn routes() -> Router {
+        Router::new()
+            .route("/playground", get(get_playground))
+            .route("/test-render", get(get_test_render))
+            .route("/htmx", get(htmx_test))
+    }
+    #[builder(doc, crate_module_path = ::rscx::typed_builder)]
+    pub struct FooButtonProps {}
+    #[automatically_derived]
+    impl FooButtonProps {
+        /**
+                Create a builder for building `FooButtonProps`.
+                On the builder, call  to set the values of the fields.
+                Finally, call `.build()` to create the instance of `FooButtonProps`.
+                */
+        #[allow(dead_code, clippy::default_trait_access)]
+        pub fn builder() -> FooButtonPropsBuilder<()> {
+            FooButtonPropsBuilder {
+                fields: (),
+                phantom: ::core::default::Default::default(),
+            }
+        }
+    }
+    #[must_use]
+    /**Builder for [`FooButtonProps`] instances.
+
+See [`FooButtonProps::builder()`] for more info.*/
+    #[allow(dead_code, non_camel_case_types, non_snake_case)]
+    pub struct FooButtonPropsBuilder<TypedBuilderFields = ()> {
+        fields: TypedBuilderFields,
+        phantom: ::core::marker::PhantomData<()>,
+    }
+    #[automatically_derived]
+    impl<TypedBuilderFields> Clone for FooButtonPropsBuilder<TypedBuilderFields>
+    where
+        TypedBuilderFields: Clone,
+    {
+        #[allow(clippy::default_trait_access)]
+        fn clone(&self) -> Self {
+            Self {
+                fields: self.fields.clone(),
+                phantom: ::core::marker::PhantomData,
+            }
+        }
+    }
+    #[allow(dead_code, non_camel_case_types, missing_docs)]
+    #[automatically_derived]
+    impl FooButtonPropsBuilder<()> {
+        ///Finalise the builder and create its [`FooButtonProps`] instance
+        #[allow(clippy::default_trait_access, clippy::used_underscore_binding)]
+        pub fn build(self) -> FooButtonProps {
+            let () = self.fields;
+            #[allow(deprecated)] FooButtonProps {}.into()
+        }
+    }
+    impl ::rscx::props::Props for FooButtonProps {
+        type Builder = FooButtonPropsBuilder;
+        fn builder() -> Self::Builder {
+            FooButtonProps::builder()
+        }
+    }
+    #[allow(non_snake_case)]
+    async fn FooButton(_props: FooButtonProps) -> String {
+        {
+            {
+                {
+                    let res = ::alloc::fmt::format(
+                        format_args!(
+                            "{0}",
+                            rscx::FormatWrapper::new(
+                                HtmlElement(
+                                        ::rscx::props::props_builder(&HtmlElement)
+                                            .children({
+                                                {
+                                                    let res = ::alloc::fmt::format(
+                                                        format_args!(
+                                                            "A button rendered w / HTMLElement.Click for more foo!",
+                                                        ),
+                                                    );
+                                                    res
+                                                }
+                                            })
+                                            .tag("button".into())
+                                            .class("bg-slate-200 ml-4 p-3 rounded-full".into())
+                                            .id("btn-foo".into())
+                                            .build(),
+                                    )
+                                    .await,
+                            ),
+                        ),
+                    );
+                    res
+                }
+            }
+        }
+    }
+    #[builder(doc, crate_module_path = ::rscx::typed_builder)]
+    struct MessageButtonProps {
+        #[builder(default)]
+        message: String,
+        #[builder(default)]
+        children: String,
+    }
+    #[automatically_derived]
+    impl MessageButtonProps {
+        /**
+                Create a builder for building `MessageButtonProps`.
+                On the builder, call `.message(...)`(optional), `.children(...)`(optional) to set the values of the fields.
+                Finally, call `.build()` to create the instance of `MessageButtonProps`.
+                */
+        #[allow(dead_code, clippy::default_trait_access)]
+        fn builder() -> MessageButtonPropsBuilder<((), ())> {
+            MessageButtonPropsBuilder {
+                fields: ((), ()),
+                phantom: ::core::default::Default::default(),
+            }
+        }
+    }
+    #[must_use]
+    /**Builder for [`MessageButtonProps`] instances.
+
+See [`MessageButtonProps::builder()`] for more info.*/
+    #[allow(dead_code, non_camel_case_types, non_snake_case)]
+    struct MessageButtonPropsBuilder<TypedBuilderFields = ((), ())> {
+        fields: TypedBuilderFields,
+        phantom: ::core::marker::PhantomData<()>,
+    }
+    #[automatically_derived]
+    impl<TypedBuilderFields> Clone for MessageButtonPropsBuilder<TypedBuilderFields>
+    where
+        TypedBuilderFields: Clone,
+    {
+        #[allow(clippy::default_trait_access)]
+        fn clone(&self) -> Self {
+            Self {
+                fields: self.fields.clone(),
+                phantom: ::core::marker::PhantomData,
+            }
+        }
+    }
+    #[allow(dead_code, non_camel_case_types, missing_docs)]
+    #[automatically_derived]
+    impl<__children> MessageButtonPropsBuilder<((), __children)> {
+        #[allow(clippy::used_underscore_binding)]
+        pub fn message(
+            self,
+            message: String,
+        ) -> MessageButtonPropsBuilder<((String,), __children)> {
+            let message = (message,);
+            let ((), children) = self.fields;
+            MessageButtonPropsBuilder {
+                fields: (message, children),
+                phantom: self.phantom,
+            }
+        }
+    }
+    #[doc(hidden)]
+    #[allow(dead_code, non_camel_case_types, non_snake_case)]
+    #[allow(clippy::exhaustive_enums)]
+    pub enum MessageButtonPropsBuilder_Error_Repeated_field_message {}
+    #[doc(hidden)]
+    #[allow(dead_code, non_camel_case_types, missing_docs)]
+    #[automatically_derived]
+    impl<__children> MessageButtonPropsBuilder<((String,), __children)> {
+        #[deprecated(note = "Repeated field message")]
+        pub fn message(
+            self,
+            _: MessageButtonPropsBuilder_Error_Repeated_field_message,
+        ) -> MessageButtonPropsBuilder<((String,), __children)> {
+            self
+        }
+    }
+    #[allow(dead_code, non_camel_case_types, missing_docs)]
+    #[automatically_derived]
+    impl<__message> MessageButtonPropsBuilder<(__message, ())> {
+        #[allow(clippy::used_underscore_binding)]
+        pub fn children(
+            self,
+            children: String,
+        ) -> MessageButtonPropsBuilder<(__message, (String,))> {
+            let children = (children,);
+            let (message, ()) = self.fields;
+            MessageButtonPropsBuilder {
+                fields: (message, children),
+                phantom: self.phantom,
+            }
+        }
+    }
+    #[doc(hidden)]
+    #[allow(dead_code, non_camel_case_types, non_snake_case)]
+    #[allow(clippy::exhaustive_enums)]
+    pub enum MessageButtonPropsBuilder_Error_Repeated_field_children {}
+    #[doc(hidden)]
+    #[allow(dead_code, non_camel_case_types, missing_docs)]
+    #[automatically_derived]
+    impl<__message> MessageButtonPropsBuilder<(__message, (String,))> {
+        #[deprecated(note = "Repeated field children")]
+        pub fn children(
+            self,
+            _: MessageButtonPropsBuilder_Error_Repeated_field_children,
+        ) -> MessageButtonPropsBuilder<(__message, (String,))> {
+            self
+        }
+    }
+    #[allow(dead_code, non_camel_case_types, missing_docs)]
+    #[automatically_derived]
+    impl<
+        __message: ::rscx::typed_builder::Optional<String>,
+        __children: ::rscx::typed_builder::Optional<String>,
+    > MessageButtonPropsBuilder<(__message, __children)> {
+        ///Finalise the builder and create its [`MessageButtonProps`] instance
+        #[allow(clippy::default_trait_access, clippy::used_underscore_binding)]
+        pub fn build(self) -> MessageButtonProps {
+            let (message, children) = self.fields;
+            let message = ::rscx::typed_builder::Optional::into_value(
+                message,
+                || ::core::default::Default::default(),
+            );
+            let children = ::rscx::typed_builder::Optional::into_value(
+                children,
+                || ::core::default::Default::default(),
+            );
+            #[allow(deprecated)]
+            MessageButtonProps {
+                message,
+                children,
+            }
+                .into()
+        }
+    }
+    impl ::rscx::props::Props for MessageButtonProps {
+        type Builder = MessageButtonPropsBuilder;
+        fn builder() -> Self::Builder {
+            MessageButtonProps::builder()
+        }
+    }
+    #[allow(non_snake_case)]
+    async fn MessageButton(props: MessageButtonProps) -> String {
+        {
+            {
+                {
+                    let res = ::alloc::fmt::format(
+                        format_args!(
+                            "{0}",
+                            rscx::FormatWrapper::new(
+                                HtmlElement(
+                                        ::rscx::props::props_builder(&HtmlElement)
+                                            .children({
+                                                {
+                                                    let res = ::alloc::fmt::format(
+                                                        format_args!(
+                                                            "{0}",
+                                                            rscx::FormatWrapper::new(props.children),
+                                                        ),
+                                                    );
+                                                    res
+                                                }
+                                            })
+                                            .tag("button".into())
+                                            .id("btn-alert".into())
+                                            .class("bg-slate-200 ml-4 p-3 rounded-full".into())
+                                            .onclick({
+                                                {
+                                                    let res = ::alloc::fmt::format(
+                                                        format_args!("alert(\'{0}\')", props.message),
+                                                    );
+                                                    res
+                                                }
+                                                    .into()
+                                            })
+                                            .build(),
+                                    )
+                                    .await,
+                            ),
+                        ),
+                    );
+                    res
+                }
+            }
+        }
+    }
+    #[builder(doc, crate_module_path = ::rscx::typed_builder)]
+    pub struct SimpleElementProps {
+        ///HTML attrs ftw!
+        #[builder(default)]
+        class: String,
+        #[builder(default)]
+        children: String,
+        #[builder(default)]
+        simple: String,
+    }
+    #[automatically_derived]
+    impl SimpleElementProps {
+        /**
+                Create a builder for building `SimpleElementProps`.
+                On the builder, call `.class(...)`(optional), `.children(...)`(optional), `.simple(...)`(optional) to set the values of the fields.
+                Finally, call `.build()` to create the instance of `SimpleElementProps`.
+                */
+        #[allow(dead_code, clippy::default_trait_access)]
+        pub fn builder() -> SimpleElementPropsBuilder<((), (), ())> {
+            SimpleElementPropsBuilder {
+                fields: ((), (), ()),
+                phantom: ::core::default::Default::default(),
+            }
+        }
+    }
+    #[must_use]
+    /**Builder for [`SimpleElementProps`] instances.
+
+See [`SimpleElementProps::builder()`] for more info.*/
+    #[allow(dead_code, non_camel_case_types, non_snake_case)]
+    pub struct SimpleElementPropsBuilder<TypedBuilderFields = ((), (), ())> {
+        fields: TypedBuilderFields,
+        phantom: ::core::marker::PhantomData<()>,
+    }
+    #[automatically_derived]
+    impl<TypedBuilderFields> Clone for SimpleElementPropsBuilder<TypedBuilderFields>
+    where
+        TypedBuilderFields: Clone,
+    {
+        #[allow(clippy::default_trait_access)]
+        fn clone(&self) -> Self {
+            Self {
+                fields: self.fields.clone(),
+                phantom: ::core::marker::PhantomData,
+            }
+        }
+    }
+    #[allow(dead_code, non_camel_case_types, missing_docs)]
+    #[automatically_derived]
+    impl<__children, __simple> SimpleElementPropsBuilder<((), __children, __simple)> {
+        #[allow(clippy::used_underscore_binding)]
+        pub fn class(
+            self,
+            class: String,
+        ) -> SimpleElementPropsBuilder<((String,), __children, __simple)> {
+            let class = (class,);
+            let ((), children, simple) = self.fields;
+            SimpleElementPropsBuilder {
+                fields: (class, children, simple),
+                phantom: self.phantom,
+            }
+        }
+    }
+    #[doc(hidden)]
+    #[allow(dead_code, non_camel_case_types, non_snake_case)]
+    #[allow(clippy::exhaustive_enums)]
+    pub enum SimpleElementPropsBuilder_Error_Repeated_field_class {}
+    #[doc(hidden)]
+    #[allow(dead_code, non_camel_case_types, missing_docs)]
+    #[automatically_derived]
+    impl<
+        __children,
+        __simple,
+    > SimpleElementPropsBuilder<((String,), __children, __simple)> {
+        #[deprecated(note = "Repeated field class")]
+        pub fn class(
+            self,
+            _: SimpleElementPropsBuilder_Error_Repeated_field_class,
+        ) -> SimpleElementPropsBuilder<((String,), __children, __simple)> {
+            self
+        }
+    }
+    #[allow(dead_code, non_camel_case_types, missing_docs)]
+    #[automatically_derived]
+    impl<__class, __simple> SimpleElementPropsBuilder<(__class, (), __simple)> {
+        #[allow(clippy::used_underscore_binding)]
+        pub fn children(
+            self,
+            children: String,
+        ) -> SimpleElementPropsBuilder<(__class, (String,), __simple)> {
+            let children = (children,);
+            let (class, (), simple) = self.fields;
+            SimpleElementPropsBuilder {
+                fields: (class, children, simple),
+                phantom: self.phantom,
+            }
+        }
+    }
+    #[doc(hidden)]
+    #[allow(dead_code, non_camel_case_types, non_snake_case)]
+    #[allow(clippy::exhaustive_enums)]
+    pub enum SimpleElementPropsBuilder_Error_Repeated_field_children {}
+    #[doc(hidden)]
+    #[allow(dead_code, non_camel_case_types, missing_docs)]
+    #[automatically_derived]
+    impl<__class, __simple> SimpleElementPropsBuilder<(__class, (String,), __simple)> {
+        #[deprecated(note = "Repeated field children")]
+        pub fn children(
+            self,
+            _: SimpleElementPropsBuilder_Error_Repeated_field_children,
+        ) -> SimpleElementPropsBuilder<(__class, (String,), __simple)> {
+            self
+        }
+    }
+    #[allow(dead_code, non_camel_case_types, missing_docs)]
+    #[automatically_derived]
+    impl<__class, __children> SimpleElementPropsBuilder<(__class, __children, ())> {
+        #[allow(clippy::used_underscore_binding)]
+        pub fn simple(
+            self,
+            simple: String,
+        ) -> SimpleElementPropsBuilder<(__class, __children, (String,))> {
+            let simple = (simple,);
+            let (class, children, ()) = self.fields;
+            SimpleElementPropsBuilder {
+                fields: (class, children, simple),
+                phantom: self.phantom,
+            }
+        }
+    }
+    #[doc(hidden)]
+    #[allow(dead_code, non_camel_case_types, non_snake_case)]
+    #[allow(clippy::exhaustive_enums)]
+    pub enum SimpleElementPropsBuilder_Error_Repeated_field_simple {}
+    #[doc(hidden)]
+    #[allow(dead_code, non_camel_case_types, missing_docs)]
+    #[automatically_derived]
+    impl<
+        __class,
+        __children,
+    > SimpleElementPropsBuilder<(__class, __children, (String,))> {
+        #[deprecated(note = "Repeated field simple")]
+        pub fn simple(
+            self,
+            _: SimpleElementPropsBuilder_Error_Repeated_field_simple,
+        ) -> SimpleElementPropsBuilder<(__class, __children, (String,))> {
+            self
+        }
+    }
+    #[allow(dead_code, non_camel_case_types, missing_docs)]
+    #[automatically_derived]
+    impl<
+        __class: ::rscx::typed_builder::Optional<String>,
+        __children: ::rscx::typed_builder::Optional<String>,
+        __simple: ::rscx::typed_builder::Optional<String>,
+    > SimpleElementPropsBuilder<(__class, __children, __simple)> {
+        ///Finalise the builder and create its [`SimpleElementProps`] instance
+        #[allow(clippy::default_trait_access, clippy::used_underscore_binding)]
+        pub fn build(self) -> SimpleElementProps {
+            let (class, children, simple) = self.fields;
+            let class = ::rscx::typed_builder::Optional::into_value(
+                class,
+                || ::core::default::Default::default(),
+            );
+            let children = ::rscx::typed_builder::Optional::into_value(
+                children,
+                || ::core::default::Default::default(),
+            );
+            let simple = ::rscx::typed_builder::Optional::into_value(
+                simple,
+                || ::core::default::Default::default(),
+            );
+            #[allow(deprecated)]
+            SimpleElementProps {
+                class,
+                children,
+                simple,
+            }
+                .into()
+        }
+    }
+    impl ::rscx::props::Props for SimpleElementProps {
+        type Builder = SimpleElementPropsBuilder;
+        fn builder() -> Self::Builder {
+            SimpleElementProps::builder()
+        }
+    }
+    #[automatically_derived]
+    impl ::core::fmt::Debug for SimpleElementProps {
+        fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+            ::core::fmt::Formatter::debug_struct_field3_finish(
+                f,
+                "SimpleElementProps",
+                "class",
+                &self.class,
+                "children",
+                &self.children,
+                "simple",
+                &&self.simple,
+            )
+        }
+    }
+    #[allow(non_snake_case)]
+    async fn SimpleElement(props: SimpleElementProps) -> String {
+        {
+            {
+                {
+                    let res = ::alloc::fmt::format(
+                        format_args!(
+                            "<div class=\"{0}\" data-simple=\"{1}\"><p>I am foo, hear me roar!</p><div>{2}</div></div>",
+                            rscx::FormatWrapper::new({
+                                ::rscx::EscapeAttribute::escape_attribute(&props.class)
+                            }),
+                            rscx::FormatWrapper::new({
+                                ::rscx::EscapeAttribute::escape_attribute(&props.simple)
+                            }),
+                            rscx::FormatWrapper::new(props.children),
+                        ),
+                    );
+                    res
+                }
+            }
+        }
+    }
+    #[builder(doc, crate_module_path = ::rscx::typed_builder)]
+    pub struct HtmlElementPlaygroundProps {}
+    #[automatically_derived]
+    impl HtmlElementPlaygroundProps {
+        /**
+                Create a builder for building `HtmlElementPlaygroundProps`.
+                On the builder, call  to set the values of the fields.
+                Finally, call `.build()` to create the instance of `HtmlElementPlaygroundProps`.
+                */
+        #[allow(dead_code, clippy::default_trait_access)]
+        pub fn builder() -> HtmlElementPlaygroundPropsBuilder<()> {
+            HtmlElementPlaygroundPropsBuilder {
+                fields: (),
+                phantom: ::core::default::Default::default(),
+            }
+        }
+    }
+    #[must_use]
+    /**Builder for [`HtmlElementPlaygroundProps`] instances.
+
+See [`HtmlElementPlaygroundProps::builder()`] for more info.*/
+    #[allow(dead_code, non_camel_case_types, non_snake_case)]
+    pub struct HtmlElementPlaygroundPropsBuilder<TypedBuilderFields = ()> {
+        fields: TypedBuilderFields,
+        phantom: ::core::marker::PhantomData<()>,
+    }
+    #[automatically_derived]
+    impl<TypedBuilderFields> Clone
+    for HtmlElementPlaygroundPropsBuilder<TypedBuilderFields>
+    where
+        TypedBuilderFields: Clone,
+    {
+        #[allow(clippy::default_trait_access)]
+        fn clone(&self) -> Self {
+            Self {
+                fields: self.fields.clone(),
+                phantom: ::core::marker::PhantomData,
+            }
+        }
+    }
+    #[allow(dead_code, non_camel_case_types, missing_docs)]
+    #[automatically_derived]
+    impl HtmlElementPlaygroundPropsBuilder<()> {
+        ///Finalise the builder and create its [`HtmlElementPlaygroundProps`] instance
+        #[allow(clippy::default_trait_access, clippy::used_underscore_binding)]
+        pub fn build(self) -> HtmlElementPlaygroundProps {
+            let () = self.fields;
+            #[allow(deprecated)] HtmlElementPlaygroundProps {}.into()
+        }
+    }
+    impl ::rscx::props::Props for HtmlElementPlaygroundProps {
+        type Builder = HtmlElementPlaygroundPropsBuilder;
+        fn builder() -> Self::Builder {
+            HtmlElementPlaygroundProps::builder()
+        }
+    }
+    #[allow(non_snake_case)]
+    async fn HtmlElementPlayground(_props: HtmlElementPlaygroundProps) -> String {
+        {
+            {
+                {
+                    let res = ::alloc::fmt::format(
+                        format_args!(
+                            "<section class=\"py&#x2D;8\"><h2 class=\"text&#x2D;xl&#x20;font&#x2D;bold\">HtmlElement Playground</h2><div class=\"flex&#x20;flex&#x2D;col&#x20;gap&#x2D;4\">{0}{1}{2}</div></section>",
+                            rscx::FormatWrapper::new(
+                                SimpleElement(
+                                        ::rscx::props::props_builder(&SimpleElement)
+                                            .children({
+                                                {
+                                                    let res = ::alloc::fmt::format(
+                                                        format_args!("Simple but not so simple."),
+                                                    );
+                                                    res
+                                                }
+                                            })
+                                            .class("font-bold".into())
+                                            .simple("YO".into())
+                                            .build(),
+                                    )
+                                    .await,
+                            ),
+                            rscx::FormatWrapper::new(
+                                FooButton(::rscx::props::props_builder(&FooButton).build())
+                                    .await,
+                            ),
+                            rscx::FormatWrapper::new(
+                                MessageButton(
+                                        ::rscx::props::props_builder(&MessageButton)
+                                            .children({
+                                                {
+                                                    let res = ::alloc::fmt::format(
+                                                        format_args!(
+                                                            "I am a MessageButton, click to see a message!",
+                                                        ),
+                                                    );
+                                                    res
+                                                }
+                                            })
+                                            .message("This is a message from a button!".into())
+                                            .build(),
+                                    )
+                                    .await,
+                            ),
+                        ),
+                    );
+                    res
+                }
+            }
+        }
+    }
+    #[builder(doc, crate_module_path = ::rscx::typed_builder)]
+    struct WelcomeProps {
+        #[builder(setter(into), default = "Welcome!".to_string())]
+        title: String,
+        #[builder(default)]
+        children: String,
+    }
+    #[automatically_derived]
+    impl WelcomeProps {
+        /**
+                Create a builder for building `WelcomeProps`.
+                On the builder, call `.title(...)`(optional), `.children(...)`(optional) to set the values of the fields.
+                Finally, call `.build()` to create the instance of `WelcomeProps`.
+                */
+        #[allow(dead_code, clippy::default_trait_access)]
+        fn builder() -> WelcomePropsBuilder<((), ())> {
+            WelcomePropsBuilder {
+                fields: ((), ()),
+                phantom: ::core::default::Default::default(),
+            }
+        }
+    }
+    #[must_use]
+    /**Builder for [`WelcomeProps`] instances.
+
+See [`WelcomeProps::builder()`] for more info.*/
+    #[allow(dead_code, non_camel_case_types, non_snake_case)]
+    struct WelcomePropsBuilder<TypedBuilderFields = ((), ())> {
+        fields: TypedBuilderFields,
+        phantom: ::core::marker::PhantomData<()>,
+    }
+    #[automatically_derived]
+    impl<TypedBuilderFields> Clone for WelcomePropsBuilder<TypedBuilderFields>
+    where
+        TypedBuilderFields: Clone,
+    {
+        #[allow(clippy::default_trait_access)]
+        fn clone(&self) -> Self {
+            Self {
+                fields: self.fields.clone(),
+                phantom: ::core::marker::PhantomData,
+            }
+        }
+    }
+    #[allow(dead_code, non_camel_case_types, missing_docs)]
+    #[automatically_derived]
+    impl<__children> WelcomePropsBuilder<((), __children)> {
+        #[allow(clippy::used_underscore_binding)]
+        pub fn title(
+            self,
+            title: impl ::core::convert::Into<String>,
+        ) -> WelcomePropsBuilder<((String,), __children)> {
+            let title = (title.into(),);
+            let ((), children) = self.fields;
+            WelcomePropsBuilder {
+                fields: (title, children),
+                phantom: self.phantom,
+            }
+        }
+    }
+    #[doc(hidden)]
+    #[allow(dead_code, non_camel_case_types, non_snake_case)]
+    #[allow(clippy::exhaustive_enums)]
+    pub enum WelcomePropsBuilder_Error_Repeated_field_title {}
+    #[doc(hidden)]
+    #[allow(dead_code, non_camel_case_types, missing_docs)]
+    #[automatically_derived]
+    impl<__children> WelcomePropsBuilder<((String,), __children)> {
+        #[deprecated(note = "Repeated field title")]
+        pub fn title(
+            self,
+            _: WelcomePropsBuilder_Error_Repeated_field_title,
+        ) -> WelcomePropsBuilder<((String,), __children)> {
+            self
+        }
+    }
+    #[allow(dead_code, non_camel_case_types, missing_docs)]
+    #[automatically_derived]
+    impl<__title> WelcomePropsBuilder<(__title, ())> {
+        #[allow(clippy::used_underscore_binding)]
+        pub fn children(
+            self,
+            children: String,
+        ) -> WelcomePropsBuilder<(__title, (String,))> {
+            let children = (children,);
+            let (title, ()) = self.fields;
+            WelcomePropsBuilder {
+                fields: (title, children),
+                phantom: self.phantom,
+            }
+        }
+    }
+    #[doc(hidden)]
+    #[allow(dead_code, non_camel_case_types, non_snake_case)]
+    #[allow(clippy::exhaustive_enums)]
+    pub enum WelcomePropsBuilder_Error_Repeated_field_children {}
+    #[doc(hidden)]
+    #[allow(dead_code, non_camel_case_types, missing_docs)]
+    #[automatically_derived]
+    impl<__title> WelcomePropsBuilder<(__title, (String,))> {
+        #[deprecated(note = "Repeated field children")]
+        pub fn children(
+            self,
+            _: WelcomePropsBuilder_Error_Repeated_field_children,
+        ) -> WelcomePropsBuilder<(__title, (String,))> {
+            self
+        }
+    }
+    #[allow(dead_code, non_camel_case_types, missing_docs)]
+    #[automatically_derived]
+    impl<
+        __title: ::rscx::typed_builder::Optional<String>,
+        __children: ::rscx::typed_builder::Optional<String>,
+    > WelcomePropsBuilder<(__title, __children)> {
+        ///Finalise the builder and create its [`WelcomeProps`] instance
+        #[allow(clippy::default_trait_access, clippy::used_underscore_binding)]
+        pub fn build(self) -> WelcomeProps {
+            let (title, children) = self.fields;
+            let title = ::rscx::typed_builder::Optional::into_value(
+                title,
+                || "Welcome!".to_string(),
+            );
+            let children = ::rscx::typed_builder::Optional::into_value(
+                children,
+                || ::core::default::Default::default(),
+            );
+            #[allow(deprecated)] WelcomeProps { title, children }.into()
+        }
+    }
+    impl ::rscx::props::Props for WelcomeProps {
+        type Builder = WelcomePropsBuilder;
+        fn builder() -> Self::Builder {
+            WelcomeProps::builder()
+        }
+    }
+    #[allow(non_snake_case)]
+    async fn Welcome(props: WelcomeProps) -> String {
+        {
+            {
+                {
+                    let res = ::alloc::fmt::format(
+                        format_args!(
+                            "<h1 class=\"text&#x2D;xl&#x20;text&#x2D;slate&#x2D;600\">{0}</h1>{1}",
+                            rscx::FormatWrapper::new(props.title),
+                            rscx::FormatWrapper::new(props.children),
+                        ),
+                    );
+                    res
+                }
+            }
+        }
+    }
+    #[builder(doc, crate_module_path = ::rscx::typed_builder)]
+    pub struct PartialRenderTestProps {}
+    #[automatically_derived]
+    impl PartialRenderTestProps {
+        /**
+                Create a builder for building `PartialRenderTestProps`.
+                On the builder, call  to set the values of the fields.
+                Finally, call `.build()` to create the instance of `PartialRenderTestProps`.
+                */
+        #[allow(dead_code, clippy::default_trait_access)]
+        pub fn builder() -> PartialRenderTestPropsBuilder<()> {
+            PartialRenderTestPropsBuilder {
+                fields: (),
+                phantom: ::core::default::Default::default(),
+            }
+        }
+    }
+    #[must_use]
+    /**Builder for [`PartialRenderTestProps`] instances.
+
+See [`PartialRenderTestProps::builder()`] for more info.*/
+    #[allow(dead_code, non_camel_case_types, non_snake_case)]
+    pub struct PartialRenderTestPropsBuilder<TypedBuilderFields = ()> {
+        fields: TypedBuilderFields,
+        phantom: ::core::marker::PhantomData<()>,
+    }
+    #[automatically_derived]
+    impl<TypedBuilderFields> Clone for PartialRenderTestPropsBuilder<TypedBuilderFields>
+    where
+        TypedBuilderFields: Clone,
+    {
+        #[allow(clippy::default_trait_access)]
+        fn clone(&self) -> Self {
+            Self {
+                fields: self.fields.clone(),
+                phantom: ::core::marker::PhantomData,
+            }
+        }
+    }
+    #[allow(dead_code, non_camel_case_types, missing_docs)]
+    #[automatically_derived]
+    impl PartialRenderTestPropsBuilder<()> {
+        ///Finalise the builder and create its [`PartialRenderTestProps`] instance
+        #[allow(clippy::default_trait_access, clippy::used_underscore_binding)]
+        pub fn build(self) -> PartialRenderTestProps {
+            let () = self.fields;
+            #[allow(deprecated)] PartialRenderTestProps {}.into()
+        }
+    }
+    impl ::rscx::props::Props for PartialRenderTestProps {
+        type Builder = PartialRenderTestPropsBuilder;
+        fn builder() -> Self::Builder {
+            PartialRenderTestProps::builder()
+        }
+    }
+    #[allow(non_snake_case)]
+    async fn PartialRenderTest(_props: PartialRenderTestProps) -> String {
+        {
+            {
+                {
+                    let res = ::alloc::fmt::format(
+                        format_args!(
+                            "<section class=\"py&#x2D;8\"><h2 class=\"text&#x2D;xl&#x20;font&#x2D;bold\">Test rendering</h2><ul class=\"list&#x2D;disc&#x20;list&#x2D;inside\"><li><a class=\"text&#x2D;blue&#x2D;600&#x20;hover&#x3A;underline\" href=\"&#x2F;test&#x2D;render\">Goto a full page render.</a></li><li><a class=\"text&#x2D;blue&#x2D;600&#x20;hover&#x3A;underline\" hx-get=\"&#x2F;test&#x2D;render\" hx-target=\"&#x2E;partial&#x2D;rendered&#x2D;content\">See a partial render.</a></li></ul><div class=\"text&#x2D;sm&#x20;italic&#x20;partial&#x2D;rendered&#x2D;content\"></div></section>",
+                        ),
+                    );
+                    res
+                }
+            }
+        }
+    }
+    #[builder(doc, crate_module_path = ::rscx::typed_builder)]
+    pub struct PlaygroundPgContentProps {}
+    #[automatically_derived]
+    impl PlaygroundPgContentProps {
+        /**
+                Create a builder for building `PlaygroundPgContentProps`.
+                On the builder, call  to set the values of the fields.
+                Finally, call `.build()` to create the instance of `PlaygroundPgContentProps`.
+                */
+        #[allow(dead_code, clippy::default_trait_access)]
+        pub fn builder() -> PlaygroundPgContentPropsBuilder<()> {
+            PlaygroundPgContentPropsBuilder {
+                fields: (),
+                phantom: ::core::default::Default::default(),
+            }
+        }
+    }
+    #[must_use]
+    /**Builder for [`PlaygroundPgContentProps`] instances.
+
+See [`PlaygroundPgContentProps::builder()`] for more info.*/
+    #[allow(dead_code, non_camel_case_types, non_snake_case)]
+    pub struct PlaygroundPgContentPropsBuilder<TypedBuilderFields = ()> {
+        fields: TypedBuilderFields,
+        phantom: ::core::marker::PhantomData<()>,
+    }
+    #[automatically_derived]
+    impl<TypedBuilderFields> Clone
+    for PlaygroundPgContentPropsBuilder<TypedBuilderFields>
+    where
+        TypedBuilderFields: Clone,
+    {
+        #[allow(clippy::default_trait_access)]
+        fn clone(&self) -> Self {
+            Self {
+                fields: self.fields.clone(),
+                phantom: ::core::marker::PhantomData,
+            }
+        }
+    }
+    #[allow(dead_code, non_camel_case_types, missing_docs)]
+    #[automatically_derived]
+    impl PlaygroundPgContentPropsBuilder<()> {
+        ///Finalise the builder and create its [`PlaygroundPgContentProps`] instance
+        #[allow(clippy::default_trait_access, clippy::used_underscore_binding)]
+        pub fn build(self) -> PlaygroundPgContentProps {
+            let () = self.fields;
+            #[allow(deprecated)] PlaygroundPgContentProps {}.into()
+        }
+    }
+    impl ::rscx::props::Props for PlaygroundPgContentProps {
+        type Builder = PlaygroundPgContentPropsBuilder;
+        fn builder() -> Self::Builder {
+            PlaygroundPgContentProps::builder()
+        }
+    }
+    #[allow(non_snake_case)]
+    pub async fn PlaygroundPgContent(_props: PlaygroundPgContentProps) -> String {
+        {
+            {
+                {
+                    let res = ::alloc::fmt::format(
+                        format_args!(
+                            "{0}",
+                            rscx::FormatWrapper::new(
+                                Welcome(
+                                        ::rscx::props::props_builder(&Welcome)
+                                            .children({
+                                                {
+                                                    let res = ::alloc::fmt::format(
+                                                        format_args!(
+                                                            "<marquee>I didn\'t think so!</marquee><section class=\"py&#x2D;8\"><h2 class=\"text&#x2D;xl&#x20;font&#x2D;bold\">Click some buttons</h2><button class=\"bg&#x2D;slate&#x2D;200&#x20;p&#x2D;3&#x20;rounded&#x2D;full\" hx-get=\"&#x2F;htmx\" hx-swap=\"outerHTML\">Click me!</button><button class=\"bg&#x2D;slate&#x2D;200&#x20;ml&#x2D;4&#x20;p&#x2D;3&#x20;rounded&#x2D;full\" onclick=\"YcControls&#x2E;showErrorNotification&#x28;&#x27;This&#x20;is&#x20;an&#x20;error&#x20;notification&#x2E;&#x27;&#x29;\">Show Error Notification</button></section>{0}",
+                                                            rscx::FormatWrapper::new(
+                                                                HtmlElementPlayground(
+                                                                        ::rscx::props::props_builder(&HtmlElementPlayground).build(),
+                                                                    )
+                                                                    .await,
+                                                            ),
+                                                        ),
+                                                    );
+                                                    res
+                                                }
+                                            })
+                                            .title("Yall Ready for This?")
+                                            .build(),
+                                    )
+                                    .await,
+                            ),
+                        ),
+                    );
+                    res
+                }
+            }
+        }
+    }
+    async fn get_playground() -> Html<String> {
+        Html({
+            {
+                let res = ::alloc::fmt::format(
+                    format_args!(
+                        "{0}",
+                        rscx::FormatWrapper::new(
+                            PageLayout(
+                                    ::rscx::props::props_builder(&PageLayout)
+                                        .children({
+                                            {
+                                                let res = ::alloc::fmt::format(
+                                                    format_args!(
+                                                        "{0}",
+                                                        rscx::FormatWrapper::new(
+                                                            PlaygroundPgContent(
+                                                                    ::rscx::props::props_builder(&PlaygroundPgContent).build(),
+                                                                )
+                                                                .await,
+                                                        ),
+                                                    ),
+                                                );
+                                                res
+                                            }
+                                        })
+                                        .build(),
+                                )
+                                .await,
+                        ),
+                    ),
+                );
+                res
+            }
+        })
+    }
+    async fn htmx_test() -> Html<String> {
+        Html("Is this the real life? Is this just fantasy?".into())
+    }
+    async fn get_test_render(headers: HeaderMap) -> Html<String> {
+        Html({
+            {
+                let res = ::alloc::fmt::format(
+                    format_args!(
+                        "{0}",
+                        rscx::FormatWrapper::new(
+                            PageLayout(
+                                    ::rscx::props::props_builder(&PageLayout)
+                                        .children({
+                                            {
+                                                let res = ::alloc::fmt::format(
+                                                    format_args!(
+                                                        "<section><h1>Test Render</h1><p>If you are viewing this page at the url `/test-render`\n                    you should see the full render (header and footer).</p><p>If this is being pulled in from an htmx request\n                    we should just see the `section` tag only.</p></section>",
+                                                    ),
+                                                );
+                                                res
+                                            }
+                                        })
+                                        .partial(headers.contains_key("Hx-Request"))
+                                        .build(),
+                                )
+                                .await,
+                        ),
+                    ),
+                );
+                res
+            }
+        })
+    }
+}

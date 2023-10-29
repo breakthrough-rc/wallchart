@@ -3,6 +3,7 @@ resolver = "2"
 
 members = [
   "main",
+  "macros",
   "web-client",
   "web-htmx",
   "db",
