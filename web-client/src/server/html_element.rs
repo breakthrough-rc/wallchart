@@ -58,4 +58,30 @@ mod tests {
 
         assert_eq!(html, String::from("<div data-rsx=\"HtmlElement\"></div>"));
     }
+
+    #[tokio::test]
+    async fn test_with_tag_set() {
+        let html = html! {
+            <HtmlElement tag="button".into() />
+        };
+
+        assert_eq!(
+            html,
+            String::from("<button data-rsx=\"HtmlElement\"></button>")
+        );
+    }
+
+    #[tokio::test]
+    async fn test_with_children() {
+        let html = html! {
+            <HtmlElement tag="button".into()>
+                <p>Paragraph text.</p>
+            </HtmlElement>
+        };
+
+        assert_eq!(
+            html,
+            String::from("<button data-rsx=\"HtmlElement\"><p>Paragraph text.</p></button>")
+        );
+    }
 }
