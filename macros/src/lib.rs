@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 /*
  To add an attribute to the html_attrs macro,
    - add a field to the struct
@@ -31,6 +32,9 @@ macro_rules! html_attrs {
             tabindex: String,
 
             #[builder(default)]
+            attrs: ::macros::Attrs,
+
+            #[builder(default)]
             data: std::collections::HashMap<&'static str, String>,
 
             #[builder(default=String::from("div"))]
@@ -54,8 +58,46 @@ macro_rules! html_attrs {
                 map.insert("aria-labelledby", self.aria_labelledby.clone());
                 map.insert("tabindex", self.tabindex.clone());
 
+                map.extend(self.attrs.to_hashmap());
                 map
             }
         }
+
+        impl From<$name> for Attrs {
+            fn from(html_props: $name) -> Self {
+                Attrs::from(html_props.html_attrs_to_hashmap())
+            }
+        }
     };
+}
+
+#[derive(Default)]
+pub struct Attrs {
+    values: std::collections::HashMap<&'static str, String>,
+    omit: Vec<&'static str>,
+}
+impl Attrs {
+    pub fn omit(&self, fields_to_omit: Vec<&'static str>) -> Self {
+        Self {
+            values: self.values.clone(),
+            omit: fields_to_omit,
+        }
+    }
+    pub fn to_hashmap(&self) -> std::collections::HashMap<&'static str, String> {
+        let mut hashmap = self.values.clone();
+
+        for field in &self.omit {
+            hashmap.remove(field);
+        }
+
+        hashmap
+    }
+}
+impl From<HashMap<&'static str, String>> for Attrs {
+    fn from(html_attrs: HashMap<&'static str, String>) -> Self {
+        Self {
+            values: html_attrs,
+            omit: vec![],
+        }
+    }
 }
