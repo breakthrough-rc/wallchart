@@ -35,7 +35,7 @@ pub fn Transition(props: TransitionProps) -> String {
     let original_props = props.clone();
     html! {
         <HtmlElement
-            tag=props.tag.clone()
+            tag=props.tag
             class={format!("hidden {}", props.class)}
             component_name="Transition".into()
             data=HashMap::from([
