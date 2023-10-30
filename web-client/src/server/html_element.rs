@@ -1,5 +1,5 @@
 use super::opt_attrs::{opt_attr, opt_attrs};
-use macros::html_attrs;
+use macros::*;
 use rscx::{component, props};
 use std::collections::HashMap;
 
@@ -99,6 +99,41 @@ mod tests {
             String::from(
                 "<button data-rsx=\"HtmlElement\" data-foo=\"baz\"><h1>Header text.</h1></button>"
             )
+        );
+    }
+
+    #[tokio::test]
+    async fn test_with_attrs_with_omit() {
+        // Emulate usage by a component
+        // Common use case: we want to apply the `class` attribute (or any attribute) manually
+        // Then pass the right of the props, omitting `class`.
+        let built_props = HtmlElementProps::builder();
+        let outer_props = built_props
+            .id("set-id".into())
+            .role("set-role".into())
+            .class("THIS_CLASS_SHOULD_BE_OMITTED".into())
+            .build();
+
+        let html = html! {
+            <HtmlElement
+                class="hard-coded-class".into()
+                attrs=Attrs::from(outer_props).omit(vec!["class"])
+            >
+                What an awesome element!
+            </HtmlElement>
+        };
+
+        assert!(
+            html.contains("class=\"hard-coded-class\""),
+            "The class attr is set from rscx NOT overwritten by props."
+        );
+        assert!(
+            !html.contains("THIS_CLASS_SHOULD_BE_OMITTED"),
+            "The class attr should have omitted class prop."
+        );
+        assert!(
+            html.contains("id=\"set-id\"") && html.contains("role=\"set-role\""),
+            "Contains id and role attrs from props."
         );
     }
 }
