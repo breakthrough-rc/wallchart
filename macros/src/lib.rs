@@ -9,6 +9,7 @@ use std::collections::HashMap;
 macro_rules! html_attrs {
     ($pub:vis struct $name:ident { $(#[$x:meta] $fpub:vis $field:ident : $type:ty,)* }) => {
         #[props]
+        #[derive(Clone)]
         $pub struct $name {
             #[builder(default)]
             id: String,
@@ -93,6 +94,16 @@ impl Attrs {
         hashmap
     }
 }
+
+impl Clone for Attrs {
+    fn clone(&self) -> Self {
+        Self {
+            values: self.values.clone(),
+            omit: self.omit.clone(),
+        }
+    }
+}
+
 impl From<HashMap<&'static str, String>> for Attrs {
     fn from(html_attrs: HashMap<&'static str, String>) -> Self {
         Self {
