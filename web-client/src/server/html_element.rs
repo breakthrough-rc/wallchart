@@ -1,5 +1,5 @@
 use super::opt_attrs::{opt_attr, opt_attrs};
-use macros::*;
+pub use macros::*;
 use rscx::{component, props};
 use std::collections::HashMap;
 
