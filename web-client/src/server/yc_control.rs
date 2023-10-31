@@ -25,3 +25,23 @@ pub fn YcControl(props: YcControlProps) -> String {
         </HtmlElement>
     }
 }
+
+html_attrs! {
+    pub struct ToggleProps {
+        #[builder(default)]
+        children: String,
+    }
+}
+
+#[component]
+pub fn Toggle(props: ToggleProps) -> String {
+    let original_props = props.clone();
+    html! {
+        <YcControl
+            control="toggle".into()
+            attrs=Attrs::from(original_props)
+        >
+            {props.children}
+        </YcControl>
+    }
+}

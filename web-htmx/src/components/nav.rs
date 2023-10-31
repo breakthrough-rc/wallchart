@@ -1,7 +1,7 @@
 use crate::components::logo::Logo;
 use rscx::{component, html, props, CollectFragment};
 use web_client::server::transition::Transition;
-use web_client::server::yc_control::YcControl;
+use web_client::server::yc_control::Toggle;
 
 #[props]
 pub struct NavProps {
@@ -162,10 +162,7 @@ struct ProfileDropdownProps {
 #[component]
 fn ProfileDropdown(props: ProfileDropdownProps) -> String {
     html! {
-        <YcControl
-            control="toggle".into()
-            class="relative ml-3".into()
-        >
+        <Toggle class="relative ml-3".into()>
             <div>
                 <button type="button" data-toggle-action class="relative flex max-w-xs items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
                     <span class="absolute -inset-1.5"></span>
@@ -197,6 +194,6 @@ fn ProfileDropdown(props: ProfileDropdownProps) -> String {
                         .collect_fragment()
                 }
             </Transition>
-        </YcControl>
+        </Toggle>
     }
 }
