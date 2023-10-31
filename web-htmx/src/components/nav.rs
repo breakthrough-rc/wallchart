@@ -1,6 +1,7 @@
 use crate::components::logo::Logo;
 use rscx::{component, html, props, CollectFragment};
 use web_client::server::transition::Transition;
+use web_client::server::yc_control::YcControl;
 
 #[props]
 pub struct NavProps {
@@ -161,7 +162,10 @@ struct ProfileDropdownProps {
 #[component]
 fn ProfileDropdown(props: ProfileDropdownProps) -> String {
     html! {
-        <div class="relative ml-3" data-yc-control="toggle">
+        <YcControl
+            control="toggle".into()
+            class="relative ml-3".into()
+        >
             <div>
                 <button type="button" data-toggle-action class="relative flex max-w-xs items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
                     <span class="absolute -inset-1.5"></span>
@@ -169,7 +173,6 @@ fn ProfileDropdown(props: ProfileDropdownProps) -> String {
                     <img class="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
                 </button>
             </div>
-
             <Transition
                 class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none".into()
                 role="menu".into()
@@ -194,7 +197,6 @@ fn ProfileDropdown(props: ProfileDropdownProps) -> String {
                         .collect_fragment()
                 }
             </Transition>
-            <script>"YcControls.attach(document.currentScript.parentElement)"</script>
-        </div>
+        </YcControl>
     }
 }
