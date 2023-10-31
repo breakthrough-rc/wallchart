@@ -1,6 +1,5 @@
 #![allow(unused_braces)]
-use super::html_element::{Attrs, HtmlElement};
-use macros::html_attrs;
+use super::html_element::{html_attrs, Attrs, HtmlElement};
 use rscx::html;
 use rscx::{component, props};
 use std::collections::HashMap;
