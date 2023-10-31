@@ -35,11 +35,12 @@ html_attrs! {
 
 #[component]
 pub fn Toggle(props: ToggleProps) -> String {
-    let original_props = props.clone();
+    let attrs = props.html_attrs_to_hashmap();
+
     html! {
         <YcControl
             control="toggle".into()
-            attrs=Attrs::from(original_props)
+            attrs=Attrs::from(attrs)
         >
             {props.children}
         </YcControl>

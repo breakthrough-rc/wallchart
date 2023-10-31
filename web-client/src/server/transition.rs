@@ -31,7 +31,7 @@ html_attrs! {
 
 #[component]
 pub fn Transition(props: TransitionProps) -> String {
-    let original_props = props.clone();
+    let attrs = props.html_attrs_to_hashmap();
     html! {
         <HtmlElement
             tag=props.tag
@@ -46,7 +46,7 @@ pub fn Transition(props: TransitionProps) -> String {
                 ("transition-leave-start", props.leave_from),
                 ("transition-leave-end", props.leave_to),
             ])
-            attrs=Attrs::from(original_props).omit(vec!["class"])
+            attrs=Attrs::from(attrs).omit(vec!["class"])
         >
             {props.children}
         </HtmlElement>
