@@ -51,16 +51,29 @@ macro_rules! html_attrs {
             fn html_attrs_to_hashmap(&self) -> std::collections::HashMap<&'static str, String> {
                 let mut map = std::collections::HashMap::new();
 
-                map.insert("id", self.id.clone());
-                map.insert("class", self.class.clone());
-                map.insert("onclick", self.onclick.clone());
-                map.insert("role", self.role.clone());
-                map.insert("aria-orientation", self.aria_orientation.clone());
-                map.insert("aria-labelledby", self.aria_labelledby.clone());
-                map.insert("tabindex", self.tabindex.clone());
+                map.insert("id", self.concat_attribute(&self.id, self.attrs.get("id")));
+                map.insert("class", self.concat_attribute(&self.class, self.attrs.get("class")));
+                map.insert("onclick", self.concat_attribute(&self.onclick, self.attrs.get("onclick")));
+                map.insert("role", self.concat_attribute(&self.role, self.attrs.get("role")));
+                map.insert("aria-orientation", self.concat_attribute(&self.aria_orientation, self.attrs.get("aria-orientation")));
+                map.insert("aria-labelledby", self.concat_attribute(&self.aria_labelledby, self.attrs.get("aria_labelledby")));
+                map.insert("tabindex", self.concat_attribute(&self.tabindex, self.attrs.get("tabindex")));
 
-                map.extend(self.attrs.to_hashmap());
                 map
+            }
+
+            fn concat_attribute(&self, field_value: &str, attribute_value: Option<&String>) -> String {
+                let mut values = vec![];
+
+                if !field_value.is_empty() {
+                    values.push(field_value.trim());
+                }
+
+                if let Some(value) = attribute_value {
+                    values.push(value.trim());
+                }
+
+                values.join(" ")
             }
         }
 
@@ -92,6 +105,9 @@ impl Attrs {
         }
 
         hashmap
+    }
+    pub fn get(&self, key: &'static str) -> Option<&String> {
+        self.values.get(key)
     }
 }
 
