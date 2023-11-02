@@ -1,4 +1,3 @@
-use super::attrs::Attrs;
 use super::opt_attrs::{opt_attr, opt_attrs};
 use crate::html_attrs;
 use rscx::{component, props};
@@ -47,6 +46,7 @@ pub fn HtmlElement(props: HtmlElementProps) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::server::attrs::Attrs;
     use rscx::html;
 
     #[tokio::test]
