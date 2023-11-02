@@ -2,8 +2,8 @@
 use crate::page::PageLayout;
 use axum::{response::Html, routing::get, Router};
 use http::HeaderMap;
-use macros::*;
 use rscx::{component, html, props};
+use web_client::html_attrs;
 use web_client::server::html_element::HtmlElement;
 
 pub fn routes() -> Router {

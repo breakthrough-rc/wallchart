@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 /*
  To add an attribute to the html_attrs macro,
    - add a field to the struct
@@ -33,7 +32,7 @@ macro_rules! html_attrs {
             tabindex: String,
 
             #[builder(default)]
-            attrs: ::macros::Attrs,
+            attrs: ::web_client::server::attrs::Attrs,
 
             #[builder(default)]
             data: std::collections::HashMap<&'static str, String>,
@@ -77,54 +76,10 @@ macro_rules! html_attrs {
             }
         }
 
-        impl From<$name> for Attrs {
+        impl From<$name> for ::web_client::server::attrs::Attrs {
             fn from(html_props: $name) -> Self {
-                Attrs::from(html_props.html_attrs_to_hashmap())
+                ::web_client::server::attrs::Attrs::from(html_props.html_attrs_to_hashmap())
             }
         }
     };
-}
-
-#[derive(Default)]
-pub struct Attrs {
-    values: std::collections::HashMap<&'static str, String>,
-    omit: Vec<&'static str>,
-}
-impl Attrs {
-    pub fn omit(&self, fields_to_omit: Vec<&'static str>) -> Self {
-        Self {
-            values: self.values.clone(),
-            omit: fields_to_omit,
-        }
-    }
-    pub fn to_hashmap(&self) -> std::collections::HashMap<&'static str, String> {
-        let mut hashmap = self.values.clone();
-
-        for field in &self.omit {
-            hashmap.remove(field);
-        }
-
-        hashmap
-    }
-    pub fn get(&self, key: &'static str) -> Option<&String> {
-        self.values.get(key)
-    }
-}
-
-impl Clone for Attrs {
-    fn clone(&self) -> Self {
-        Self {
-            values: self.values.clone(),
-            omit: self.omit.clone(),
-        }
-    }
-}
-
-impl From<HashMap<&'static str, String>> for Attrs {
-    fn from(html_attrs: HashMap<&'static str, String>) -> Self {
-        Self {
-            values: html_attrs,
-            omit: vec![],
-        }
-    }
 }

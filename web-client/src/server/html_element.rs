@@ -1,5 +1,6 @@
+use super::attrs::Attrs;
 use super::opt_attrs::{opt_attr, opt_attrs};
-pub use macros::*;
+use crate::html_attrs;
 use rscx::{component, props};
 use std::collections::HashMap;
 

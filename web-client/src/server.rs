@@ -1,3 +1,4 @@
+pub mod attrs;
 pub mod html_element;
 pub mod notification;
 pub mod opt_attrs;

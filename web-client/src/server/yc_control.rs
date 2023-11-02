@@ -1,4 +1,6 @@
-use super::html_element::{html_attrs, Attrs, HtmlElement};
+use super::attrs::Attrs;
+use super::html_element::HtmlElement;
+use crate::html_attrs;
 use rscx::{component, html, props};
 use std::collections::HashMap;
 

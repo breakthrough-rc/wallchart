@@ -1,3 +1,4 @@
+extern crate self as web_client; // Allows web_client crate to import from itself when expanding macros.
 use axum::Router;
 use once_cell::sync::Lazy;
 use rscx::{component, html, props};
@@ -5,6 +6,7 @@ use server::notification::NotificationLiveRegion;
 use std::time::{SystemTime, UNIX_EPOCH};
 use tower_http::services::ServeDir;
 
+pub mod macros;
 pub mod server;
 
 pub fn routes() -> Router {
