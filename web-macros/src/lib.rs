@@ -1,6 +1,10 @@
 use proc_macro::TokenStream;
+use proc_macro2::Span;
 use quote::{quote, ToTokens};
-use syn::{parse::Parse, parse_macro_input, Fields, FieldsNamed, ItemStruct};
+use syn::{
+    parse::Parse, parse_macro_input, punctuated::Punctuated, token::Comma, Expr, Fields,
+    FieldsNamed, Ident, ItemStruct, Token,
+};
 
 const ATTRS_LEN: usize = 7;
 const HTML_ELEMENT_ATTRS: [&str; ATTRS_LEN] = [
@@ -44,12 +48,7 @@ impl ToTokens for HtmlElementStruct {
             _ => panic!("not named fields"),
         };
 
-        let attr_idents = HTML_ELEMENT_ATTRS.map(|attr| {
-            let attr = attr.replace("-", "_");
-            let attr = attr.as_str();
-
-            syn::Ident::new(attr, proc_macro2::Span::call_site())
-        });
+        let attr_idents = create_attr_idents();
 
         let fields = quote! {
             {
@@ -90,24 +89,10 @@ impl ToTokens for HtmlElementStruct {
                     let mut map = std::collections::HashMap::new();
 
                     #(
-                        map.insert(#attr_keys, self.concat_attribute(&self.#attr_idents, self.attrs.get(#attr_keys)));
+                        map.insert(#attr_keys, web_client::concat_attribute(&self.#attr_idents, self.attrs.get(#attr_keys)));
                     )*
 
                     map
-                }
-
-                fn concat_attribute(&self, field_value: &str, attribute_value: Option<&String>) -> String {
-                    let mut values = vec![];
-
-                    if !field_value.is_empty() {
-                        values.push(field_value.trim());
-                    }
-
-                    if let Some(value) = attribute_value {
-                        values.push(value.trim());
-                    }
-
-                    values.join(" ")
                 }
             }
 
@@ -118,4 +103,73 @@ impl ToTokens for HtmlElementStruct {
             }
         });
     }
+}
+
+fn create_attr_idents() -> [syn::Ident; ATTRS_LEN] {
+    HTML_ELEMENT_ATTRS.map(|attr| {
+        let attr = attr.replace("-", "_");
+        let attr = attr.as_str();
+
+        syn::Ident::new(attr, Span::call_site())
+    })
+}
+
+#[derive(Debug)]
+struct AttrsSpread {
+    props: Ident,
+    omit: Punctuated<Expr, Comma>,
+}
+
+impl Parse for AttrsSpread {
+    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+        let props: Ident = input.parse()?;
+
+        input.parse::<Token![|]>()?;
+        let omit: Expr = input.parse()?;
+
+        if let Expr::Call(syn::ExprCall { func, args, .. }) = omit {
+            Ok(AttrsSpread { props, omit: args })
+        } else {
+            panic!("Expected omit call in macro!");
+        }
+    }
+}
+
+#[proc_macro]
+pub fn spread_attrs(input: TokenStream) -> TokenStream {
+    let ast = syn::parse_macro_input!(input as AttrsSpread);
+    let AttrsSpread { props, omit } = ast;
+
+    let mut attr_keys = HTML_ELEMENT_ATTRS.clone().to_vec();
+    let mut attr_idents = create_attr_idents().to_vec();
+
+    for field in omit {
+        match field {
+            Expr::Path(path) => {
+                let ident = path.path.get_ident().unwrap();
+                if !HTML_ELEMENT_ATTRS.contains(&ident.to_string().replace("_", "-").as_str()) {
+                    panic!(
+                        "Cannot omit field {}. It doesn't exit in HtmlElementProps.",
+                        ident
+                    );
+                }
+                attr_keys.retain(|f| f != &ident.to_string());
+                attr_idents.retain(|f| f.to_string() != ident.to_string());
+            }
+            _ => (),
+        }
+    }
+
+    let gen = quote! {
+        {
+            let mut map = std::collections::HashMap::new();
+            #(
+                map.insert(#attr_keys, web_client::concat_attribute(&#props.#attr_idents, #props.attrs.get(#attr_keys)));
+            )*
+
+            ::web_client::server::attrs::Attrs::from(map)
+        }
+    };
+
+    gen.into()
 }
