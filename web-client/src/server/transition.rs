@@ -1,10 +1,8 @@
 #![allow(unused_braces)]
-use super::attrs::Attrs;
 use super::html_element::HtmlElement;
-use rscx::html;
-use rscx::{component, props};
+use rscx::{component, html, props};
 use std::collections::HashMap;
-use web_macros::html_element;
+use web_macros::*;
 
 #[html_element]
 pub struct TransitionProps {
@@ -32,7 +30,6 @@ pub struct TransitionProps {
 
 #[component]
 pub fn Transition(props: TransitionProps) -> String {
-    let attrs = props.html_attrs_to_hashmap();
     html! {
         <HtmlElement
             tag=props.tag
@@ -47,7 +44,7 @@ pub fn Transition(props: TransitionProps) -> String {
                 ("transition-leave-start", props.leave_from),
                 ("transition-leave-end", props.leave_to),
             ])
-            attrs=Attrs::from(attrs).omit(vec!["class"])
+            attrs=spread_attrs!(props | omit(class))
         >
             {props.children}
         </HtmlElement>
