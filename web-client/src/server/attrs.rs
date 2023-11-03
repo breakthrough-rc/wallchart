@@ -22,6 +22,9 @@ impl Attrs {
         hashmap
     }
     pub fn get(&self, key: &'static str) -> Option<&String> {
+        if self.omit.contains(&key) {
+            return None;
+        }
         self.values.get(key)
     }
 }
