@@ -1,34 +1,33 @@
 #![allow(unused_braces)]
 use super::attrs::Attrs;
 use super::html_element::HtmlElement;
-use crate::html_attrs;
 use rscx::html;
 use rscx::{component, props};
 use std::collections::HashMap;
+use web_macros::html_element;
 
-html_attrs! {
-    pub struct TransitionProps {
-        #[builder(default)]
-        enter: String,
+#[html_element]
+pub struct TransitionProps {
+    #[builder(default)]
+    enter: String,
 
-        #[builder(default)]
-        enter_from: String,
+    #[builder(default)]
+    enter_from: String,
 
-        #[builder(default)]
-        enter_to: String,
+    #[builder(default)]
+    enter_to: String,
 
-        #[builder(default)]
-        leave: String,
+    #[builder(default)]
+    leave: String,
 
-        #[builder(default)]
-        leave_from: String,
+    #[builder(default)]
+    leave_from: String,
 
-        #[builder(default)]
-        leave_to: String,
+    #[builder(default)]
+    leave_to: String,
 
-        #[builder(default)]
-        children: String,
-    }
+    #[builder(default)]
+    children: String,
 }
 
 #[component]
