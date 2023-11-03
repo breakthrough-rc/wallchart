@@ -67,6 +67,20 @@ pub fn HtmlLayout(props: HtmlLayoutProps) -> String {
     }
 }
 
+pub fn concat_attribute(field_value: &str, attribute_value: Option<&String>) -> String {
+    let mut values = vec![];
+
+    if !field_value.is_empty() {
+        values.push(field_value.trim());
+    }
+
+    if let Some(value) = attribute_value {
+        values.push(value.trim());
+    }
+
+    values.join(" ")
+}
+
 #[cfg(test)]
 mod tests {
     #[test]
