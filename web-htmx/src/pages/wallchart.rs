@@ -17,7 +17,7 @@ pub async fn get_wallchart_page(
         .unwrap();
 
     Html(html! {
-        <PageLayout title="Wallchart".into()>
+        <PageLayout title="Wallchart">
             <div class="my-4">
                 <Wallchart worksite=worksite/>
             </div>

@@ -4,7 +4,7 @@ use web_client::HtmlLayout;
 
 #[props]
 pub struct PageLayoutProps {
-    #[builder(default = "Page".into())]
+    #[builder(setter(into), default = "Page".into())]
     title: String,
 
     #[builder(default = false)]
