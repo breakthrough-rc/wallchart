@@ -1,3 +1,5 @@
+// MODULE IS DEPRECATED. Please use/see the `html_element` macro in the `web-macro` crate.
+
 /*
  To add an attribute to the html_attrs macro,
    - add a field to the struct
