@@ -12,6 +12,7 @@
   },
   "custom": "700",
   "dependencies": {
+    "@tailwindcss/forms": "^0.5.6",
     "caniuse-lite": "^1.0.30001551",
     "el-transition": "^0.0.7",
     "update-browserslist-db": "latest"
