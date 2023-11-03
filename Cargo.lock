@@ -1717,6 +1717,7 @@ dependencies = [
  "tokio",
  "tower-livereload",
  "web-client",
+ "web-macros",
  "worksite-service",
 ]
 

@@ -15,4 +15,5 @@ serde_json = { workspace = true }
 tokio = { workspace = true, features = ["full"] }
 tower-livereload = { workspace = true }
 web-client = { path = "../web-client" }
+web-macros = { path = "../web-macros" }
 worksite-service = { path = "../worksite/worksite-service" }
