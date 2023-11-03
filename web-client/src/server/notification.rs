@@ -19,13 +19,13 @@ pub(crate) fn NotificationLiveRegion() -> String {
 pub fn ErrorNotification() -> String {
     html! {
         <Transition
-            class="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5".into()
-            enter="transform ease-out duration-300 transition".into()
-            enter_from="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2".into()
-            enter_to="translate-y-0 opacity-100 sm:translate-x-0".into()
-            leave="transition ease-in duration-300".into()
-            leave_from="opacity-100".into()
-            leave_to="opacity-0".into()
+            class="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5"
+            enter="transform ease-out duration-300 transition"
+            enter_from="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
+            enter_to="translate-y-0 opacity-100 sm:translate-x-0"
+            leave="transition ease-in duration-300"
+            leave_from="opacity-100"
+            leave_to="opacity-0"
         >
             <div class="p-4">
                 <div class="flex items-start">

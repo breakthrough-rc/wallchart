@@ -8,25 +8,25 @@ use web_macros::html_element;
 
 #[html_element]
 pub struct TransitionProps {
-    #[builder(default)]
+    #[builder(setter(into))]
     enter: String,
 
-    #[builder(default)]
+    #[builder(setter(into))]
     enter_from: String,
 
-    #[builder(default)]
+    #[builder(setter(into))]
     enter_to: String,
 
-    #[builder(default)]
+    #[builder(setter(into))]
     leave: String,
 
-    #[builder(default)]
+    #[builder(setter(into))]
     leave_from: String,
 
-    #[builder(default)]
+    #[builder(setter(into))]
     leave_to: String,
 
-    #[builder(default)]
+    #[builder(setter(into))]
     children: String,
 }
 
