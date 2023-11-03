@@ -65,7 +65,7 @@ impl ToTokens for HtmlElementStruct {
                 #[builder(default)]
                 data: std::collections::HashMap<&'static str, String>,
 
-                #[builder(default=String::from("div"))]
+                #[builder(setter(into), default=String::from("div"))]
                 tag: String,
             }
         };
@@ -79,6 +79,7 @@ impl ToTokens for HtmlElementStruct {
 
         tokens.extend(quote! {
             #[props]
+            #[derive(Clone)]
             #item
         });
 

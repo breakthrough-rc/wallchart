@@ -34,7 +34,7 @@ pub fn Transition(props: TransitionProps) -> String {
         <HtmlElement
             tag=props.tag
             class={format!("hidden {}", props.class)}
-            component_name="Transition".into()
+            component_name="Transition"
             data=HashMap::from([
                 ("yc-control", "transition".into()),
                 ("transition-enter", props.enter),

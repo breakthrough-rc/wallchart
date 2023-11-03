@@ -1,16 +1,15 @@
 use super::opt_attrs::{opt_attr, opt_attrs};
-use crate::html_attrs;
 use rscx::{component, props};
 use std::collections::HashMap;
+use web_macros::*;
 
-html_attrs! {
-    pub struct HtmlElementProps {
-        #[builder(default)]
-        children: String,
+#[html_element]
+pub struct HtmlElementProps {
+    #[builder(default)]
+    children: String,
 
-        #[builder(default=String::from("HtmlElement"))]
-        component_name: String,
-    }
+    #[builder(setter(into), default=String::from("HtmlElement"))]
+    component_name: String,
 }
 
 #[component]
@@ -61,7 +60,7 @@ mod tests {
     #[tokio::test]
     async fn test_with_tag_set() {
         let html = html! {
-            <HtmlElement tag="button".into() />
+            <HtmlElement tag="button" />
         };
 
         assert_eq!(
@@ -73,7 +72,7 @@ mod tests {
     #[tokio::test]
     async fn test_with_children() {
         let html = html! {
-            <HtmlElement tag="button".into()>
+            <HtmlElement tag="button">
                 <p>Paragraph text.</p>
             </HtmlElement>
         };
@@ -88,7 +87,7 @@ mod tests {
     async fn test_with_data_attributes() {
         let html = html! {
             <HtmlElement
-                tag="button".into()
+                tag="button"
                 data=HashMap::from([("foo", "baz".into())])
             >
                 <h1>Header text.</h1>
@@ -110,19 +109,21 @@ mod tests {
         // Then pass the right of the props, omitting `class`.
         let built_props = HtmlElementProps::builder();
         let outer_props = built_props
-            .id("set-id".into())
-            .role("set-role".into())
-            .class("THIS_CLASS_SHOULD_BE_OMITTED".into())
+            .id("set-id")
+            .role("set-role")
+            .class("THIS_CLASS_SHOULD_BE_OMITTED")
             .build();
 
         let html = html! {
             <HtmlElement
-                class="hard-coded-class".into()
+                class="hard-coded-class"
                 attrs=Attrs::from(outer_props).omit(vec!["class"])
             >
                 What an awesome element!
             </HtmlElement>
         };
+
+        println!("{}", html);
 
         assert!(
             html.contains("class=\"hard-coded-class\""),

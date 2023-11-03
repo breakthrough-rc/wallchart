@@ -3,8 +3,7 @@ use crate::page::PageLayout;
 use axum::{response::Html, routing::get, Router};
 use http::HeaderMap;
 use rscx::{component, html, props};
-use web_client::html_attrs;
-use web_client::server::html_element::HtmlElement;
+use web_client::{html_attrs, server::html_element::HtmlElement};
 
 pub fn routes() -> Router {
     Router::new()
@@ -17,9 +16,9 @@ pub fn routes() -> Router {
 fn FooButton() -> String {
     html! {
         <HtmlElement
-            tag="button".into()
-            class="bg-slate-200 ml-4 p-3 rounded-full".into()
-            id="btn-foo".into()
+            tag="button"
+            class="bg-slate-200 ml-4 p-3 rounded-full"
+            id="btn-foo"
         >
             A button rendered w/ HTMLElement. Click for more foo!
         </HtmlElement>
@@ -39,10 +38,10 @@ struct MessageButtonProps {
 fn MessageButton(props: MessageButtonProps) -> String {
     html! {
         <HtmlElement
-            tag="button".into()
-            id="btn-alert".into()
-            class="bg-slate-200 ml-4 p-3 rounded-full".into()
-            onclick={format!("alert('{}')", props.message).into()}
+            tag="button"
+            id="btn-alert"
+            class="bg-slate-200 ml-4 p-3 rounded-full"
+            onclick={format!("alert('{}')", props.message)}
         >
             {props.children}
         </HtmlElement>
