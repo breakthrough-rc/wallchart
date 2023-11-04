@@ -21,6 +21,15 @@ impl Attrs {
 
         hashmap
     }
+    pub fn set(&self, key: &'static str, value: String) -> Self {
+        let mut values = self.values.clone();
+        values.insert(key, value);
+
+        Self {
+            values,
+            omit: self.omit.clone(),
+        }
+    }
     pub fn get(&self, key: &'static str) -> Option<&String> {
         if self.omit.contains(&key) {
             return None;

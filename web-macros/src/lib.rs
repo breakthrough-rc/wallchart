@@ -93,6 +93,11 @@ impl ToTokens for HtmlElementStruct {
                         map.insert(#attr_keys, web_client::concat_attribute(&self.#attr_idents, self.attrs.get(#attr_keys)));
                     )*
 
+                    // Check for special case html attributes that are not part of HtmlElementProps
+                    if let Some(for_input) = self.attrs.get("for") {
+                        map.insert("for", for_input.to_string());
+                    }
+
                     map
                 }
             }
