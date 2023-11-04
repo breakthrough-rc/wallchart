@@ -1,11 +1,10 @@
 use axum::{
     response::{Html, Redirect},
-    routing::{delete, get},
+    routing::get,
     Router,
 };
 use http::StatusCode;
 use page::PageLayout;
-use pages::wallchart::get_wallchart_page;
 //##PLOP USE RESOURCE HOOK##
 use components::not_found_message::NotFoundMessage;
 use resources::workers::workers_routes;
