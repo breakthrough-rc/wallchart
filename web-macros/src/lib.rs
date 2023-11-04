@@ -6,7 +6,7 @@ use syn::{
     FieldsNamed, Ident, ItemStruct, Token,
 };
 
-const ATTRS_LEN: usize = 7;
+const ATTRS_LEN: usize = 9;
 const HTML_ELEMENT_ATTRS: [&str; ATTRS_LEN] = [
     "id",
     "class",
@@ -15,6 +15,8 @@ const HTML_ELEMENT_ATTRS: [&str; ATTRS_LEN] = [
     "aria-orientation",
     "aria-labelledby",
     "tabindex",
+    "name",
+    "autocomplete",
 ];
 
 #[proc_macro_attribute]
@@ -97,6 +99,9 @@ impl ToTokens for HtmlElementStruct {
                     if let Some(for_input) = self.attrs.get("for") {
                         map.insert("for", for_input.to_string());
                     }
+                    if let Some(for_input) = self.attrs.get("type") {
+                        map.insert("type", for_input.to_string());
+                    }                    
 
                     map
                 }
