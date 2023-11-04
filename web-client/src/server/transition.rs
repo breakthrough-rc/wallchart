@@ -1,4 +1,3 @@
-#![allow(unused_braces)]
 use super::html_element::HtmlElement;
 use rscx::{component, html, props};
 use std::collections::HashMap;
@@ -33,7 +32,7 @@ pub fn Transition(props: TransitionProps) -> String {
     html! {
         <HtmlElement
             tag=props.tag
-            class={format!("hidden {}", props.class)}
+            class=format!("hidden {}", props.class)
             component_name="Transition"
             data=HashMap::from([
                 ("yc-control", "transition".into()),

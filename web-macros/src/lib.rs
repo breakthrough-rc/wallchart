@@ -128,7 +128,7 @@ impl Parse for AttrsSpread {
         input.parse::<Token![|]>()?;
         let omit: Expr = input.parse()?;
 
-        if let Expr::Call(syn::ExprCall { func, args, .. }) = omit {
+        if let Expr::Call(syn::ExprCall { func: _, args, .. }) = omit {
             Ok(AttrsSpread { props, omit: args })
         } else {
             panic!("Expected omit call in macro!");

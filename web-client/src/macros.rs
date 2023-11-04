@@ -11,6 +11,7 @@ macro_rules! html_attrs {
     ($pub:vis struct $name:ident { $(#[$x:meta] $fpub:vis $field:ident : $type:ty,)* }) => {
         #[props]
         #[derive(Clone)]
+        #[allow(dead_code)]
         $pub struct $name {
             #[builder(default)]
             id: String,
