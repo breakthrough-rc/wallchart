@@ -2,11 +2,22 @@ use crate::state::WebHtmxState;
 use axum::{
     extract::{self, State},
     response::IntoResponse,
+    routing::delete,
+    Router,
 };
 use http::StatusCode;
 use worksite_service::remove_worker_from_shift::RemoveWorkerFromShiftInput;
 
-pub async fn delete_worker_from_shift(
+pub fn worksite_routes(state: WebHtmxState) -> Router {
+    Router::new()
+        .route(
+            "/worksites/:worksite_id/locations/:location_id/shifts/:shift_id/workers/:worker_id",
+            delete(delete_worker_from_shift),
+        )
+        .with_state(state)
+}
+
+async fn delete_worker_from_shift(
     extract::Path((worksite_id, location_id, shift_id, worker_id)): extract::Path<(
         String,
         String,

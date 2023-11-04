@@ -9,7 +9,7 @@ use pages::wallchart::get_wallchart_page;
 //##PLOP USE RESOURCE HOOK##
 use components::not_found_message::NotFoundMessage;
 use resources::workers::workers_routes;
-use resources::worksite::delete_worker_from_shift;
+use resources::worksite::worksite_routes;
 use rscx::html;
 use state::WebHtmxState;
 use web_client::routes as client_routes;
@@ -26,12 +26,9 @@ pub fn routes(state: WebHtmxState) -> Router {
     Router::new()
         .route("/", get(Redirect::temporary("/playground")))
         .route("/wallchart", get(get_wallchart_page))
-        .route(
-            "/worksites/:worksite_id/locations/:location_id/shifts/:shift_id/workers/:worker_id",
-            delete(delete_worker_from_shift),
-        )
         .nest_service("/client", client_routes())
         .with_state(state.clone())
+        .merge(worksite_routes(state.clone()))
         .merge(workers_routes(state))
         .merge(playground::routes())
         .fallback(fallback)
