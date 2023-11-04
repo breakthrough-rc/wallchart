@@ -3,7 +3,7 @@ use proc_macro2::Span;
 use quote::{quote, ToTokens};
 use syn::{
     parse::Parse, parse_macro_input, punctuated::Punctuated, token::Comma, Expr, Fields,
-    FieldsNamed, Ident, ItemStruct, Token,
+    FieldsNamed, Ident, ItemStruct, Token, ExprCall,
 };
 
 const ATTRS_LEN: usize = 9;
@@ -128,47 +128,46 @@ fn create_attr_idents() -> [syn::Ident; ATTRS_LEN] {
 #[derive(Debug)]
 struct AttrsSpread {
     props: Ident,
-    omit: Punctuated<Expr, Comma>,
+    transforms: Vec<ExprCall>,
 }
 
 impl Parse for AttrsSpread {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+        let mut transforms: Vec<ExprCall> = Vec::new();
+
         let props: Ident = input.parse()?;
 
-        input.parse::<Token![|]>()?;
-        let omit: Expr = input.parse()?;
+        while !input.is_empty() { 
+            input.parse::<Token![|]>()?;
 
-        if let Expr::Call(syn::ExprCall { func: _, args, .. }) = omit {
-            Ok(AttrsSpread { props, omit: args })
-        } else {
-            panic!("Expected omit call in macro!");
+            let call: ExprCall = input.parse()?;
+            transforms.push(call);
         }
+
+        Ok(AttrsSpread { props, transforms })
     }
+}
+
+// Right now we only support omit transform in spread_attr!
+enum Transformer {
+    Omit(Punctuated<Expr, Comma>),
 }
 
 #[proc_macro]
 pub fn spread_attrs(input: TokenStream) -> TokenStream {
     let ast = syn::parse_macro_input!(input as AttrsSpread);
-    let AttrsSpread { props, omit } = ast;
+    let AttrsSpread { props, transforms } = ast;
 
     let mut attr_keys = HTML_ELEMENT_ATTRS.clone().to_vec();
     let mut attr_idents = create_attr_idents().to_vec();
 
-    for field in omit {
-        match field {
-            Expr::Path(path) => {
-                let ident = path.path.get_ident().unwrap();
-                if !HTML_ELEMENT_ATTRS.contains(&ident.to_string().replace("_", "-").as_str()) {
-                    panic!(
-                        "Cannot omit field {}. It doesn't exit in HtmlElementProps.",
-                        ident
-                    );
-                }
-                attr_keys.retain(|f| f != &ident.to_string());
-                attr_idents.retain(|f| f.to_string() != ident.to_string());
-            }
-            _ => (),
-        }
+    for syn::ExprCall { func, args, .. } in transforms {
+        let transform = match *func  {
+            Expr::Path(path) if path.path.is_ident("omit") => Transformer::Omit(args),
+            _ => panic!("Expected a pipe transform. Example: omit(field, ..)"),
+        };
+
+        transform_attrs(transform, &mut attr_keys, &mut attr_idents);
     }
 
     let gen = quote! {
@@ -183,4 +182,24 @@ pub fn spread_attrs(input: TokenStream) -> TokenStream {
     };
 
     gen.into()
+}
+
+fn transform_attrs(transform: Transformer, attr_keys: &mut Vec<&str>, attr_idents: &mut Vec<Ident>) {
+    match transform {
+        Transformer::Omit(args) => {
+            for arg in args {
+                if let Expr::Path(path) = arg {
+                    let ident = path.path.get_ident().unwrap();
+                    if !HTML_ELEMENT_ATTRS.contains(&ident.to_string().replace("_", "-").as_str()) {
+                        panic!(
+                            "Cannot omit field {}. It doesn't exit in HtmlElementProps.",
+                            ident,
+                        );
+                    }
+                    attr_keys.retain(|f| f != &ident.to_string());
+                    attr_idents.retain(|f| f.to_string() != ident.to_string());
+                }
+            }
+        },
+    }
 }
