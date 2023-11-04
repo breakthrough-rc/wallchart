@@ -25,7 +25,6 @@ pub mod state;
 pub fn routes(state: WebHtmxState) -> Router {
     Router::new()
         .route("/", get(Redirect::temporary("/playground")))
-        .route("/wallchart", get(get_wallchart_page))
         .nest_service("/client", client_routes())
         .with_state(state.clone())
         .merge(worksite_routes(state.clone()))
