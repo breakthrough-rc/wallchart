@@ -116,6 +116,7 @@ impl WorksiteRepository for DieselWorksiteRepository {
                 Event::ShiftAssigned {
                     shift_id,
                     worker_id,
+                    location_id,
                 } => todo!(),
 
                 Event::ShiftUnassigned {

@@ -3,7 +3,7 @@ use std::sync::Arc;
 use async_trait::async_trait;
 use nonempty::NonEmpty;
 use tokio::sync::RwLock;
-use worksite_service::models::{Event, Location, Worksite};
+use worksite_service::models::{Event, Location, Worker, Worksite};
 use worksite_service::ports::worksite_repository::{RepositoryFailure, WorksiteRepository};
 
 #[derive(Clone, Debug)]
@@ -73,12 +73,28 @@ fn apply_event(worksite: Worksite, event: &Event) -> Worksite {
             name,
         } => todo!(),
 
-        Event::WorkerCreated { id, name } => todo!(),
+        Event::WorkerCreated { id, name } => {
+            // TODO! Properly apply WorkerCreated event.
+            ignore
+        }
 
         Event::ShiftAssigned {
             shift_id,
             worker_id,
-        } => todo!(),
+            location_id,
+        } => {
+            // TODO! Properly store woker in `WorkerCreated`.
+            let worker = Worker {
+                id: worker_id.to_owned(),
+                name: "Baul Pouzakis".to_string(),
+                last_assessment: None,
+                tags: vec![],
+            };
+
+            let (state, _) =
+                worksite.assign_worker(worker, shift_id.to_owned(), location_id.to_owned());
+            state
+        }
 
         Event::ShiftUnassigned {
             shift_id,

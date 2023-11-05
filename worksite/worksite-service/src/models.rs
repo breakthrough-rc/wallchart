@@ -12,7 +12,7 @@ impl Worksite {
         &self,
         worker: Worker,
         shift_id: String,
-        _: String,
+        location_id: String,
     ) -> (Worksite, NonEmpty<Event>) {
         let mut updated_worksite = self.clone();
 
@@ -36,7 +36,8 @@ impl Worksite {
                 },
                 Event::ShiftAssigned {
                     shift_id,
-                    worker_id: worker_id.clone()
+                    worker_id: worker_id.clone(),
+                    location_id,
                 }
             ],
         )
@@ -129,6 +130,7 @@ pub enum Event {
     ShiftAssigned {
         shift_id: String,
         worker_id: String,
+        location_id: String,
     },
     ShiftUnassigned {
         shift_id: String,
