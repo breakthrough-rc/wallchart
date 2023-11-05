@@ -5,7 +5,7 @@ use crate::{
     assign_worker::{AssignWorker, AssignWorkerInput, AssignWorkerOutput},
     get_worksite::{GetWorksite, GetWorksiteFailure, GetWorksiteInput},
     models::Worksite,
-    ports::worksite_repository::{self, WorksiteRepository},
+    ports::worksite_repository::WorksiteRepository,
     remove_worker_from_shift::{
         RemoveWorkerFromShift, RemoveWorkerFromShiftFailure, RemoveWorkerFromShiftInput,
     },
@@ -23,7 +23,7 @@ impl WorksiteService {
     pub fn new(worksite_repository: Arc<dyn WorksiteRepository>) -> Self {
         Self {
             //##PLOP INSERT COMMAND INSTANTIATION HOOK##
-            assign_worker: AssignWorker {},
+            assign_worker: AssignWorker::new(worksite_repository.clone()),
             get_worksite: GetWorksite {
                 worksite_repository: worksite_repository.clone(),
             },

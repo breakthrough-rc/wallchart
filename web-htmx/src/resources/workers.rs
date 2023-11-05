@@ -1,13 +1,15 @@
-use crate::{page::PageLayout, state::WebHtmxState};
+use crate::{page::PageLayout, resources::worksite, state::WebHtmxState};
 use axum::{
     extract::{self, State},
     response::{Html, IntoResponse},
     routing::get,
     Form, Router,
 };
+use http::StatusCode;
 use rscx::html;
 use serde::Deserialize;
 use web_client::server::form::{Button, CellSpan, GridCell, GridLayout, Label, Select, TextInput};
+use worksite_service::assign_worker::AssignWorkerInput;
 
 pub fn workers_routes(state: WebHtmxState) -> Router {
     Router::new()
@@ -106,7 +108,23 @@ async fn post_worker(
 
     println!("add_worker: {:?}", form);
 
-    Html(html! {
-        <div>Hi</div>
-    })
+    worksite_service
+        .assign_worker(AssignWorkerInput {
+            id: wallchart_id,
+            location_id,
+            shift_id,
+            first_name: form.first_name,
+            last_name: form.last_name,
+            street_address: form.street_address,
+            city: form.city,
+            region: form.region,
+            postal_code: form.postal_code,
+        })
+        .await
+        .expect("Failed to assign worker");
+
+    (
+        StatusCode::OK,
+        [("hx-redirect", "/wallchart"), ("hx-retarget", "body")],
+    )
 }

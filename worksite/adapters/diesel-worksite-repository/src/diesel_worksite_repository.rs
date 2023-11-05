@@ -156,10 +156,10 @@ fn to_worksite(
                             .map(|worker| worksite_service::models::Worker {
                                 id: worker.id,
                                 name: worker.first_name + " " + &worker.last_name,
-                                last_assessment: Assessment {
+                                last_assessment: Some(Assessment {
                                     id: "1".to_string(),
                                     value: 5,
-                                },
+                                }),
                                 tags: vec![],
                             })
                             .collect();

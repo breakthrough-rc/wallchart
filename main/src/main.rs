@@ -24,10 +24,10 @@ async fn main() {
                         Worker {
                             id: "1".into(),
                             name: "Jim Halpert".into(),
-                            last_assessment: Assessment {
+                            last_assessment: Some(Assessment {
                                 id: "1".into(),
                                 value: 1,
-                            },
+                            }),
                             tags: vec![
                                 Tag {
                                     id: "1".into(),
@@ -49,10 +49,10 @@ async fn main() {
                         Worker {
                             id: "2".into(),
                             name: "Pam Beesly".into(),
-                            last_assessment: Assessment {
+                            last_assessment: Some(Assessment {
                                 id: "2".into(),
                                 value: 2,
-                            },
+                            }),
                             tags: vec![
                                 Tag {
                                     id: "1".into(),
@@ -74,10 +74,10 @@ async fn main() {
                         Worker {
                             id: "3".into(),
                             name: "Dwight Schrute".into(),
-                            last_assessment: Assessment {
+                            last_assessment: Some(Assessment {
                                 id: "3".into(),
                                 value: 4,
-                            },
+                            }),
                             tags: vec![Tag {
                                 id: "3".into(),
                                 name: "Listened to Rancid".into(),
@@ -98,10 +98,10 @@ async fn main() {
                             Worker {
                                 id: "4".into(),
                                 name: "Darryl Philbin".into(),
-                                last_assessment: Assessment {
+                                last_assessment: Some(Assessment {
                                     id: "4".into(),
                                     value: 1,
-                                },
+                                }),
                                 tags: vec![
                                     Tag {
                                         id: "2".into(),
@@ -118,10 +118,10 @@ async fn main() {
                             Worker {
                                 id: "5".into(),
                                 name: "Nate Nickerson".into(),
-                                last_assessment: Assessment {
+                                last_assessment: Some(Assessment {
                                     id: "5".into(),
                                     value: 3,
-                                },
+                                }),
                                 tags: vec![Tag {
                                     id: "1".into(),
                                     name: "Baked a cake".into(),
@@ -137,10 +137,10 @@ async fn main() {
                             Worker {
                                 id: "6".into(),
                                 name: "Roy Anderson".into(),
-                                last_assessment: Assessment {
+                                last_assessment: Some(Assessment {
                                     id: "3".into(),
                                     value: 3,
-                                },
+                                }),
                                 tags: vec![
                                     Tag {
                                         id: "2".into(),
@@ -157,10 +157,10 @@ async fn main() {
                             Worker {
                                 id: "7".into(),
                                 name: "Val johnson".into(),
-                                last_assessment: Assessment {
+                                last_assessment: Some(Assessment {
                                     id: "7".into(),
                                     value: 2,
-                                },
+                                }),
                                 tags: vec![
                                     Tag {
                                         id: "1".into(),

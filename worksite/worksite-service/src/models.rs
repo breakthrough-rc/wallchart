@@ -8,6 +8,40 @@ pub struct Worksite {
 }
 
 impl Worksite {
+    pub fn assign_worker(
+        &self,
+        worker: Worker,
+        shift_id: String,
+        _: String,
+    ) -> (Worksite, NonEmpty<Event>) {
+        let mut updated_worksite = self.clone();
+
+        updated_worksite.locations.iter_mut().for_each(|location| {
+            location.shifts.iter_mut().for_each(|shift| {
+                if shift.id == shift_id {
+                    shift.workers.push(worker.clone())
+                }
+            })
+        });
+
+        let worker_id = worker.id;
+
+        // TODO! Reconsider the name of the event.
+        (
+            updated_worksite,
+            nonempty![
+                Event::WorkerCreated {
+                    id: worker_id,
+                    name: worker.name,
+                },
+                Event::ShiftAssigned {
+                    shift_id,
+                    worker_id: worker_id.clone()
+                }
+            ],
+        )
+    }
+
     /**
      * Removes the given worker from the given shift.
      *
@@ -56,7 +90,7 @@ pub struct Shift {
 pub struct Worker {
     pub id: String,
     pub name: String,
-    pub last_assessment: Assessment,
+    pub last_assessment: Option<Assessment>,
     pub tags: Vec<Tag>,
 }
 
