@@ -22,7 +22,9 @@ pub fn workers_routes(state: WebHtmxState) -> Router {
 
 async fn get_worker_form(
     extract::Path((wallchart_id, location_id, shift_id)): extract::Path<(String, String, String)>,
-    State(WebHtmxState { worksite_service }): State<WebHtmxState>,
+    State(WebHtmxState {
+        worksite_service, ..
+    }): State<WebHtmxState>,
 ) -> impl IntoResponse {
     Html(html! {
         <PageLayout title="Add Worker">
@@ -97,7 +99,9 @@ struct AddWorkerForm {
 }
 
 async fn post_worker(
-    State(WebHtmxState { worksite_service }): State<WebHtmxState>,
+    State(WebHtmxState {
+        worksite_service, ..
+    }): State<WebHtmxState>,
     extract::Path((wallchart_id, location_id, shift_id)): extract::Path<(String, String, String)>,
     Form(form): Form<AddWorkerForm>,
 ) -> impl IntoResponse {

@@ -191,6 +191,7 @@ async fn main() {
     // Create WebHtmxState
     let web_htmx_state = WebHtmxState {
         worksite_service: Arc::new(worksite_service),
+        flash_config: axum_flash::Config::new(axum_flash::Key::generate()),
     };
 
     let app = Router::new()

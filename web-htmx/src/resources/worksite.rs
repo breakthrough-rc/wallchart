@@ -23,7 +23,9 @@ pub fn worksite_routes(state: WebHtmxState) -> Router {
 }
 
 async fn get_wallchart_page(
-    State(WebHtmxState { worksite_service }): State<WebHtmxState>,
+    State(WebHtmxState {
+        worksite_service, ..
+    }): State<WebHtmxState>,
 ) -> Html<String> {
     let worksite = worksite_service
         .get_worksite(GetWorksiteInput {
@@ -50,7 +52,9 @@ async fn delete_worker_from_shift(
         String,
         String,
     )>,
-    State(WebHtmxState { worksite_service }): State<WebHtmxState>,
+    State(WebHtmxState {
+        worksite_service, ..
+    }): State<WebHtmxState>,
 ) -> impl IntoResponse {
     println!(
         "Delete worker: {} from shift: {}, from worksite: {} in location: {}",
