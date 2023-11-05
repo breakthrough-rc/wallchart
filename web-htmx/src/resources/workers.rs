@@ -7,7 +7,7 @@ use axum::{
 };
 use rscx::html;
 use serde::Deserialize;
-use web_client::server::form::{Button, Label, TextInput};
+use web_client::server::form::{Button, CellSpan, GridCell, GridLayout, Label, Select, TextInput};
 
 pub fn workers_routes(state: WebHtmxState) -> Router {
     Router::new()
@@ -29,60 +29,51 @@ async fn get_worker_form(
                     <p class="mt-1 text-sm leading-6 text-gray-600">
                         "Please enter the worker's information."
                     </p>
-                    <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                        <div class="sm:col-span-3">
-                            <Label for_input="first_name">First name</Label>
-                            <div class="mt-2">
-                                <TextInput name="first_name" autocomplete="given-name" />
-                            </div>
-                        </div>
-                        <div class="sm:col-span-3">
+                    <GridLayout class="mt-10">
+                        <GridCell span=3>
+                            <Label for_input="last_name">First name</Label>
+                            <TextInput name="first_name" autocomplete="given-name" />
+                        </GridCell>
+
+                        <GridCell span=3>
                             <Label for_input="last_name">Last name</Label>
-                            <div class="mt-2">
-                                <TextInput name="last_name" autocomplete="family-name" />
-                            </div>
-                        </div>
-                        <div class="sm:col-span-4">
+                            <TextInput name="last_name" autocomplete="family-name" />
+                        </GridCell>
+
+                        <GridCell span=4>
                             <Label for_input="email">Email address</Label>
-                            <div class="mt-2">
-                                <TextInput input_type="email" name="email" autocomplete="email" />
-                            </div>
-                        </div>
-                        <div class="sm:col-span-3">
+                            <TextInput input_type="email" name="email" autocomplete="email" />
+                        </GridCell>
+
+                        <GridCell span=3>
                             <Label for_input="country">Country</Label>
-                            <div class="mt-2">
-                                <select id="country" name="country" autocomplete="country-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
-                                    <option default>United States</option>
-                                    <option>Canada</option>
-                                    <option>Mexico</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-span-full">
+                            <Select id="country" name="country" autocomplete="country-name">
+                                <option default>United States</option>
+                                <option>Canada</option>
+                                <option>Mexico</option>
+                            </Select>
+                        </GridCell>
+
+                        <GridCell span=CellSpan::Full>
                             <Label for_input="street_address">Street address</Label>
-                            <div class="mt-2">
-                                <TextInput name="street_address" autocomplete="street-address" />
-                            </div>
-                        </div>
-                        <div class="sm:col-span-2 sm:col-start-1">
+                            <TextInput name="street_address" autocomplete="street-address" />
+                        </GridCell>
+
+                        <GridCell span=2 start=1>
                             <Label for_input="city">City</Label>
-                            <div class="mt-2">
-                                <TextInput name="city" autocomplete="address-level2" />
-                            </div>
-                        </div>
-                        <div class="sm:col-span-2">
+                            <TextInput name="city" autocomplete="address-level2" />
+                        </GridCell>
+
+                        <GridCell span=2>
                             <Label for_input="region">State</Label>
-                            <div class="mt-2">
-                                <TextInput name="region" autocomplete="address-level1" />
-                            </div>
-                        </div>
-                        <div class="sm:col-span-2">
+                            <TextInput name="region" autocomplete="address-level1" />
+                        </GridCell>
+
+                        <GridCell span=2>
                             <Label for_input="postal_code">Zip Code</Label>
-                            <div class="mt-2">
-                                <TextInput name="postal_code" autocomplete="postal-code" />
-                            </div>
-                        </div>
-                    </div>
+                            <TextInput name="postal_code" autocomplete="postal-code" />
+                        </GridCell>
+                    </GridLayout>
                 </div>
                 <div class="mt-6 flex items-center justify-end gap-x-6">
                     <Button onclick="history.go(-1)">Cancel</Button>
