@@ -16,7 +16,6 @@ use web_client::routes as client_routes;
 pub mod components;
 pub mod livereload;
 pub mod page;
-pub mod pages;
 pub mod playground;
 pub mod resources;
 pub mod state;
