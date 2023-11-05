@@ -41,6 +41,25 @@ pub fn Label(props: LabelProps) -> String {
 }
 
 #[html_element]
+pub struct SelectProps {
+    children: String,
+}
+
+#[component]
+pub fn Select(props: SelectProps) -> String {
+    html! {
+        <HtmlElement
+            tag="select"
+            id=props.name.clone()
+            class=format!("block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6 {}", props.class).trim()
+            attrs=spread_attrs!(props | omit(id, class))
+        >
+            {props.children}
+        </HtmlElement>
+    }
+}
+
+#[html_element]
 pub struct ButtonProps {
     #[builder(setter(into), default="button".into())]
     kind: String,
@@ -58,8 +77,89 @@ pub fn Button(props: ButtonProps) -> String {
     html! {
         <HtmlElement
             tag="button"
-            class=css
+            class=format!("{} {}", css, props.class).trim()
             attrs=spread_attrs!(props | omit(class, name)).set("type", button_type)
+        >
+            {props.children}
+        </HtmlElement>
+    }
+}
+
+// FormLayouts ////////////////////////////////////////////////
+
+#[html_element]
+pub struct GridLayoutProps {
+    children: String,
+}
+
+#[component]
+pub fn GridLayout(props: GridLayoutProps) -> String {
+    html! {
+        <HtmlElement
+            tag="div"
+            class=format!("grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 {}", props.class).trim()
+            attrs=spread_attrs!(props | omit(class))
+        >
+            {props.children}
+        </HtmlElement>
+    }
+}
+
+#[derive(Clone)]
+pub enum CellSpan {
+    Size(usize),
+    Full,
+}
+
+impl From<usize> for CellSpan {
+    fn from(size: usize) -> Self {
+        CellSpan::Size(size)
+    }
+}
+
+#[html_element]
+pub struct GridCellProps {
+    children: String,
+
+    #[builder(setter(into), default=CellSpan::Full)]
+    span: CellSpan,
+
+    #[builder(default = 0)]
+    start: usize,
+}
+
+#[component]
+pub fn GridCell(props: GridCellProps) -> String {
+    html! {
+        <HtmlElement
+            tag="div"
+            class={
+                let mut classes = Vec::new();
+
+                // For now hardcode this layout of cells (col w/ .5rem gap)
+                // If we have other cell layouts, we can create new enum
+                classes.push("flex flex-col gap-2".to_string());
+
+                classes.push(match props.span {
+                    // generates classes (for tailwind) in tailwind.config.js safelist
+                    CellSpan::Size(size) => format!("sm:col-span-{}", size),
+                    CellSpan::Full => "sm:col-span-full".to_string(),
+                });
+
+                if props.start > 0 {
+                    // generates classes (for tailwind) in tailwind.config.js safelist
+                    // sm:col-start-1, sm:col-start-2, sm:col-start-3
+                    // sm:col-start-4, sm:col-start-5, sm:col-start-6
+                    classes.push(format!("sm:col-start-{}", props.start));
+                }
+
+                if !props.class.is_empty() {
+                    classes.push(props.class);
+                }
+
+                classes.join(" ")
+            }
+            attrs=spread_attrs!(props | omit(class))
         >
             {props.children}
         </HtmlElement>
