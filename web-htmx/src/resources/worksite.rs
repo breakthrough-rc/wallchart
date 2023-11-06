@@ -8,7 +8,7 @@ use axum::{
 };
 use axum_flash::IncomingFlashes;
 use http::StatusCode;
-use rscx::{html, CollectFragment};
+use rscx::html;
 use web_client::server::notification::NotificationFlashes;
 use worksite_service::{
     get_worksite::GetWorksiteInput, remove_worker_from_shift::RemoveWorkerFromShiftInput,
@@ -29,7 +29,7 @@ async fn get_wallchart_page(
     State(WebHtmxState {
         worksite_service, ..
     }): State<WebHtmxState>,
-) -> Html<String> {
+) -> impl IntoResponse {
     let worksite = worksite_service
         .get_worksite(GetWorksiteInput {
             id: "1".to_string(),
@@ -39,14 +39,16 @@ async fn get_wallchart_page(
         .ok_or("Worksite not found")
         .unwrap();
 
-    Html(html! {
+    let html = html! {
         <PageLayout title="Wallchart">
-            <NotificationFlashes flashes=flashes />
+            <NotificationFlashes flashes=flashes.clone() />
             <div class="my-4">
                 <Wallchart worksite=worksite/>
             </div>
         </PageLayout>
-    })
+    };
+
+    (flashes, Html(html))
 }
 
 async fn delete_worker_from_shift(
