@@ -180,6 +180,7 @@ fn to_worksite(
                 }
             })
             .collect(),
+        workers: vec![], // TODO - Implement instantiating worksite workers in diesel worksite repo.
     };
     worksite
 }

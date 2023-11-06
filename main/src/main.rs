@@ -184,6 +184,7 @@ async fn main() {
                 ],
             },
         ],
+        workers: vec![],
     };
     let worksite_repository = Arc::new(InMemoryWorksiteRepository::with(vec![worksite]));
     let worksite_service = WorksiteService::new(worksite_repository);

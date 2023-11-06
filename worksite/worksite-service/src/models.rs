@@ -5,6 +5,7 @@ pub struct Worksite {
     pub id: String,
     pub name: String,
     pub locations: Vec<Location>,
+    pub workers: Vec<Worker>,
 }
 
 impl Worksite {

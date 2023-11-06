@@ -126,6 +126,7 @@ fn get_or_create_worksite(
                         id: id.to_owned(),
                         name: name.to_owned(),
                         locations: vec![],
+                        workers: vec![],
                     },
                     events
                         .iter()
