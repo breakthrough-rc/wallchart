@@ -77,8 +77,8 @@ const Notifications = {
     if (!tpl) throw new Error("Can not show ErrorNotification. Element with id `tpl-error-notification` not found.");
 
     const notification = tpl.content.cloneNode(true) as HTMLElement;
-    const messageElement = notification.querySelector("[data-error-message]");
-    if (!messageElement) throw new Error("Could not find element with attribute `data-error-message` in template.");
+    const messageElement = notification.querySelector("[data-notification-message]");
+    if (!messageElement) throw new Error("Could not find element with attribute `data-notification-message` in template.");
 
     messageElement.textContent = request.message || "Unknown error";
     return Notifications.appendNotification(notification);

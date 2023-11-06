@@ -144,19 +144,27 @@ pub fn PlaygroundPgContent() -> String {
             </marquee>
             <section class="py-8">
                 <h2 class="text-xl font-bold">Click some buttons</h2>
-                <button
-                    class="bg-slate-200 p-3 rounded-full"
-                    hx-get="/htmx"
-                    hx-swap="outerHTML"
-                >
-                    Click me!
-                </button>
-                <button
-                    class="bg-slate-200 ml-4 p-3 rounded-full"
-                    onclick="YcControls.showErrorNotification('This is an error notification.')"
-                >
-                    Show Error Notification
-                </button>
+                <div class="flex gap-2">
+                    <button
+                        class="bg-slate-200 p-3 rounded-full"
+                        hx-get="/htmx"
+                        hx-swap="outerHTML"
+                    >
+                        Click me!
+                    </button>
+                    <button
+                        class="bg-slate-200 p-3 rounded-full"
+                        onclick="YcControls.showSuccessNotification('Success feels so good!')"
+                    >
+                        Show Success Notification
+                    </button>
+                    <button
+                        class="bg-slate-200 p-3 rounded-full"
+                        onclick="YcControls.showErrorNotification('This is an error notification.')"
+                    >
+                        Show Error Notification
+                    </button>
+                </div>
             </section>
             <HtmlElementPlayground />
         </Welcome>
