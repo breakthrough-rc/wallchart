@@ -6,8 +6,10 @@ use axum::{
     routing::{delete, get},
     Router,
 };
+use axum_flash::IncomingFlashes;
 use http::StatusCode;
-use rscx::html;
+use rscx::{html, CollectFragment};
+use web_client::server::notification::NotificationFlashes;
 use worksite_service::{
     get_worksite::GetWorksiteInput, remove_worker_from_shift::RemoveWorkerFromShiftInput,
 };
@@ -23,6 +25,7 @@ pub fn worksite_routes(state: WebHtmxState) -> Router {
 }
 
 async fn get_wallchart_page(
+    flashes: IncomingFlashes,
     State(WebHtmxState {
         worksite_service, ..
     }): State<WebHtmxState>,
@@ -38,6 +41,7 @@ async fn get_wallchart_page(
 
     Html(html! {
         <PageLayout title="Wallchart">
+            <NotificationFlashes flashes=flashes />
             <div class="my-4">
                 <Wallchart worksite=worksite/>
             </div>

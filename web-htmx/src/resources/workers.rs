@@ -5,6 +5,7 @@ use axum::{
     routing::get,
     Form, Router,
 };
+use axum_flash::Flash;
 use http::StatusCode;
 use rscx::html;
 use serde::Deserialize;
@@ -22,9 +23,7 @@ pub fn workers_routes(state: WebHtmxState) -> Router {
 
 async fn get_worker_form(
     extract::Path((wallchart_id, location_id, shift_id)): extract::Path<(String, String, String)>,
-    State(WebHtmxState {
-        worksite_service, ..
-    }): State<WebHtmxState>,
+    State(WebHtmxState { .. }): State<WebHtmxState>,
 ) -> impl IntoResponse {
     Html(html! {
         <PageLayout title="Add Worker">
@@ -102,6 +101,7 @@ async fn post_worker(
     State(WebHtmxState {
         worksite_service, ..
     }): State<WebHtmxState>,
+    flash: Flash,
     extract::Path((wallchart_id, location_id, shift_id)): extract::Path<(String, String, String)>,
     Form(form): Form<AddWorkerForm>,
 ) -> impl IntoResponse {
@@ -129,6 +129,7 @@ async fn post_worker(
 
     (
         StatusCode::OK,
+        flash.success("Worker added successfully!"),
         [("hx-redirect", "/wallchart"), ("hx-retarget", "body")],
     )
 }
