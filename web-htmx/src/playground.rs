@@ -87,6 +87,29 @@ fn HtmlElementPlayground() -> String {
     }
 }
 
+#[component]
+fn NotificationsPlayground() -> String {
+    html! {
+        <section class="py-8">
+            <h2 class="text-xl font-bold">Notifications Playground</h2>
+            <div class="flex gap-2">
+                <button
+                    class="bg-slate-200 p-3 rounded-full"
+                    onclick="YcControls.showSuccessNotification('Success feels so good!')"
+                >
+                    Show Success Notification
+                </button>
+                <button
+                    class="bg-slate-200 p-3 rounded-full"
+                    onclick="YcControls.showErrorNotification('This is an error notification.')"
+                >
+                    Show Error Notification
+                </button>
+            </div>
+        </section>
+    }
+}
+
 #[props]
 struct WelcomeProps {
     #[builder(setter(into), default = "Welcome!".to_string())]
@@ -143,7 +166,7 @@ pub fn PlaygroundPgContent() -> String {
                 "I didn't think so!"
             </marquee>
             <section class="py-8">
-                <h2 class="text-xl font-bold">Click some buttons</h2>
+                <h2 class="text-xl font-bold">HTMX Rendering</h2>
                 <div class="flex gap-2">
                     <button
                         class="bg-slate-200 p-3 rounded-full"
@@ -152,20 +175,9 @@ pub fn PlaygroundPgContent() -> String {
                     >
                         Click me!
                     </button>
-                    <button
-                        class="bg-slate-200 p-3 rounded-full"
-                        onclick="YcControls.showSuccessNotification('Success feels so good!')"
-                    >
-                        Show Success Notification
-                    </button>
-                    <button
-                        class="bg-slate-200 p-3 rounded-full"
-                        onclick="YcControls.showErrorNotification('This is an error notification.')"
-                    >
-                        Show Error Notification
-                    </button>
                 </div>
             </section>
+            <NotificationsPlayground />
             <HtmlElementPlayground />
         </Welcome>
     }

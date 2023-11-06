@@ -2,21 +2,22 @@ import events from "../events";
 import { ControlRegistry } from "../registery";
 import Toggle from "./Toggle";
 
-type SuccessNotificationRequest = {
-  kind: 'SUCCESS',
+type NotificationRequest = {
+  kind: 'SUCCESS' | 'ERROR' | 'GENERIC',
   message: string,
 };
 
-type ErrorNotificationRequest = {
-  kind: 'ERROR',
-  message: string,
-};
+let showFromTemplate = (tplSelector: string) => async (request: NotificationRequest) => {
+  const tpl = document.querySelector(tplSelector) as HTMLTemplateElement;
+  if (!tpl) throw new Error(`Can not show Notification. Element selector "${tplSelector}" not found.`);
 
-type GenericNotificationRequest = {
-  kind: 'GENERIC',
-};
+  const notification = tpl.content.cloneNode(true) as HTMLElement;
+  const messageElement = notification.querySelector("[data-notification-message]");
+  if (!messageElement) throw new Error("Could not find element with attribute `data-notification-message` in template.");
 
-type NotificationRequest = SuccessNotificationRequest | ErrorNotificationRequest | GenericNotificationRequest;
+  messageElement.textContent = request.message || "Everything is all good!";
+  return Notifications.appendNotification(notification);
+};
 
 const Notifications = {
   get region(): HTMLElement {
@@ -60,29 +61,8 @@ const Notifications = {
     return await toggle.open();
   },
 
-  async showSuccess(request: SuccessNotificationRequest) {
-    const tpl = document.getElementById("tpl-success-notification") as HTMLTemplateElement;
-    if (!tpl) throw new Error("Can not show SuccessNotification. Element with id `tpl-success-notification` not found.");
-
-    const notification = tpl.content.cloneNode(true) as HTMLElement;
-    const messageElement = notification.querySelector("[data-notification-message]");
-    if (!messageElement) throw new Error("Could not find element with attribute `data-notification-message` in template.");
-
-    messageElement.textContent = request.message || "Everything is all good!";
-    return Notifications.appendNotification(notification);
-  },
-
-  async showError(request: ErrorNotificationRequest) {
-    const tpl = document.getElementById("tpl-error-notification") as HTMLTemplateElement;
-    if (!tpl) throw new Error("Can not show ErrorNotification. Element with id `tpl-error-notification` not found.");
-
-    const notification = tpl.content.cloneNode(true) as HTMLElement;
-    const messageElement = notification.querySelector("[data-notification-message]");
-    if (!messageElement) throw new Error("Could not find element with attribute `data-notification-message` in template.");
-
-    messageElement.textContent = request.message || "Unknown error";
-    return Notifications.appendNotification(notification);
-  },
+  showSuccess: showFromTemplate("#tpl-success-notification"),
+  showError: showFromTemplate("#tpl-error-notification"),
 };
 
 function init(registry: ControlRegistry) {
