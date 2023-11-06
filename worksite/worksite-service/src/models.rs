@@ -9,6 +9,25 @@ pub struct Worksite {
 }
 
 impl Worksite {
+    pub fn get_worker(&self, worker_id: String) -> Option<Worker> {
+        self.workers.iter().find(|w| w.id == worker_id).cloned()
+    }
+
+    pub fn add_worker(&self, worker: Worker) -> (Worksite, NonEmpty<Event>) {
+        let mut updated_worksite = self.clone();
+
+        updated_worksite.workers.push(worker.clone());
+
+        (
+            updated_worksite,
+            nonempty![Event::WorkerCreated {
+                id: worker.id,
+                name: worker.name,
+            }],
+        )
+    }
+
+    // TODO! Should assign_worker take an owned worker?
     pub fn assign_worker(
         &self,
         worker: Worker,
@@ -30,17 +49,11 @@ impl Worksite {
         // TODO! Reconsider the name of the event.
         (
             updated_worksite,
-            nonempty![
-                Event::WorkerCreated {
-                    id: worker_id,
-                    name: worker.name,
-                },
-                Event::ShiftAssigned {
-                    shift_id,
-                    worker_id: worker_id.clone(),
-                    location_id,
-                }
-            ],
+            nonempty![Event::ShiftAssigned {
+                shift_id,
+                worker_id: worker_id.clone(),
+                location_id,
+            }],
         )
     }
 

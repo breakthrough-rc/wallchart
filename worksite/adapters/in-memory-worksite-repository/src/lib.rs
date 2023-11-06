@@ -74,8 +74,15 @@ fn apply_event(worksite: Worksite, event: &Event) -> Worksite {
         } => todo!(),
 
         Event::WorkerCreated { id, name } => {
-            // TODO! Properly apply WorkerCreated event.
-            ignore
+            let worker = Worker {
+                id: id.to_owned(),
+                name: name.to_owned(),
+                last_assessment: None,
+                tags: vec![],
+            };
+
+            let (state, _) = worksite.add_worker(worker);
+            state
         }
 
         Event::ShiftAssigned {
@@ -83,13 +90,7 @@ fn apply_event(worksite: Worksite, event: &Event) -> Worksite {
             worker_id,
             location_id,
         } => {
-            // TODO! Properly store woker in `WorkerCreated`.
-            let worker = Worker {
-                id: worker_id.to_owned(),
-                name: "Baul Pouzakis".to_string(),
-                last_assessment: None,
-                tags: vec![],
-            };
+            let worker = worksite.get_worker(worker_id.to_owned()).unwrap();
 
             let (state, _) =
                 worksite.assign_worker(worker, shift_id.to_owned(), location_id.to_owned());

@@ -1,9 +1,13 @@
 use std::sync::Arc;
 
+use nonempty::NonEmpty;
 use thiserror::Error;
 
 // Example repo dependency
-use crate::{models::Worker, ports::worksite_repository::WorksiteRepository};
+use crate::{
+    models::{Event, Worker},
+    ports::worksite_repository::WorksiteRepository,
+};
 
 #[derive(Clone)]
 pub struct AssignWorker {
@@ -59,7 +63,18 @@ impl AssignWorker {
             ..
         } = input;
 
-        let (_, events) = worksite.assign_worker(worker, shift_id, location_id);
+        let events = {
+            // TODO! Reconsider assumption that assigning worker to shit, also comes with creating new worker.
+            let (_, add_worker_events) = worksite.add_worker(worker.clone());
+            let (_, assign_worker_events) = worksite.assign_worker(worker, shift_id, location_id);
+
+            let events: Vec<Event> = add_worker_events
+                .into_iter()
+                .chain(assign_worker_events.into_iter())
+                .collect();
+
+            NonEmpty::from_vec(events).unwrap()
+        };
 
         self.worksite_repository
             .save(worksite.id.clone(), events)
