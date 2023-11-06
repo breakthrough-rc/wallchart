@@ -2,6 +2,11 @@ import events from "../events";
 import { ControlRegistry } from "../registery";
 import Toggle from "./Toggle";
 
+type SuccessNotificationRequest = {
+  kind: 'SUCCESS',
+  message: string,
+};
+
 type ErrorNotificationRequest = {
   kind: 'ERROR',
   message: string,
@@ -11,7 +16,7 @@ type GenericNotificationRequest = {
   kind: 'GENERIC',
 };
 
-type NotificationRequest = ErrorNotificationRequest | GenericNotificationRequest;
+type NotificationRequest = SuccessNotificationRequest | ErrorNotificationRequest | GenericNotificationRequest;
 
 const Notifications = {
   get region(): HTMLElement {
@@ -29,6 +34,9 @@ const Notifications = {
   init() {
     events.on("yc:notificationRequest", (request: NotificationRequest) => {
       switch (request.kind) {
+        case "SUCCESS":
+          Notifications.showSuccess(request);
+          break;
         case "ERROR":
           Notifications.showError(request);
           break;
@@ -52,6 +60,18 @@ const Notifications = {
     return await toggle.open();
   },
 
+  async showSuccess(request: SuccessNotificationRequest) {
+    const tpl = document.getElementById("tpl-success-notification") as HTMLTemplateElement;
+    if (!tpl) throw new Error("Can not show SuccessNotification. Element with id `tpl-success-notification` not found.");
+
+    const notification = tpl.content.cloneNode(true) as HTMLElement;
+    const messageElement = notification.querySelector("[data-notification-message]");
+    if (!messageElement) throw new Error("Could not find element with attribute `data-notification-message` in template.");
+
+    messageElement.textContent = request.message || "Everything is all good!";
+    return Notifications.appendNotification(notification);
+  },
+
   async showError(request: ErrorNotificationRequest) {
     const tpl = document.getElementById("tpl-error-notification") as HTMLTemplateElement;
     if (!tpl) throw new Error("Can not show ErrorNotification. Element with id `tpl-error-notification` not found.");
@@ -69,6 +89,12 @@ function init(registry: ControlRegistry) {
   Notifications.init();
 
   registry.registerGlobalApi({
+    showSuccessNotification(message: string) {
+      Notifications.showSuccess({
+        kind: "SUCCESS",
+        message,
+      });
+    },
     showErrorNotification(message: string) {
       Notifications.showError({
         kind: "ERROR",
