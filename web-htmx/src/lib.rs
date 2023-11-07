@@ -27,7 +27,7 @@ pub fn routes(state: WebHtmxState) -> Router {
         .with_state(state.clone())
         .merge(worksite_routes(state.clone()))
         .merge(workers_routes(state))
-        .merge(playground::routes())
+        .nest("/playground", playground::routes())
         .fallback(fallback)
     //##PLOP MERGE ROUTE HOOK##
 }

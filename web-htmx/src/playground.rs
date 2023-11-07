@@ -7,7 +7,7 @@ use web_client::{html_attrs, server::html_element::HtmlElement};
 
 pub fn routes() -> Router {
     Router::new()
-        .route("/playground", get(get_playground))
+        .route("/", get(get_playground))
         .route("/test-render", get(get_test_render))
         .route("/htmx", get(htmx_test))
 }
@@ -92,24 +92,25 @@ fn NotificationsPlayground() -> String {
     html! {
         <section class="py-8">
             <h2 class="text-xl font-bold">Notifications Playground</h2>
+            <p><em>Click a button below to show a toast notification.</em></p>
             <div class="flex gap-2">
                 <button
                     class="bg-slate-200 p-3 rounded-full"
                     onclick="YcControls.showSuccessNotification('Success feels so good!')"
                 >
-                    Show Success Notification
+                    Show Success
                 </button>
                 <button
                     class="bg-slate-200 p-3 rounded-full"
                     onclick="YcControls.showErrorNotification('This is an error notification.')"
                 >
-                    Show Error Notification
+                    Show Error
                 </button>
                 <button
                     class="bg-slate-200 p-3 rounded-full"
                     onclick="YcControls.showNotification('This just in', 'You are still not done!')"
                 >
-                    Show Generic Notification
+                    Show Generic
                 </button>
             </div>
         </section>
@@ -142,7 +143,7 @@ fn PartialRenderTest() -> String {
                 <li>
                     <a
                         class="text-blue-600 hover:underline"
-                        href="/test-render"
+                        href="/playground/test-render"
                     >
                         "Goto a full page render."
                     </a>
@@ -150,7 +151,7 @@ fn PartialRenderTest() -> String {
                 <li>
                     <a
                         class="text-blue-600 hover:underline"
-                        hx-get="/test-render"
+                        hx-get="/playground/test-render"
                         hx-target=".partial-rendered-content"
                     >
                         "See a partial render."
@@ -176,7 +177,7 @@ pub fn PlaygroundPgContent() -> String {
                 <div class="flex gap-2">
                     <button
                         class="bg-slate-200 p-3 rounded-full"
-                        hx-get="/htmx"
+                        hx-get="/playground/htmx"
                         hx-swap="outerHTML"
                     >
                         Click me!
@@ -185,6 +186,7 @@ pub fn PlaygroundPgContent() -> String {
             </section>
             <NotificationsPlayground />
             <HtmlElementPlayground />
+            <PartialRenderTest />
         </Welcome>
     }
 }
@@ -210,10 +212,10 @@ async fn get_test_render(headers: HeaderMap) -> Html<String> {
             partial=headers.contains_key("Hx-Request")
         >
             <section>
-                <h1>"Test Render"</h1>
+                <h1>Test Render</h1>
                 <p>
-                    "If you are viewing this page at the url `/test-render`
-                    you should see the full render (header and footer)."
+                    "If you are viewing this page at the url `test-render`
+                    you should see the full render (header and footer)"
                 </p>
                 <p>
                     "If this is being pulled in from an htmx request
