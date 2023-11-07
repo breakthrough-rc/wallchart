@@ -4,18 +4,33 @@ import Toggle from "./Toggle";
 
 type NotificationRequest = {
   kind: 'SUCCESS' | 'ERROR' | 'GENERIC',
+  title?: string,
   message: string,
 };
 
-let showFromTemplate = (tplSelector: string) => async (request: NotificationRequest) => {
+type RenderDelegate = {
+  notificationWillAppend?: (notificationEl: HTMLElement, request: NotificationRequest) => void,
+};
+
+const nullDelegate: RenderDelegate = {};
+
+let showFromTemplate = (tplSelector: string, delegate: RenderDelegate = nullDelegate) => async (request: NotificationRequest) => {
   const tpl = document.querySelector(tplSelector) as HTMLTemplateElement;
   if (!tpl) throw new Error(`Can not show Notification. Element selector "${tplSelector}" not found.`);
 
   const notification = tpl.content.cloneNode(true) as HTMLElement;
+
+  if (request.title) {
+    const titleElement = notification.querySelector("[data-notification-title]");
+    if (!titleElement) throw new Error("Could not find element with attribute `data-notification-title` in template.");
+    titleElement.textContent = request.title;
+  }
+
   const messageElement = notification.querySelector("[data-notification-message]");
   if (!messageElement) throw new Error("Could not find element with attribute `data-notification-message` in template.");
-
   messageElement.textContent = request.message || "Everything is all good!";
+
+  delegate.notificationWillAppend?.(notification, request);
   return Notifications.appendNotification(notification);
 };
 
@@ -61,6 +76,20 @@ const Notifications = {
     return await toggle.open();
   },
 
+  show: showFromTemplate("#tpl-success-notification", {
+    notificationWillAppend(notification: HTMLElement) {
+      const tpl = document.querySelector("#tpl-notification-icons") as HTMLTemplateElement;
+      if (!tpl) throw new Error("Could not find element with selector `#tpl-notification-icons` in template.");
+      const iconsTemplate = tpl.content.cloneNode(true) as HTMLElement;
+
+      const infoIcon = iconsTemplate.querySelector("[data-notification-icon=info]");
+      if (!infoIcon) throw new Error("Could not find element with attribute `data-notification-icon=info` in template.");
+
+      const iconElement = notification.querySelector("[data-notification-icon]");
+      if (!iconElement) throw new Error("Could not find element with attribute `data-notification-icon` in template.");
+      iconElement.replaceWith(infoIcon);
+    }
+  }),
   showSuccess: showFromTemplate("#tpl-success-notification"),
   showError: showFromTemplate("#tpl-error-notification"),
 };
@@ -69,6 +98,13 @@ function init(registry: ControlRegistry) {
   Notifications.init();
 
   registry.registerGlobalApi({
+    showNotification(title: string, message: string, icon?: string | HTMLElement) {
+      Notifications.show({
+        kind: "GENERIC",
+        title,
+        message,
+      });
+    },
     showSuccessNotification(message: string) {
       Notifications.showSuccess({
         kind: "SUCCESS",

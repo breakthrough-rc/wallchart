@@ -14,6 +14,10 @@ pub(crate) fn NotificationLiveRegion() -> String {
             <template id="tpl-success-notification">
                 <SuccessNotification />
             </template>
+            <template id="tpl-notification-icons">
+                <NotificationIcon svg=IconSvg::Info/>
+                // Add any additional prerendered icons here.
+            </template>
         </div>
     }
 }
@@ -50,8 +54,8 @@ fn Notification(props: NotificationProps) -> String {
                 </div>
 
                 <div class="ml-3 w-0 flex-1 pt-0.5">
-                    <p class="text-sm font-medium text-gray-900">{props.title}</p>
-                    <p class="mt-1 text-sm text-gray-500" data-notification-message></p>
+                    <p class="text-sm font-medium text-gray-900" data-notification-title>{props.title}</p>
+                    <p class="mt-1 text-sm text-gray-500" data-notification-message>{props.message}</p>
                 </div>
                 <div class="ml-4 flex flex-shrink-0">
                     <button type="button" data-toggle-action="close" data-notification-close class="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
@@ -80,6 +84,7 @@ pub fn SuccessNotification() -> String {
 pub enum IconSvg {
     Success,
     Error,
+    Info,
     Custom(String),
 }
 
@@ -98,13 +103,18 @@ struct NotificationIconProps {
 fn NotificationIcon(props: NotificationIconProps) -> String {
     match props.svg {
         IconSvg::Success => html! {
-            <svg class="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+            <svg class="h-6 w-6 text-green-400" data-notification-icon="success" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
         },
         IconSvg::Error => html! {
-            <svg class="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+            <svg class="h-6 w-6 text-red-400" data-notification-icon="error" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        },
+        IconSvg::Info => html! {
+            <svg class="h-6 w-6 text-blue-400" data-notification-icon="info" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
             </svg>
         },
         IconSvg::Custom(svg) => svg,

@@ -105,6 +105,12 @@ fn NotificationsPlayground() -> String {
                 >
                     Show Error Notification
                 </button>
+                <button
+                    class="bg-slate-200 p-3 rounded-full"
+                    onclick="YcControls.showNotification('This just in', 'You are still not done!')"
+                >
+                    Show Generic Notification
+                </button>
             </div>
         </section>
     }
