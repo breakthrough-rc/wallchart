@@ -18,7 +18,7 @@ type ShowDelegate = {
 
 const nullDelegate: ShowDelegate = {};
 
-let renderAndAttach = async ({ title, message, ...delegate }: NotificationCommand & ShowDelegate) => {
+let renderStandardTemplate = async ({ title, message, ...delegate }: NotificationCommand & ShowDelegate) => {
   const tpl = document.querySelector("#tpl-notification") as HTMLTemplateElement;
   if (!tpl) throw new Error(`Can not show Notification. Element selector "#tpl-notification" not found.`);
 
@@ -86,9 +86,9 @@ const Notifications = {
     return await toggle.open();
   },
 
-  show: (title: string, message: string) => renderAndAttach({ title, message }),
+  show: (title: string, message: string) => renderStandardTemplate({ title, message }),
 
-  showSuccess: (message: string) => renderAndAttach({
+  showSuccess: (message: string) => renderStandardTemplate({
     title: "Success!",
     message,
     provideIconElement() {
@@ -103,7 +103,7 @@ const Notifications = {
     },
   }),
 
-  showError: (message: string) => renderAndAttach({
+  showError: (message: string) => renderStandardTemplate({
     title: "Oops! Something went wrong",
     message,
     provideIconElement() {
