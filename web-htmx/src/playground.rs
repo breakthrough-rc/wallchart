@@ -223,8 +223,8 @@ async fn ex_business_logic() -> Html<String> {
         .subsec_nanos();
 
     Html(html! {
-        {format!("Action complete ({})!", nanos)}
-        <NotificationPresenter call=NotificationCall::Success("Server side validated!".into()) />
+        {format!("Action complete. Result: {}!", nanos)}
+        <NotificationPresenter call=NotificationCall::Success(format!("Server side validated! Answer is {}", nanos)) />
     })
 }
 
