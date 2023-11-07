@@ -11,14 +11,14 @@ type NotificationCommand = {
   message: string,
 }
 
-type ShowDelegate = {
-  provideIconElement?: () => Element | undefined,
+type RenderTemplateDelegate = {
+  iconElement?: Element | undefined,
   notificationWillAppend?: (notificationEl: HTMLElement) => void,
 };
 
-const nullDelegate: ShowDelegate = {};
+const nullDelegate: RenderTemplateDelegate = {};
 
-let renderStandardTemplate = async ({ title, message, ...delegate }: NotificationCommand & ShowDelegate) => {
+function renderStandardTemplate({ title, message, ...delegate }: NotificationCommand & RenderTemplateDelegate) {
   const tpl = document.querySelector("#tpl-notification") as HTMLTemplateElement;
   if (!tpl) throw new Error(`Can not show Notification. Element selector "#tpl-notification" not found.`);
 
@@ -32,16 +32,26 @@ let renderStandardTemplate = async ({ title, message, ...delegate }: Notificatio
   if (!messageElement) throw new Error("Could not find element with attribute `data-notification-message` in template.");
   messageElement.textContent = message || "Everything is all good!";
 
-  const providedIconElement = delegate.provideIconElement?.();
-  if (providedIconElement) {
+  if (delegate.iconElement) {
     const defaultIconElement = notification.querySelector("[data-notification-icon]");
     if (!defaultIconElement) throw new Error("Could not find element with attribute `data-notification-icon` in template.");
-    defaultIconElement.replaceWith(providedIconElement);
+    defaultIconElement.replaceWith(delegate.iconElement);
   }
 
   delegate.notificationWillAppend?.(notification);
   return Notifications.appendNotification(notification);
 };
+
+function iconFromTemplate(iconKey: "success" | "error" | "info") {
+  const tpl = document.querySelector("#tpl-notification-icons") as HTMLTemplateElement;
+  if (!tpl) throw new Error("Could not find element with selector `#tpl-notification-icons`.");
+
+  const iconsTemplate = tpl.content.cloneNode(true) as HTMLElement;
+
+  const iconElement = iconsTemplate.querySelector(`[data-notification-icon=${iconKey}]`);
+  if (!iconElement) throw new Error("Could not find element with selector: `[data-notification-icon=${iconKey}]`.");
+  return iconElement;
+}
 
 const Notifications = {
   get region(): HTMLElement {
@@ -91,31 +101,13 @@ const Notifications = {
   showSuccess: (message: string) => renderStandardTemplate({
     title: "Success!",
     message,
-    provideIconElement() {
-      const tpl = document.querySelector("#tpl-notification-icons") as HTMLTemplateElement;
-      if (!tpl) throw new Error("Could not find element with selector `#tpl-notification-icons` in template.");
-
-      const iconsTemplate = tpl.content.cloneNode(true) as HTMLElement;
-
-      const infoIcon = iconsTemplate.querySelector("[data-notification-icon=success]");
-      if (!infoIcon) throw new Error("Could not find element with attribute `data-notification-icon=success` in template.");
-      return infoIcon;
-    },
+    iconElement: iconFromTemplate("success"),
   }),
 
   showError: (message: string) => renderStandardTemplate({
     title: "Oops! Something went wrong",
     message,
-    provideIconElement() {
-      const tpl = document.querySelector("#tpl-notification-icons") as HTMLTemplateElement;
-      if (!tpl) throw new Error("Could not find element with selector `#tpl-notification-icons` in template.");
-
-      const iconsTemplate = tpl.content.cloneNode(true) as HTMLElement;
-
-      const infoIcon = iconsTemplate.querySelector("[data-notification-icon=error]");
-      if (!infoIcon) throw new Error("Could not find element with attribute `data-notification-icon=success` in template.");
-      return infoIcon;
-    },
+    iconElement: iconFromTemplate("error"),
   }),
 };
 
