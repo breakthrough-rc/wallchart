@@ -1,5 +1,6 @@
 use crate::components::appshell::AppShell;
 use rscx::{component, html, props};
+use web_client::server::notification::NotificationLiveRegion;
 use web_client::HtmlLayout;
 
 #[props]
@@ -38,6 +39,7 @@ pub fn PageLayout(props: PageLayoutProps) -> String {
                     {props.children}
                 </main>
             </AppShell>
+            <NotificationLiveRegion />
             <script>{
                 "
                 htmx.on('htmx:sendError', function() {

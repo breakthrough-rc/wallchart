@@ -2,7 +2,7 @@ use super::transition::Transition;
 use rscx::{component, html, props, CollectFragment};
 
 #[component]
-pub(crate) fn NotificationLiveRegion() -> String {
+pub fn NotificationLiveRegion() -> String {
     html! {
         <div id="notification-live-region" aria-live="assertive" class="pointer-events-none fixed inset-0 flex items-end px-4 py-6 sm:items-start sm:p-6">
             <section class="flex w-full flex-col items-center space-y-4 sm:items-end">
