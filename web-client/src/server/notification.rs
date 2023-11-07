@@ -8,13 +8,12 @@ pub(crate) fn NotificationLiveRegion() -> String {
             <section class="flex w-full flex-col items-center space-y-4 sm:items-end">
             </section>
 
-            <template id="tpl-error-notification">
-                <ErrorNotification />
-            </template>
-            <template id="tpl-success-notification">
-                <SuccessNotification />
+            <template id="tpl-notification">
+                <Notification icon_svg=IconSvg::Info />
             </template>
             <template id="tpl-notification-icons">
+                <NotificationIcon svg=IconSvg::Success/>
+                <NotificationIcon svg=IconSvg::Error/>
                 <NotificationIcon svg=IconSvg::Info/>
                 // Add any additional prerendered icons here.
             </template>
@@ -24,7 +23,7 @@ pub(crate) fn NotificationLiveRegion() -> String {
 
 #[props]
 struct NotificationProps {
-    #[builder(setter(into))]
+    #[builder(setter(into), default="Notification".to_string())]
     title: String,
 
     #[builder(setter(into), default)]

@@ -9,13 +9,14 @@ type NotificationRequest = {
 };
 
 type RenderDelegate = {
+  provideIconElement?: (request: NotificationRequest) => Element | undefined,
   notificationWillAppend?: (notificationEl: HTMLElement, request: NotificationRequest) => void,
 };
 
 const nullDelegate: RenderDelegate = {};
 
-let showFromTemplate = (tplSelector: string, delegate: RenderDelegate = nullDelegate) => async (request: NotificationRequest) => {
-  const tpl = document.querySelector(tplSelector) as HTMLTemplateElement;
+let showFromTemplate = (delegate: RenderDelegate = nullDelegate) => async (request: NotificationRequest) => {
+  const tpl = document.querySelector("#tpl-notification") as HTMLTemplateElement;
   if (!tpl) throw new Error(`Can not show Notification. Element selector "${tplSelector}" not found.`);
 
   const notification = tpl.content.cloneNode(true) as HTMLElement;
@@ -29,6 +30,13 @@ let showFromTemplate = (tplSelector: string, delegate: RenderDelegate = nullDele
   const messageElement = notification.querySelector("[data-notification-message]");
   if (!messageElement) throw new Error("Could not find element with attribute `data-notification-message` in template.");
   messageElement.textContent = request.message || "Everything is all good!";
+
+  const providedIconElement = delegate.provideIconElement?.(request);
+  if (providedIconElement) {
+    const defaultIconElement = notification.querySelector("[data-notification-icon]");
+    if (!defaultIconElement) throw new Error("Could not find element with attribute `data-notification-icon` in template.");
+    defaultIconElement.replaceWith(providedIconElement);
+  }
 
   delegate.notificationWillAppend?.(notification, request);
   return Notifications.appendNotification(notification);
@@ -76,22 +84,31 @@ const Notifications = {
     return await toggle.open();
   },
 
-  show: showFromTemplate("#tpl-success-notification", {
-    notificationWillAppend(notification: HTMLElement) {
+  show: showFromTemplate(),
+  showSuccess: showFromTemplate({
+    provideIconElement(_: NotificationRequest) {
       const tpl = document.querySelector("#tpl-notification-icons") as HTMLTemplateElement;
       if (!tpl) throw new Error("Could not find element with selector `#tpl-notification-icons` in template.");
+
       const iconsTemplate = tpl.content.cloneNode(true) as HTMLElement;
 
-      const infoIcon = iconsTemplate.querySelector("[data-notification-icon=info]");
-      if (!infoIcon) throw new Error("Could not find element with attribute `data-notification-icon=info` in template.");
-
-      const iconElement = notification.querySelector("[data-notification-icon]");
-      if (!iconElement) throw new Error("Could not find element with attribute `data-notification-icon` in template.");
-      iconElement.replaceWith(infoIcon);
-    }
+      const infoIcon = iconsTemplate.querySelector("[data-notification-icon=success]");
+      if (!infoIcon) throw new Error("Could not find element with attribute `data-notification-icon=success` in template.");
+      return infoIcon;
+    },
   }),
-  showSuccess: showFromTemplate("#tpl-success-notification"),
-  showError: showFromTemplate("#tpl-error-notification"),
+  showError: showFromTemplate({
+    provideIconElement(_: NotificationRequest) {
+      const tpl = document.querySelector("#tpl-notification-icons") as HTMLTemplateElement;
+      if (!tpl) throw new Error("Could not find element with selector `#tpl-notification-icons` in template.");
+
+      const iconsTemplate = tpl.content.cloneNode(true) as HTMLElement;
+
+      const infoIcon = iconsTemplate.querySelector("[data-notification-icon=error]");
+      if (!infoIcon) throw new Error("Could not find element with attribute `data-notification-icon=success` in template.");
+      return infoIcon;
+    },
+  }),
 };
 
 function init(registry: ControlRegistry) {
@@ -108,12 +125,14 @@ function init(registry: ControlRegistry) {
     showSuccessNotification(message: string) {
       Notifications.showSuccess({
         kind: "SUCCESS",
+        title: "Success",
         message,
       });
     },
     showErrorNotification(message: string) {
       Notifications.showError({
         kind: "ERROR",
+        title: "Oops! Somethingn went wrong",
         message,
       });
     },
