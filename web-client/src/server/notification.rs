@@ -1,5 +1,6 @@
 use super::transition::Transition;
-use rscx::{component, html, props, CollectFragment};
+use super::yc_control::YcControlJsApi;
+use rscx::{component, html, props, CollectFragmentAsync};
 
 #[component]
 pub fn NotificationLiveRegion() -> String {
@@ -140,7 +141,7 @@ pub fn NotificationFlashes(props: NotificationFlashesProps) -> String {
     props
         .flashes
         .into_iter()
-        .map(|(level, message)| {
+        .map(|(level, message)| async move {
             let js_notification_fn = match level {
                 axum_flash::Level::Success => "showSuccessNotification",
                 axum_flash::Level::Error => "showErrorNotification",
@@ -150,18 +151,9 @@ pub fn NotificationFlashes(props: NotificationFlashesProps) -> String {
             let message = serde_json::to_string(&message).unwrap();
 
             html! {
-                <script>
-                    {format!(
-                        r#"
-                        addEventListener("DOMContentLoaded", (event) => {{
-                            YcControls.{}({});
-                        }});
-                        "#,
-                        js_notification_fn,
-                        message)
-                    }
-                </script>
+                <YcControlJsApi call=format!("{}({})", js_notification_fn, message) />
             }
         })
-        .collect_fragment()
+        .collect_fragment_async()
+        .await
 }

@@ -41,7 +41,11 @@ pub fn HtmlLayout(props: HtmlLayoutProps) -> String {
                         attachOnReadyQueue: [],
                         attach: function(element) {
                             this.attachOnReadyQueue.push(element);
-                        }
+                        },
+                        onReadyQueue: [],
+                        onReady: function(onReadyHandler) {
+                            this.onReadyQueue.push(onReadyHandler);
+                        },
                     };"
                 }</script>
                 {props.head_links}

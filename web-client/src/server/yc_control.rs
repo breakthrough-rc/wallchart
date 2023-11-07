@@ -23,7 +23,7 @@ pub fn YcControl(props: YcControlProps) -> String {
             attrs=Attrs::from(original_props)
         >
             {props.children}
-            <script>"YcControls.attach(document.currentScript.parentElement)"</script>
+            <script>"YcControls.attach(document.currentScript.parentElement);"</script>
         </HtmlElement>
     }
 }
@@ -46,5 +46,27 @@ pub fn Toggle(props: ToggleProps) -> String {
         >
             {props.children}
         </YcControl>
+    }
+}
+
+#[props]
+pub struct YcControlJsApiProps {
+    #[builder(setter(into))]
+    call: String,
+}
+
+#[component]
+pub fn YcControlJsApi(props: YcControlJsApiProps) -> String {
+    html! {
+        <script>
+            {format!(
+                r#"
+                    YcControls.onReady(function() {{
+                        YcControls.{};
+                    }});
+                "#,
+                props.call,
+            )}
+        </script>
     }
 }

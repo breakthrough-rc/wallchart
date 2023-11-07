@@ -5,7 +5,6 @@ export type ControlRegistry = {
   registerControl(controlKey: string, control: any): void,
 };
 
-let attachOnReadyQueue: HTMLElement[] = [];
 let controls = new Map<string, any>();
 
 const YcControls_ = {
@@ -28,13 +27,8 @@ const YcControls_ = {
   },
 };
 
-function init() {
-  attachOnReadyQueue = global.YcControls.attachOnReadyQueue || [];
-  global.YcControls = YcControls_;
-}
-
-function ready() {
-  attachOnReadyQueue.forEach(YcControls_.attach);
+function get(controlKey: string) {
+  return controls.get(controlKey);
 }
 
 function registerControl(controlKey: string, control: any) {
@@ -49,8 +43,7 @@ function registerGlobalApi(api: any) {
 }
 
 export default {
-  init,
-  ready,
+  get,
   registerControl,
   registerGlobalApi,
 }
