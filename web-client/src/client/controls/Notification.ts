@@ -2,43 +2,44 @@ import events from "../events";
 import { ControlRegistry } from "../registery";
 import Toggle from "./Toggle";
 
-type NotificationRequest = {
-  kind: 'SUCCESS' | 'ERROR' | 'GENERIC',
-  title?: string,
+type NotificationEventDetails
+  = { kind: 'SUCCESS' | 'ERROR' | 'GENERIC' }
+  & Partial<NotificationCommand>;
+
+type NotificationCommand = {
+  title: string,
   message: string,
+}
+
+type ShowDelegate = {
+  provideIconElement?: () => Element | undefined,
+  notificationWillAppend?: (notificationEl: HTMLElement) => void,
 };
 
-type RenderDelegate = {
-  provideIconElement?: (request: NotificationRequest) => Element | undefined,
-  notificationWillAppend?: (notificationEl: HTMLElement, request: NotificationRequest) => void,
-};
+const nullDelegate: ShowDelegate = {};
 
-const nullDelegate: RenderDelegate = {};
-
-let showFromTemplate = (delegate: RenderDelegate = nullDelegate) => async (request: NotificationRequest) => {
+let renderAndAttach = async ({ title, message, ...delegate }: NotificationCommand & ShowDelegate) => {
   const tpl = document.querySelector("#tpl-notification") as HTMLTemplateElement;
-  if (!tpl) throw new Error(`Can not show Notification. Element selector "${tplSelector}" not found.`);
+  if (!tpl) throw new Error(`Can not show Notification. Element selector "#tpl-notification" not found.`);
 
   const notification = tpl.content.cloneNode(true) as HTMLElement;
 
-  if (request.title) {
-    const titleElement = notification.querySelector("[data-notification-title]");
-    if (!titleElement) throw new Error("Could not find element with attribute `data-notification-title` in template.");
-    titleElement.textContent = request.title;
-  }
+  const titleElement = notification.querySelector("[data-notification-title]");
+  if (!titleElement) throw new Error("Could not find element with attribute `data-notification-title` in template.");
+  titleElement.textContent = title;
 
   const messageElement = notification.querySelector("[data-notification-message]");
   if (!messageElement) throw new Error("Could not find element with attribute `data-notification-message` in template.");
-  messageElement.textContent = request.message || "Everything is all good!";
+  messageElement.textContent = message || "Everything is all good!";
 
-  const providedIconElement = delegate.provideIconElement?.(request);
+  const providedIconElement = delegate.provideIconElement?.();
   if (providedIconElement) {
     const defaultIconElement = notification.querySelector("[data-notification-icon]");
     if (!defaultIconElement) throw new Error("Could not find element with attribute `data-notification-icon` in template.");
     defaultIconElement.replaceWith(providedIconElement);
   }
 
-  delegate.notificationWillAppend?.(notification, request);
+  delegate.notificationWillAppend?.(notification);
   return Notifications.appendNotification(notification);
 };
 
@@ -56,16 +57,17 @@ const Notifications = {
   },
 
   init() {
-    events.on("yc:notificationRequest", (request: NotificationRequest) => {
+    events.on("yc:notificationRequest", (request: NotificationEventDetails) => {
+      const { title = "Notification", message = "", } = request;
       switch (request.kind) {
         case "SUCCESS":
-          Notifications.showSuccess(request);
+          Notifications.showSuccess(message);
           break;
         case "ERROR":
-          Notifications.showError(request);
+          Notifications.showError(message);
           break;
         case "GENERIC":
-          console.warn("Generic notification request not implemented yet.");
+          Notifications.show(title, message);
           break;
       }
     });
@@ -84,9 +86,12 @@ const Notifications = {
     return await toggle.open();
   },
 
-  show: showFromTemplate(),
-  showSuccess: showFromTemplate({
-    provideIconElement(_: NotificationRequest) {
+  show: (title: string, message: string) => renderAndAttach({ title, message }),
+
+  showSuccess: (message: string) => renderAndAttach({
+    title: "Success!",
+    message,
+    provideIconElement() {
       const tpl = document.querySelector("#tpl-notification-icons") as HTMLTemplateElement;
       if (!tpl) throw new Error("Could not find element with selector `#tpl-notification-icons` in template.");
 
@@ -97,8 +102,11 @@ const Notifications = {
       return infoIcon;
     },
   }),
-  showError: showFromTemplate({
-    provideIconElement(_: NotificationRequest) {
+
+  showError: (message: string) => renderAndAttach({
+    title: "Oops! Something went wrong",
+    message,
+    provideIconElement() {
       const tpl = document.querySelector("#tpl-notification-icons") as HTMLTemplateElement;
       if (!tpl) throw new Error("Could not find element with selector `#tpl-notification-icons` in template.");
 
@@ -115,27 +123,9 @@ function init(registry: ControlRegistry) {
   Notifications.init();
 
   registry.registerGlobalApi({
-    showNotification(title: string, message: string, icon?: string | HTMLElement) {
-      Notifications.show({
-        kind: "GENERIC",
-        title,
-        message,
-      });
-    },
-    showSuccessNotification(message: string) {
-      Notifications.showSuccess({
-        kind: "SUCCESS",
-        title: "Success",
-        message,
-      });
-    },
-    showErrorNotification(message: string) {
-      Notifications.showError({
-        kind: "ERROR",
-        title: "Oops! Somethingn went wrong",
-        message,
-      });
-    },
+    showNotification: Notifications.show,
+    showSuccessNotification: Notifications.showSuccess,
+    showErrorNotification: Notifications.showError,
   });
 }
 
