@@ -23,7 +23,7 @@ pub fn NotificationLiveRegion() -> String {
 }
 
 #[props]
-struct NotificationProps {
+pub struct NotificationProps {
     #[builder(setter(into), default="Notification".to_string())]
     title: String,
 
@@ -35,7 +35,7 @@ struct NotificationProps {
 }
 
 #[component]
-fn Notification(props: NotificationProps) -> String {
+pub fn Notification(props: NotificationProps) -> String {
     html! {
         <Transition
             class="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5"
@@ -156,4 +156,41 @@ pub fn NotificationFlashes(props: NotificationFlashesProps) -> String {
         })
         .collect_fragment_async()
         .await
+}
+
+pub enum NotificationCall {
+    Success(String),
+    Error(String),
+    Info(String, String), // title, message
+}
+
+#[props]
+pub struct NotificationPresenterProps {
+    call: NotificationCall,
+}
+
+fn js_enc<T>(data: &T) -> String
+where
+    T: ?Sized + serde::Serialize,
+{
+    serde_json::to_string::<T>(data).unwrap()
+}
+
+#[component]
+pub fn NotificationPresenter(props: NotificationPresenterProps) -> String {
+    let api_call = match props.call {
+        NotificationCall::Success(message) => {
+            format!("showSuccessNotification({})", js_enc(&message))
+        }
+        NotificationCall::Error(message) => {
+            format!("showErrorNotification({})", js_enc(&message))
+        }
+        NotificationCall::Info(title, message) => {
+            format!("showNotification({}, {})", js_enc(&title), js_enc(&message))
+        }
+    };
+
+    html! {
+        <YcControlJsApi call=api_call />
+    }
 }

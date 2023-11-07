@@ -11,6 +11,9 @@ function create(attachOnReadyQueue: HTMLElement[] = [], onReadyQueue: CallableFu
       attachOnReadyQueue.forEach(controls.attach);
       onReadyQueue.forEach(cb => cb());
     },
+    onReady(cb: CallableFunction) {
+      cb(); // At this point, YcControls is already loaded and ready, just call back.
+    },
     attach(element: HTMLElement) {
       console.log("[YcControls::attach()]", element);
       const controlKey = element.dataset.ycControl;

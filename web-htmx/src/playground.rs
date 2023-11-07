@@ -1,8 +1,14 @@
 #![allow(unused_braces)]
 use crate::page::PageLayout;
-use axum::{response::Html, routing::get, Router};
+use axum::{
+    response::Html,
+    routing::{get, post},
+    Router,
+};
 use http::HeaderMap;
 use rscx::{component, html, props};
+use std::time::{SystemTime, UNIX_EPOCH};
+use web_client::server::notification::{NotificationCall, NotificationPresenter};
 use web_client::{html_attrs, server::html_element::HtmlElement};
 
 pub fn routes() -> Router {
@@ -10,6 +16,7 @@ pub fn routes() -> Router {
         .route("/", get(get_playground))
         .route("/test-render", get(get_test_render))
         .route("/htmx", get(htmx_test))
+        .route("/ex-business-logic", post(ex_business_logic))
 }
 
 #[component]
@@ -112,6 +119,12 @@ fn NotificationsPlayground() -> String {
                 >
                     Show Generic
                 </button>
+                <button
+                    class="bg-slate-200 p-3 rounded-full"
+                    hx-post="/playground/ex-business-logic"
+                >
+                    Show ServerSide Success
+                </button>
             </div>
         </section>
     }
@@ -198,6 +211,20 @@ async fn get_playground() -> Html<String> {
         <PageLayout>
             <PlaygroundPgContent />
         </PageLayout>
+    })
+}
+
+async fn ex_business_logic() -> Html<String> {
+    // Do some business logic here...
+    // Then we will tell the client to show a success notification.
+    let nanos = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .subsec_nanos();
+
+    Html(html! {
+        {format!("Action complete ({})!", nanos)}
+        <NotificationPresenter call=NotificationCall::Success("Server side validated!".into()) />
     })
 }
 
