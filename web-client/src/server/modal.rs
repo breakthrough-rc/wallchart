@@ -3,8 +3,14 @@ use super::yc_control::YcControl;
 use rscx::{component, html, props};
 use std::collections::HashMap;
 
+#[props]
+pub struct ModalProps {
+    #[builder(setter(into))]
+    children: String,
+}
+
 #[component]
-pub fn Modal() -> String {
+pub fn Modal(props: ModalProps) -> String {
     html! {
       <YcControl
         control="modal".into()
@@ -35,7 +41,7 @@ pub fn Modal() -> String {
               leave_to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <div>
-                <h1>I am a modal</h1>
+                {props.children}
               </div>
             </Transition>
           </div>

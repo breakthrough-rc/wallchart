@@ -230,7 +230,7 @@ pub fn PlaygroundPgContent() -> String {
             title="Yall Ready for This?"
         >
             <marquee>
-                "I didn't think so!"
+                "It's The Playground&#133; Let's have some fun!"
             </marquee>
             <section class="py-8">
                 <h2 class="text-xl font-bold">HTMX Rendering</h2>
@@ -256,13 +256,15 @@ pub fn PlaygroundPgContent() -> String {
 
 async fn get_modal_one() -> Html<String> {
     Html(html! {
-        <Modal />
+        <Modal>
+            <h1>I am a very boring and simple modal!</h1>
+        </Modal>
     })
 }
 
 async fn get_playground() -> Html<String> {
     Html(html! {
-        <PageLayout>
+        <PageLayout title="Component Playground">
             <PlaygroundPgContent />
         </PageLayout>
     })
