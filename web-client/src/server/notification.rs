@@ -23,7 +23,7 @@ pub fn NotificationLiveRegion() -> String {
 }
 
 #[props]
-pub struct NotificationProps {
+struct NotificationProps {
     #[builder(setter(into), default="Notification".to_string())]
     title: String,
 
@@ -35,7 +35,7 @@ pub struct NotificationProps {
 }
 
 #[component]
-pub fn Notification(props: NotificationProps) -> String {
+fn Notification(props: NotificationProps) -> String {
     html! {
         <Transition
             class="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5"
@@ -161,11 +161,16 @@ pub enum NotificationCall {
     Success(String),
     Error(String),
     Info(String, String), // title, message
+    Template,
+    TemplateSelector(String),
 }
 
 #[props]
 pub struct NotificationPresenterProps {
     call: NotificationCall,
+
+    #[builder(default)]
+    children: String,
 }
 
 fn js_enc<T>(data: &T) -> String
@@ -187,9 +192,24 @@ pub fn NotificationPresenter(props: NotificationPresenterProps) -> String {
         NotificationCall::Info(title, message) => {
             format!("showNotification({}, {})", js_enc(&title), js_enc(&message))
         }
+        NotificationCall::TemplateSelector(templateSelector) => {
+            format!(
+                "showNotificationWithTemplate({})",
+                js_enc(&templateSelector),
+            )
+        }
+        NotificationCall::Template => {
+            if props.children.is_empty() {
+                panic!("NotificationPresenter: Template call requires children.")
+            }
+            "showNotificationWithTemplate(callerScript.nextElementSibling)".into()
+        }
     };
 
     html! {
-        <YcControlJsApi call=api_call />
+        <div class="hidden">
+            <YcControlJsApi call=api_call />
+            {props.children}
+        </div>
     }
 }

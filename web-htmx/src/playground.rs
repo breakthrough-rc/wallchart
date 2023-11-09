@@ -17,6 +17,7 @@ pub fn routes() -> Router {
         .route("/test-render", get(get_test_render))
         .route("/htmx", get(htmx_test))
         .route("/ex-business-logic", post(ex_business_logic))
+        .route("/custom-notification", get(get_custom_notification))
 }
 
 #[component]
@@ -125,6 +126,14 @@ fn NotificationsPlayground() -> String {
                 >
                     Show ServerSide Success
                 </button>
+                <button
+                    class="bg-slate-200 p-3 rounded-full"
+                    hx-get="/playground/custom-notification"
+                    hx-target="body"
+                    hx-swap="beforeend"
+                >
+                    Show Custom
+                </button>
             </div>
         </section>
     }
@@ -211,6 +220,19 @@ async fn get_playground() -> Html<String> {
         <PageLayout>
             <PlaygroundPgContent />
         </PageLayout>
+    })
+}
+
+async fn get_custom_notification() -> Html<String> {
+    Html(html! {
+        <NotificationPresenter call=NotificationCall::Template>
+            <template>
+                <div class="bg-white p-10 border">
+                    <p>This is a bad notification!</p>
+                    <button data-toggle-action="close">Close me</button>
+                </div>
+            </template>
+        </NotificationPresenter>
     })
 }
 
