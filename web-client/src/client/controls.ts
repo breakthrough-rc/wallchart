@@ -2,6 +2,7 @@ import registry from "./registery";
 import events from "./events";
 import Notifications from "./controls/Notification";
 import Toggle from "./controls/Toggle";
+import Modal from "./controls/Modal";
 
 const global = (window as any);
 
@@ -41,6 +42,7 @@ function init() {
 
   events.init(registry);
   Notifications.init(registry);
+  Modal.init(registry);
   Toggle.init(registry);
 
   YcControls.ready();

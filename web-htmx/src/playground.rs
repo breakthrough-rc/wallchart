@@ -99,6 +99,24 @@ fn HtmlElementPlayground() -> String {
 }
 
 #[component]
+fn ModalPlayground() -> String {
+    html! {
+        <section class="py-8">
+            <h2 class="text-xl font-bold">Modal Playground</h2>
+            <p><em>Open models for fun AND non-profit.</em></p>
+            <div class="flex gap-2">
+            <button
+                class="bg-slate-200 p-3 rounded-full"
+                onclick="YcControls.openModal()"
+            >
+                    Open Simple Modal
+                </button>
+            </div>
+        </section>
+    }
+}
+
+#[component]
 fn NotificationsPlayground() -> String {
     html! {
         <section class="py-8">
@@ -222,6 +240,7 @@ pub fn PlaygroundPgContent() -> String {
                 </div>
             </section>
             <NotificationsPlayground />
+            <ModalPlayground />
             <HtmlElementPlayground />
             <PartialRenderTest />
         </Welcome>
