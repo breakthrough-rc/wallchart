@@ -42,6 +42,32 @@ function renderStandardTemplate({ title, message, ...delegate }: NotificationCom
   return Notifications.appendNotification(notification);
 };
 
+function renderCustomTemplate(templateSelector: string | HTMLTemplateElement) {
+  const tpl = (() => {
+    if (typeof templateSelector === "string") {
+      const template = document.querySelector(templateSelector) as HTMLTemplateElement;
+      if (!template) throw new Error(`Could not find template with selector: ${templateSelector}`);
+
+      return template;
+
+    } else if (templateSelector instanceof HTMLTemplateElement) {
+      return templateSelector;
+
+    } else {
+      throw new Error("Invaliad argument. Expected selector string or HTMLTemplateElement.");
+    }
+  })();
+
+  const notification = tpl.content.cloneNode(true) as HTMLElement;
+
+  // Ensure notification is clickable (live-region disables pointer events)
+  if (!notification.firstElementChild?.classList.contains("pointer-events-auto")) {
+    notification.firstElementChild?.classList.add("pointer-events-auto");
+  }
+
+  return Notifications.appendNotification(notification);
+}
+
 function iconFromTemplate(iconKey: "success" | "error" | "info") {
   const tpl = document.querySelector("#tpl-notification-icons") as HTMLTemplateElement;
   if (!tpl) throw new Error("Could not find element with selector `#tpl-notification-icons`.");
@@ -118,6 +144,7 @@ function init(registry: ControlRegistry) {
     showNotification: Notifications.show,
     showSuccessNotification: Notifications.showSuccess,
     showErrorNotification: Notifications.showError,
+    showNotificationWithTemplate: renderCustomTemplate,
   });
 }
 
