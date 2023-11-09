@@ -25,7 +25,8 @@ const Toggle_ = {
       if (element.dataset.ycControl === "transition") {
         return element;
       } else {
-        return element.querySelector("[data-yc-control=transition") as HTMLElement;
+        const queriedElement = element.querySelector("[data-yc-control=transition]") as HTMLElement;
+        return queriedElement ?? element;
       }
     })();
     const transition = Transition.create(transitionElement);
