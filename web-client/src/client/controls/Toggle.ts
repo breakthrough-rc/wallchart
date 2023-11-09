@@ -1,6 +1,5 @@
 import { ControlRegistry } from "../registery";
 import Transition from "./Transition";
-import Toggle from "./Toggle";
 
 type ToggleState = "opened" | "closed";
 
