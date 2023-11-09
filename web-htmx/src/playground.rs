@@ -8,6 +8,7 @@ use axum::{
 use http::HeaderMap;
 use rscx::{component, html, props};
 use std::time::{SystemTime, UNIX_EPOCH};
+use web_client::server::modal::Modal;
 use web_client::server::notification::{
     NoticationCloseButton, NotificationCall, NotificationPresenter, NotificationTransition,
 };
@@ -21,6 +22,7 @@ pub fn routes() -> Router {
         .route("/ex-business-logic", post(ex_business_logic))
         .route("/custom-notification", get(get_custom_notification))
         .route("/custom-notification2", get(get_custom_notification2))
+        .route("/modal/one", get(get_modal_one))
 }
 
 #[component]
@@ -107,10 +109,13 @@ fn ModalPlayground() -> String {
             <div class="flex gap-2">
             <button
                 class="bg-slate-200 p-3 rounded-full"
-                onclick="YcControls.openModal()"
+                hx-get="/playground/modal/one"
+                hx-target="#modals-root"
             >
                     Open Simple Modal
                 </button>
+            </div>
+            <div id="modals-root">
             </div>
         </section>
     }
@@ -248,6 +253,12 @@ pub fn PlaygroundPgContent() -> String {
 }
 
 // ### Route Handlers ###
+
+async fn get_modal_one() -> Html<String> {
+    Html(html! {
+        <Modal />
+    })
+}
 
 async fn get_playground() -> Html<String> {
     Html(html! {
