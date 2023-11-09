@@ -162,7 +162,7 @@ struct ProfileDropdownProps {
 #[component]
 fn ProfileDropdown(props: ProfileDropdownProps) -> String {
     html! {
-        <Toggle class="relative ml-3".into()>
+        <Toggle class="relative ml-3">
             <div>
                 <button type="button" data-toggle-action class="relative flex max-w-xs items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
                     <span class="absolute -inset-1.5"></span>

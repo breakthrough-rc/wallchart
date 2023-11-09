@@ -13,11 +13,11 @@ pub struct ModalProps {
 pub fn Modal(props: ModalProps) -> String {
     html! {
       <YcControl
-        control="modal".into()
-        class="relative z-10".into()
-        role="dialog".into()
-        aria_labelledby="modal-title".into()
-        //arial-modal="true"
+        control="modal"
+        class="relative z-10"
+        role="dialog"
+        aria_labelledby="modal-title"
+        // aria-modal="true"
       >
         <Transition
           class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"

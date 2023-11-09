@@ -4,7 +4,6 @@ pub use crate::server::html_layout::HtmlLayout;
 use axum::Router;
 use tower_http::services::ServeDir;
 
-pub mod macros;
 pub mod server;
 
 pub fn routes() -> Router {

@@ -8,11 +8,12 @@ use axum::{
 use http::HeaderMap;
 use rscx::{component, html, props};
 use std::time::{SystemTime, UNIX_EPOCH};
+use web_client::server::html_element::HtmlElement;
 use web_client::server::modal::Modal;
 use web_client::server::notification::{
     NoticationCloseButton, NotificationCall, NotificationPresenter, NotificationTransition,
 };
-use web_client::{html_attrs, server::html_element::HtmlElement};
+use web_macros::*;
 
 pub fn routes() -> Router {
     Router::new()
@@ -62,14 +63,13 @@ fn MessageButton(props: MessageButtonProps) -> String {
 }
 
 // This macro adds all standard HTML attributes for your component!
-html_attrs! {
-    pub struct SimpleElementProps {
-        #[builder(default)]
-        children: String,
+#[html_element]
+pub struct SimpleElementProps {
+    #[builder(default)]
+    children: String,
 
-        #[builder(default="SIMPLE!".to_string())]
-        simple: String,
-    }
+    #[builder(default="SIMPLE!".to_string())]
+    simple: String,
 }
 
 #[component]
@@ -88,7 +88,7 @@ fn HtmlElementPlayground() -> String {
         <section class="py-8">
             <h2 class="text-xl font-bold">"HtmlElement Playground"</h2>
             <div class="flex flex-col gap-4">
-                <SimpleElement class="font-bold".into() simple="YO".into()>
+                <SimpleElement class="font-bold" simple="YO".into()>
                     Simple but not so simple.
                 </SimpleElement>
                 <FooButton />
