@@ -61,9 +61,11 @@ pub fn YcControlJsApi(props: YcControlJsApiProps) -> String {
         <script>
             {format!(
                 r#"
-                    YcControls.onReady(function() {{
-                        YcControls.{};
-                    }});
+                    (function(callerScript) {{
+                        YcControls.onReady(function() {{
+                            YcControls.{};
+                        }});
+                    }}(document.currentScript));
                 "#,
                 props.call,
             )}
