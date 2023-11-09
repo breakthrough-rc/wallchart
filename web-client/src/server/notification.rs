@@ -207,9 +207,7 @@ pub fn NotificationPresenter(props: NotificationPresenterProps) -> String {
     };
 
     html! {
-        <div class="hidden">
-            <YcControlJsApi call=api_call />
-            {props.children}
-        </div>
+        <YcControlJsApi call=api_call />
+        {props.children}
     }
 }

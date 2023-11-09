@@ -100,7 +100,7 @@ fn NotificationsPlayground() -> String {
     html! {
         <section class="py-8">
             <h2 class="text-xl font-bold">Notifications Playground</h2>
-            <p><em>Click a button below to show a toast notification.</em></p>
+            <p><em>Show a toast notification (client-side).</em></p>
             <div class="flex gap-2">
                 <button
                     class="bg-slate-200 p-3 rounded-full"
@@ -120,11 +120,15 @@ fn NotificationsPlayground() -> String {
                 >
                     Show Generic
                 </button>
+            </div>
+            <br />
+            <p><em>Show a toast notification (server-side).</em></p>
+            <div class="flex gap-2">
                 <button
                     class="bg-slate-200 p-3 rounded-full"
                     hx-post="/playground/ex-business-logic"
                 >
-                    Show ServerSide Success
+                    Show Success
                 </button>
                 <button
                     class="bg-slate-200 p-3 rounded-full"
