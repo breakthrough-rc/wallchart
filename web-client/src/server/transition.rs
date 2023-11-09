@@ -23,7 +23,7 @@ pub struct TransitionProps {
     #[builder(setter(into))]
     leave_to: String,
 
-    #[builder(setter(into))]
+    #[builder(setter(into), default)]
     children: String,
 }
 
@@ -34,15 +34,20 @@ pub fn Transition(props: TransitionProps) -> String {
             tag=props.tag
             class=format!("hidden {}", props.class)
             component_name="Transition"
-            data=HashMap::from([
-                ("yc-control", "transition".into()),
-                ("transition-enter", props.enter),
-                ("transition-enter-start", props.enter_from),
-                ("transition-enter-end", props.enter_to),
-                ("transition-leave", props.leave),
-                ("transition-leave-start", props.leave_from),
-                ("transition-leave-end", props.leave_to),
-            ])
+            data={
+                HashMap::from([
+                    ("yc-control", "transition".into()),
+                    ("transition-enter", props.enter),
+                    ("transition-enter-start", props.enter_from),
+                    ("transition-enter-end", props.enter_to),
+                    ("transition-leave", props.leave),
+                    ("transition-leave-start", props.leave_from),
+                    ("transition-leave-end", props.leave_to),
+                ])
+                .into_iter()
+                .chain(props.data)
+                .collect()
+            }
             attrs=spread_attrs!(props | omit(class))
         >
             {props.children}
