@@ -1,4 +1,5 @@
 import events from "../events";
+import query from "../query";
 import { ControlRegistry } from "../registery";
 import Toggle from "./Toggle";
 
@@ -16,26 +17,21 @@ type RenderTemplateDelegate = {
   notificationWillAppend?: (notificationEl: HTMLElement) => void,
 };
 
-const nullDelegate: RenderTemplateDelegate = {};
-
 function renderStandardTemplate({ title, message, ...delegate }: NotificationCommand & RenderTemplateDelegate) {
-  const tpl = document.querySelector("#tpl-notification") as HTMLTemplateElement;
-  if (!tpl) throw new Error(`Can not show Notification. Element selector "#tpl-notification" not found.`);
-
+  const tpl = query(document, "#tpl-notification") as HTMLTemplateElement;
   const notification = tpl.content.cloneNode(true) as HTMLElement;
 
-  const titleElement = notification.querySelector("[data-notification-title]");
-  if (!titleElement) throw new Error("Could not find element with attribute `data-notification-title` in template.");
-  titleElement.textContent = title;
+  const Elements = query.all(notification, {
+    title: "[data-notification-title]",
+    message: "[data-notification-message]",
+    defaultIcon: "[data-notification-icon]",
+  });
 
-  const messageElement = notification.querySelector("[data-notification-message]");
-  if (!messageElement) throw new Error("Could not find element with attribute `data-notification-message` in template.");
-  messageElement.textContent = message || "Everything is all good!";
+  Elements.title.textContent = title;
+  Elements.message.textContent = message || "Everything is all good!";
 
   if (delegate.iconElement) {
-    const defaultIconElement = notification.querySelector("[data-notification-icon]");
-    if (!defaultIconElement) throw new Error("Could not find element with attribute `data-notification-icon` in template.");
-    defaultIconElement.replaceWith(delegate.iconElement);
+    Elements.defaultIcon.replaceWith(delegate.iconElement);
   }
 
   delegate.notificationWillAppend?.(notification);
@@ -45,10 +41,7 @@ function renderStandardTemplate({ title, message, ...delegate }: NotificationCom
 function renderCustomTemplate(templateSelector: string | HTMLTemplateElement) {
   const tpl = (() => {
     if (typeof templateSelector === "string") {
-      const template = document.querySelector(templateSelector) as HTMLTemplateElement;
-      if (!template) throw new Error(`Could not find template with selector: ${templateSelector}`);
-
-      return template;
+      return query(document, templateSelector) as HTMLTemplateElement;
 
     } else if (templateSelector instanceof HTMLTemplateElement) {
       return templateSelector;
@@ -59,39 +52,20 @@ function renderCustomTemplate(templateSelector: string | HTMLTemplateElement) {
   })();
 
   const notification = tpl.content.cloneNode(true) as HTMLElement;
-
   // Ensure notification is clickable (live-region disables pointer events)
-  if (!notification.firstElementChild?.classList.contains("pointer-events-auto")) {
-    notification.firstElementChild?.classList.add("pointer-events-auto");
-  }
+  notification.firstElementChild?.classList.add("pointer-events-auto");
 
   return Notifications.appendNotification(notification);
 }
 
 function iconFromTemplate(iconKey: "success" | "error" | "info") {
-  const tpl = document.querySelector("#tpl-notification-icons") as HTMLTemplateElement;
-  if (!tpl) throw new Error("Could not find element with selector `#tpl-notification-icons`.");
-
+  const tpl = query(document, "#tpl-notification-icons") as HTMLTemplateElement;
   const iconsTemplate = tpl.content.cloneNode(true) as HTMLElement;
 
-  const iconElement = iconsTemplate.querySelector(`[data-notification-icon=${iconKey}]`);
-  if (!iconElement) throw new Error("Could not find element with selector: `[data-notification-icon=${iconKey}]`.");
-  return iconElement;
+  return query(iconsTemplate, `[data-notification-icon=${iconKey}]`);
 }
 
 const Notifications = {
-  get region(): HTMLElement {
-    const region = document.getElementById('notification-live-region');
-    if (!region) throw new Error("Could not find notification live region.");
-    return region;
-  },
-
-  get content(): HTMLElement {
-    const content = Notifications.region.querySelector(":scope > section") as HTMLElement;
-    if (!content) throw new Error("Could not find notification live region main content.");
-    return content;
-  },
-
   init() {
     events.on("yc:notificationRequest", (request: NotificationEventDetails) => {
       const { title = "Notification", message = "", } = request;
@@ -112,10 +86,11 @@ const Notifications = {
   async appendNotification(notification: HTMLElement) {
     // Fragments don't provide a reference to DOM element, first child is actual element attached.
     const notificationElement = notification.firstElementChild!;
+    const contentElement = query(document, "#notification-live-region [data-notification-content]");
 
     const toggle = Toggle.attach(notificationElement as HTMLElement, {
-      toggleWillOpen: () => Notifications.content.appendChild(notification),
-      toggleClosed: () => Notifications.content.removeChild(notificationElement),
+      toggleWillOpen: () => contentElement.appendChild(notification),
+      toggleClosed: () => contentElement.removeChild(notificationElement),
       shouldToggleCloseOnBodyClick: false,
     });
 
