@@ -11,8 +11,8 @@ function create(attachOnReadyQueue: HTMLElement[] = [], onReadyQueue: CallableFu
       attachOnReadyQueue.forEach(controls.attach);
       onReadyQueue.forEach(cb => cb());
     },
-    onReady(cb: CallableFunction) {
-      cb(); // At this point, YcControls is already loaded and ready, just call back.
+    onReady(cb: VoidFunction) {
+      queueMicrotask(cb); // YcControls is already loaded and ready. Queue for next tick.
     },
     attach(element: HTMLElement) {
       console.log("[YcControls::attach()]", element);
