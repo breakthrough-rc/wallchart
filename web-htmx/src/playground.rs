@@ -8,7 +8,9 @@ use axum::{
 use http::HeaderMap;
 use rscx::{component, html, props};
 use std::time::{SystemTime, UNIX_EPOCH};
-use web_client::server::notification::{NotificationCall, NotificationPresenter};
+use web_client::server::notification::{
+    NoticationCloseButton, NotificationCall, NotificationPresenter, NotificationTransition,
+};
 use web_client::{html_attrs, server::html_element::HtmlElement};
 
 pub fn routes() -> Router {
@@ -18,6 +20,7 @@ pub fn routes() -> Router {
         .route("/htmx", get(htmx_test))
         .route("/ex-business-logic", post(ex_business_logic))
         .route("/custom-notification", get(get_custom_notification))
+        .route("/custom-notification2", get(get_custom_notification2))
 }
 
 #[component]
@@ -138,6 +141,14 @@ fn NotificationsPlayground() -> String {
                 >
                     Show Custom
                 </button>
+                <button
+                    class="bg-slate-200 p-3 rounded-full"
+                    hx-get="/playground/custom-notification2"
+                    hx-target="body"
+                    hx-swap="beforeend"
+                >
+                    Show Custom w/ Standard Components
+                </button>
             </div>
         </section>
     }
@@ -235,6 +246,25 @@ async fn get_custom_notification() -> Html<String> {
                     <p>This is a bad notification!</p>
                     <button data-toggle-action="close">Close me</button>
                 </div>
+            </template>
+        </NotificationPresenter>
+    })
+}
+
+async fn get_custom_notification2() -> Html<String> {
+    Html(html! {
+        <NotificationPresenter call=NotificationCall::Template>
+            <template>
+                <NotificationTransition
+                    class="bg-white border w-full max-w-sm overflow-hidden shadow-lg"
+                >
+                    <div class="p-4">
+                        <div class="flex items-start">
+                            <p class="flex-1">Wow this looks a lil nicer.</p>
+                            <NoticationCloseButton />
+                        </div>
+                    </div>
+                </NotificationTransition>
             </template>
         </NotificationPresenter>
     })
