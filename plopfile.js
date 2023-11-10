@@ -153,4 +153,28 @@ export default function(plop) {
       },
     ],
   });
+  plop.setGenerator("service-repository", {
+    description: "Create a repository for a service",
+    prompts: [
+      {
+        type: "input",
+        name: "service_name",
+        message: "Service name: ",
+      },
+      {
+        type: "input",
+        name: "aggregate_name",
+        message: "Aggregate name: ",
+      },
+    ],
+    actions: [
+      {
+        type: "addMany",
+        destination:
+          "{{kabobCase service_name}}/{{kabobCase service_name}}-service/src/ports/",
+        templateFiles: "plop-templates/service-repository/ports/*.hbs",
+        base: "plop-templates/service-service-repository",
+      },
+    ],
+  });
 }

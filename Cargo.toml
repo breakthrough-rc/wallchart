@@ -3,7 +3,7 @@ resolver = "2"
 
 members = [
   ##PLOP NEW PACKAGE HOOK##
-          "auth/auth-service",
+  "auth/auth-service",
   "main",
   "web-client",
   "web-htmx",
