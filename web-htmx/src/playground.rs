@@ -8,6 +8,7 @@ use axum::{
 use http::HeaderMap;
 use rscx::{component, html, props};
 use std::time::{SystemTime, UNIX_EPOCH};
+use web_client::server::button::PrimaryButton;
 use web_client::server::html_element::HtmlElement;
 use web_client::server::modal::Modal;
 use web_client::server::notification::{
@@ -113,7 +114,7 @@ fn ModalPlayground() -> String {
                 hx-target="#modals-root"
             >
                     Open Simple Modal
-                </button>
+            </button>
             </div>
             <div id="modals-root">
             </div>
@@ -128,24 +129,21 @@ fn NotificationsPlayground() -> String {
             <h2 class="text-xl font-bold">Notifications Playground</h2>
             <p><em>Show a toast notification (client-side).</em></p>
             <div class="flex gap-2">
-                <button
-                    class="bg-slate-200 p-3 rounded-full"
+                <PrimaryButton
                     onclick="YcControls.showSuccessNotification('Success feels so good!')"
                 >
                     Show Success
-                </button>
-                <button
-                    class="bg-slate-200 p-3 rounded-full"
+                </PrimaryButton>
+                <PrimaryButton
                     onclick="YcControls.showErrorNotification('This is an error notification.')"
                 >
                     Show Error
-                </button>
-                <button
-                    class="bg-slate-200 p-3 rounded-full"
+                </PrimaryButton>
+                <PrimaryButton
                     onclick="YcControls.showNotification('This just in', 'You are still not done!')"
                 >
                     Show Generic
-                </button>
+                </PrimaryButton>
             </div>
             <br />
             <p><em>Show a toast notification (server-side).</em></p>
