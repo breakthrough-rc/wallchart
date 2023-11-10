@@ -21,6 +21,24 @@ impl Attrs {
 
         hashmap
     }
+    pub fn to_hashmap_excluding(
+        &self,
+        exclude: Vec<&'static str>,
+    ) -> HashMap<&'static str, String> {
+        let mut hashmap = self.to_hashmap();
+
+        for field in exclude {
+            hashmap.remove(field);
+        }
+
+        hashmap
+    }
+    pub fn with(key: &'static str, value: String) -> Self {
+        Self {
+            values: HashMap::from([(key, value)]),
+            omit: vec![],
+        }
+    }
     pub fn set(&self, key: &'static str, value: String) -> Self {
         let mut values = self.values.clone();
         values.insert(key, value);

@@ -141,7 +141,10 @@ impl ToTokens for HtmlElementStruct {
                     }
                     if let Some(for_input) = self.attrs.get("type") {
                         map.insert("type", for_input.to_string());
-                    }                    
+                    }          
+
+                    let attrs = vec![#(#attr_keys),*];
+                    map.extend(self.attrs.to_hashmap_excluding(attrs));
 
                     map
                 }
@@ -220,6 +223,9 @@ pub fn spread_attrs(input: TokenStream) -> TokenStream {
             #(
                 map.insert(#attr_keys, web_client::concat_attribute(&#props.#attr_idents, #props.attrs.get(#attr_keys)));
             )*
+
+            let attrs = vec![#(#attr_keys),*];
+            map.extend(#props.attrs.to_hashmap_excluding(attrs));
 
             ::web_client::server::attrs::Attrs::from(map)
         }

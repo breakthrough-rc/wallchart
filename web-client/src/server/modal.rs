@@ -1,5 +1,6 @@
 use super::transition::Transition;
 use super::yc_control::YcControl;
+use crate::server::attrs::Attrs;
 use rscx::{component, html, props};
 use std::collections::HashMap;
 
@@ -17,7 +18,7 @@ pub fn Modal(props: ModalProps) -> String {
         class="relative z-10"
         role="dialog"
         aria_labelledby="modal-title"
-        // aria-modal="true"
+        attrs=Attrs::with("aria-modal", "true".into())
       >
         <Transition
           class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
