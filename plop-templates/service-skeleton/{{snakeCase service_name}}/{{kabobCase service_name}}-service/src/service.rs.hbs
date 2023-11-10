@@ -1,0 +1,20 @@
+use std::sync::Arc;
+
+use crate::{
+    //##PLOP INSERT COMMAND IMPORTS HOOK##
+};
+
+#[derive(Clone)]
+pub struct {{pascalCase service_name}}Service {
+    //##PLOP INSERT COMMAND HOOK##
+    // Add service infra dependencies here
+}
+
+impl {{pascalCase service_name}}Service {
+    pub fn new() -> Self {
+        Self {
+            //##PLOP INSERT COMMAND INSTANTIATION HOOK##
+        }
+    }
+    //##PLOP INSERT DELEGATE HOOK##
+}
