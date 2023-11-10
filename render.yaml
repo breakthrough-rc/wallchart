@@ -1,0 +1,13 @@
+services:
+  - name: wallchart
+    type: web
+    env: rust
+    region: ohio
+    buildCommand: ./build-client.sh & cargo build --release
+    startCommand: cargo run --release
+    healthCheckPath: /healthcheck
+    envVars:
+      - key: NODE_VERSION
+        value: 18
+      - key: OUT_DIR
+        value: "out"
