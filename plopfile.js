@@ -126,18 +126,6 @@ export default function(plop) {
 `,
         type: "modify",
       },
-      // {
-      //   path: 'web-htmx/src/lib.rs',
-      //   pattern: /(\/\/##PLOP USE RESOURCE HOOK##)/g,
-      //   template: '$1\nuse resources::{{snakeCase resource_name}}::{{snakeCase resource_name}}_routes;',
-      //   type: 'modify',
-      // },
-      // {
-      //   path: 'web-htmx/src/lib.rs',
-      //   pattern: /(\/\/##PLOP MERGE ROUTE HOOK##)/g,
-      //   template: '$1\n.merge({{snakeCase resource_name}}_routes(state))',
-      //   type: 'modify',
-      // }
     ],
   });
   plop.setGenerator("service-skeleton", {
@@ -155,6 +143,13 @@ export default function(plop) {
         destination: "./",
         templateFiles: "plop-templates/service-skeleton/**",
         base: "plop-templates/service-skeleton",
+      },
+      {
+        path: "Cargo.toml",
+        pattern: /(##PLOP NEW PACKAGE HOOK##)/g,
+        template: `$1
+          "{{kabobCase service_name}}",`,
+        type: "modify",
       },
     ],
   });
