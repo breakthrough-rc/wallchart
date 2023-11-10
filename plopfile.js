@@ -171,9 +171,9 @@ export default function(plop) {
       {
         type: "addMany",
         destination:
-          "{{kabobCase service_name}}/{{kabobCase service_name}}-service/src/ports/",
-        templateFiles: "plop-templates/service-repository/ports/*.hbs",
-        base: "plop-templates/service-service-repository",
+          "{{kabobCase service_name}}/{{kabobCase service_name}}-service/src/",
+        templateFiles: "plop-templates/service-repository/ports/**",
+        base: "plop-templates/service-repository",
       },
     ],
   });
