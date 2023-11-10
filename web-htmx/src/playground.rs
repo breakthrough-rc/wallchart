@@ -108,13 +108,12 @@ fn ModalPlayground() -> String {
             <h2 class="text-xl font-bold">Modal Playground</h2>
             <p><em>Open models for fun AND non-profit.</em></p>
             <div class="flex gap-2">
-            <button
-                class="bg-slate-200 p-3 rounded-full"
-                hx-get="/playground/modal/one"
-                hx-target="#modals-root"
+            <PrimaryButton
+                hx_get="/playground/modal/one"
+                hx_target="#modals-root"
             >
                     Open Simple Modal
-            </button>
+            </PrimaryButton>
             </div>
             <div id="modals-root">
             </div>
@@ -148,28 +147,25 @@ fn NotificationsPlayground() -> String {
             <br />
             <p><em>Show a toast notification (server-side).</em></p>
             <div class="flex gap-2">
-                <button
-                    class="bg-slate-200 p-3 rounded-full"
-                    hx-post="/playground/ex-business-logic"
+                <PrimaryButton
+                    hx_post="/playground/ex-business-logic"
                 >
                     Show Success
-                </button>
-                <button
-                    class="bg-slate-200 p-3 rounded-full"
-                    hx-get="/playground/custom-notification"
-                    hx-target="body"
-                    hx-swap="beforeend"
+                </PrimaryButton>
+                <PrimaryButton
+                    hx_get="/playground/custom-notification"
+                    hx_target="body"
+                    hx_swap="beforeend"
                 >
                     Show Custom
-                </button>
-                <button
-                    class="bg-slate-200 p-3 rounded-full"
-                    hx-get="/playground/custom-notification2"
-                    hx-target="body"
-                    hx-swap="beforeend"
+                </PrimaryButton>
+                <PrimaryButton
+                    hx_get="/playground/custom-notification2"
+                    hx_target="body"
+                    hx_swap="beforeend"
                 >
                     Show Custom w/ Standard Components
-                </button>
+                </PrimaryButton>
             </div>
         </section>
     }
@@ -233,13 +229,12 @@ pub fn PlaygroundPgContent() -> String {
             <section class="py-8">
                 <h2 class="text-xl font-bold">HTMX Rendering</h2>
                 <div class="flex gap-2">
-                    <button
-                        class="bg-slate-200 p-3 rounded-full"
-                        hx-get="/playground/htmx"
-                        hx-swap="outerHTML"
+                    <PrimaryButton
+                        hx_get="/playground/htmx"
+                        hx_swap="outerHTML"
                     >
                         Click me!
-                    </button>
+                    </PrimaryButton>
                 </div>
             </section>
             <NotificationsPlayground />

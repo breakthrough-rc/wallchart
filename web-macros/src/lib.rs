@@ -6,7 +6,7 @@ use syn::{
     FieldsNamed, Ident, ItemStruct, Token, ParenthesizedGenericArguments,
 };
 
-const ATTRS_LEN: usize = 9;
+const ATTRS_LEN: usize = 45;
 const HTML_ELEMENT_ATTRS: [&str; ATTRS_LEN] = [
     "id",
     "class",
@@ -17,6 +17,46 @@ const HTML_ELEMENT_ATTRS: [&str; ATTRS_LEN] = [
     "tabindex",
     "name",
     "autocomplete",
+
+    // https://htmx.org/reference/#attributes
+    "hx-boost",
+    "hx-get",
+    "hx-post",
+    "hx-on",
+    "hx-push-url",
+    "hx-select",
+    "hx-select-oob",
+    "hx-swap",
+    "hx-swap-oob",
+    "hx-target",
+    "hx-trigger",
+    "hx-vals",
+
+    // https://htmx.org/reference/#attributes-additional
+    "hx-confirm",
+    "hx-delete",
+    "hx-disable",
+    "hx-disabled-elt",
+    "hx-disinherit",
+    "hx-encoding",
+    "hx-ext",
+    "hx-headers",
+    "hx-history",
+    "hx-history-elt",
+    "hx-include",
+    "hx-indicator",
+    "hx-params",
+    "hx-patch",
+    "hx-preserve",
+    "hx-prompt",
+    "hx-put",
+    "hx-replace-url",
+    "hx-request",
+    "hx-sse",
+    "hx-sync",
+    "hx-validate",
+    "hx-vars",
+    "hx-ws",
 ];
 
 #[proc_macro_attribute]
