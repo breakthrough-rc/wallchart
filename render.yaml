@@ -3,7 +3,7 @@ services:
     type: web
     env: rust
     region: ohio
-    buildCommand: ./build-client.sh & cargo build --release
+    buildCommand: npm install -g bun & ./build-client.sh & cargo build --release
     startCommand: cargo run --release
     healthCheckPath: /healthcheck
     envVars:
