@@ -1,4 +1,4 @@
-export default function (plop) {
+export default function(plop) {
   plop.setGenerator("web-htmx-component", {
     description: "web-htmx component",
     prompts: [
@@ -126,18 +126,31 @@ export default function (plop) {
 `,
         type: "modify",
       },
-      // {
-      //   path: 'web-htmx/src/lib.rs',
-      //   pattern: /(\/\/##PLOP USE RESOURCE HOOK##)/g,
-      //   template: '$1\nuse resources::{{snakeCase resource_name}}::{{snakeCase resource_name}}_routes;',
-      //   type: 'modify',
-      // },
-      // {
-      //   path: 'web-htmx/src/lib.rs',
-      //   pattern: /(\/\/##PLOP MERGE ROUTE HOOK##)/g,
-      //   template: '$1\n.merge({{snakeCase resource_name}}_routes(state))',
-      //   type: 'modify',
-      // }
+    ],
+  });
+  plop.setGenerator("service-skeleton", {
+    description: "Create the skeleton of a new service",
+    prompts: [
+      {
+        type: "input",
+        name: "service_name",
+        message: "Service name: ",
+      },
+    ],
+    actions: [
+      {
+        type: "addMany",
+        destination: "./",
+        templateFiles: "plop-templates/service-skeleton/**",
+        base: "plop-templates/service-skeleton",
+      },
+      {
+        path: "Cargo.toml",
+        pattern: /(##PLOP NEW PACKAGE HOOK##)/g,
+        template: `$1
+          "{{kabobCase service_name}}/{{kabobCase service_name}}-service",`,
+        type: "modify",
+      },
     ],
   });
 }
