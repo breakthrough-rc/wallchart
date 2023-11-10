@@ -175,6 +175,12 @@ export default function(plop) {
         templateFiles: "plop-templates/service-repository/ports/**",
         base: "plop-templates/service-repository",
       },
+      {
+        path: "{{kabobCase service_name}}/{{kabobCase service_name}}-service/src/ports.rs",
+        pattern: /(\/\/##PLOP INSERT MOD HOOK##)/g,
+        template: "$1\npub mod {{snakeCase aggregate_name}}_repository;",
+        type: "modify",
+      },
     ],
   });
 }
