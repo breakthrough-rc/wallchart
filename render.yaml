@@ -3,7 +3,8 @@ services:
     type: web
     env: rust
     region: ohio
-    buildCommand: npm install -g bun & ./build-client.sh & cargo build --release
+    # Install bun, build client, then build rust app
+    buildCommand: curl -fsSL https://bun.sh/install | bash & ./build-client.sh & cargo build --release
     startCommand: cargo run --release
     healthCheckPath: /healthcheck
     envVars:
