@@ -148,7 +148,7 @@ export default function(plop) {
         path: "Cargo.toml",
         pattern: /(##PLOP NEW PACKAGE HOOK##)/g,
         template: `$1
-          "{{kabobCase service_name}}",`,
+          "{{kabobCase service_name}}/{{kabobCase service_name}}-service",`,
         type: "modify",
       },
     ],

@@ -44,6 +44,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "auth-service"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "thiserror",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
 name = "autocfg"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
