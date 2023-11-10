@@ -152,8 +152,8 @@ export default function(plop) {
     actions: [
       {
         type: "addMany",
-        destination: "",
-        templateFiles: "plop-templates/service-skeleton/*.hbs",
+        destination: "./",
+        templateFiles: "plop-templates/service-skeleton/**",
         base: "plop-templates/service-skeleton",
       },
     ],
