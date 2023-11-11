@@ -181,6 +181,26 @@ export default function(plop) {
         template: "$1\npub mod {{snakeCase aggregate_name}}_repository;",
         type: "modify",
       },
+      {
+        type: "addMany",
+        destination: "{{kabobCase service_name}}/",
+        templateFiles: "plop-templates/service-repository/adapters/**",
+        base: "plop-templates/service-repository",
+      },
+      {
+        path: "Cargo.toml",
+        pattern: /(##PLOP NEW PACKAGE HOOK##)/g,
+        template: `$1
+          "{{kabobCase service_name}}/adapters/in-memory-{{kabobCase aggregate_name}}-repository",`,
+        type: "modify",
+      },
+      {
+        path: "Cargo.toml",
+        pattern: /(##PLOP NEW PACKAGE HOOK##)/g,
+        template: `$1
+          "{{kabobCase service_name}}/adapters/diesel-{{kabobCase aggregate_name}}-repository",`,
+        type: "modify",
+      },
     ],
   });
 }
