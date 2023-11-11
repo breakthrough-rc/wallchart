@@ -48,6 +48,8 @@ pub fn Wallchart(props: WallchartProps) -> String {
                                                     <PrimaryButton
                                                         hx_get=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new-modal", &props.worksite.id, location.clone().id, shift.id)
                                                         hx_target="body"
+                                                        hx_swap="afterend"
+                                                        hx_push_url=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new", &props.worksite.id, location.clone().id, shift.id)
                                                     >
                                                         "Create New Worker"
                                                     </PrimaryButton>

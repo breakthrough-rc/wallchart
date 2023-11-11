@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use rscx::{component, html, props};
 use web_client::server::form::{Button, CellSpan, GridCell, GridLayout, Label, Select, TextInput};
 
@@ -62,7 +64,7 @@ pub fn AddWorkerForm(props: AddWorkerFormProps) -> String {
                 </GridLayout>
             </div>
             <div class="mt-6 flex items-center justify-end gap-x-6">
-                <Button onclick="history.go(-1)">Cancel</Button>
+                <Button onclick="history.go(-1)" data=HashMap::from([("toggle-action", "close".to_string())])>Cancel</Button>
                 <Button kind="submit">Save</Button>
             </div>
         </form>

@@ -9,6 +9,7 @@ use axum_flash::Flash;
 use http::StatusCode;
 use rscx::html;
 use serde::Deserialize;
+use web_client::server::modal::Modal;
 use worksite_service::assign_worker::AssignWorkerInput;
 
 pub fn workers_routes(state: WebHtmxState) -> Router {
@@ -29,9 +30,9 @@ async fn get_worker_form_modal(
     State(WebHtmxState { .. }): State<WebHtmxState>,
 ) -> impl IntoResponse {
     Html(html! {
-        <PageLayout title="Add Worker">
+        <Modal>
             <AddWorkerForm create_worker_route=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new", wallchart_id, location_id, shift_id) />
-        </PageLayout>
+        </Modal>
     })
 }
 async fn get_worker_form(
