@@ -7,10 +7,11 @@ edition = "2021"
 
 [dependencies]
 async-trait = { workspace = true }
-thiserror = { workspace = true }
-tokio = { workspace = true, features = ["full"] }
-tracing = { workspace = true }
 axum = { features = ["headers"], workspace = true }
 axum-login = { workspace = true }
 password-auth = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
+thiserror = { workspace = true }
+tokio = { workspace = true, features = ["full"] }
+tracing = { workspace = true }
+uuid = { workspace = true }
