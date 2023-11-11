@@ -1,6 +1,5 @@
 use super::html_element::HtmlElement;
 use rscx::{component, html, props};
-use std::collections::HashMap;
 use web_macros::*;
 
 #[html_element]
@@ -34,21 +33,14 @@ pub fn Transition(props: TransitionProps) -> String {
             tag=props.tag
             class=format!("hidden {}", props.class)
             component_name="Transition"
-            data={
-                HashMap::from([
-                    ("yc-control", "transition".into()),
-                    ("transition-enter", props.enter),
-                    ("transition-enter-start", props.enter_from),
-                    ("transition-enter-end", props.enter_to),
-                    ("transition-leave", props.leave),
-                    ("transition-leave-start", props.leave_from),
-                    ("transition-leave-end", props.leave_to),
-                ])
-                .into_iter()
-                .chain(props.data)
-                .collect()
-            }
             attrs=spread_attrs!(props | omit(class))
+                .set("data-yc-control", "transition".into())
+                .set("data-transition-enter", props.enter)
+                .set("data-transition-enter-start", props.enter_from)
+                .set("data-transition-enter-end", props.enter_to)
+                .set("data-transition-leave", props.leave)
+                .set("data-transition-leave-start", props.leave_from)
+                .set("data-transition-leave-end", props.leave_to)
         >
             {props.children}
         </HtmlElement>

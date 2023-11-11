@@ -79,7 +79,6 @@ pub fn Button(props: ButtonProps) -> String {
             tag="button"
             class=format!("{} {}", css, props.class).trim()
             attrs=spread_attrs!(props | omit(class, name)).set("type", button_type)
-            data=props.data
         >
             {props.children}
         </HtmlElement>
