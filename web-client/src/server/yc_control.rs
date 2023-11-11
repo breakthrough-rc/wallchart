@@ -1,6 +1,5 @@
 use super::html_element::HtmlElement;
 use rscx::{component, html, props};
-use std::collections::HashMap;
 use web_macros::*;
 
 #[html_element]
@@ -16,8 +15,7 @@ pub struct YcControlProps {
 pub fn YcControl(props: YcControlProps) -> String {
     html! {
         <HtmlElement
-            data=HashMap::from([("yc-control", props.control)])
-            attrs=spread_attrs!(props)
+            attrs=spread_attrs!(props).set("data-yc-control", props.control)
         >
             {props.children}
             <script>"YcControls.attach(document.currentScript.parentElement);"</script>

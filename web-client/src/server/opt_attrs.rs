@@ -12,12 +12,14 @@ pub fn opt_attrs(map: HashMap<&str, String>) -> String {
     if map.is_empty() {
         String::from("")
     } else {
-        map.iter()
+        let mut attrs = map
+            .iter()
             .map(|(key, val)| opt_attr(key, val.to_string()))
-            .collect::<Vec<String>>()
-            .join(" ")
-            .trim()
-            .to_string()
+            .collect::<Vec<String>>();
+
+        // Output attributes in alpha order.
+        attrs.sort_by(|a, b| a.cmp(b));
+        attrs.join(" ").trim().to_string()
     }
 }
 
@@ -91,12 +93,6 @@ mod tests {
             ("bar", String::from("fuzz fuzz-baz")),
         ]));
 
-        // Hashmap does not guarantee order, so asset each attribute individually
-        assert!(attrs.contains("foo=\"baz\""));
-        assert!(attrs.contains("bar=\"fuzz fuzz-baz\""));
-        assert!(
-            attrs == "foo=\"baz\" bar=\"fuzz fuzz-baz\""
-                || attrs == "bar=\"fuzz fuzz-baz\" foo=\"baz\""
-        );
+        assert_eq!(attrs, String::from("bar=\"fuzz fuzz-baz\" foo=\"baz\""),);
     }
 }

@@ -104,9 +104,6 @@ impl ToTokens for HtmlElementStruct {
                 #[builder(default)]
                 attrs: ::web_client::server::attrs::Attrs,
 
-                #[builder(default)]
-                data: std::collections::HashMap<&'static str, String>,
-
                 #[builder(setter(into), default=String::from("div"))]
                 tag: String,
             }

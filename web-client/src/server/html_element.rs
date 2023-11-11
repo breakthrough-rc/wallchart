@@ -1,4 +1,4 @@
-use super::opt_attrs::{opt_attr, opt_attrs};
+use super::opt_attrs::opt_attrs;
 use rscx::{component, props};
 use std::collections::HashMap;
 use web_macros::*;
@@ -20,21 +20,6 @@ pub fn HtmlElement(props: HtmlElementProps) -> String {
             .chain(props.html_attrs_to_hashmap())
             .collect::<HashMap<&str, String>>(),
     );
-
-    let data_attrs: String = props
-        .data
-        .into_iter()
-        .map(|(key, value)| opt_attr(format!("data-{}", key).as_str(), value))
-        .collect::<Vec<String>>()
-        .join(" ")
-        .to_string();
-
-    let attrs = vec![attrs, data_attrs]
-        .into_iter()
-        .filter(|attr| !attr.is_empty())
-        .collect::<Vec<String>>()
-        .join(" ")
-        .to_string();
 
     format!(
         "<{} {}>{}</{}>",
@@ -88,7 +73,7 @@ mod tests {
         let html = html! {
             <HtmlElement
                 tag="button"
-                data=HashMap::from([("foo", "baz".into())])
+                attrs=Attrs::with("data-foo", "baz".into())
             >
                 <h1>Header text.</h1>
             </HtmlElement>
@@ -97,7 +82,7 @@ mod tests {
         assert_eq!(
             html,
             String::from(
-                "<button data-rsx=\"HtmlElement\" data-foo=\"baz\"><h1>Header text.</h1></button>"
+                "<button data-foo=\"baz\" data-rsx=\"HtmlElement\"><h1>Header text.</h1></button>"
             )
         );
     }
@@ -109,9 +94,9 @@ mod tests {
         // Then pass the right of the props, omitting `class`.
         let built_props = HtmlElementProps::builder();
         let outer_props = built_props
+            .class("THIS_CLASS_SHOULD_BE_OMITTED")
             .id("set-id")
             .role("set-role")
-            .class("THIS_CLASS_SHOULD_BE_OMITTED")
             .build();
 
         let html = html! {
@@ -123,19 +108,11 @@ mod tests {
             </HtmlElement>
         };
 
-        println!("{}", html);
-
-        assert!(
-            html.contains("class=\"hard-coded-class\""),
-            "The class attr is set from rscx NOT overwritten by props."
-        );
-        assert!(
-            !html.contains("THIS_CLASS_SHOULD_BE_OMITTED"),
-            "The class attr should have omitted class prop."
-        );
-        assert!(
-            html.contains("id=\"set-id\"") && html.contains("role=\"set-role\""),
-            "Contains id and role attrs from props."
+        assert_eq!(
+            html,
+            String::from(
+                "<div class=\"hard-coded-class\" data-rsx=\"HtmlElement\" id=\"set-id\" role=\"set-role\">What an awesome element!</div>"
+            )
         );
     }
 }
