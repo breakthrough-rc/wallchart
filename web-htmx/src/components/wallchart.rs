@@ -46,7 +46,7 @@ pub fn Wallchart(props: WallchartProps) -> String {
                                                 </th>
                                                 <th colspan="3" scope="colgroup" class="bg-gray-50 py-2 pl-4 pr-3 text-right text-sm font-semibold text-gray-900 sm:pl-3">
                                                     <PrimaryButton
-                                                        hx_get=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new", &props.worksite.id, location.clone().id, shift.id)
+                                                        hx_get=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new-modal", &props.worksite.id, location.clone().id, shift.id)
                                                         hx_target="body"
                                                     >
                                                         "Create New Worker"
