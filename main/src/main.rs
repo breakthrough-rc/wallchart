@@ -1,4 +1,6 @@
+use auth_service::{create_user::CreateUserInput, models::User, service::AuthService};
 use axum::{response::IntoResponse, routing::get, Router};
+use in_memory_user_repository::InMemoryUserRepository;
 use in_memory_worksite_repository::InMemoryWorksiteRepository;
 use std::{net::SocketAddr, sync::Arc};
 use web_htmx::{livereload, routes as web_routes, state::WebHtmxState};
@@ -188,6 +190,18 @@ async fn main() {
     };
     let worksite_repository = Arc::new(InMemoryWorksiteRepository::with(vec![worksite]));
     let worksite_service = WorksiteService::new(worksite_repository);
+
+    let user_repository = Arc::new(InMemoryUserRepository::empty());
+    let auth_service = AuthService::new(user_repository);
+
+    // Create a default user
+    auth_service
+        .create_user(CreateUserInput {
+            email: "user@yallchart.com".into(),
+            password: "password".into(),
+        })
+        .await
+        .expect("Failed to create default user");
 
     // Create WebHtmxState
     let web_htmx_state = WebHtmxState {
