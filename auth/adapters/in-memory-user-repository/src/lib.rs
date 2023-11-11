@@ -28,7 +28,15 @@ impl InMemoryUserRepository {
 impl UserRepository for InMemoryUserRepository {
     async fn get_user(&self, id: String) -> Result<Option<User>, RepositoryFailure> {
         let users = self.users.read().await;
-        Ok(users.iter().find(|w| w.id == id).map(|w| w.to_owned()))
+        Ok(users.iter().find(|u| u.id == id).map(|u| u.to_owned()))
+    }
+
+    async fn find_by_email(&self, email: String) -> Result<Option<User>, RepositoryFailure> {
+        let users = self.users.read().await;
+        Ok(users
+            .iter()
+            .find(|u| u.email == email)
+            .map(|u| u.to_owned()))
     }
 
     async fn save(&self, user: User) -> Result<(), RepositoryFailure> {
