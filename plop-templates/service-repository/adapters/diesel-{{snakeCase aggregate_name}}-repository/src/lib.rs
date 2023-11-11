@@ -1,3 +1,3 @@
-pub mod diesel_worksite_repository;
+pub mod diesel_{{snakeCase aggregate_name}}_repository;
 mod records;
 
