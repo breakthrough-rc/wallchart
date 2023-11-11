@@ -3,6 +3,7 @@ use std::sync::Arc;
 use async_trait::async_trait;
 use auth_service::models::User;
 use auth_service::ports::user_repository::{RepositoryFailure, UserRepository};
+use axum_login::{AuthUser, UserStore};
 use tokio::sync::RwLock;
 
 #[derive(Clone, Debug)]
@@ -46,5 +47,17 @@ impl UserRepository for InMemoryUserRepository {
         users.push(user.to_owned());
 
         Ok(())
+    }
+}
+
+/**
+* Also implement the UserStore trait from the auth_service crate.
+*/
+#[async_trait]
+impl UserStore<String, ()> for InMemoryUserRepository {
+    type User = User;
+    type Error = RepositoryFailure;
+    async fn load_user(&self, user_id: &String) -> Result<Option<Self::User>, Self::Error> {
+        self.get_user(user_id.to_owned()).await
     }
 }

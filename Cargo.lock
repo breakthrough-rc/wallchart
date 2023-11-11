@@ -940,6 +940,7 @@ version = "0.1.0"
 dependencies = [
  "async-trait",
  "auth-service",
+ "axum-login",
  "thiserror",
  "tokio",
  "tracing",
