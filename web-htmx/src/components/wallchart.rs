@@ -1,4 +1,5 @@
 use rscx::{component, html, props, CollectFragment, CollectFragmentAsync};
+use web_client::server::button::PrimaryButton;
 use worksite_service::models::{Shift, Worker, Worksite};
 
 #[props]
@@ -44,7 +45,12 @@ pub fn Wallchart(props: WallchartProps) -> String {
                                                     {location.name.clone()} - {shift.name.clone()}
                                                 </th>
                                                 <th colspan="3" scope="colgroup" class="bg-gray-50 py-2 pl-4 pr-3 text-right text-sm font-semibold text-gray-900 sm:pl-3">
-                                                    <a href=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new", &props.worksite.id, location.clone().id, shift.id)>"Create New Worker"</a>
+                                                    <PrimaryButton
+                                                        hx_get=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new", &props.worksite.id, location.clone().id, shift.id)
+                                                        hx_target="body"
+                                                    >
+                                                        "Create New Worker"
+                                                    </PrimaryButton>
                                                 </th>
                                             </tr>
                                             <ShiftRows shift=shift.clone() location_path=format!("/worksites/{}/locations/{}", &props.worksite.id, location.clone().id)/>
