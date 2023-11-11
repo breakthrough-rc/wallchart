@@ -2,27 +2,18 @@
 resolver = "2"
 
 members = [
-  ##PLOP NEW PACKAGE HOOK##
-          "auth/adapters/diesel-user-repository",
+          ##PLOP NEW PACKAGE HOOK##
           "auth/adapters/in-memory-user-repository",
           "auth/auth-service",
-          "auth/adapters/diesel-user-repository",
-          "auth/adapters/in-memory-user-repository",
           "auth/auth-service",
-          "auth/adapters/diesel-user-repository",
-          "auth/adapters/in-memory-user-repository",
-          "auth/auth-service",
-          "auth/adapters/diesel-user-repository",
-          "auth/adapters/in-memory-user-repository",
-  "auth/auth-service",
-  "main",
-  "web-client",
-  "web-htmx",
-  "web-macros",
-  "db",
-  "worksite/worksite-service",
-  "worksite/adapters/in-memory-worksite-repository",
-  "worksite/adapters/diesel-worksite-repository",
+          "main",
+          "web-client",
+          "web-htmx",
+          "web-macros",
+          "db",
+          "worksite/worksite-service",
+          "worksite/adapters/in-memory-worksite-repository",
+          "worksite/adapters/diesel-worksite-repository",
 ]
 
 [workspace.dependencies]
