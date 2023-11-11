@@ -6,7 +6,6 @@ use diesel::OptionalExtension;
 use diesel_async::scoped_futures::ScopedFutureExt;
 use diesel_async::RunQueryDsl;
 
-use auth_service::ports::user_repository::UserRepository;
 use {{snakeCase service_name}}_service::ports::{{snakeCase aggregate_name}}_repository::{RepositoryFailure, {{pascalCase aggregate_name}}Repository};
 use {{snakeCase service_name}}_service::models::{{pascalCase aggregate_name}};
 use crate::records::*;
@@ -29,7 +28,7 @@ impl {{pascalCase aggregate_name}}Repository for Diesel{{pascalCase aggregate_na
 
     }
 
-    async fn save(&self, id: String, {{snakeCase aggregate_name}}: {{pascalCase aggregate_name}}) -> Result<(), RepositoryFailure> {
+    async fn save(&self, {{snakeCase aggregate_name}}: {{pascalCase aggregate_name}}) -> Result<(), RepositoryFailure> {
         let conn = &mut self
             .pg_pool
             .get()

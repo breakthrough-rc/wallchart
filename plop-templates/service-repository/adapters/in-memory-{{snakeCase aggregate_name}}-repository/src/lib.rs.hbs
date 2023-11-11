@@ -31,7 +31,7 @@ impl {{pascalCase aggregate_name}}Repository for InMemory{{pascalCase aggregate_
         Ok({{snakeCase aggregate_name}}s.iter().find(|w| w.id == id).map(|w| w.to_owned()))
     }
 
-    async fn save(&self, id: String, {{snakeCase aggregate_name}}: {{pascalCase aggregate_name}}) -> Result<(), RepositoryFailure> {
+    async fn save(&self, {{snakeCase aggregate_name}}: {{pascalCase aggregate_name}}) -> Result<(), RepositoryFailure> {
         let mut {{snakeCase aggregate_name}}s = self.{{snakeCase aggregate_name}}s.write().await;
 
         {{snakeCase aggregate_name}}s.retain(|w| w.id != id);
