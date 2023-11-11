@@ -1,14 +1,14 @@
 use async_trait::async_trait;
 use db::db::PgPool;
-use db::schema:**;
+use db::schema::*;
 use diesel::prelude::*;
 use diesel::OptionalExtension;
 use diesel_async::scoped_futures::ScopedFutureExt;
 use diesel_async::RunQueryDsl;
-use {{snakeCase service_name}}_service::{
-    models::{{pascalCase aggregate_name}},
-    ports::{{snakeCase aggregate_name}}_repository::{RepositoryFailure, {{pascalCase aggregate_name}}Repository},
-}
+
+use auth_service::ports::user_repository::UserRepository;
+use {{snakeCase service_name}}_service::ports::{{snakeCase aggregate_name}}_repository::{RepositoryFailure, {{pascalCase aggregate_name}}Repository},;
+use {{snakeCase service_name}}_service::models::{{pascalCase aggregate_name}};
 use crate::records::*;
 
 #[derive(Clone)]
