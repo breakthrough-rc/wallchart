@@ -153,4 +153,54 @@ export default function(plop) {
       },
     ],
   });
+  plop.setGenerator("service-repository", {
+    description: "Create a repository for a service",
+    prompts: [
+      {
+        type: "input",
+        name: "service_name",
+        message: "Service name: ",
+      },
+      {
+        type: "input",
+        name: "aggregate_name",
+        message: "Aggregate name: ",
+      },
+    ],
+    actions: [
+      {
+        type: "addMany",
+        destination:
+          "{{kabobCase service_name}}/{{kabobCase service_name}}-service/src/",
+        templateFiles: "plop-templates/service-repository/ports/**",
+        base: "plop-templates/service-repository",
+      },
+      {
+        path: "{{kabobCase service_name}}/{{kabobCase service_name}}-service/src/ports.rs",
+        pattern: /(\/\/##PLOP INSERT MOD HOOK##)/g,
+        template: "$1\npub mod {{snakeCase aggregate_name}}_repository;",
+        type: "modify",
+      },
+      {
+        type: "addMany",
+        destination: "{{kabobCase service_name}}/",
+        templateFiles: "plop-templates/service-repository/adapters/**",
+        base: "plop-templates/service-repository",
+      },
+      {
+        path: "Cargo.toml",
+        pattern: /(##PLOP NEW PACKAGE HOOK##)/g,
+        template: `$1
+          "{{kabobCase service_name}}/adapters/in-memory-{{kabobCase aggregate_name}}-repository",`,
+        type: "modify",
+      },
+      {
+        path: "Cargo.toml",
+        pattern: /(##PLOP NEW PACKAGE HOOK##)/g,
+        template: `$1
+          "{{kabobCase service_name}}/adapters/diesel-{{kabobCase aggregate_name}}-repository",`,
+        type: "modify",
+      },
+    ],
+  });
 }
