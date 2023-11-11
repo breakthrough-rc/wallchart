@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 axum = { workspace = true }
 axum-flash = { workspace = true }
+axum-login = { workspace = true }
 http = { workspace = true }
 once_cell = { workspace = true }
 rscx = { workspace = true }
@@ -18,3 +19,4 @@ tower-livereload = { workspace = true }
 web-client = { path = "../web-client" }
 web-macros = { path = "../web-macros" }
 worksite-service = { path = "../worksite/worksite-service" }
+auth-service = { path = "../auth/auth-service" }

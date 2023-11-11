@@ -71,4 +71,3 @@ impl UserStore<String, ()> for InMemoryUserStore {
 *  We can probably find a better way to implement this but for now just sticking it here.
  */
 pub type AuthContext = axum_login::extractors::AuthContext<String, User, InMemoryUserStore>;
-pub type RequireAuth = RequireAuthorizationLayer<String, User, ()>;

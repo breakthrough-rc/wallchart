@@ -2174,8 +2174,10 @@ dependencies = [
 name = "web-htmx"
 version = "0.1.0"
 dependencies = [
+ "auth-service",
  "axum",
  "axum-flash",
+ "axum-login",
  "http",
  "once_cell",
  "rscx",
