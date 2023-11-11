@@ -32,6 +32,7 @@ once_cell = { version = "1.18.0" }
 password-auth = { version = "1.0.0" }
 proc-macro2 = { version = "1.0.69" }
 quote = { version = "1.0.33" }
+rand = { version = "0.8.5" }
 rscx = { version = "0.1.11" }
 serde = { version = "1.0.188" }
 serde_json = { version = "1.0.107" }

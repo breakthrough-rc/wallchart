@@ -3,7 +3,7 @@ use std::sync::Arc;
 use async_trait::async_trait;
 use auth_service::models::User;
 use auth_service::ports::user_repository::{RepositoryFailure, UserRepository};
-use axum_login::{AuthUser, UserStore};
+use axum_login::{AuthUser, RequireAuthorizationLayer, UserStore};
 use tokio::sync::RwLock;
 
 #[derive(Clone, Debug)]
@@ -61,3 +61,10 @@ impl UserStore<String, ()> for InMemoryUserRepository {
         self.get_user(user_id.to_owned()).await
     }
 }
+
+/**
+ * Provide a couple required types that are tight coupled to the DB implementation
+*  We can probably find a better way to implement this but for now just sticking it here.
+ */
+pub type AuthContext = axum_login::extractors::AuthContext<String, User, InMemoryUserRepository>;
+pub type RequireAuth = RequireAuthorizationLayer<String, User, ()>;

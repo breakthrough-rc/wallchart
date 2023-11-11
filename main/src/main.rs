@@ -1,7 +1,12 @@
-use auth_service::{create_user::CreateUserInput, models::User, service::AuthService};
+use auth_service::{create_user::CreateUserInput, service::AuthService};
 use axum::{response::IntoResponse, routing::get, Router};
+use axum_login::{
+    axum_sessions::{async_session::MemoryStore, SessionLayer},
+    AuthLayer,
+};
 use in_memory_user_repository::InMemoryUserRepository;
 use in_memory_worksite_repository::InMemoryWorksiteRepository;
+use rand::Rng;
 use std::{net::SocketAddr, sync::Arc};
 use web_htmx::{livereload, routes as web_routes, state::WebHtmxState};
 use worksite_service::{
@@ -191,8 +196,8 @@ async fn main() {
     let worksite_repository = Arc::new(InMemoryWorksiteRepository::with(vec![worksite]));
     let worksite_service = WorksiteService::new(worksite_repository);
 
-    let user_repository = Arc::new(InMemoryUserRepository::empty());
-    let auth_service = AuthService::new(user_repository);
+    let user_repository = InMemoryUserRepository::empty();
+    let auth_service = AuthService::new(Arc::new(user_repository.clone()));
 
     // Create a default user
     auth_service
@@ -215,6 +220,15 @@ async fn main() {
 
     #[cfg(debug_assertions)]
     let app = app.layer(livereload::layer());
+
+    // Session and Auth Management
+    let secret = rand::thread_rng().gen::<[u8; 64]>();
+    let session_store = MemoryStore::new();
+    let session_layer = SessionLayer::new(session_store, &secret).with_secure(false);
+    let auth_layer = AuthLayer::new(user_repository.clone(), &secret);
+
+    let app = app.layer(auth_layer);
+    let app = app.layer(session_layer);
 
     // run our app with hyper
     // `axum::Server` is a re-export of `hyper::Server`
