@@ -50,15 +50,19 @@ impl UserRepository for InMemoryUserRepository {
     }
 }
 
+#[derive(Clone)]
+pub struct InMemoryUserStore {
+    pub users: Arc<InMemoryUserRepository>,
+}
 /**
 * Also implement the UserStore trait from the auth_service crate.
 */
 #[async_trait]
-impl UserStore<String, ()> for InMemoryUserRepository {
+impl UserStore<String, ()> for InMemoryUserStore {
     type User = User;
     type Error = RepositoryFailure;
     async fn load_user(&self, user_id: &String) -> Result<Option<Self::User>, Self::Error> {
-        self.get_user(user_id.to_owned()).await
+        self.users.get_user(user_id.to_owned()).await
     }
 }
 
@@ -66,5 +70,5 @@ impl UserStore<String, ()> for InMemoryUserRepository {
  * Provide a couple required types that are tight coupled to the DB implementation
 *  We can probably find a better way to implement this but for now just sticking it here.
  */
-pub type AuthContext = axum_login::extractors::AuthContext<String, User, InMemoryUserRepository>;
+pub type AuthContext = axum_login::extractors::AuthContext<String, User, InMemoryUserStore>;
 pub type RequireAuth = RequireAuthorizationLayer<String, User, ()>;

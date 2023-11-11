@@ -4,7 +4,7 @@ use axum_login::{
     axum_sessions::{async_session::MemoryStore, SessionLayer},
     AuthLayer,
 };
-use in_memory_user_repository::InMemoryUserRepository;
+use in_memory_user_repository::{InMemoryUserRepository, InMemoryUserStore};
 use in_memory_worksite_repository::InMemoryWorksiteRepository;
 use rand::Rng;
 use std::{net::SocketAddr, sync::Arc};
@@ -196,8 +196,8 @@ async fn main() {
     let worksite_repository = Arc::new(InMemoryWorksiteRepository::with(vec![worksite]));
     let worksite_service = WorksiteService::new(worksite_repository);
 
-    let user_repository = InMemoryUserRepository::empty();
-    let auth_service = AuthService::new(Arc::new(user_repository.clone()));
+    let user_repository = Arc::new(InMemoryUserRepository::empty());
+    let auth_service = AuthService::new(user_repository.clone());
 
     // Create a default user
     auth_service
@@ -225,7 +225,10 @@ async fn main() {
     let secret = rand::thread_rng().gen::<[u8; 64]>();
     let session_store = MemoryStore::new();
     let session_layer = SessionLayer::new(session_store, &secret).with_secure(false);
-    let auth_layer = AuthLayer::new(user_repository.clone(), &secret);
+    let user_memory_store = InMemoryUserStore {
+        users: user_repository.clone(),
+    };
+    let auth_layer = AuthLayer::new(user_memory_store, &secret);
 
     let app = app.layer(auth_layer);
     let app = app.layer(session_layer);
