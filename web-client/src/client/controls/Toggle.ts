@@ -31,21 +31,23 @@ const Toggle_ = {
     })();
     const transition = Transition.create(transitionElement);
 
-    const actionElement = element.querySelector("[data-toggle-action]");
-    if (!actionElement) {
-      console.warn("Toggle control has no action element.", element);
+    const actionElementNodeList = Array.from(element.querySelectorAll("[data-toggle-action]"));
+    if (actionElementNodeList.length === 0) {
+      console.warn("Toggle control has no action elements with selector: [data-toggle-action].", element);
     }
 
-    actionElement?.addEventListener("click", (event: Event) => {
-      event.stopPropagation();
+    actionElementNodeList.forEach((actionElement) => {
+      actionElement.addEventListener("click", (event: Event) => {
+        event.stopPropagation();
 
-      const actionKey = (event.target as HTMLElement).dataset.toggleAction;
+        const actionKey = (event.target as HTMLElement).dataset.toggleAction;
 
-      if (actionKey && actionKey in actions) {
-        actions[actionKey]();
-      } else {
-        handleToggleStateChange();
-      }
+        if (actionKey && actionKey in actions) {
+          actions[actionKey]();
+        } else {
+          handleToggleStateChange();
+        }
+      });
     });
 
     const shouldCloseOnBodyClick = delegate.shouldToggleCloseOnBodyClick ?? true;
