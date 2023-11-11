@@ -1,34 +1,52 @@
 use std::sync::Arc;
 
+use password_auth::verify_password;
 use thiserror::Error;
+
+use crate::{models::User, ports::user_repository::UserRepository};
 
 // Example repo dependency
 // use crate::ports::worksite_repository::WorksiteRepository;
 
 #[derive(Clone)]
 pub struct GetUserForLogin {
-    // Put infra dependencies in this struct
-    // Below is an example of a repo dependency
-    // pub worksite_repository: Arc<dyn WorksiteRepository>,
+    pub user_repository: Arc<dyn UserRepository>,
 }
 
 #[derive(Clone, Debug)]
 pub struct GetUserForLoginInput {
-    // Put input fields here
-    pub id: String
+    pub email: String,
+    pub password: String,
 }
 
 // Change the return type, if needed
-pub type GetUserForLoginOutput = Result<(), GetUserForLoginFailure>;
+pub type GetUserForLoginOutput = Result<User, GetUserForLoginFailure>;
 
 impl GetUserForLogin {
     pub async fn get_user_for_login(&self, input: GetUserForLoginInput) -> GetUserForLoginOutput {
-        todo!("Implement get_user_for_login")
+        let user = self
+            .user_repository
+            .find_by_email(input.email)
+            .await
+            .map_err(|e| GetUserForLoginFailure::Internal(e.to_string()))?;
+
+        match user {
+            Some(user) => verify_password(input.password, &user.hashed_password)
+                .map(|_| user)
+                .map_err(|_| GetUserForLoginFailure::WrongPassword),
+            None => Err(GetUserForLoginFailure::UserNotFound),
+        }
     }
 }
 
 #[derive(Error, Debug, PartialEq)]
 pub enum GetUserForLoginFailure {
+    #[error("User does not exist!")]
+    UserNotFound,
+    #[error("Wrong password!")]
+    WrongPassword,
+    #[error("Internal Error")]
+    Internal(String),
     #[error("Something went wrong")]
     Unknown(String),
 }

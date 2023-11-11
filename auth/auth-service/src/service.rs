@@ -19,7 +19,7 @@ impl AuthService {
         Self {
             //##PLOP INSERT COMMAND INSTANTIATION HOOK##
             get_user_for_login: GetUserForLogin {
-              // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
+                user_repository: user_repository.clone(),
             },
             create_user: CreateUser { user_repository },
         }
