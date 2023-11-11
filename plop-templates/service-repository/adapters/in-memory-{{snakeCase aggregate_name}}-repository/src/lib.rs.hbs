@@ -34,7 +34,7 @@ impl {{pascalCase aggregate_name}}Repository for InMemory{{pascalCase aggregate_
     async fn save(&self, {{snakeCase aggregate_name}}: {{pascalCase aggregate_name}}) -> Result<(), RepositoryFailure> {
         let mut {{snakeCase aggregate_name}}s = self.{{snakeCase aggregate_name}}s.write().await;
 
-        {{snakeCase aggregate_name}}s.retain(|w| w.id != id);
+        {{snakeCase aggregate_name}}s.retain(|w| w.id != {{snakeCase aggegate_name}}.id);
         {{snakeCase aggregate_name}}s.push({{snakeCase aggregate_name}}.to_owned());
 
         Ok(())
