@@ -12,17 +12,16 @@ use std::{
     sync::Arc,
     time::{SystemTime, UNIX_EPOCH},
 };
-use web_client::server::button::PrimaryButton;
 use web_client::server::html_element::HtmlElement;
 use web_client::server::modal::Modal;
 use web_client::server::notification::{
     NoticationCloseButton, NotificationCall, NotificationPresenter, NotificationTransition,
 };
+use web_client::server::{attrs::Attrs, button::PrimaryButton};
 use web_macros::*;
 
 pub fn routes() -> Router {
     Router::new()
-        .route("/authenticated", get(get_authenticated))
         .route("/", get(get_playground))
         .route("/test-render", get(get_test_render))
         .route("/htmx", get(htmx_test))
@@ -252,11 +251,12 @@ pub fn PlaygroundPgContent() -> String {
             <section class="py-8">
                 <h2 class="text-xl font-bold">Auth Testing</h2>
                 <div class="flex gap-2">
-                    <a
-                        href="/playground/authenticated"
+                    <PrimaryButton
+                        tag="a"
+                        attrs=Attrs::with("href", "/wallchart".into())
                     >
                         Authenticated page link
-                    </a>
+                    </PrimaryButton>
                 </div>
             </section>
         </Welcome>
@@ -347,17 +347,6 @@ async fn get_test_render(headers: HeaderMap) -> Html<String> {
                     "If this is being pulled in from an htmx request
                     we should just see the `section` tag only."
                 </p>
-            </section>
-        </PageLayout>
-    })
-}
-
-async fn get_authenticated() -> Html<String> {
-    Html(html! {
-        <PageLayout title="Authenticated">
-            <section class="py-8">
-                <h2 class="text-xl font-bold">"Authenticated"</h2>
-                <p>"You are authenticated!"</p>
             </section>
         </PageLayout>
     })

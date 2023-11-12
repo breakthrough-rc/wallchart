@@ -26,16 +26,17 @@ pub mod state;
 
 pub fn routes(state: WebHtmxState) -> Router {
     Router::new()
-        .route("/", get(Redirect::temporary("/playground")))
         .with_state(state.clone())
         //##PLOP MERGE ROUTE HOOK##
         .merge(worksite_routes(state.clone()))
         .merge(workers_routes(state.clone()))
-        .nest("/playground", playground::routes())
+        // Anything above this RequireAuth route will require authentication
         .route_layer(RequireAuth::login_or_redirect(
             Arc::new("/login".into()),
             None,
         ))
+        .route("/", get(Redirect::temporary("/playground")))
+        .nest("/playground", playground::routes())
         .nest_service("/client", client_routes())
         .merge(users_routes(state.clone()))
         .fallback(fallback)
