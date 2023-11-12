@@ -39,10 +39,13 @@ async fn get_wallchart_page(
         .ok_or("Worksite not found")
         .unwrap();
 
+    let worksite_name = worksite.name.clone();
+
     let html = html! {
-        <PageLayout title="Wallchart">
+        <PageLayout title=format!("Wallchart: {}", worksite_name)>
             <NotificationFlashes flashes=flashes.clone() />
             <div class="my-4">
+                <p><em>Manage your worksite and more.</em></p>
                 <Wallchart worksite=worksite/>
             </div>
         </PageLayout>
