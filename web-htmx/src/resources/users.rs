@@ -1,16 +1,22 @@
 use crate::{components::login_form::LoginForm, page::PageLayout, state::WebHtmxState};
+use auth_service::{
+    get_user_for_login::GetUserForLoginInput, models::User, ports::user_repository::UserRepository,
+};
 use axum::{
     extract::{self, State},
     response::{Html, IntoResponse},
     routing::get,
     Form, Router,
 };
+use axum_flash::Flash;
+use http::StatusCode;
+use in_memory_user_repository::AuthContext;
 use rscx::html;
 use serde::Deserialize;
 
 pub fn users_routes(state: WebHtmxState) -> Router {
     Router::new()
-        .route("/login", get(get_login))
+        .route("/login", get(get_login).post(post_login))
         .with_state(state)
 }
 
@@ -22,19 +28,42 @@ async fn get_login(State(state): State<WebHtmxState>) -> impl IntoResponse {
     })
 }
 
-// #[derive(Deserialize, Debug)]
-// struct ExampleForm {
-//     foo: String,
-//     bar: String,
-// }
-//
-// async fn post_users(
-//     State(WebHtmxState {
-//         worksite_service,
-//         auth_service,
-//         flash_config,
-//     }): State<WebHtmxState>,
-//     Form(example_form): Form<ExampleForm>,
-// ) -> impl IntoResponse {
-//     todo!()
-// }
+#[derive(Deserialize, Debug)]
+struct LoginForm {
+    email: String,
+    password: String,
+}
+
+async fn post_login(
+    State(WebHtmxState {
+        worksite_service,
+        auth_service,
+        flash_config,
+    }): State<WebHtmxState>,
+    mut auth: AuthContext,
+    flash: Flash,
+    Form(login_form): Form<LoginForm>,
+) -> impl IntoResponse {
+    let result = auth_service
+        .get_user_for_login(GetUserForLoginInput {
+            email: login_form.email,
+            password: login_form.password,
+        })
+        .await;
+
+    match result {
+        Ok(user) => match auth.login(&user).await {
+            Ok(_) => (
+                StatusCode::OK,
+                [("hx-redirect", "/"), ("hx-retarget", "body")],
+            )
+                .into_response(),
+            Err(_) => (StatusCode::BAD_REQUEST, "Login failed").into_response(),
+        },
+        Err(_) => (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            "Login failed".to_string(),
+        )
+            .into_response(),
+    }
+}

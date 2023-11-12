@@ -2179,6 +2179,7 @@ dependencies = [
  "axum-flash",
  "axum-login",
  "http",
+ "in-memory-user-repository",
  "once_cell",
  "rscx",
  "serde",

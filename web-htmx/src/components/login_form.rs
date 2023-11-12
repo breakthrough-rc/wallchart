@@ -13,6 +13,9 @@ pub fn LoginForm(props: LoginFormProps) -> String {
         <div>
             <form hx-post=props.login_route>
                 <div class="pb-12">
+                    <p class="mt-1 text-sm leading-6 text-gray-600">
+                        "pssst: try user@yallchart.com / password"
+                    </p>
                     <GridLayout class="mt-10">
                         <GridCell span=4>
                             <Label for_input="email">Email</Label>
