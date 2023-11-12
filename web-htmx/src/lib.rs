@@ -1,3 +1,6 @@
+use std::sync::Arc;
+
+use auth_service::RequireAuth;
 use axum::{
     response::{Html, Redirect},
     routing::get,
@@ -24,13 +27,17 @@ pub mod state;
 pub fn routes(state: WebHtmxState) -> Router {
     Router::new()
         .route("/", get(Redirect::temporary("/playground")))
-        .nest_service("/client", client_routes())
         .with_state(state.clone())
         //##PLOP MERGE ROUTE HOOK##
         .merge(worksite_routes(state.clone()))
         .merge(workers_routes(state.clone()))
-        .merge(users_routes(state.clone()))
         .nest("/playground", playground::routes())
+        .route_layer(RequireAuth::login_or_redirect(
+            Arc::new("/login".into()),
+            None,
+        ))
+        .nest_service("/client", client_routes())
+        .merge(users_routes(state.clone()))
         .fallback(fallback)
 }
 

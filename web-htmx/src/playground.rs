@@ -23,10 +23,6 @@ use web_macros::*;
 pub fn routes() -> Router {
     Router::new()
         .route("/authenticated", get(get_authenticated))
-        .route_layer(RequireAuth::login_or_redirect(
-            Arc::new("/login".into()),
-            None,
-        ))
         .route("/", get(get_playground))
         .route("/test-render", get(get_test_render))
         .route("/htmx", get(htmx_test))
