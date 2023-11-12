@@ -13,7 +13,7 @@ pub struct WorkerDetailProps {
 pub fn WorkerDetail(props: WorkerDetailProps) -> String {
     html! {
         <div>
-            <AddWorkerForm action=""/>
+           <AddWorkerForm action=""/>
         </div>
     }
 }

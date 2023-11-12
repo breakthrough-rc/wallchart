@@ -18,7 +18,10 @@ use worksite_service::{assign_worker::AssignWorkerInput, models::Worker};
 
 pub fn workers_routes(state: WebHtmxState) -> Router {
     Router::new()
-        .route("/workers/:worker_id", get(get_worker_detail))
+        .route(
+            "/workers/:worker_id",
+            get(get_worker_detail).post(post_worker_detail),
+        )
         .route(
             "/wallcharts/:worksite_id/locations/:location_id/shifts/:shift_id/workers/new",
             get(get_worker_form).post(post_worker),
@@ -120,6 +123,46 @@ async fn post_worker(
     (
         StatusCode::OK,
         flash.success("Worker added successfully!"),
+        [("hx-redirect", "/wallchart"), ("hx-retarget", "body")],
+    )
+}
+
+#[derive(Deserialize, Debug)]
+struct UpdateWorkerFormData {
+    first_name: String,
+    last_name: String,
+    street_address: String,
+    city: String,
+    region: String,
+    postal_code: String,
+}
+
+async fn post_worker_detail(
+    State(WebHtmxState {
+        worksite_service, ..
+    }): State<WebHtmxState>,
+    flash: Flash,
+    extract::Path(worker_id): extract::Path<String>,
+    Form(form): Form<UpdateWorkerFormData>,
+) -> impl IntoResponse {
+    // worksite_service
+    //     .assign_worker(AssignWorkerInput {
+    //         id: wallchart_id,
+    //         location_id,
+    //         shift_id,
+    //         first_name: form.first_name,
+    //         last_name: form.last_name,
+    //         street_address: form.street_address,
+    //         city: form.city,
+    //         region: form.region,
+    //         postal_code: form.postal_code,
+    //     })
+    //     .await
+    //     .expect("Failed to assign worker");
+
+    (
+        StatusCode::OK,
+        flash.success("Worker updated successfully!"),
         [("hx-redirect", "/wallchart"), ("hx-retarget", "body")],
     )
 }
