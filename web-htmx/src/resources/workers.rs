@@ -14,6 +14,7 @@ use worksite_service::assign_worker::AssignWorkerInput;
 
 pub fn workers_routes(state: WebHtmxState) -> Router {
     Router::new()
+        .route("/workers/:worker_id", get(get_worker_detail))
         .route(
             "/wallcharts/:worksite_id/locations/:location_id/shifts/:shift_id/workers/new",
             get(get_worker_form).post(post_worker),
@@ -23,6 +24,17 @@ pub fn workers_routes(state: WebHtmxState) -> Router {
             get(get_worker_form_modal),
         )
         .with_state(state)
+}
+
+async fn get_worker_detail(
+    extract::Path(worker_id): extract::Path<String>,
+    State(state): State<WebHtmxState>,
+) -> impl IntoResponse {
+    Html(html! {
+        <PageLayout title="Worker Detail">
+            <p>Hello worker {worker_id}</p>
+        </PageLayout>
+    })
 }
 
 async fn get_worker_form_modal(
@@ -35,6 +47,7 @@ async fn get_worker_form_modal(
         </Modal>
     })
 }
+
 async fn get_worker_form(
     extract::Path((wallchart_id, location_id, shift_id)): extract::Path<(String, String, String)>,
     State(WebHtmxState { .. }): State<WebHtmxState>,
