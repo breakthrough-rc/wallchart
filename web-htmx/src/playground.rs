@@ -17,7 +17,10 @@ use web_client::server::modal::Modal;
 use web_client::server::notification::{
     NoticationCloseButton, NotificationCall, NotificationPresenter, NotificationTransition,
 };
-use web_client::server::{attrs::Attrs, button::PrimaryButton};
+use web_client::server::{
+    attrs::Attrs,
+    button::{PrimaryButton, SecondaryButton},
+};
 use web_macros::*;
 
 pub fn routes() -> Router {
@@ -115,12 +118,12 @@ fn ModalPlayground() -> String {
             <h2 class="text-xl font-bold">Modal Playground</h2>
             <p><em>Open models for fun AND non-profit.</em></p>
             <div class="flex gap-2">
-            <PrimaryButton
-                hx_get="/playground/modal/one"
-                hx_target="#modals-root"
-            >
-                    Open Simple Modal
-            </PrimaryButton>
+                <PrimaryButton
+                    hx_get="/playground/modal/one"
+                    hx_target="#modals-root"
+                >
+                        Open Simple Modal
+                </PrimaryButton>
             </div>
             <div id="modals-root">
             </div>
@@ -236,12 +239,12 @@ pub fn PlaygroundPgContent() -> String {
             <section class="py-8">
                 <h2 class="text-xl font-bold">HTMX Rendering</h2>
                 <div class="flex gap-2">
-                    <PrimaryButton
+                    <SecondaryButton
                         hx_get="/playground/htmx"
                         hx_swap="outerHTML"
                     >
                         Click me!
-                    </PrimaryButton>
+                    </SecondaryButton>
                 </div>
             </section>
             <NotificationsPlayground />
@@ -253,7 +256,7 @@ pub fn PlaygroundPgContent() -> String {
                 <div class="flex gap-2">
                     <PrimaryButton
                         tag="a"
-                        attrs=Attrs::with("href", "/wallchart".into())
+                        href="/wallchart"
                     >
                         Authenticated page link
                     </PrimaryButton>
@@ -287,7 +290,9 @@ async fn get_custom_notification() -> Html<String> {
             <template>
                 <div class="bg-white p-10 border">
                     <p>This is a bad notification!</p>
-                    <button data-toggle-action="close">Close me</button>
+                    <SecondaryButton attrs=Attrs::with("data-toggle-action", "close".into())>
+                        Close me
+                    </SecondaryButton>
                 </div>
             </template>
         </NotificationPresenter>

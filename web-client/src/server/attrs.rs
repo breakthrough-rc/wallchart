@@ -48,6 +48,13 @@ impl Attrs {
             omit: self.omit.clone(),
         }
     }
+    pub fn set_if(&self, key: &'static str, value: String, condition: bool) -> Self {
+        if condition {
+            self.set(key, value)
+        } else {
+            self.clone()
+        }
+    }
     pub fn get(&self, key: &'static str) -> Option<&String> {
         if self.omit.contains(&key) {
             return None;
