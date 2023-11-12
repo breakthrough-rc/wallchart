@@ -22,7 +22,14 @@ export default {
     "sm:col-start-3",
     "sm:col-start-4", 
     "sm:col-start-5", 
-    "sm:col-start-6",    
+    "sm:col-start-6",
+
+    // used in web-client/server/modal.rs
+    "sm:max-w-sm",
+    "sm:max-w-md",
+    "sm:max-w-lg",
+    "sm:max-w-screen-sm",
+    "sm:max-w-screen-md",
   ],  
 }
 
