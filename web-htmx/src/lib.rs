@@ -7,6 +7,7 @@ use http::StatusCode;
 use page::PageLayout;
 //##PLOP USE RESOURCE HOOK##
 use components::not_found_message::NotFoundMessage;
+use resources::users::users_routes;
 use resources::workers::workers_routes;
 use resources::worksite::worksite_routes;
 use rscx::html;
@@ -25,11 +26,12 @@ pub fn routes(state: WebHtmxState) -> Router {
         .route("/", get(Redirect::temporary("/playground")))
         .nest_service("/client", client_routes())
         .with_state(state.clone())
+        //##PLOP MERGE ROUTE HOOK##
         .merge(worksite_routes(state.clone()))
-        .merge(workers_routes(state))
+        .merge(workers_routes(state.clone()))
+        .merge(users_routes(state.clone()))
         .nest("/playground", playground::routes())
         .fallback(fallback)
-    //##PLOP MERGE ROUTE HOOK##
 }
 
 async fn fallback() -> (StatusCode, Html<String>) {
