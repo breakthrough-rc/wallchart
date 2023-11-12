@@ -104,7 +104,7 @@ pub fn WorkerRow(props: WorkerRowProps) -> String {
     html! {
       <tr class="border-t border-gray-300" data-loading-states>
           <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
-              <a href=format!("/workers/{}", props.worker.id)>
+              <a href=format!("/worksites/{}/workers/{}", 1, props.worker.id)>
                   {format!("{} {}", props.worker.first_name, props.worker.last_name)}
               </a>
           </td>

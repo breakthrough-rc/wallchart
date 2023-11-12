@@ -111,6 +111,12 @@ pub struct Worker {
     pub tags: Vec<Tag>,
 }
 
+impl Worker {
+    pub fn full_name(&self) -> String {
+        format!("{} {}", self.first_name, self.last_name)
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct Assessment {
     pub id: String,

@@ -198,7 +198,74 @@ async fn main() {
                 ],
             },
         ],
-        workers: vec![],
+        workers: vec![
+            Worker {
+                id: "1".into(),
+                first_name: "Jim".into(),
+                last_name: "Halpert".into(),
+                last_assessment: Some(Assessment {
+                    id: "1".into(),
+                    value: 1,
+                }),
+                tags: vec![
+                    Tag {
+                        id: "1".into(),
+                        name: "Baked a cake".into(),
+                        icon: "🍰".into(),
+                    },
+                    Tag {
+                        id: "2".into(),
+                        name: "Shared fries".into(),
+                        icon: "🍟".into(),
+                    },
+                    Tag {
+                        id: "3".into(),
+                        name: "Listened to Rancid".into(),
+                        icon: "🎸".into(),
+                    },
+                ],
+            },
+            Worker {
+                id: "2".into(),
+                first_name: "Pam".into(),
+                last_name: "Beesly".into(),
+                last_assessment: Some(Assessment {
+                    id: "2".into(),
+                    value: 2,
+                }),
+                tags: vec![
+                    Tag {
+                        id: "1".into(),
+                        name: "Baked a cake".into(),
+                        icon: "🍰".into(),
+                    },
+                    Tag {
+                        id: "2".into(),
+                        name: "Shared fries".into(),
+                        icon: "🍟".into(),
+                    },
+                    Tag {
+                        id: "3".into(),
+                        name: "Listened to Rancid".into(),
+                        icon: "🎸".into(),
+                    },
+                ],
+            },
+            Worker {
+                id: "3".into(),
+                first_name: "Dwight".into(),
+                last_name: "Schrute".into(),
+                last_assessment: Some(Assessment {
+                    id: "3".into(),
+                    value: 4,
+                }),
+                tags: vec![Tag {
+                    id: "3".into(),
+                    name: "Listened to Rancid".into(),
+                    icon: "🎸".into(),
+                }],
+            },
+        ],
     };
     let worksite_repository = Arc::new(InMemoryWorksiteRepository::with(vec![worksite]));
     let worksite_service = WorksiteService::new(worksite_repository);

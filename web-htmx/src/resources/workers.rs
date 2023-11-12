@@ -14,12 +14,14 @@ use http::StatusCode;
 use rscx::html;
 use serde::Deserialize;
 use web_client::server::modal::{Modal, ModalSize};
-use worksite_service::{assign_worker::AssignWorkerInput, models::Worker};
+use worksite_service::{
+    assign_worker::AssignWorkerInput, get_worker::GetWorkerInput, models::Worker,
+};
 
 pub fn workers_routes(state: WebHtmxState) -> Router {
     Router::new()
         .route(
-            "/workers/:worker_id",
+            "/worksites/:worksite_id/workers/:worker_id",
             get(get_worker_detail).post(post_worker_detail),
         )
         .route(
@@ -34,25 +36,26 @@ pub fn workers_routes(state: WebHtmxState) -> Router {
 }
 
 async fn get_worker_detail(
-    extract::Path(worker_id): extract::Path<String>,
+    extract::Path((worksite_id, worker_id)): extract::Path<(String, String)>,
     State(state): State<WebHtmxState>,
 ) -> impl IntoResponse {
-    // let worker = state
-    //     .worksite_service
-    //     .get_worker(worker_id)
-    //     .await
-    //     .expect("Failed to get worker");
+    let worker = state
+        .worksite_service
+        .get_worker(GetWorkerInput {
+            id: worker_id,
+            worksite_id,
+        })
+        .await
+        .expect("Failed to get worker")
+        .ok_or("Worker not found")
+        .expect("Worker not found");
 
-    let worker = Worker {
-        id: worker_id,
-        first_name: "hard coded worker".into(),
-        last_name: "hard coded worker".into(),
-        last_assessment: None,
-        tags: vec![],
-    };
+    let full_name = worker.full_name();
 
     Html(html! {
-        <PageLayout title="Worker Detail">
+        <PageLayout
+            title=format!("Worker Detail: {}", full_name)
+        >
             <WorkerDetail worker=worker />
         </PageLayout>
     })
