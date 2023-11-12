@@ -52,7 +52,8 @@ impl AssignWorker {
         // TODO! Implement uuid generation as a port
         let worker = Worker {
             id: uuid::Uuid::new_v4().to_string(),
-            name: format!("{} {}", input.first_name, input.last_name), // TODO! Seperate first and last name!
+            first_name: input.first_name,
+            last_name: input.last_name,
             last_assessment: None,
             tags: Vec::new(),
         };

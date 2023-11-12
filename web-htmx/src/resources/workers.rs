@@ -1,4 +1,8 @@
-use crate::{components::add_worker_form::AddWorkerForm, page::PageLayout, state::WebHtmxState};
+use crate::{
+    components::{add_worker_form::AddWorkerForm, worker_detail::WorkerDetail},
+    page::PageLayout,
+    state::WebHtmxState,
+};
 use axum::{
     extract::{self, State},
     response::{Html, IntoResponse},
@@ -10,7 +14,7 @@ use http::StatusCode;
 use rscx::html;
 use serde::Deserialize;
 use web_client::server::modal::{Modal, ModalSize};
-use worksite_service::assign_worker::AssignWorkerInput;
+use worksite_service::{assign_worker::AssignWorkerInput, models::Worker};
 
 pub fn workers_routes(state: WebHtmxState) -> Router {
     Router::new()
@@ -30,9 +34,23 @@ async fn get_worker_detail(
     extract::Path(worker_id): extract::Path<String>,
     State(state): State<WebHtmxState>,
 ) -> impl IntoResponse {
+    // let worker = state
+    //     .worksite_service
+    //     .get_worker(worker_id)
+    //     .await
+    //     .expect("Failed to get worker");
+
+    let worker = Worker {
+        id: worker_id,
+        first_name: "hard coded worker".into(),
+        last_name: "hard coded worker".into(),
+        last_assessment: None,
+        tags: vec![],
+    };
+
     Html(html! {
         <PageLayout title="Worker Detail">
-            <p>Hello worker {worker_id}</p>
+            <WorkerDetail worker=worker />
         </PageLayout>
     })
 }
@@ -43,7 +61,7 @@ async fn get_worker_form_modal(
 ) -> impl IntoResponse {
     Html(html! {
         <Modal size=ModalSize::MediumScreen>
-            <AddWorkerForm create_worker_route=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new", wallchart_id, location_id, shift_id) />
+            <AddWorkerForm action=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new", wallchart_id, location_id, shift_id) />
         </Modal>
     })
 }
@@ -54,7 +72,7 @@ async fn get_worker_form(
 ) -> impl IntoResponse {
     Html(html! {
         <PageLayout title="Add Worker">
-            <AddWorkerForm create_worker_route=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new", wallchart_id, location_id, shift_id) />
+            <AddWorkerForm action=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new", wallchart_id, location_id, shift_id) />
         </PageLayout>
     })
 }

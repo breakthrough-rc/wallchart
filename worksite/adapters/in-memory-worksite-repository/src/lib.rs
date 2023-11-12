@@ -73,10 +73,15 @@ fn apply_event(worksite: Worksite, event: &Event) -> Worksite {
             name,
         } => todo!(),
 
-        Event::WorkerCreated { id, name } => {
+        Event::WorkerCreated {
+            id,
+            first_name,
+            last_name,
+        } => {
             let worker = Worker {
                 id: id.to_owned(),
-                name: name.to_owned(),
+                first_name: first_name.to_owned(),
+                last_name: last_name.to_owned(),
                 last_assessment: None,
                 tags: vec![],
             };

@@ -4,16 +4,25 @@ use web_client::server::{
     form::{Button, CellSpan, GridCell, GridLayout, Label, Select, TextInput},
 };
 
+pub struct AddWorkerFormData {
+    pub id: String,
+    pub first_name: String,
+    pub last_name: String,
+}
+
 #[props]
 pub struct AddWorkerFormProps {
     #[builder(setter(into))]
-    create_worker_route: String,
+    action: String,
+
+    #[builder(default)]
+    children: String,
 }
 
 #[component]
 pub fn AddWorkerForm(props: AddWorkerFormProps) -> String {
     html! {
-        <form hx-post=props.create_worker_route>
+        <form hx-post=props.action>
             <div class="pb-12">
                 <p class="mt-1 text-sm leading-6 text-gray-600">
                     "Please enter the worker's information."
@@ -62,6 +71,7 @@ pub fn AddWorkerForm(props: AddWorkerFormProps) -> String {
                         <Label for_input="postal_code">Zip Code</Label>
                         <TextInput name="postal_code" autocomplete="postal-code" />
                     </GridCell>
+                    {props.children}
                 </GridLayout>
             </div>
             <div class="mt-6 flex items-center justify-end gap-x-6">

@@ -112,7 +112,11 @@ impl WorksiteRepository for DieselWorksiteRepository {
                     location_id,
                     name,
                 } => todo!(),
-                Event::WorkerCreated { id, name } => todo!(),
+                Event::WorkerCreated {
+                    id,
+                    first_name,
+                    last_name,
+                } => todo!(),
                 Event::ShiftAssigned {
                     shift_id,
                     worker_id,
@@ -156,7 +160,8 @@ fn to_worksite(
                             .into_iter()
                             .map(|worker| worksite_service::models::Worker {
                                 id: worker.id,
-                                name: worker.first_name + " " + &worker.last_name,
+                                first_name: worker.first_name,
+                                last_name: worker.last_name,
                                 last_assessment: Some(Assessment {
                                     id: "1".to_string(),
                                     value: 5,

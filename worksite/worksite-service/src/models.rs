@@ -22,7 +22,8 @@ impl Worksite {
             updated_worksite,
             nonempty![Event::WorkerCreated {
                 id: worker.id,
-                name: worker.name,
+                first_name: worker.first_name,
+                last_name: worker.last_name,
             }],
         )
     }
@@ -104,7 +105,8 @@ pub struct Shift {
 #[derive(Debug, Clone)]
 pub struct Worker {
     pub id: String,
-    pub name: String,
+    pub first_name: String,
+    pub last_name: String,
     pub last_assessment: Option<Assessment>,
     pub tags: Vec<Tag>,
 }
@@ -139,7 +141,8 @@ pub enum Event {
     },
     WorkerCreated {
         id: String,
-        name: String,
+        first_name: String,
+        last_name: String,
     },
     ShiftAssigned {
         shift_id: String,

@@ -30,7 +30,8 @@ async fn main() {
                     workers: vec![
                         Worker {
                             id: "1".into(),
-                            name: "Jim Halpert".into(),
+                            first_name: "Jim".into(),
+                            last_name: "Halpert".into(),
                             last_assessment: Some(Assessment {
                                 id: "1".into(),
                                 value: 1,
@@ -55,7 +56,8 @@ async fn main() {
                         },
                         Worker {
                             id: "2".into(),
-                            name: "Pam Beesly".into(),
+                            first_name: "Pam".into(),
+                            last_name: "Beesly".into(),
                             last_assessment: Some(Assessment {
                                 id: "2".into(),
                                 value: 2,
@@ -80,7 +82,8 @@ async fn main() {
                         },
                         Worker {
                             id: "3".into(),
-                            name: "Dwight Schrute".into(),
+                            first_name: "Dwight".into(),
+                            last_name: "Schrute".into(),
                             last_assessment: Some(Assessment {
                                 id: "3".into(),
                                 value: 4,
@@ -104,7 +107,8 @@ async fn main() {
                         workers: vec![
                             Worker {
                                 id: "4".into(),
-                                name: "Darryl Philbin".into(),
+                                first_name: "Darryl".into(),
+                                last_name: "Philbin".into(),
                                 last_assessment: Some(Assessment {
                                     id: "4".into(),
                                     value: 1,
@@ -124,7 +128,8 @@ async fn main() {
                             },
                             Worker {
                                 id: "5".into(),
-                                name: "Nate Nickerson".into(),
+                                first_name: "Nate".into(),
+                                last_name: "Nickerson".into(),
                                 last_assessment: Some(Assessment {
                                     id: "5".into(),
                                     value: 3,
@@ -143,7 +148,8 @@ async fn main() {
                         workers: vec![
                             Worker {
                                 id: "6".into(),
-                                name: "Roy Anderson".into(),
+                                first_name: "Roy".into(),
+                                last_name: "Anderson".into(),
                                 last_assessment: Some(Assessment {
                                     id: "3".into(),
                                     value: 3,
@@ -163,7 +169,8 @@ async fn main() {
                             },
                             Worker {
                                 id: "7".into(),
-                                name: "Val johnson".into(),
+                                first_name: "Val".into(),
+                                last_name: "johnson".into(),
                                 last_assessment: Some(Assessment {
                                     id: "7".into(),
                                     value: 2,
