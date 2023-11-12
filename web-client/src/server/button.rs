@@ -17,13 +17,16 @@ pub struct PrimaryButtonProps {
 
     #[builder(default = ButtonSize::Md)]
     size: ButtonSize,
+
+    #[builder(setter(into), default=String::from("button"))]
+    tag: String,
 }
 
 #[component]
 pub fn PrimaryButton(props: PrimaryButtonProps) -> String {
     html! {
         <HtmlElement
-            tag="button"
+            tag=props.tag
             class={
                 let class = match props.size {
                     ButtonSize::Xs => "rounded bg-indigo-600 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600",

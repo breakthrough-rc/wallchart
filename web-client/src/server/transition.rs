@@ -24,6 +24,9 @@ pub struct TransitionProps {
 
     #[builder(setter(into), default)]
     children: String,
+
+    #[builder(setter(into), default=String::from("div"))]
+    tag: String,
 }
 
 #[component]

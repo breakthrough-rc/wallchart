@@ -10,6 +10,9 @@ pub struct HtmlElementProps {
 
     #[builder(setter(into), default=String::from("HtmlElement"))]
     component_name: String,
+
+    #[builder(setter(into), default=String::from("div"))]
+    tag: String,
 }
 
 #[component]

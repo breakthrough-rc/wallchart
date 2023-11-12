@@ -80,6 +80,9 @@ pub struct SimpleElementProps {
 
     #[builder(default="SIMPLE!".to_string())]
     simple: String,
+
+    #[builder(setter(into), default=String::from("div"))]
+    tag: String,
 }
 
 #[component]

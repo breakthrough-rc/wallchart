@@ -103,9 +103,6 @@ impl ToTokens for HtmlElementStruct {
 
                 #[builder(default)]
                 attrs: ::web_client::server::attrs::Attrs,
-
-                #[builder(setter(into), default=String::from("div"))]
-                tag: String,
             }
         };
         let fields: FieldsNamed = syn::parse_quote! { #fields };
