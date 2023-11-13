@@ -78,7 +78,6 @@ const Toggle_ = {
 
     const handleBodyClick = (event: Event) => {
       if (event.target === element || element.contains(event.target as Node)) {
-        event.preventDefault();
         return false;
       }
 
