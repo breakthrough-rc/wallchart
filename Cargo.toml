@@ -10,10 +10,8 @@ members = [
           "web-client",
           "web-htmx",
           "web-macros",
-          "db",
-          "worksite/worksite-service",
           "worksite/adapters/in-memory-worksite-repository",
-          "worksite/adapters/diesel-worksite-repository",
+          "worksite/worksite-service",
 ]
 
 [workspace.dependencies]
