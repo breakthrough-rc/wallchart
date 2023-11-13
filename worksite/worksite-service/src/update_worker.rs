@@ -1,5 +1,5 @@
 use crate::{models::Worker, ports::worksite_repository::WorksiteRepository};
-use nonempty::NonEmpty;
+
 use std::sync::Arc;
 use thiserror::Error;
 
@@ -25,7 +25,7 @@ pub type UpdateWorkerOutput = Result<(), UpdateWorkerFailure>;
 
 impl UpdateWorker {
     pub async fn update_worker(&self, input: UpdateWorkerInput) -> UpdateWorkerOutput {
-        let worksite_id = input.worksite_id.clone();
+        let _worksite_id = input.worksite_id.clone();
 
         let worksite = self
             .worksite_repository

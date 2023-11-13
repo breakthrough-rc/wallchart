@@ -16,13 +16,13 @@ impl Worksite {
     pub fn add_worker(&self, worker: Worker) -> Worksite {
         let mut updated_worksite = self.clone();
 
-        updated_worksite.workers.push(worker.clone());
+        updated_worksite.workers.push(worker);
 
         updated_worksite
     }
 
     // TODO! Should assign_worker take an owned worker?
-    pub fn assign_worker(&self, worker: Worker, shift_id: String, location_id: String) -> Worksite {
+    pub fn assign_worker(&self, worker: Worker, shift_id: String, _location_id: String) -> Worksite {
         let mut updated_worksite = self.clone();
 
         updated_worksite.locations.iter_mut().for_each(|location| {

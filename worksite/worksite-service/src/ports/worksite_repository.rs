@@ -1,8 +1,8 @@
 use async_trait::async_trait;
-use nonempty::NonEmpty;
+
 use thiserror::Error;
 
-use crate::models::{Event, Worksite};
+use crate::models::{Worksite};
 
 #[async_trait]
 pub trait WorksiteRepository: Send + Sync + 'static {

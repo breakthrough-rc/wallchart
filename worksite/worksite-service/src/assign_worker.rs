@@ -1,11 +1,11 @@
 use std::sync::Arc;
 
-use nonempty::NonEmpty;
+
 use thiserror::Error;
 
 // Example repo dependency
 use crate::{
-    models::{Event, Worker},
+    models::{Worker},
     ports::worksite_repository::WorksiteRepository,
 };
 
