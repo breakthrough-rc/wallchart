@@ -2,9 +2,9 @@ use std::sync::Arc;
 
 use thiserror::Error;
 
-use crate::models::{Event, Worksite};
+use crate::models::{Worksite};
 use crate::ports::worksite_repository::WorksiteRepository;
-use nonempty::{nonempty, NonEmpty};
+
 
 #[derive(Clone)]
 pub struct RemoveWorkerFromShift {

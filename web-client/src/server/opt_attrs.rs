@@ -18,7 +18,7 @@ pub fn opt_attrs(map: HashMap<&str, String>) -> String {
             .collect::<Vec<String>>();
 
         // Output attributes in alpha order.
-        attrs.sort_by(|a, b| a.cmp(b));
+        attrs.sort();
         attrs.join(" ").trim().to_string()
     }
 }

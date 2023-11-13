@@ -1,6 +1,6 @@
-use std::sync::Arc;
 
-use auth_service::RequireAuth;
+
+
 use axum::{
     response::{Html, Redirect},
     routing::get,
@@ -38,7 +38,7 @@ pub fn routes(state: WebHtmxState) -> Router {
         .route("/", get(Redirect::temporary("/playground")))
         .nest("/playground", playground::routes())
         .nest_service("/client", client_routes())
-        .merge(users_routes(state.clone()))
+        .merge(users_routes(state))
         .fallback(fallback)
 }
 

@@ -3,7 +3,7 @@ use std::sync::Arc;
 use async_trait::async_trait;
 use auth_service::models::User;
 use auth_service::ports::user_repository::{RepositoryFailure, UserRepository};
-use axum_login::{AuthUser, RequireAuthorizationLayer, UserStore};
+use axum_login::{UserStore};
 use tokio::sync::RwLock;
 
 #[derive(Clone, Debug)]

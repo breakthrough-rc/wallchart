@@ -1,6 +1,6 @@
 #![allow(unused_braces)]
 use crate::page::PageLayout;
-use auth_service::RequireAuth;
+
 use axum::{
     response::Html,
     routing::{get, post},
@@ -9,7 +9,6 @@ use axum::{
 use http::HeaderMap;
 use rscx::{component, html, props};
 use std::{
-    sync::Arc,
     time::{SystemTime, UNIX_EPOCH},
 };
 use web_client::server::html_element::HtmlElement;

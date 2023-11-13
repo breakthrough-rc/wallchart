@@ -1,9 +1,9 @@
 use crate::{components::login_form::LoginForm, page::PageLayout, state::WebHtmxState};
 use auth_service::{
-    get_user_for_login::GetUserForLoginInput, models::User, ports::user_repository::UserRepository,
+    get_user_for_login::GetUserForLoginInput,
 };
 use axum::{
-    extract::{self, State},
+    extract::{State},
     response::{Html, IntoResponse},
     routing::get,
     Form, Router,
@@ -20,7 +20,7 @@ pub fn users_routes(state: WebHtmxState) -> Router {
         .with_state(state)
 }
 
-async fn get_login(State(state): State<WebHtmxState>) -> impl IntoResponse {
+async fn get_login(State(_state): State<WebHtmxState>) -> impl IntoResponse {
     Html(html! {
         <PageLayout title="Login">
             <LoginForm login_route="/login" />
@@ -36,12 +36,12 @@ struct LoginForm {
 
 async fn post_login(
     State(WebHtmxState {
-        worksite_service,
+        worksite_service: _,
         auth_service,
-        flash_config,
+        flash_config: _,
     }): State<WebHtmxState>,
     mut auth: AuthContext,
-    flash: Flash,
+    _flash: Flash,
     Form(login_form): Form<LoginForm>,
 ) -> impl IntoResponse {
     let result = auth_service

@@ -52,7 +52,7 @@ impl Worksite {
             updated_worksite,
             nonempty![Event::ShiftAssigned {
                 shift_id,
-                worker_id: worker_id.clone(),
+                worker_id,
                 location_id,
             }],
         )

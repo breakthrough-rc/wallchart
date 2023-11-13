@@ -15,7 +15,7 @@ use rscx::html;
 use serde::Deserialize;
 use web_client::server::modal::{Modal, ModalSize};
 use worksite_service::{
-    assign_worker::AssignWorkerInput, get_worker::GetWorkerInput, models::Worker,
+    assign_worker::AssignWorkerInput, get_worker::GetWorkerInput,
     update_worker::UpdateWorkerInput,
 };
 

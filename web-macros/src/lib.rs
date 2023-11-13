@@ -109,7 +109,7 @@ impl ToTokens for HtmlElementStruct {
         let fields = Fields::Named(fields);
 
         let item = &ItemStruct {
-            fields: fields.into(),
+            fields,
             ..original_item.clone()
         };
 
@@ -119,7 +119,7 @@ impl ToTokens for HtmlElementStruct {
             #item
         });
 
-        let attr_keys = HTML_ELEMENT_ATTRS.clone();
+        let attr_keys = HTML_ELEMENT_ATTRS;
         tokens.extend(quote! {
             impl #name {
                 fn html_attrs_to_hashmap(&self) -> std::collections::HashMap<&'static str, String> {
@@ -155,7 +155,7 @@ impl ToTokens for HtmlElementStruct {
 
 fn create_attr_idents() -> [Ident; ATTRS_LEN] {
     HTML_ELEMENT_ATTRS.map(|attr| {
-        let attr = attr.replace("-", "_");
+        let attr = attr.replace('-', "_");
         let attr = attr.as_str();
 
         Ident::new(attr, Span::call_site())
@@ -205,7 +205,7 @@ pub fn spread_attrs(input: TokenStream) -> TokenStream {
     for (fn_name, fn_args) in transforms {
         let transform = match fn_name.to_string().as_str()  {
             "omit" => Transformer::Omit(fn_args),
-            _ => panic!("Unrecognized pipe transfomer: `{}`. Valid pipe transformers: `omit`", fn_name.to_string()),
+            _ => panic!("Unrecognized pipe transfomer: `{}`. Valid pipe transformers: `omit`", fn_name),
         };
 
         transform_attrs(transform, &mut attr_keys, &mut attr_idents);
@@ -235,14 +235,14 @@ fn transform_attrs(transform: Transformer, attr_keys: &mut Vec<&str>, attr_ident
                 match arg {
                     syn::Type::Path(path) => {
                         let ident = path.path.get_ident().unwrap();
-                        if !HTML_ELEMENT_ATTRS.contains(&ident.to_string().replace("_", "-").as_str()) {
+                        if !HTML_ELEMENT_ATTRS.contains(&ident.to_string().replace('_', "-").as_str()) {
                             panic!(
                                 "Cannot omit field {}. It doesn't exit in HtmlElementProps.",
                                 ident,
                             );
                         }
                         attr_keys.retain(|f| f != &ident.to_string());
-                        attr_idents.retain(|f| f.to_string() != ident.to_string());
+                        attr_idents.retain(|f| *ident != f.to_string());
                     },
                     _ => panic!("Expected a path"),
                 }

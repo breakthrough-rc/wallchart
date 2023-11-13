@@ -40,7 +40,7 @@ impl WorksiteRepository for InMemoryWorksiteRepository {
         let worksite = apply_events(worksite, remaining_events);
 
         worksites.retain(|w| w.id != id);
-        worksites.push(worksite.to_owned());
+        worksites.push(worksite);
 
         Ok(())
     }
@@ -68,9 +68,9 @@ fn apply_event(worksite: Worksite, event: &Event) -> Worksite {
         }
 
         Event::ShiftAdded {
-            id,
-            location_id,
-            name,
+            id: _,
+            location_id: _,
+            name: _,
         } => todo!(),
 
         Event::WorkerCreated {
@@ -98,7 +98,7 @@ fn apply_event(worksite: Worksite, event: &Event) -> Worksite {
             let (state, _) = worksite.update_worker(id.to_owned(), |w| Worker {
                 first_name: first_name.to_owned(),
                 last_name: last_name.to_owned(),
-                ..w.clone()
+                ..w
             });
             state
         }
@@ -137,7 +137,7 @@ fn get_or_create_worksite(
     // 3 - The worksite does not exist and the first event is not creating the worksite =>
     //   error.
     let (worksite, remaining_events) = match maybe_worksite {
-        Some(worksite) => (worksite.clone().to_owned(), events.into()),
+        Some(worksite) => (worksite.clone(), events.into()),
         None => {
             match events.first() {
                 Event::WorksiteCreated { id, name } => (

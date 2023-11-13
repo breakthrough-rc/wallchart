@@ -1,11 +1,11 @@
 use async_trait::async_trait;
 use db::db::PgPool;
 use db::schema::{
-    activities, assessments, locations, shift_assignments, shifts, tags, workers, worksites,
+    shift_assignments, workers, worksites,
 };
 use diesel::prelude::*;
 use diesel::OptionalExtension;
-use diesel_async::scoped_futures::ScopedFutureExt;
+
 use diesel_async::RunQueryDsl;
 use nonempty::NonEmpty;
 use worksite_service::models::{Assessment, Event};
@@ -93,7 +93,7 @@ impl WorksiteRepository for DieselWorksiteRepository {
         Ok(Some(to_worksite(worksite, grouped_locations)))
     }
 
-    async fn save(&self, id: String, events: NonEmpty<Event>) -> Result<(), RepositoryFailure> {
+    async fn save(&self, _id: String, events: NonEmpty<Event>) -> Result<(), RepositoryFailure> {
         // TODOs:
         // - Should this be a single transaction?
         //
@@ -106,26 +106,26 @@ impl WorksiteRepository for DieselWorksiteRepository {
         for event in events {
             match event {
                 Event::WorksiteCreated { id: _, name: _ } => todo!(),
-                Event::LocationAdded { id, name } => todo!(),
+                Event::LocationAdded { id: _, name: _ } => todo!(),
                 Event::ShiftAdded {
-                    id,
-                    location_id,
-                    name,
+                    id: _,
+                    location_id: _,
+                    name: _,
                 } => todo!(),
                 Event::WorkerCreated {
-                    id,
-                    first_name,
-                    last_name,
+                    id: _,
+                    first_name: _,
+                    last_name: _,
                 } => todo!(),
                 Event::WorkerUpdated {
-                    id,
-                    first_name,
-                    last_name,
+                    id: _,
+                    first_name: _,
+                    last_name: _,
                 } => todo!(),
                 Event::ShiftAssigned {
-                    shift_id,
-                    worker_id,
-                    location_id,
+                    shift_id: _,
+                    worker_id: _,
+                    location_id: _,
                 } => todo!(),
 
                 Event::ShiftUnassigned {
@@ -152,7 +152,8 @@ fn to_worksite(
     worksite: WorksiteRecord,
     locations: Vec<(LocationRecord, Vec<(ShiftRecord, Vec<WorkerRecord>)>)>,
 ) -> Worksite {
-    let worksite = Worksite {
+    
+    Worksite {
         id: worksite.id,
         name: worksite.name,
         locations: locations
@@ -191,6 +192,5 @@ fn to_worksite(
             })
             .collect(),
         workers: vec![], // TODO - Implement instantiating worksite workers in diesel worksite repo.
-    };
-    worksite
+    }
 }
