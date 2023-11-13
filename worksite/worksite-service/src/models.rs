@@ -22,7 +22,12 @@ impl Worksite {
     }
 
     // TODO! Should assign_worker take an owned worker?
-    pub fn assign_worker(&self, worker: Worker, shift_id: String, _location_id: String) -> Worksite {
+    pub fn assign_worker(
+        &self,
+        worker: Worker,
+        shift_id: String,
+        _location_id: String,
+    ) -> Worksite {
         let mut updated_worksite = self.clone();
 
         updated_worksite.locations.iter_mut().for_each(|location| {
@@ -66,11 +71,7 @@ impl Worksite {
      *
      * This function won't fail and will treat the worker/shift not existing as a trivial success.
      */
-    pub fn remove_worker(
-        &self,
-        shift_id: String,
-        worker_id: String,
-    ) -> (Worksite, NonEmpty<Event>) {
+    pub fn remove_worker(&self, shift_id: String, worker_id: String) -> Worksite {
         let mut updated_worksite = self.to_owned();
 
         updated_worksite.locations.iter_mut().for_each(|location| {
@@ -81,13 +82,7 @@ impl Worksite {
             })
         });
 
-        (
-            updated_worksite,
-            nonempty![Event::ShiftUnassigned {
-                shift_id,
-                worker_id,
-            }],
-        )
+        updated_worksite
     }
 }
 
@@ -131,40 +126,4 @@ pub struct Tag {
     pub id: String,
     pub name: String,
     pub icon: String,
-}
-
-#[derive(Debug, Clone)]
-pub enum Event {
-    WorksiteCreated {
-        id: String,
-        name: String,
-    },
-    LocationAdded {
-        id: String,
-        name: String,
-    },
-    ShiftAdded {
-        id: String,
-        location_id: String,
-        name: String,
-    },
-    WorkerCreated {
-        id: String,
-        first_name: String,
-        last_name: String,
-    },
-    WorkerUpdated {
-        id: String,
-        first_name: String,
-        last_name: String,
-    },
-    ShiftAssigned {
-        shift_id: String,
-        worker_id: String,
-        location_id: String,
-    },
-    ShiftUnassigned {
-        shift_id: String,
-        worker_id: String,
-    },
 }

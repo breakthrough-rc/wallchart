@@ -29,7 +29,7 @@ impl RemoveWorkerFromShift {
             .map_err(|e| RemoveWorkerFromShiftFailure::Unknown(e.to_string()))?
             .ok_or(RemoveWorkerFromShiftFailure::NotFound)?;
 
-        let (updated_worksite, _events) = worksite.remove_worker(input.shift_id, input.worker_id);
+        let updated_worksite = worksite.remove_worker(input.shift_id, input.worker_id);
 
         self.worksite_repository
             .save(updated_worksite.clone())
