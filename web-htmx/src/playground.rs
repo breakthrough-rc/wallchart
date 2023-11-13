@@ -116,13 +116,19 @@ fn ModalPlayground() -> String {
     html! {
         <section class="py-8">
             <h2 class="text-xl font-bold">Modal Playground</h2>
-            <p><em>Open models for fun AND non-profit.</em></p>
+            <p><em>Open models and flyouts for fun AND non-profit.</em></p>
             <div class="flex gap-2">
                 <PrimaryButton
                     hx_get="/playground/modal/one"
                     hx_target="#modals-root"
                 >
-                        Open Simple Modal
+                    Open Simple Modal
+                </PrimaryButton>
+                <PrimaryButton
+                    hx_get="/playground/flyout/one"
+                    hx_target="#modals-root"
+                >
+                    Open Flyout
                 </PrimaryButton>
             </div>
             <div id="modals-root">
