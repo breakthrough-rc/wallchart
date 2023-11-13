@@ -16,6 +16,7 @@ use serde::Deserialize;
 use web_client::server::modal::{Modal, ModalSize};
 use worksite_service::{
     assign_worker::AssignWorkerInput, get_worker::GetWorkerInput, models::Worker,
+    update_worker::UpdateWorkerInput,
 };
 
 pub fn workers_routes(state: WebHtmxState) -> Router {
@@ -145,23 +146,18 @@ async fn post_worker_detail(
         worksite_service, ..
     }): State<WebHtmxState>,
     flash: Flash,
-    extract::Path(worker_id): extract::Path<String>,
+    extract::Path((worksite_id, worker_id)): extract::Path<(String, String)>,
     Form(form): Form<UpdateWorkerFormData>,
 ) -> impl IntoResponse {
-    // worksite_service
-    //     .assign_worker(AssignWorkerInput {
-    //         id: wallchart_id,
-    //         location_id,
-    //         shift_id,
-    //         first_name: form.first_name,
-    //         last_name: form.last_name,
-    //         street_address: form.street_address,
-    //         city: form.city,
-    //         region: form.region,
-    //         postal_code: form.postal_code,
-    //     })
-    //     .await
-    //     .expect("Failed to assign worker");
+    worksite_service
+        .update_worker(UpdateWorkerInput {
+            worker_id,
+            worksite_id,
+            first_name: form.first_name,
+            last_name: form.last_name,
+        })
+        .await
+        .expect("Failed to assign worker");
 
     (
         StatusCode::OK,

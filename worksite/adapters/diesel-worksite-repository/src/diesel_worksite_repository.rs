@@ -117,6 +117,11 @@ impl WorksiteRepository for DieselWorksiteRepository {
                     first_name,
                     last_name,
                 } => todo!(),
+                Event::WorkerUpdated {
+                    id,
+                    first_name,
+                    last_name,
+                } => todo!(),
                 Event::ShiftAssigned {
                     shift_id,
                     worker_id,

@@ -58,6 +58,38 @@ impl Worksite {
         )
     }
 
+    pub fn update_worker(
+        &self,
+        worker_id: String,
+        update_fn: impl FnOnce(Worker) -> Worker,
+    ) -> (Worksite, Vec<Event>) {
+        let mut updated_worksite = self.clone();
+
+        let worker = self.get_worker(worker_id.clone());
+
+        match worker {
+            Some(worker) => {
+                let updated_worker = update_fn(worker);
+
+                updated_worksite.workers.iter_mut().for_each(|worker| {
+                    if worker.id == worker_id {
+                        *worker = updated_worker.clone();
+                    }
+                });
+
+                (
+                    updated_worksite,
+                    vec![Event::WorkerUpdated {
+                        id: updated_worker.id,
+                        first_name: updated_worker.first_name,
+                        last_name: updated_worker.last_name,
+                    }],
+                )
+            }
+            None => (updated_worksite, vec![]),
+        }
+    }
+
     /**
      * Removes the given worker from the given shift.
      *
@@ -146,6 +178,11 @@ pub enum Event {
         name: String,
     },
     WorkerCreated {
+        id: String,
+        first_name: String,
+        last_name: String,
+    },
+    WorkerUpdated {
         id: String,
         first_name: String,
         last_name: String,

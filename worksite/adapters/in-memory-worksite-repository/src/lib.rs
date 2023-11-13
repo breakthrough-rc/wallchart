@@ -90,6 +90,19 @@ fn apply_event(worksite: Worksite, event: &Event) -> Worksite {
             state
         }
 
+        Event::WorkerUpdated {
+            id,
+            first_name,
+            last_name,
+        } => {
+            let (state, _) = worksite.update_worker(id.to_owned(), |w| Worker {
+                first_name: first_name.to_owned(),
+                last_name: last_name.to_owned(),
+                ..w.clone()
+            });
+            state
+        }
+
         Event::ShiftAssigned {
             shift_id,
             worker_id,
