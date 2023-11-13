@@ -8,7 +8,7 @@ use crate::models::{Event, Worksite};
 pub trait WorksiteRepository: Send + Sync + 'static {
     async fn get_worksite(&self, id: String) -> Result<Option<Worksite>, RepositoryFailure>;
 
-    async fn save(&self, id: String, events: NonEmpty<Event>) -> Result<(), RepositoryFailure>;
+    async fn save(&self, worksite: Worksite) -> Result<(), RepositoryFailure>;
 }
 
 #[derive(Error, Debug, PartialEq)]

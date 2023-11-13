@@ -2,9 +2,8 @@ use std::sync::Arc;
 
 use thiserror::Error;
 
-use crate::models::{Worksite};
+use crate::models::Worksite;
 use crate::ports::worksite_repository::WorksiteRepository;
-
 
 #[derive(Clone)]
 pub struct RemoveWorkerFromShift {
@@ -33,7 +32,7 @@ impl RemoveWorkerFromShift {
         let (updated_worksite, events) = worksite.remove_worker(input.shift_id, input.worker_id);
 
         self.worksite_repository
-            .save(input.id, events)
+            .save(updated_worksite.clone())
             .await
             .map_err(|e| RemoveWorkerFromShiftFailure::Unknown(e.to_string()))?;
 

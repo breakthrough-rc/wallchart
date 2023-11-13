@@ -64,21 +64,11 @@ impl AssignWorker {
             ..
         } = input;
 
-        let events = {
-            // TODO! Reconsider assumption that assigning worker to shit, also comes with creating new worker.
-            let (_, add_worker_events) = worksite.add_worker(worker.clone());
-            let (_, assign_worker_events) = worksite.assign_worker(worker, shift_id, location_id);
-
-            let events: Vec<Event> = add_worker_events
-                .into_iter()
-                .chain(assign_worker_events.into_iter())
-                .collect();
-
-            NonEmpty::from_vec(events).unwrap()
-        };
+        let updated_worksite = worksite.add_worker(worker.clone());
+        let updated_worksite = updated_worksite.assign_worker(worker, shift_id, location_id);
 
         self.worksite_repository
-            .save(worksite.id.clone(), events)
+            .save(updated_worksite)
             .await
             .map_err(|e| AssignWorkerFailure::Unknown(e.to_string()))?;
 

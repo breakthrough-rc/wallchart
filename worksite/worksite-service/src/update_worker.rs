@@ -34,7 +34,7 @@ impl UpdateWorker {
             .map_err(|e| UpdateWorkerFailure::Unknown(e.to_string()))?
             .ok_or(UpdateWorkerFailure::NotFound)?;
 
-        let (_, events) = worksite.update_worker(input.worker_id, |worker| -> Worker {
+        let updated_worksite = worksite.update_worker(input.worker_id, |worker| -> Worker {
             Worker {
                 first_name: input.first_name,
                 last_name: input.last_name,
@@ -42,18 +42,10 @@ impl UpdateWorker {
             }
         });
 
-        if events.is_empty() {
-            return Err(UpdateWorkerFailure::NotFound);
-        }
-
-        match NonEmpty::from_vec(events) {
-            Some(events) => self
-                .worksite_repository
-                .save(worksite_id, events)
-                .await
-                .map_err(|e| UpdateWorkerFailure::Unknown(e.to_string()))?,
-            None => (),
-        };
+        self.worksite_repository
+            .save(updated_worksite)
+            .await
+            .map_err(|e| UpdateWorkerFailure::Unknown(e.to_string()))?;
 
         Ok(())
     }

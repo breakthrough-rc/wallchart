@@ -13,28 +13,16 @@ impl Worksite {
         self.workers.iter().find(|w| w.id == worker_id).cloned()
     }
 
-    pub fn add_worker(&self, worker: Worker) -> (Worksite, NonEmpty<Event>) {
+    pub fn add_worker(&self, worker: Worker) -> Worksite {
         let mut updated_worksite = self.clone();
 
         updated_worksite.workers.push(worker.clone());
 
-        (
-            updated_worksite,
-            nonempty![Event::WorkerCreated {
-                id: worker.id,
-                first_name: worker.first_name,
-                last_name: worker.last_name,
-            }],
-        )
+        updated_worksite
     }
 
     // TODO! Should assign_worker take an owned worker?
-    pub fn assign_worker(
-        &self,
-        worker: Worker,
-        shift_id: String,
-        location_id: String,
-    ) -> (Worksite, NonEmpty<Event>) {
+    pub fn assign_worker(&self, worker: Worker, shift_id: String, location_id: String) -> Worksite {
         let mut updated_worksite = self.clone();
 
         updated_worksite.locations.iter_mut().for_each(|location| {
@@ -45,24 +33,14 @@ impl Worksite {
             })
         });
 
-        let worker_id = worker.id;
-
-        // TODO! Reconsider the name of the event.
-        (
-            updated_worksite,
-            nonempty![Event::ShiftAssigned {
-                shift_id,
-                worker_id,
-                location_id,
-            }],
-        )
+        updated_worksite
     }
 
     pub fn update_worker(
         &self,
         worker_id: String,
         update_fn: impl FnOnce(Worker) -> Worker,
-    ) -> (Worksite, Vec<Event>) {
+    ) -> Worksite {
         let mut updated_worksite = self.clone();
 
         let worker = self.get_worker(worker_id.clone());
@@ -77,16 +55,9 @@ impl Worksite {
                     }
                 });
 
-                (
-                    updated_worksite,
-                    vec![Event::WorkerUpdated {
-                        id: updated_worker.id,
-                        first_name: updated_worker.first_name,
-                        last_name: updated_worker.last_name,
-                    }],
-                )
+                updated_worksite
             }
-            None => (updated_worksite, vec![]),
+            None => updated_worksite,
         }
     }
 
