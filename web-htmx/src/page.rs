@@ -25,6 +25,7 @@ pub fn PageLayout(props: PageLayoutProps) -> String {
         <HtmlLayout
             head_scripts={
                 html! {
+                    // For debugging use this -> <script src="https://unpkg.com/htmx.org@1.9.8/dist/htmx.js"></script>
                     <script
                         src="https://unpkg.com/htmx.org@1.9.5"
                         integrity="sha384-xcuj3WpfgjlKF+FXhSQFQ0ZNr39ln+hwjN3npfM9VBnUskLolQAcN80McRIVOPuO"
