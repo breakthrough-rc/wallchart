@@ -13,6 +13,27 @@ impl Worksite {
         self.workers.iter().find(|w| w.id == worker_id).cloned()
     }
 
+    pub fn get_workers_for_shift(&self, shift_id: String) -> Vec<Worker> {
+        let shift = self.get_shift(shift_id);
+        let shift = match shift {
+            Some(shift) => shift,
+            None => return vec![],
+        };
+
+        self.workers
+            .iter()
+            .filter(|worker| shift.worker_ids.contains(&worker.id))
+            .cloned()
+            .collect::<Vec<Worker>>()
+    }
+
+    fn get_shift(&self, shift_id: String) -> Option<Shift> {
+        self.locations
+            .iter()
+            .flat_map(|location| location.shifts.clone())
+            .find(|shift| shift.id == shift_id)
+    }
+
     pub fn add_worker(&self, worker: Worker) -> Worksite {
         let mut updated_worksite = self.clone();
 
@@ -33,7 +54,7 @@ impl Worksite {
         updated_worksite.locations.iter_mut().for_each(|location| {
             location.shifts.iter_mut().for_each(|shift| {
                 if shift.id == shift_id {
-                    shift.workers.push(worker.clone())
+                    shift.worker_ids.push(worker.id.clone())
                 }
             })
         });
@@ -77,7 +98,7 @@ impl Worksite {
         updated_worksite.locations.iter_mut().for_each(|location| {
             location.shifts.iter_mut().for_each(|shift| {
                 if shift.id == shift_id {
-                    shift.workers.retain(|worker| worker.id != worker_id)
+                    shift.worker_ids.retain(|w_id| w_id != &worker_id)
                 }
             })
         });
@@ -97,7 +118,7 @@ pub struct Location {
 pub struct Shift {
     pub id: String,
     pub name: String,
-    pub workers: Vec<Worker>,
+    pub worker_ids: Vec<String>,
 }
 
 #[derive(Debug, Clone)]

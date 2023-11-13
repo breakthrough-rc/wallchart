@@ -27,74 +27,7 @@ async fn main() {
                 shifts: vec![Shift {
                     id: "1".into(),
                     name: "Day".into(),
-                    workers: vec![
-                        Worker {
-                            id: "1".into(),
-                            first_name: "Jim".into(),
-                            last_name: "Halpert".into(),
-                            last_assessment: Some(Assessment {
-                                id: "1".into(),
-                                value: 1,
-                            }),
-                            tags: vec![
-                                Tag {
-                                    id: "1".into(),
-                                    name: "Baked a cake".into(),
-                                    icon: "🍰".into(),
-                                },
-                                Tag {
-                                    id: "2".into(),
-                                    name: "Shared fries".into(),
-                                    icon: "🍟".into(),
-                                },
-                                Tag {
-                                    id: "3".into(),
-                                    name: "Listened to Rancid".into(),
-                                    icon: "🎸".into(),
-                                },
-                            ],
-                        },
-                        Worker {
-                            id: "2".into(),
-                            first_name: "Pam".into(),
-                            last_name: "Beesly".into(),
-                            last_assessment: Some(Assessment {
-                                id: "2".into(),
-                                value: 2,
-                            }),
-                            tags: vec![
-                                Tag {
-                                    id: "1".into(),
-                                    name: "Baked a cake".into(),
-                                    icon: "🍰".into(),
-                                },
-                                Tag {
-                                    id: "2".into(),
-                                    name: "Shared fries".into(),
-                                    icon: "🍟".into(),
-                                },
-                                Tag {
-                                    id: "3".into(),
-                                    name: "Listened to Rancid".into(),
-                                    icon: "🎸".into(),
-                                },
-                            ],
-                        },
-                        Worker {
-                            id: "3".into(),
-                            first_name: "Dwight".into(),
-                            last_name: "Schrute".into(),
-                            last_assessment: Some(Assessment {
-                                id: "3".into(),
-                                value: 4,
-                            }),
-                            tags: vec![Tag {
-                                id: "3".into(),
-                                name: "Listened to Rancid".into(),
-                                icon: "🎸".into(),
-                            }],
-                        },
-                    ],
+                    worker_ids: vec!["1".into(), "2".into(), "3".into()],
                 }],
             },
             Location {
@@ -104,96 +37,12 @@ async fn main() {
                     Shift {
                         id: "2".into(),
                         name: "Day".into(),
-                        workers: vec![
-                            Worker {
-                                id: "4".into(),
-                                first_name: "Darryl".into(),
-                                last_name: "Philbin".into(),
-                                last_assessment: Some(Assessment {
-                                    id: "4".into(),
-                                    value: 1,
-                                }),
-                                tags: vec![
-                                    Tag {
-                                        id: "2".into(),
-                                        name: "Shared fries".into(),
-                                        icon: "🍟".into(),
-                                    },
-                                    Tag {
-                                        id: "3".into(),
-                                        name: "Listened to Rancid".into(),
-                                        icon: "🎸".into(),
-                                    },
-                                ],
-                            },
-                            Worker {
-                                id: "5".into(),
-                                first_name: "Nate".into(),
-                                last_name: "Nickerson".into(),
-                                last_assessment: Some(Assessment {
-                                    id: "5".into(),
-                                    value: 3,
-                                }),
-                                tags: vec![Tag {
-                                    id: "1".into(),
-                                    name: "Baked a cake".into(),
-                                    icon: "🍰".into(),
-                                }],
-                            },
-                        ],
+                        worker_ids: vec!["4".into(), "5".into()],
                     },
                     Shift {
                         id: "3".into(),
                         name: "Night".into(),
-                        workers: vec![
-                            Worker {
-                                id: "6".into(),
-                                first_name: "Roy".into(),
-                                last_name: "Anderson".into(),
-                                last_assessment: Some(Assessment {
-                                    id: "3".into(),
-                                    value: 3,
-                                }),
-                                tags: vec![
-                                    Tag {
-                                        id: "2".into(),
-                                        name: "Shared fries".into(),
-                                        icon: "🍟".into(),
-                                    },
-                                    Tag {
-                                        id: "3".into(),
-                                        name: "Listened to Rancid".into(),
-                                        icon: "🎸".into(),
-                                    },
-                                ],
-                            },
-                            Worker {
-                                id: "7".into(),
-                                first_name: "Val".into(),
-                                last_name: "johnson".into(),
-                                last_assessment: Some(Assessment {
-                                    id: "7".into(),
-                                    value: 2,
-                                }),
-                                tags: vec![
-                                    Tag {
-                                        id: "1".into(),
-                                        name: "Baked a cake".into(),
-                                        icon: "🍰".into(),
-                                    },
-                                    Tag {
-                                        id: "2".into(),
-                                        name: "Shared fries".into(),
-                                        icon: "🍟".into(),
-                                    },
-                                    Tag {
-                                        id: "3".into(),
-                                        name: "Listened to Rancid".into(),
-                                        icon: "🎸".into(),
-                                    },
-                                ],
-                            },
-                        ],
+                        worker_ids: vec!["6".into(), "7".into()],
                     },
                 ],
             },
@@ -264,6 +113,88 @@ async fn main() {
                     name: "Listened to Rancid".into(),
                     icon: "🎸".into(),
                 }],
+            },
+            Worker {
+                id: "4".into(),
+                first_name: "Darryl".into(),
+                last_name: "Philbin".into(),
+                last_assessment: Some(Assessment {
+                    id: "4".into(),
+                    value: 1,
+                }),
+                tags: vec![
+                    Tag {
+                        id: "2".into(),
+                        name: "Shared fries".into(),
+                        icon: "🍟".into(),
+                    },
+                    Tag {
+                        id: "3".into(),
+                        name: "Listened to Rancid".into(),
+                        icon: "🎸".into(),
+                    },
+                ],
+            },
+            Worker {
+                id: "5".into(),
+                first_name: "Nate".into(),
+                last_name: "Nickerson".into(),
+                last_assessment: Some(Assessment {
+                    id: "5".into(),
+                    value: 3,
+                }),
+                tags: vec![Tag {
+                    id: "1".into(),
+                    name: "Baked a cake".into(),
+                    icon: "🍰".into(),
+                }],
+            },
+            Worker {
+                id: "6".into(),
+                first_name: "Roy".into(),
+                last_name: "Anderson".into(),
+                last_assessment: Some(Assessment {
+                    id: "3".into(),
+                    value: 3,
+                }),
+                tags: vec![
+                    Tag {
+                        id: "2".into(),
+                        name: "Shared fries".into(),
+                        icon: "🍟".into(),
+                    },
+                    Tag {
+                        id: "3".into(),
+                        name: "Listened to Rancid".into(),
+                        icon: "🎸".into(),
+                    },
+                ],
+            },
+            Worker {
+                id: "7".into(),
+                first_name: "Val".into(),
+                last_name: "johnson".into(),
+                last_assessment: Some(Assessment {
+                    id: "7".into(),
+                    value: 2,
+                }),
+                tags: vec![
+                    Tag {
+                        id: "1".into(),
+                        name: "Baked a cake".into(),
+                        icon: "🍰".into(),
+                    },
+                    Tag {
+                        id: "2".into(),
+                        name: "Shared fries".into(),
+                        icon: "🍟".into(),
+                    },
+                    Tag {
+                        id: "3".into(),
+                        name: "Listened to Rancid".into(),
+                        icon: "🎸".into(),
+                    },
+                ],
             },
         ],
     };

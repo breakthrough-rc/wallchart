@@ -49,7 +49,10 @@ pub fn Wallchart(props: WallchartProps) -> String {
                                                 </PrimaryButton>
                                             </th>
                                         </tr>
-                                        <ShiftRows shift=shift.clone() location_path=format!("/worksites/{}/locations/{}", &props.worksite.id, location.clone().id)/>
+                                        <ShiftRows
+                                            shift_id=shift.id.clone()
+                                            workers=worksite.get_workers_for_shift(shift.id.clone())
+                                            location_path=format!("/worksites/{}/locations/{}", &props.worksite.id, location.clone().id)/>
                                     }})
                                     .collect_fragment_async()
                                     .await
@@ -69,7 +72,10 @@ pub fn Wallchart(props: WallchartProps) -> String {
 #[props]
 pub struct ShiftRowsProps {
     #[builder(setter(into))]
-    shift: Shift,
+    shift_id: String,
+
+    #[builder(setter(into))]
+    workers: Vec<Worker>,
 
     #[builder(setter(into))]
     location_path: String,
@@ -78,12 +84,11 @@ pub struct ShiftRowsProps {
 #[component]
 pub fn ShiftRows(props: ShiftRowsProps) -> String {
     props
-        .shift
         .workers
         .into_iter()
         .map(|worker| async {
             html! {
-              <WorkerRow worker=worker shift_path=format!("{}/shifts/{}", props.location_path, props.shift.id)/>
+              <WorkerRow worker=worker shift_path=format!("{}/shifts/{}", props.location_path, props.shift_id)/>
             }
         })
         .collect_fragment_async()
