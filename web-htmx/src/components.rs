@@ -1,4 +1,5 @@
 //##PLOP COMPONENT MOD##
+pub mod add_location_form;
 pub mod worker_detail;
 pub mod login_form;
 pub mod add_worker_form;

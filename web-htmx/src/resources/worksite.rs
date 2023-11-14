@@ -1,3 +1,4 @@
+use crate::components::add_location_form::AddLocationForm;
 use crate::state::WebHtmxState;
 use crate::{components::wallchart::Wallchart, page::PageLayout};
 use axum::routing::post;
@@ -71,8 +72,7 @@ async fn get_location_form_modal(
 ) -> impl IntoResponse {
     Html(html! {
         <Modal size=ModalSize::MediumScreen>
-            // <AddWorkerForm action=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new", wallchart_id, location_id, shift_id) />
-            <p>get location form modal</p>
+            <AddLocationForm action=format!("/wallcharts/{}/locations", worksite_id) />
         </Modal>
     })
 }
