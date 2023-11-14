@@ -15,6 +15,7 @@ use rscx::html;
 use serde::Deserialize;
 use web_client::server::modal::{Modal, ModalSize};
 use web_client::server::notification::NotificationFlashes;
+use worksite_service::add_location::AddLocationInput;
 use worksite_service::{
     get_worksite::GetWorksiteInput, remove_worker_from_shift::RemoveWorkerFromShiftInput,
 };
@@ -90,17 +91,19 @@ async fn post_location(
     flash: Flash,
     Form(form): Form<AddLocationFormData>,
 ) -> impl IntoResponse {
-    todo!()
-    // let result = Ok(());
-    //
-    // match result {
-    //     Ok(_) => "".into_response(),
-    //     Err(_) => (
-    //         StatusCode::INTERNAL_SERVER_ERROR,
-    //         "Error adding location to worksite",
-    //     )
-    //         .into_response(),
-    // }
+    worksite_service
+        .add_location(AddLocationInput {
+            worksite_id,
+            location_name: form.name,
+        })
+        .await
+        .expect("Failed to add new location");
+
+    (
+        StatusCode::OK,
+        flash.success("Added new location!"),
+        [("hx-redirect", "/wallchart"), ("hx-retarget", "body")],
+    )
 }
 
 async fn delete_worker_from_shift(

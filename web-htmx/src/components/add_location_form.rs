@@ -17,11 +17,11 @@ pub fn AddLocationForm(props: AddLocationFormProps) -> String {
                         Add a new location
                     </p>
                     <GridLayout class="mt-10">
-                        <GridCell span=6>
+                        <GridCell span=4>
                             <Label for_input="name">Name</Label>
                             <TextInput input_type="name" name="name" />
                         </GridCell>
-                        <GridCell span=6>
+                        <GridCell span=4>
                             <div class="mt-6 flex items-center justify-end gap-x-6">
                                 <Button kind="submit">Add</Button>
                             </div>

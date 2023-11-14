@@ -1,5 +1,3 @@
-use nonempty::{nonempty, NonEmpty};
-
 #[derive(Debug, Clone)]
 pub struct Worksite {
     pub id: String,
@@ -32,6 +30,20 @@ impl Worksite {
             .iter()
             .flat_map(|location| location.shifts.clone())
             .find(|shift| shift.id == shift_id)
+    }
+
+    pub fn add_location(&self, location_name: String) -> Worksite {
+        let mut updated_worksite = self.clone();
+
+        let location = Location {
+            id: uuid::Uuid::new_v4().to_string(),
+            name: location_name,
+            shifts: vec![],
+        };
+
+        updated_worksite.locations.push(location);
+
+        updated_worksite
     }
 
     pub fn add_worker(&self, worker: Worker) -> Worksite {

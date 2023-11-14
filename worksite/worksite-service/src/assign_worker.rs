@@ -1,13 +1,9 @@
 use std::sync::Arc;
 
-
 use thiserror::Error;
 
 // Example repo dependency
-use crate::{
-    models::{Worker},
-    ports::worksite_repository::WorksiteRepository,
-};
+use crate::{models::Worker, ports::worksite_repository::WorksiteRepository};
 
 #[derive(Clone)]
 pub struct AssignWorker {
