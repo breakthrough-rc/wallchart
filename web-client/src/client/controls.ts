@@ -3,6 +3,7 @@ import events from "./events";
 import Notifications from "./controls/Notification";
 import Toggle from "./controls/Toggle";
 import Modal from "./controls/Modal";
+import Flyout from "./controls/Flyout"
 
 const global = (window as any);
 
@@ -42,8 +43,9 @@ function init() {
 
   events.init(registry);
   Notifications.init(registry);
-  Modal.init(registry);
   Toggle.init(registry);
+  Modal.init(registry);
+  Flyout.init(registry);
 
   YcControls.ready();
 }

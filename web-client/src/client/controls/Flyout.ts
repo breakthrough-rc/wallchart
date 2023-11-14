@@ -2,26 +2,23 @@ import { ControlRegistry } from "../registery";
 import Toggle from "./Toggle";
 import query from "../query"
 
-const Modal = {
+const Flyout = {
   async attach(element: HTMLElement) {
-    console.log("Modal::attach()", element);
-    const toggle = Toggle.attach(element);
+    console.log("Flyout::attach()", element);
 
-    const modalPanelElement = query(element, "[data-modal-panel]") as HTMLElement;
-    const togglePanel = Toggle.attach(modalPanelElement, {
+    const flyoutPanelElement = query(element, "[data-flyout-panel]") as HTMLElement;
+    const toggle = Toggle.attach(flyoutPanelElement, {
       async toggleClosed() {
-        await toggle.close();
         element.parentElement?.removeChild(element);
       }
     });
 
     await toggle.open();
-    await togglePanel.open();
   }
 };
 
 function init(registry: ControlRegistry) {
-  registry.registerControl("modal", Modal);
+  registry.registerControl("flyout", Flyout);
 }
 
 export default {

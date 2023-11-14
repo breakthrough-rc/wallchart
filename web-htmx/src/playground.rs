@@ -8,10 +8,7 @@ use axum::{
 };
 use http::HeaderMap;
 use rscx::{component, html, props};
-use std::{
-    time::{SystemTime, UNIX_EPOCH},
-};
-use web_client::server::html_element::HtmlElement;
+use std::time::{SystemTime, UNIX_EPOCH};
 use web_client::server::modal::Modal;
 use web_client::server::notification::{
     NoticationCloseButton, NotificationCall, NotificationPresenter, NotificationTransition,
@@ -20,6 +17,7 @@ use web_client::server::{
     attrs::Attrs,
     button::{PrimaryButton, SecondaryButton},
 };
+use web_client::server::{flyout::Flyout, html_element::HtmlElement};
 use web_macros::*;
 
 pub fn routes() -> Router {
@@ -31,6 +29,7 @@ pub fn routes() -> Router {
         .route("/custom-notification", get(get_custom_notification))
         .route("/custom-notification2", get(get_custom_notification2))
         .route("/modal/one", get(get_modal_one))
+        .route("/flyout/one", get(get_flyout_one))
 }
 
 #[component]
@@ -278,6 +277,14 @@ async fn get_modal_one() -> Html<String> {
         <Modal>
             <h1>I am a very boring and simple modal!</h1>
         </Modal>
+    })
+}
+
+async fn get_flyout_one() -> Html<String> {
+    Html(html! {
+        <Flyout title="Hello Playground!">
+            <h1>Sliding on in... its a flyout!</h1>
+        </Flyout>
     })
 }
 
