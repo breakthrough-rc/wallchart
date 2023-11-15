@@ -23,7 +23,7 @@ pub fn users_routes(state: WebHtmxState) -> Router {
 
 async fn get_login(State(_state): State<WebHtmxState>) -> impl IntoResponse {
     Html(html! {
-        <PageLayout title="Login">
+        <PageLayout header="Login">
             <LoginForm login_route="/login" />
         </PageLayout>
     })

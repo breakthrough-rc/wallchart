@@ -77,7 +77,7 @@ async fn get_worker_form(
     State(WebHtmxState { .. }): State<WebHtmxState>,
 ) -> impl IntoResponse {
     Html(html! {
-        <PageLayout title="Add Worker">
+        <PageLayout header="Add Worker">
             <AddWorkerForm action=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new", wallchart_id, location_id, shift_id) />
         </PageLayout>
     })

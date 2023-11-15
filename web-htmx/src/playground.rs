@@ -290,7 +290,7 @@ async fn get_flyout_one() -> Html<String> {
 
 async fn get_playground() -> Html<String> {
     Html(html! {
-        <PageLayout title="Component Playground">
+        <PageLayout header="Component Playground">
             <PlaygroundPgContent />
         </PageLayout>
     })

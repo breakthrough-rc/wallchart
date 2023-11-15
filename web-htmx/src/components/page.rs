@@ -3,10 +3,41 @@ use rscx::{component, html, props};
 use web_client::server::notification::NotificationLiveRegion;
 use web_client::HtmlLayout;
 
+pub enum PageHeader {
+    None,
+    Title(String),
+}
+
+impl Default for PageHeader {
+    fn default() -> Self {
+        Self::None
+    }
+}
+
+impl From<String> for PageHeader {
+    fn from(s: String) -> Self {
+        Self::Title(s)
+    }
+}
+impl From<&str> for PageHeader {
+    fn from(s: &str) -> Self {
+        Self::Title(s.to_string())
+    }
+}
+
+impl Into<String> for PageHeader {
+    fn into(self) -> String {
+        match self {
+            Self::None => "".into(),
+            Self::Title(s) => s,
+        }
+    }
+}
+
 #[props]
 pub struct PageLayoutProps {
     #[builder(setter(into), default = "Page".into())]
-    title: String,
+    header: PageHeader,
 
     #[builder(default = false)]
     partial: bool,
@@ -35,7 +66,7 @@ pub fn PageLayout(props: PageLayoutProps) -> String {
                 }
             }
         >
-            <AppShell title=props.title>
+            <AppShell title=props.header.into()>
                 <main hx-ext="loading-states">
                     {props.children}
                 </main>

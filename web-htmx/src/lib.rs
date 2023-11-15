@@ -39,7 +39,7 @@ pub fn routes(state: WebHtmxState) -> Router {
 
 async fn fallback() -> (StatusCode, Html<String>) {
     let not_found = html! {
-        <PageLayout title="Oops!">
+        <PageLayout header="Oops!">
             <NotFoundMessage />
         </PageLayout>
     };

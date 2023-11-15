@@ -36,7 +36,7 @@ pub fn Nav(props: NavProps) -> String {
                                 nav_links
                                     .into_iter()
                                     .map(|(label, href)| {
-                                        let is_current = label == props.title;
+                                        let is_current = label == props.title.trim();
                                         let link_css = "inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium";
                                         let link_css = if is_current {
                                             format!("border-indigo-500 text-gray-900 {}", link_css)

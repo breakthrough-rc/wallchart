@@ -58,7 +58,7 @@ async fn get_wallchart_page(
     let worksite_name = worksite.name.clone();
 
     let html = html! {
-        <PageLayout title=format!("Wallchart: {}", worksite_name)>
+        <PageLayout header=format!("Wallchart: {}", worksite_name)>
             <NotificationFlashes flashes=flashes.clone() />
             <div class="my-4">
                 <Wallchart worksite=worksite/>
