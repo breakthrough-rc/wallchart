@@ -20,7 +20,7 @@ impl Worksite {
 
         self.workers
             .iter()
-            .filter(|worker| shift.worker_ids.contains(&worker.id))
+            .filter(|worker| shift.contains_worker(&worker))
             .cloned()
             .collect::<Vec<Worker>>()
     }
@@ -66,7 +66,7 @@ impl Worksite {
         updated_worksite.locations.iter_mut().for_each(|location| {
             location.shifts.iter_mut().for_each(|shift| {
                 if shift.id == shift_id {
-                    shift.worker_ids.push(worker.id.clone())
+                    *shift = shift.assign_worker(&worker);
                 }
             })
         });
@@ -104,13 +104,13 @@ impl Worksite {
      *
      * This function won't fail and will treat the worker/shift not existing as a trivial success.
      */
-    pub fn remove_worker(&self, shift_id: String, worker_id: String) -> Worksite {
+    pub fn remove_worker(&self, shift_id: String, worker: Worker) -> Worksite {
         let mut updated_worksite = self.to_owned();
 
         updated_worksite.locations.iter_mut().for_each(|location| {
             location.shifts.iter_mut().for_each(|shift| {
                 if shift.id == shift_id {
-                    shift.worker_ids.retain(|w_id| w_id != &worker_id)
+                    *shift = shift.remove_worker(&worker);
                 }
             })
         });
@@ -127,10 +127,37 @@ pub struct Location {
 }
 
 #[derive(Debug, Clone)]
+pub struct ShiftWorker(String);
+
+impl ShiftWorker {
+    pub fn new(id: String) -> Self {
+        Self(id)
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct Shift {
     pub id: String,
     pub name: String,
-    pub worker_ids: Vec<String>,
+    pub workers: Vec<ShiftWorker>,
+}
+
+impl Shift {
+    pub fn assign_worker(&self, worker: &Worker) -> Shift {
+        let mut updated_shift = self.clone();
+        updated_shift.workers.push(ShiftWorker(worker.id.clone()));
+
+        updated_shift
+    }
+    pub fn contains_worker(&self, worker: &Worker) -> bool {
+        self.workers.iter().any(|w| w.0 == worker.id)
+    }
+    pub fn remove_worker(&self, worker: &Worker) -> Shift {
+        let mut updated_shift = self.clone();
+        updated_shift.workers.retain(|w| w.0 != worker.id);
+
+        updated_shift
+    }
 }
 
 #[derive(Debug, Clone)]

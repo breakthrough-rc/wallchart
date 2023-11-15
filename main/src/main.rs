@@ -10,7 +10,7 @@ use rand::Rng;
 use std::{net::SocketAddr, sync::Arc};
 use web_htmx::{livereload, routes as web_routes, state::WebHtmxState};
 use worksite_service::{
-    models::{Assessment, Location, Shift, Tag, Worker, Worksite},
+    models::{Assessment, Location, Shift, ShiftWorker, Tag, Worker, Worksite},
     service::WorksiteService,
 };
 
@@ -27,7 +27,11 @@ async fn main() {
                 shifts: vec![Shift {
                     id: "1".into(),
                     name: "Day".into(),
-                    worker_ids: vec!["1".into(), "2".into(), "3".into()],
+                    workers: vec![
+                        ShiftWorker::new("1".into()),
+                        ShiftWorker::new("2".into()),
+                        ShiftWorker::new("3".into()),
+                    ],
                 }],
             },
             Location {
@@ -37,12 +41,12 @@ async fn main() {
                     Shift {
                         id: "2".into(),
                         name: "Day".into(),
-                        worker_ids: vec!["4".into(), "5".into()],
+                        workers: vec![ShiftWorker::new("4".into()), ShiftWorker::new("5".into())],
                     },
                     Shift {
                         id: "3".into(),
                         name: "Night".into(),
-                        worker_ids: vec!["6".into(), "7".into()],
+                        workers: vec![ShiftWorker::new("6".into()), ShiftWorker::new("7".into())],
                     },
                 ],
             },
