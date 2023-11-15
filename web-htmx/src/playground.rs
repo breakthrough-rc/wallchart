@@ -1,6 +1,5 @@
 #![allow(unused_braces)]
-use crate::page::PageLayout;
-
+use crate::components::page::PageLayout;
 use axum::{
     response::Html,
     routing::{get, post},
@@ -9,15 +8,16 @@ use axum::{
 use http::HeaderMap;
 use rscx::{component, html, props};
 use std::time::{SystemTime, UNIX_EPOCH};
-use web_client::server::modal::Modal;
-use web_client::server::notification::{
-    NoticationCloseButton, NotificationCall, NotificationPresenter, NotificationTransition,
-};
 use web_client::server::{
     attrs::Attrs,
     button::{PrimaryButton, SecondaryButton},
+    flyout::Flyout,
+    html_element::HtmlElement,
+    modal::Modal,
+    notification::{
+        NoticationCloseButton, NotificationCall, NotificationPresenter, NotificationTransition,
+    },
 };
-use web_client::server::{flyout::Flyout, html_element::HtmlElement};
 use web_macros::*;
 
 pub fn routes() -> Router {

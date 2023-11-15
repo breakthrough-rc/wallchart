@@ -1,15 +1,11 @@
-
-
-
 use axum::{
     response::{Html, Redirect},
     routing::get,
     Router,
 };
 use http::StatusCode;
-use page::PageLayout;
 //##PLOP USE RESOURCE HOOK##
-use components::not_found_message::NotFoundMessage;
+use components::{not_found_message::NotFoundMessage, page::PageLayout};
 use resources::users::users_routes;
 use resources::workers::workers_routes;
 use resources::worksite::worksite_routes;
@@ -19,7 +15,6 @@ use web_client::routes as client_routes;
 
 pub mod components;
 pub mod livereload;
-pub mod page;
 pub mod playground;
 pub mod resources;
 pub mod state;

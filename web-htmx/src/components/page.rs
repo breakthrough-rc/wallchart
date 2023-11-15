@@ -1,4 +1,4 @@
-use crate::components::appshell::AppShell;
+use super::appshell::AppShell;
 use rscx::{component, html, props};
 use web_client::server::notification::NotificationLiveRegion;
 use web_client::HtmlLayout;

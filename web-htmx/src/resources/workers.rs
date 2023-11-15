@@ -1,6 +1,5 @@
 use crate::{
-    components::{add_worker_form::AddWorkerForm, worker_detail::WorkerDetail},
-    page::PageLayout,
+    components::{add_worker_form::AddWorkerForm, page::PageLayout, worker_detail::WorkerDetail},
     state::WebHtmxState,
 };
 use axum::{

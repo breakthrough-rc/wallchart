@@ -1,9 +1,10 @@
-use crate::{components::login_form::LoginForm, page::PageLayout, state::WebHtmxState};
-use auth_service::{
-    get_user_for_login::GetUserForLoginInput,
+use crate::{
+    components::{login_form::LoginForm, page::PageLayout},
+    state::WebHtmxState,
 };
+use auth_service::get_user_for_login::GetUserForLoginInput;
 use axum::{
-    extract::{State},
+    extract::State,
     response::{Html, IntoResponse},
     routing::get,
     Form, Router,

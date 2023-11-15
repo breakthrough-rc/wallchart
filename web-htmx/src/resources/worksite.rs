@@ -1,23 +1,25 @@
-use crate::components::add_location_form::AddLocationForm;
+use crate::components::{
+    add_location_form::AddLocationForm, page::PageLayout, wallchart::Wallchart,
+};
 use crate::state::WebHtmxState;
-use crate::{components::wallchart::Wallchart, page::PageLayout};
-use axum::routing::post;
-use axum::Form;
 use axum::{
     extract::{self, State},
     response::{Html, IntoResponse},
+    routing::post,
     routing::{delete, get},
-    Router,
+    Form, Router,
 };
 use axum_flash::{Flash, IncomingFlashes};
 use http::StatusCode;
 use rscx::html;
 use serde::Deserialize;
-use web_client::server::modal::{Modal, ModalSize};
-use web_client::server::notification::NotificationFlashes;
-use worksite_service::add_location::AddLocationInput;
+use web_client::server::{
+    modal::{Modal, ModalSize},
+    notification::NotificationFlashes,
+};
 use worksite_service::{
-    get_worksite::GetWorksiteInput, remove_worker_from_shift::RemoveWorkerFromShiftInput,
+    add_location::AddLocationInput, get_worksite::GetWorksiteInput,
+    remove_worker_from_shift::RemoveWorkerFromShiftInput,
 };
 
 pub fn worksite_routes(state: WebHtmxState) -> Router {
