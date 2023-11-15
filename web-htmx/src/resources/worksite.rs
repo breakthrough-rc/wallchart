@@ -1,5 +1,7 @@
 use crate::components::{
-    add_location_form::AddLocationForm, page::PageLayout, wallchart::Wallchart,
+    add_location_form::AddLocationForm,
+    page::{PageHeader, PageLayout},
+    wallchart::Wallchart,
 };
 use crate::state::WebHtmxState;
 use axum::{
@@ -14,6 +16,7 @@ use http::StatusCode;
 use rscx::html;
 use serde::Deserialize;
 use web_client::server::{
+    button::{PrimaryButton, SecondaryButton},
     modal::{Modal, ModalSize},
     notification::NotificationFlashes,
 };
@@ -46,10 +49,10 @@ async fn get_wallchart_page(
         worksite_service, ..
     }): State<WebHtmxState>,
 ) -> impl IntoResponse {
+    let id: &str = "1";
+
     let worksite = worksite_service
-        .get_worksite(GetWorksiteInput {
-            id: "1".to_string(),
-        })
+        .get_worksite(GetWorksiteInput { id: id.to_string() })
         .await
         .unwrap()
         .ok_or("Worksite not found")
@@ -58,10 +61,36 @@ async fn get_wallchart_page(
     let worksite_name = worksite.name.clone();
 
     let html = html! {
-        <PageLayout header=format!("Wallchart: {}", worksite_name)>
+        <PageLayout
+            header=PageHeader::Toolbar {
+                title: format!("Wallchart: {}", worksite_name),
+                buttons: html! {
+                    <SecondaryButton
+                        hx_get=format!("/wallcharts/{}/locations/new-modal", &id)
+                        hx_target="body"
+                        hx_swap="beforeend"
+                        hx_push_url=format!("/wallcharts/{}/locations/new", &id)
+                    >
+                        Create New Location
+                    </SecondaryButton>
+                    <PrimaryButton
+                        onclick="alert('Coming soon!')"
+                    >
+                        Edit Worksite
+                    </PrimaryButton>
+                }
+            }
+        >
             <NotificationFlashes flashes=flashes.clone() />
             <div class="my-4">
-                <Wallchart worksite=worksite/>
+                <p><em>Manage your worksite and more.</em></p>
+                <div class="mt-8 flow-root">
+                    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                            <Wallchart worksite=worksite/>
+                        </div>
+                    </div>
+                </div>
             </div>
         </PageLayout>
     };
