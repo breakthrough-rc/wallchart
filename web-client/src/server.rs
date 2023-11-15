@@ -7,5 +7,6 @@ pub mod html_layout;
 pub mod modal;
 pub mod notification;
 pub mod opt_attrs;
+pub mod page_header;
 pub mod transition;
 pub mod yc_control;

@@ -3,14 +3,8 @@ use rscx::{component, html, props, CollectFragment};
 use web_client::server::transition::Transition;
 use web_client::server::yc_control::Toggle;
 
-#[props]
-pub struct NavProps {
-    #[builder(default)]
-    title: String,
-}
-
 #[component]
-pub fn Nav(props: NavProps) -> String {
+pub fn Nav() -> String {
     let nav_links = [
         ("Wallchart", "/wallchart"),
         ("Workers", "/workers"),
@@ -36,7 +30,7 @@ pub fn Nav(props: NavProps) -> String {
                                 nav_links
                                     .into_iter()
                                     .map(|(label, href)| {
-                                        let is_current = label == props.title.trim();
+                                        let is_current = false; // TODO! Need to support recognizing current page
                                         let link_css = "inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium";
                                         let link_css = if is_current {
                                             format!("border-indigo-500 text-gray-900 {}", link_css)
@@ -97,7 +91,7 @@ pub fn Nav(props: NavProps) -> String {
                         nav_links
                             .into_iter()
                             .map(|(label, href)| {
-                                let is_current = label == props.title;
+                                let is_current = false; // TODO! Fix me!
                                 let link_css = "block border-l-4 py-2 pl-3 pr-4 text-base font-medium";
                                 let link_css = if is_current {
                                     format!("border-indigo-500 bg-indigo-50 text-indigo-700 {}", link_css)

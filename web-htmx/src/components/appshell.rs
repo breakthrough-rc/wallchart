@@ -1,10 +1,34 @@
 use super::nav::Nav;
 use rscx::{component, html, props};
+use web_client::server::page_header::PageHeaderToolbar;
+
+pub enum PageHeader {
+    None,
+    Title(String),
+    Toolbar { title: String, buttons: String },
+}
+
+impl Default for PageHeader {
+    fn default() -> Self {
+        Self::None
+    }
+}
+
+impl From<String> for PageHeader {
+    fn from(s: String) -> Self {
+        Self::Title(s)
+    }
+}
+impl From<&str> for PageHeader {
+    fn from(s: &str) -> Self {
+        Self::Title(s.to_string())
+    }
+}
 
 #[props]
 pub struct AppShellProps {
     #[builder(default)]
-    title: String,
+    header: PageHeader,
 
     #[builder(default)]
     children: String,
@@ -14,8 +38,8 @@ pub struct AppShellProps {
 pub fn AppShell(props: AppShellProps) -> String {
     html! {
         <div class="min-h-full">
-            <Nav title=props.title.clone() />
-            <MainContent title=props.title.clone()>
+            <Nav />
+            <MainContent header=props.header>
                 {props.children}
             </MainContent>
         </div>
@@ -25,7 +49,7 @@ pub fn AppShell(props: AppShellProps) -> String {
 #[props]
 pub struct MainContentProps {
     #[builder(default)]
-    title: String,
+    header: PageHeader,
 
     #[builder(default)]
     children: String,
@@ -35,11 +59,23 @@ pub struct MainContentProps {
 fn MainContent(props: MainContentProps) -> String {
     html! {
         <div class="py-10">
-            <header>
-                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <h1 class="text-3xl font-bold leading-tight tracking-tight text-gray-900">{props.title}</h1>
-                </div>
-            </header>
+            {
+                match props.header {
+                    PageHeader::None => html! {},
+                    PageHeader::Title(title) => html! {
+                        <header class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                            <h1 class="text-3xl font-bold leading-tight tracking-tight text-gray-900">{title}</h1>
+                        </header>
+                    },
+                    PageHeader::Toolbar { title, buttons } => html! {
+                        <PageHeaderToolbar
+                            class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
+                            title=title
+                            buttons=buttons
+                        />
+                    },
+                }
+            }
             <main>
                 <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     {props.children}
