@@ -13,10 +13,12 @@ use axum_flash::Flash;
 use http::StatusCode;
 use rscx::html;
 use serde::Deserialize;
-use web_client::server::modal::{Modal, ModalSize};
+use web_client::server::{
+    flyout::Flyout,
+    modal::{Modal, ModalSize},
+};
 use worksite_service::{
-    assign_worker::AssignWorkerInput, get_worker::GetWorkerInput,
-    update_worker::UpdateWorkerInput,
+    assign_worker::AssignWorkerInput, get_worker::GetWorkerInput, update_worker::UpdateWorkerInput,
 };
 
 pub fn workers_routes(state: WebHtmxState) -> Router {
@@ -54,11 +56,9 @@ async fn get_worker_detail(
     let full_name = worker.full_name();
 
     Html(html! {
-        <PageLayout
-            title=format!("Worker Detail: {}", full_name)
-        >
+        <Flyout title=format!("Worker Detail: {}", full_name)>
             <WorkerDetail worker=worker />
-        </PageLayout>
+        </Flyout>
     })
 }
 

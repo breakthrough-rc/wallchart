@@ -63,7 +63,8 @@ pub fn Wallchart(props: WallchartProps) -> String {
                                         <ShiftRows
                                             shift_id=shift.id.clone()
                                             workers=worksite.get_workers_for_shift(shift.id.clone())
-                                            location_path=format!("/worksites/{}/locations/{}", &props.worksite.id, location.clone().id)/>
+                                            location_path=format!("/worksites/{}/locations/{}", &props.worksite.id, location.clone().id)
+                                        />
                                     }})
                                     .collect_fragment_async()
                                     .await
@@ -120,9 +121,14 @@ pub fn WorkerRow(props: WorkerRowProps) -> String {
     html! {
       <tr class="border-t border-gray-300" data-loading-states>
           <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
-              <a href=format!("/worksites/{}/workers/{}", 1, props.worker.id)>
-                  {format!("{} {}", props.worker.first_name, props.worker.last_name)}
-              </a>
+                <button
+                    hx-get=format!("/worksites/{}/workers/{}", 1, props.worker.id)
+                    hx-target="body"
+                    hx-swap="beforeend"
+                    hx-push-url=format!("/worksites/{}/workers/{}", 1, &props.worker.id)
+                >
+                    {format!("{} {}", props.worker.first_name, props.worker.last_name)}
+                </button>
           </td>
           <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{props.worker.last_assessment.map(|assessment| assessment.value).unwrap_or(0)}</td>
           <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{props.worker.tags.into_iter().map(|tag| tag.icon).collect_fragment()}</td>
