@@ -1,5 +1,8 @@
 use crate::{
-    components::{add_worker_form::AddWorkerForm, page::PageLayout, worker_detail::WorkerDetail},
+    components::{
+        add_worker_form::AddWorkerForm, page::PageLayout, worker_detail::WorkerDetail,
+        workers::Workers,
+    },
     state::WebHtmxState,
 };
 use axum::{
@@ -17,7 +20,8 @@ use web_client::server::{
     modal::{Modal, ModalSize},
 };
 use worksite_service::{
-    assign_worker::AssignWorkerInput, get_worker::GetWorkerInput, update_worker::UpdateWorkerInput,
+    assign_worker::AssignWorkerInput, get_worker::GetWorkerInput, get_workers::GetWorkersInput,
+    update_worker::UpdateWorkerInput,
 };
 
 pub fn workers_routes(state: WebHtmxState) -> Router {
@@ -43,20 +47,15 @@ async fn get_workers(
     extract::Path(worksite_id): extract::Path<String>,
     State(state): State<WebHtmxState>,
 ) -> impl IntoResponse {
-    // let workers = state
-    //     .worksite_service
-    //     .get_workers(GetWorkerInput {
-    //         id: worker_id,
-    //         worksite_id,
-    //     })
-    //     .await
-    //     .expect("Failed to get worker")
-    //     .ok_or("Worker not found")
-    //     .expect("Worker not found");
+    let workers = state
+        .worksite_service
+        .get_workers(GetWorkersInput { worksite_id })
+        .await
+        .expect("Failed to get worker");
 
     Html(html! {
-        <PageLayout>
-            <div>Workers</div>
+        <PageLayout header="Workers">
+            <Workers workers=workers />
         </PageLayout>
     })
 }
