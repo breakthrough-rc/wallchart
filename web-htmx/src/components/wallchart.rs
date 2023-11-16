@@ -30,28 +30,18 @@ pub fn Wallchart(props: WallchartProps) -> String {
                         location
                         .shifts
                         .iter()
-                        .map(|shift| async { html! {
-                            <tr class="border-t border-gray-200">
-                                <th colspan="3" scope="colgroup" class="bg-gray-50 py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
-                                    {location.name.clone()} - {shift.name.clone()}
-                                </th>
-                                <th colspan="3" scope="colgroup" class="bg-gray-50 py-2 pl-4 pr-3 text-right text-sm font-semibold text-gray-900 sm:pl-3">
-                                    <SecondaryButton
-                                        hx_get=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new-modal", &props.worksite.id, location.clone().id, shift.id)
-                                        hx_target="body"
-                                        hx_swap="beforeend"
-                                        hx_push_url=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new", &props.worksite.id, location.clone().id, shift.id)
-                                    >
-                                        "Create New Worker"
-                                    </SecondaryButton>
-                                </th>
-                            </tr>
-                            <ShiftRows
-                                shift_id=shift.id.clone()
-                                workers=worksite.get_workers_for_shift(shift.id.clone())
-                                location_path=format!("/worksites/{}/locations/{}", &props.worksite.id, location.clone().id)
-                            />
-                        }})
+                        .map(|shift| async {
+                            html! {
+                                <ShiftRows
+                                    shift_id=shift.id.clone()
+                                    shift_name=shift.name.clone()
+                                    workers=worksite.get_workers_for_shift(shift.id.clone())
+                                    new_worker_action=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new-modal", &worksite.id, location.id, shift.id)
+                                    new_worker_push_url=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new", &worksite.id, location.id, shift.id)
+                                    location_path=format!("/worksites/{}/locations/{}", &props.worksite.id, location.clone().id)
+                                />
+                            }
+                        })
                         .collect_fragment_async()
                         .await
                     })
@@ -69,14 +59,40 @@ pub struct ShiftRowsProps {
     shift_id: String,
 
     #[builder(setter(into))]
+    shift_name: String,
+
+    #[builder(setter(into))]
     workers: Vec<Worker>,
 
     #[builder(setter(into))]
     location_path: String,
+
+    #[builder(setter(into))]
+    new_worker_action: String,
+
+    #[builder(setter(into))]
+    new_worker_push_url: String,
 }
 
 #[component]
 pub fn ShiftRows(props: ShiftRowsProps) -> String {
+    html! {
+        <tr class="border-t border-gray-200">
+            <th colspan="3" scope="colgroup" class="bg-gray-50 py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
+                {props.shift_name}
+            </th>
+            <th colspan="3" scope="colgroup" class="bg-gray-50 py-2 pl-4 pr-3 text-right text-sm font-semibold text-gray-900 sm:pl-3">
+                <SecondaryButton
+                    hx_get=props.new_worker_action
+                    hx_target="body"
+                    hx_swap="beforeend"
+                    hx_push_url=props.new_worker_push_url
+                >
+                    "Create New Worker"
+                </SecondaryButton>
+            </th>
+        </tr>
+        {
     props
         .workers
         .into_iter()
@@ -87,6 +103,8 @@ pub fn ShiftRows(props: ShiftRowsProps) -> String {
         })
         .collect_fragment_async()
         .await
+        }
+    }
 }
 
 #[props]
