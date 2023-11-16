@@ -41,7 +41,7 @@ impl Worksite {
             workers: vec![],
         };
 
-        let mut location = updated_worksite
+        let location = updated_worksite
             .locations
             .iter_mut()
             .find(|l| l.id == location_id)?;

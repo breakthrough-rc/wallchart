@@ -17,6 +17,12 @@ pub struct AddWorkerFormProps {
 
     #[builder(default)]
     children: String,
+
+    #[builder(setter(into), default)]
+    first_name: String,
+
+    #[builder(setter(into), default)]
+    last_name: String,
 }
 
 #[component]
@@ -30,12 +36,12 @@ pub fn AddWorkerForm(props: AddWorkerFormProps) -> String {
                 <GridLayout class="mt-10">
                     <GridCell span=3>
                         <Label for_input="last_name">First name</Label>
-                        <TextInput name="first_name" autocomplete="given-name" />
+                        <TextInput name="first_name" autocomplete="given-name" value=props.first_name />
                     </GridCell>
 
                     <GridCell span=3>
                         <Label for_input="last_name">Last name</Label>
-                        <TextInput name="last_name" autocomplete="family-name" />
+                        <TextInput name="last_name" autocomplete="family-name" value=props.last_name />
                     </GridCell>
 
                     <GridCell span=4>

@@ -10,10 +10,10 @@ pub struct WorkerDetailProps {
 }
 
 #[component]
-pub fn WorkerDetail(_props: WorkerDetailProps) -> String {
+pub fn WorkerDetail(props: WorkerDetailProps) -> String {
     html! {
         <div>
-           <AddWorkerForm action=""/>
+           <AddWorkerForm action="" first_name=props.worker.first_name last_name=props.worker.last_name />
         </div>
     }
 }
