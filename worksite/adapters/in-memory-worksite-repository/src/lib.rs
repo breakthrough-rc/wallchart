@@ -3,7 +3,7 @@ use std::sync::Arc;
 use async_trait::async_trait;
 
 use tokio::sync::RwLock;
-use worksite_service::models::{Worksite};
+use worksite_service::models::Worksite;
 use worksite_service::ports::worksite_repository::{RepositoryFailure, WorksiteRepository};
 
 #[derive(Clone, Debug)]

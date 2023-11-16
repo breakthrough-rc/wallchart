@@ -2,7 +2,7 @@ use async_trait::async_trait;
 
 use thiserror::Error;
 
-use crate::models::{Worksite};
+use crate::models::Worksite;
 
 #[async_trait]
 pub trait WorksiteRepository: Send + Sync + 'static {
