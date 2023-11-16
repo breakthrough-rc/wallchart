@@ -259,10 +259,10 @@ async fn post_shift_assignment(
 struct UpdateWorkerFormData {
     first_name: String,
     last_name: String,
-    street_address: String,
-    city: String,
-    region: String,
-    postal_code: String,
+    // street_address: String,
+    // city: String,
+    // region: String,
+    // postal_code: String,
 }
 
 async fn post_worker_detail(
