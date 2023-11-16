@@ -24,8 +24,8 @@ use web_client::server::{
     notification::NotificationFlashes,
 };
 use worksite_service::{
-    assign_worker::AssignWorkerInput, get_worker::GetWorkerInput, get_workers::GetWorkersInput,
-    update_worker::UpdateWorkerInput,
+    add_worker::AddWorkerInput, assign_worker::AssignWorkerInput, get_worker::GetWorkerInput,
+    get_workers::GetWorkersInput, update_worker::UpdateWorkerInput,
 };
 
 pub fn workers_routes(state: WebHtmxState) -> Router {
@@ -33,16 +33,26 @@ pub fn workers_routes(state: WebHtmxState) -> Router {
         .route("/worksites/:worksite_id/workers", get(get_workers))
         .route("/workers", get(Redirect::temporary("/worksites/1/workers")))
         .route(
+            "/wallcharts/:worksite_id/workers/new",
+            get(get_worker_form).post(post_worker),
+        )
+        .route(
+            "/wallcharts/:worksite_id/workers/new-modal",
+            get(get_worker_form_modal),
+        )
+        // TODO: posting a worker to a shift should be creating a shift assignment, not a new
+        // worker
+        .route(
             "/worksites/:worksite_id/workers/:worker_id",
             get(get_worker_detail).post(post_worker_detail),
         )
         .route(
             "/wallcharts/:worksite_id/locations/:location_id/shifts/:shift_id/workers/new",
-            get(get_worker_form).post(post_worker),
+            get(get_shift_assignment_form).post(post_shift_assignment),
         )
         .route(
             "/wallcharts/:worksite_id/locations/:location_id/shifts/:shift_id/workers/new-modal",
-            get(get_worker_form_modal),
+            get(get_shift_assignment_form_modal),
         )
         .with_state(state)
 }
@@ -115,6 +125,58 @@ async fn get_worker_detail(
 }
 
 async fn get_worker_form_modal(
+    extract::Path(wallchart_id): extract::Path<String>,
+) -> impl IntoResponse {
+    Html(html! {
+        <Modal size=ModalSize::MediumScreen>
+            <AddWorkerForm action=format!("/wallcharts/{}/workers/new", wallchart_id) />
+        </Modal>
+    })
+}
+
+async fn get_worker_form(extract::Path(wallchart_id): extract::Path<String>) -> impl IntoResponse {
+    Html(html! {
+        <PageLayout header="Add Worker">
+            <AddWorkerForm action=format!("/wallcharts/{}/workers/new", wallchart_id) />
+        </PageLayout>
+    })
+}
+
+async fn post_worker(
+    State(WebHtmxState {
+        worksite_service, ..
+    }): State<WebHtmxState>,
+    flash: Flash,
+    extract::Path(wallchart_id): extract::Path<String>,
+    Form(form): Form<AddWorkerFormData>,
+) -> impl IntoResponse {
+    worksite_service
+        .add_worker(AddWorkerInput {
+            worksite_id: wallchart_id.clone(),
+            first_name: form.first_name,
+            last_name: form.last_name,
+            street_address: form.street_address,
+            city: form.city,
+            region: form.region,
+            postal_code: form.postal_code,
+        })
+        .await
+        .expect("Failed to add worker");
+
+    (
+        StatusCode::OK,
+        flash.success("Worker added successfully!"),
+        [
+            (
+                "hx-redirect",
+                format!("/worksites/{}/workers", wallchart_id),
+            ),
+            ("hx-retarget", "body".into()),
+        ],
+    )
+}
+
+async fn get_shift_assignment_form_modal(
     extract::Path((wallchart_id, location_id, shift_id)): extract::Path<(String, String, String)>,
     State(WebHtmxState { .. }): State<WebHtmxState>,
 ) -> impl IntoResponse {
@@ -125,7 +187,7 @@ async fn get_worker_form_modal(
     })
 }
 
-async fn get_worker_form(
+async fn get_shift_assignment_form(
     extract::Path((wallchart_id, location_id, shift_id)): extract::Path<(String, String, String)>,
     State(WebHtmxState { .. }): State<WebHtmxState>,
 ) -> impl IntoResponse {
@@ -146,7 +208,7 @@ struct AddWorkerFormData {
     postal_code: String,
 }
 
-async fn post_worker(
+async fn post_shift_assignment(
     State(WebHtmxState {
         worksite_service, ..
     }): State<WebHtmxState>,
