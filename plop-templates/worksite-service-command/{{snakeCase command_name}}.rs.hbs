@@ -22,17 +22,17 @@ impl {{pascalCase command_name}} {
     pub async fn {{snakeCase command_name}}(&self, input: {{pascalCase command_name}}Input) -> {{pascalCase command_name}}Output {
         let worksite = &self
             .worksite_repository
-            .get_worksite(input.id)
+            .get_worksite(input.worksite_id)
             .await
-            .map_err(|e| AssignWorkerFailure::Unknown(e.to_string()))?
-            .ok_or(AssignWorkerFailure::NotFound)?;
+            .map_err(|e| {{pascalCase command_name}}Failure::Unknown(e.to_string()))?
+            .ok_or({{pascalCase command_name}}Failure::NotFound)?;
 
         let worksite = todo!("update the worksite or whatever you like")
 
         self.worksite_repository
             .save(worksite)
             .await
-            .map_err(|e| AssignWorkerFailure::Unknown(e.to_string()))?;
+            .map_err(|e| {{pascalCase command_name}}Failure::Unknown(e.to_string()))?;
             
         Ok(())
     }
