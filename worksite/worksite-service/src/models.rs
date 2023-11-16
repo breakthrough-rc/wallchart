@@ -20,7 +20,7 @@ impl Worksite {
 
         self.workers
             .iter()
-            .filter(|worker| shift.contains_worker(&worker))
+            .filter(|worker| shift.contains_worker(worker))
             .cloned()
             .collect::<Vec<Worker>>()
     }
