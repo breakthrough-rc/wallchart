@@ -2,10 +2,7 @@ use std::sync::Arc;
 
 use thiserror::Error;
 
-use crate::{
-    models::{Tag, Worker},
-    ports::worksite_repository::WorksiteRepository,
-};
+use crate::{models::Tag, ports::worksite_repository::WorksiteRepository};
 
 #[derive(Clone)]
 pub struct GetTags {
