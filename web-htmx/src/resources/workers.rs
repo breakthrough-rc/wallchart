@@ -18,7 +18,7 @@ use http::StatusCode;
 use rscx::html;
 use serde::Deserialize;
 use web_client::server::{
-    button::{PrimaryButton},
+    button::PrimaryButton,
     flyout::Flyout,
     modal::{Modal, ModalSize},
     notification::NotificationFlashes,
