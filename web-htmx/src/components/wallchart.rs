@@ -55,10 +55,10 @@ pub struct LocationProps {
 pub fn Location(props: LocationProps) -> String {
     html! {
         <tr class="border-t border-gray-200">
-            <th colspan="3" scope="colgroup" class="bg-indigo-100 py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
+            <th colspan="3" scope="colgroup" class="bg-gray-200 py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
                 {props.location.name}
             </th>
-            <th colspan="3" scope="colgroup" class="bg-indigo-100 py-2 pl-4 pr-3 text-right text-sm font-semibold text-gray-900 sm:pl-3">
+            <th colspan="3" scope="colgroup" class="bg-gray-200 py-2 pl-4 pr-3 text-right text-sm font-semibold text-gray-900 sm:pl-3">
                 <SecondaryButton
                     hx_get="todo"
                     hx_target="body"
