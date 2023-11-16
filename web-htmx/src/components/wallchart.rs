@@ -1,6 +1,6 @@
 use rscx::{component, html, props, CollectFragment, CollectFragmentAsync};
 use web_client::server::button::SecondaryButton;
-use worksite_service::models::{Worker, Worksite};
+use worksite_service::models::{Location as LocationModel, Worker, Worksite};
 
 #[props]
 pub struct WallchartProps {
@@ -27,29 +27,66 @@ pub fn Wallchart(props: WallchartProps) -> String {
                     .locations
                     .iter()
                     .map(|location| async {
-                        location
-                        .shifts
-                        .iter()
-                        .map(|shift| async {
-                            html! {
-                                <Shift
-                                    shift_id=shift.id.clone()
-                                    shift_name=shift.name.clone()
-                                    workers=worksite.get_workers_for_shift(shift.id.clone())
-                                    new_worker_action=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new-modal", &worksite.id, location.id, shift.id)
-                                    new_worker_push_url=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new", &worksite.id, location.id, shift.id)
-                                    location_path=format!("/worksites/{}/locations/{}", &props.worksite.id, location.clone().id)
-                                />
-                            }
-                        })
-                        .collect_fragment_async()
-                        .await
+                        html! {
+                            <Location
+                                location=location.clone()
+                                worksite=worksite.clone()
+                            />
+                        }
                     })
                     .collect_fragment_async()
                     .await
                 }
             </tbody>
         </table>
+    }
+}
+
+#[props]
+pub struct LocationProps {
+    #[builder(setter(into))]
+    location: LocationModel,
+
+    #[builder(setter(into))]
+    worksite: Worksite,
+}
+
+#[component]
+pub fn Location(props: LocationProps) -> String {
+    html! {
+        <tr class="border-t border-gray-200">
+            <th colspan="3" scope="colgroup" class="bg-indigo-100 py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
+                {props.location.name}
+            </th>
+            <th colspan="3" scope="colgroup" class="bg-indigo-100 py-2 pl-4 pr-3 text-right text-sm font-semibold text-gray-900 sm:pl-3">
+                <SecondaryButton
+                    hx_get="todo"
+                    hx_target="body"
+                    hx_swap="beforeend"
+                >
+                    "Add Shift"
+                </SecondaryButton>
+            </th>
+        </tr>
+        {
+            props.location
+                .shifts
+                .iter()
+                .map(|shift| async {
+                    html! {
+                        <Shift
+                            shift_id=shift.id.clone()
+                            shift_name=shift.name.clone()
+                            workers=props.worksite.get_workers_for_shift(shift.id.clone())
+                            new_worker_action=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new-modal", &props.worksite.id, props.location.id, shift.id)
+                            new_worker_push_url=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new", &props.worksite.id, props.location.id, shift.id)
+                            location_path=format!("/worksites/{}/locations/{}", &props.worksite.id, props.location.id)
+                        />
+                    }
+                })
+                .collect_fragment_async()
+                .await
+        }
     }
 }
 
@@ -88,7 +125,7 @@ pub fn Shift(props: ShiftProps) -> String {
                     hx_swap="beforeend"
                     hx_push_url=props.new_worker_push_url
                 >
-                    "Create New Worker"
+                    "Add Worker"
                 </SecondaryButton>
             </th>
         </tr>
