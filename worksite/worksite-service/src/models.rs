@@ -3,6 +3,7 @@ pub struct Worksite {
     pub id: String,
     pub name: String,
     pub locations: Vec<Location>,
+    pub tags: Vec<Tag>,
     pub workers: Vec<Worker>,
 }
 
@@ -23,6 +24,18 @@ impl Worksite {
             .filter(|worker| shift.contains_worker(worker))
             .cloned()
             .collect::<Vec<Worker>>()
+    }
+
+    pub fn get_tags_for_worker(&self, worker: Worker) -> Vec<Tag> {
+        let mut tags = vec![];
+
+        for tag in &self.tags {
+            if worker.tags.iter().any(|t| t.0 == tag.id) {
+                tags.push(tag.clone());
+            }
+        }
+
+        tags
     }
 
     fn get_shift(&self, shift_id: String) -> Option<Shift> {
@@ -185,7 +198,7 @@ pub struct Worker {
     pub first_name: String,
     pub last_name: String,
     pub last_assessment: Option<Assessment>,
-    pub tags: Vec<Tag>,
+    pub tags: Vec<AssignedTag>,
 }
 
 impl Worker {
@@ -205,4 +218,13 @@ pub struct Tag {
     pub id: String,
     pub name: String,
     pub icon: String,
+}
+
+#[derive(Debug, Clone)]
+pub struct AssignedTag(String);
+
+impl AssignedTag {
+    pub fn new(id: String) -> Self {
+        Self(id)
+    }
 }

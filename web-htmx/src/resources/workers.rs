@@ -25,7 +25,7 @@ use web_client::server::{
 };
 use worksite_service::{
     add_worker::AddWorkerInput, assign_worker::AssignWorkerInput, get_worker::GetWorkerInput,
-    get_workers::GetWorkersInput, update_worker::UpdateWorkerInput,
+    get_workers::GetWorkersInput, get_worksite::GetWorksiteInput, update_worker::UpdateWorkerInput,
 };
 
 pub fn workers_routes(state: WebHtmxState) -> Router {
@@ -62,6 +62,16 @@ async fn get_workers(
     flashes: IncomingFlashes,
     State(state): State<WebHtmxState>,
 ) -> impl IntoResponse {
+    let worksite = state
+        .worksite_service
+        .get_worksite(GetWorksiteInput {
+            id: worksite_id.to_string(),
+        })
+        .await
+        .unwrap()
+        .ok_or("Worksite not found")
+        .unwrap();
+
     let workers = state
         .worksite_service
         .get_workers(GetWorkersInput {
@@ -91,7 +101,7 @@ async fn get_workers(
                 <div class="mt-8 flow-root">
                     <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                         <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                            <Workers workers=workers/>
+                            <Workers worksite=worksite workers=workers/>
                         </div>
                     </div>
                 </div>

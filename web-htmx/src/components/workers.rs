@@ -1,9 +1,9 @@
 use rscx::{component, html, props, CollectFragment, CollectFragmentAsync};
-use worksite_service::models::Worker;
+use worksite_service::models::{Tag, Worker, Worksite};
 
 #[props]
 pub struct WorkersProps {
-    #[builder(setter(into))]
+    worksite: Worksite,
     workers: Vec<Worker>,
 }
 
@@ -25,7 +25,10 @@ pub fn Workers(props: WorkersProps) -> String {
                         .iter()
                         .map(|worker| async {
                             html! {
-                                <Worker worker=worker.clone() />
+                                <Worker
+                                    worker=worker.clone()
+                                    tags=props.worksite.get_tags_for_worker(worker.clone())
+                                />
                             }
                         })
                         .collect_fragment_async()
@@ -38,8 +41,8 @@ pub fn Workers(props: WorkersProps) -> String {
 
 #[props]
 pub struct WorkerProps {
-    #[builder(setter(into))]
     worker: Worker,
+    tags: Vec<Tag>,
 }
 
 #[component]
@@ -56,7 +59,7 @@ pub fn Worker(props: WorkerProps) -> String {
                   </button>
             </td>
             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{props.worker.last_assessment.map(|assessment| assessment.value).unwrap_or(0)}</td>
-            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{props.worker.tags.into_iter().map(|tag| tag.icon).collect_fragment()}</td>
+            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{props.tags.into_iter().map(|tag| tag.icon).collect_fragment()}</td>
         </tr>
     }
 }

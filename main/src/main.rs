@@ -10,7 +10,7 @@ use rand::Rng;
 use std::{net::SocketAddr, sync::Arc};
 use web_htmx::{livereload, routes as web_routes, state::WebHtmxState};
 use worksite_service::{
-    models::{Assessment, Location, Shift, ShiftWorker, Tag, Worker, Worksite},
+    models::{Assessment, AssignedTag, Location, Shift, ShiftWorker, Tag, Worker, Worksite},
     service::WorksiteService,
 };
 
@@ -51,6 +51,23 @@ async fn main() {
                 ],
             },
         ],
+        tags: vec![
+            Tag {
+                id: "1".into(),
+                name: "Baked a cake".into(),
+                icon: "🍰".into(),
+            },
+            Tag {
+                id: "2".into(),
+                name: "Shared fries".into(),
+                icon: "🍟".into(),
+            },
+            Tag {
+                id: "3".into(),
+                name: "Listened to Rancid".into(),
+                icon: "🎸".into(),
+            },
+        ],
         workers: vec![
             Worker {
                 id: "1".into(),
@@ -61,21 +78,9 @@ async fn main() {
                     value: 1,
                 }),
                 tags: vec![
-                    Tag {
-                        id: "1".into(),
-                        name: "Baked a cake".into(),
-                        icon: "🍰".into(),
-                    },
-                    Tag {
-                        id: "2".into(),
-                        name: "Shared fries".into(),
-                        icon: "🍟".into(),
-                    },
-                    Tag {
-                        id: "3".into(),
-                        name: "Listened to Rancid".into(),
-                        icon: "🎸".into(),
-                    },
+                    AssignedTag::new("1".into()),
+                    AssignedTag::new("2".into()),
+                    AssignedTag::new("3".into()),
                 ],
             },
             Worker {
@@ -87,21 +92,9 @@ async fn main() {
                     value: 2,
                 }),
                 tags: vec![
-                    Tag {
-                        id: "1".into(),
-                        name: "Baked a cake".into(),
-                        icon: "🍰".into(),
-                    },
-                    Tag {
-                        id: "2".into(),
-                        name: "Shared fries".into(),
-                        icon: "🍟".into(),
-                    },
-                    Tag {
-                        id: "3".into(),
-                        name: "Listened to Rancid".into(),
-                        icon: "🎸".into(),
-                    },
+                    AssignedTag::new("1".into()),
+                    AssignedTag::new("2".into()),
+                    AssignedTag::new("3".into()),
                 ],
             },
             Worker {
@@ -112,11 +105,7 @@ async fn main() {
                     id: "3".into(),
                     value: 4,
                 }),
-                tags: vec![Tag {
-                    id: "3".into(),
-                    name: "Listened to Rancid".into(),
-                    icon: "🎸".into(),
-                }],
+                tags: vec![AssignedTag::new("3".into())],
             },
             Worker {
                 id: "4".into(),
@@ -126,18 +115,7 @@ async fn main() {
                     id: "4".into(),
                     value: 1,
                 }),
-                tags: vec![
-                    Tag {
-                        id: "2".into(),
-                        name: "Shared fries".into(),
-                        icon: "🍟".into(),
-                    },
-                    Tag {
-                        id: "3".into(),
-                        name: "Listened to Rancid".into(),
-                        icon: "🎸".into(),
-                    },
-                ],
+                tags: vec![AssignedTag::new("2".into()), AssignedTag::new("3".into())],
             },
             Worker {
                 id: "5".into(),
@@ -147,11 +125,7 @@ async fn main() {
                     id: "5".into(),
                     value: 3,
                 }),
-                tags: vec![Tag {
-                    id: "1".into(),
-                    name: "Baked a cake".into(),
-                    icon: "🍰".into(),
-                }],
+                tags: vec![AssignedTag::new("1".into())],
             },
             Worker {
                 id: "6".into(),
@@ -161,18 +135,7 @@ async fn main() {
                     id: "3".into(),
                     value: 3,
                 }),
-                tags: vec![
-                    Tag {
-                        id: "2".into(),
-                        name: "Shared fries".into(),
-                        icon: "🍟".into(),
-                    },
-                    Tag {
-                        id: "3".into(),
-                        name: "Listened to Rancid".into(),
-                        icon: "🎸".into(),
-                    },
-                ],
+                tags: vec![AssignedTag::new("2".into()), AssignedTag::new("3".into())],
             },
             Worker {
                 id: "7".into(),
@@ -183,21 +146,9 @@ async fn main() {
                     value: 2,
                 }),
                 tags: vec![
-                    Tag {
-                        id: "1".into(),
-                        name: "Baked a cake".into(),
-                        icon: "🍰".into(),
-                    },
-                    Tag {
-                        id: "2".into(),
-                        name: "Shared fries".into(),
-                        icon: "🍟".into(),
-                    },
-                    Tag {
-                        id: "3".into(),
-                        name: "Listened to Rancid".into(),
-                        icon: "🎸".into(),
-                    },
+                    AssignedTag::new("1".into()),
+                    AssignedTag::new("2".into()),
+                    AssignedTag::new("3".into()),
                 ],
             },
         ],

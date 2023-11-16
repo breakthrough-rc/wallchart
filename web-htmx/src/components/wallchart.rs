@@ -1,6 +1,6 @@
 use rscx::{component, html, props, CollectFragment, CollectFragmentAsync};
 use web_client::server::button::SecondaryButton;
-use worksite_service::models::{Location as LocationModel, Worker, Worksite};
+use worksite_service::models::{Location as LocationModel, Tag, Worker, Worksite};
 
 #[props]
 pub struct WallchartProps {
@@ -79,6 +79,7 @@ pub fn Location(props: LocationProps) -> String {
                             shift_id=shift.id.clone()
                             shift_name=shift.name.clone()
                             workers=props.worksite.get_workers_for_shift(shift.id.clone())
+                            worksite=props.worksite.clone()
                             new_worker_action=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new-modal", &props.worksite.id, props.location.id, shift.id)
                             new_worker_push_url=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new", &props.worksite.id, props.location.id, shift.id)
                             location_path=format!("/worksites/{}/locations/{}", &props.worksite.id, props.location.id)
@@ -99,8 +100,8 @@ pub struct ShiftProps {
     #[builder(setter(into))]
     shift_name: String,
 
-    #[builder(setter(into))]
     workers: Vec<Worker>,
+    worksite: Worksite,
 
     #[builder(setter(into))]
     location_path: String,
@@ -136,7 +137,11 @@ pub fn Shift(props: ShiftProps) -> String {
                 .into_iter()
                 .map(|worker| async {
                     html! {
-                      <WorkerRow worker=worker shift_path=format!("{}/shifts/{}", props.location_path, props.shift_id)/>
+                        <WorkerRow
+                            tags=props.worksite.get_tags_for_worker(worker.clone())
+                            worker=worker
+                            shift_path=format!("{}/shifts/{}", props.location_path, props.shift_id)
+                        />
                     }
                 })
                 .collect_fragment_async()
@@ -147,8 +152,8 @@ pub fn Shift(props: ShiftProps) -> String {
 
 #[props]
 pub struct WorkerRowProps {
-    #[builder(setter(into))]
     worker: Worker,
+    tags: Vec<Tag>,
 
     #[builder(setter(into))]
     shift_path: String,
@@ -168,7 +173,7 @@ pub fn WorkerRow(props: WorkerRowProps) -> String {
                 </button>
           </td>
           <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{props.worker.last_assessment.map(|assessment| assessment.value).unwrap_or(0)}</td>
-          <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{props.worker.tags.into_iter().map(|tag| tag.icon).collect_fragment()}</td>
+          <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{props.tags.into_iter().map(|tag| tag.icon).collect_fragment()}</td>
           <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
               <button
                   type="button"
