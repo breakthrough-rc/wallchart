@@ -163,7 +163,6 @@ pub fn WorkerRow(props: WorkerRowProps) -> String {
                     hx-get=format!("/worksites/{}/workers/{}", 1, props.worker.id)
                     hx-target="body"
                     hx-swap="beforeend"
-                    hx-push-url=format!("/worksites/{}/workers/{}", 1, &props.worker.id)
                 >
                     {format!("{} {}", props.worker.first_name, props.worker.last_name)}
                 </button>
