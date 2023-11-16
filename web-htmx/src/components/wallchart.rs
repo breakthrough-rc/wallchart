@@ -60,7 +60,8 @@ pub fn Location(props: LocationProps) -> String {
             </th>
             <th colspan="3" scope="colgroup" class="bg-gray-200 py-2 pl-4 pr-3 text-right text-sm font-semibold text-gray-900 sm:pl-3">
                 <SecondaryButton
-                    hx_get="todo"
+                    hx_get=format!("/wallcharts/{}/locations/{}/shifts/new-modal", &props.worksite.id, &props.location.id)
+                    hx_push_url=format!("/wallcharts/{}/locations/{}/shifts/new", &props.worksite.id, &props.location.id)
                     hx_target="body"
                     hx_swap="beforeend"
                 >
