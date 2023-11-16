@@ -20,7 +20,7 @@ pub type {{pascalCase command_name}}Output = Result<(), {{pascalCase command_nam
 
 impl {{pascalCase command_name}} {
     pub async fn {{snakeCase command_name}}(&self, input: {{pascalCase command_name}}Input) -> {{pascalCase command_name}}Output {
-        let worksite = &self
+        let worksite = self
             .worksite_repository
             .get_worksite(input.worksite_id)
             .await
