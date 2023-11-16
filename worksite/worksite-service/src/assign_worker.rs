@@ -36,8 +36,6 @@ impl AssignWorker {
     }
 
     pub async fn assign_worker(&self, input: AssignWorkerInput) -> AssignWorkerOutput {
-        // TODO! "Implement assign_worker"
-
         let worksite = &self
             .worksite_repository
             .get_worksite(input.id)
