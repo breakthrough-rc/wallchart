@@ -32,7 +32,7 @@ pub fn Wallchart(props: WallchartProps) -> String {
                         .iter()
                         .map(|shift| async {
                             html! {
-                                <ShiftRows
+                                <Shift
                                     shift_id=shift.id.clone()
                                     shift_name=shift.name.clone()
                                     workers=worksite.get_workers_for_shift(shift.id.clone())
@@ -54,7 +54,7 @@ pub fn Wallchart(props: WallchartProps) -> String {
 }
 
 #[props]
-pub struct ShiftRowsProps {
+pub struct ShiftProps {
     #[builder(setter(into))]
     shift_id: String,
 
@@ -75,7 +75,7 @@ pub struct ShiftRowsProps {
 }
 
 #[component]
-pub fn ShiftRows(props: ShiftRowsProps) -> String {
+pub fn Shift(props: ShiftProps) -> String {
     html! {
         <tr class="border-t border-gray-200">
             <th colspan="3" scope="colgroup" class="bg-gray-50 py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
@@ -93,16 +93,16 @@ pub fn ShiftRows(props: ShiftRowsProps) -> String {
             </th>
         </tr>
         {
-    props
-        .workers
-        .into_iter()
-        .map(|worker| async {
-            html! {
-              <WorkerRow worker=worker shift_path=format!("{}/shifts/{}", props.location_path, props.shift_id)/>
-            }
-        })
-        .collect_fragment_async()
-        .await
+            props
+                .workers
+                .into_iter()
+                .map(|worker| async {
+                    html! {
+                      <WorkerRow worker=worker shift_path=format!("{}/shifts/{}", props.location_path, props.shift_id)/>
+                    }
+                })
+                .collect_fragment_async()
+                .await
         }
     }
 }
