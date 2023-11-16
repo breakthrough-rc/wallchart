@@ -80,7 +80,13 @@ async fn get_wallchart_page(
                         hx_swap="beforeend"
                         hx_push_url=format!("/wallcharts/{}/locations/new", &id)
                     >
-                        Create New Location
+                        Add New Location
+                    </SecondaryButton>
+                    <SecondaryButton
+                        tag="a"
+                        href=format!("/wallcharts/{}/tags", &id)
+                    >
+                        Manage Tags
                     </SecondaryButton>
                     <PrimaryButton
                         onclick="alert('Coming soon!')"
