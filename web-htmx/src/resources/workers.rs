@@ -4,7 +4,7 @@ use crate::{
 };
 use axum::{
     extract::{self, State},
-    response::{Html, IntoResponse},
+    response::{Html, IntoResponse, Redirect},
     routing::get,
     Form, Router,
 };
@@ -22,6 +22,8 @@ use worksite_service::{
 
 pub fn workers_routes(state: WebHtmxState) -> Router {
     Router::new()
+        .route("/worksites/:worksite_id/workers", get(get_workers))
+        .route("/workers", get(Redirect::temporary("/worksites/1/workers")))
         .route(
             "/worksites/:worksite_id/workers/:worker_id",
             get(get_worker_detail).post(post_worker_detail),
@@ -35,6 +37,28 @@ pub fn workers_routes(state: WebHtmxState) -> Router {
             get(get_worker_form_modal),
         )
         .with_state(state)
+}
+
+async fn get_workers(
+    extract::Path(worksite_id): extract::Path<String>,
+    State(state): State<WebHtmxState>,
+) -> impl IntoResponse {
+    // let workers = state
+    //     .worksite_service
+    //     .get_workers(GetWorkerInput {
+    //         id: worker_id,
+    //         worksite_id,
+    //     })
+    //     .await
+    //     .expect("Failed to get worker")
+    //     .ok_or("Worker not found")
+    //     .expect("Worker not found");
+
+    Html(html! {
+        <PageLayout>
+            <div>Workers</div>
+        </PageLayout>
+    })
 }
 
 async fn get_worker_detail(
