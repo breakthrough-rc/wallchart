@@ -1,8 +1,9 @@
 use std::sync::Arc;
 
 use crate::{
-    //##PLOP INSERT COMMAND IMPORTS HOOK##
     add_location::{AddLocation, AddLocationInput, AddLocationOutput},
+    //##PLOP INSERT COMMAND IMPORTS HOOK##
+    add_shift::{AddShift, AddShiftInput, AddShiftOutput},
     assign_worker::{AssignWorker, AssignWorkerInput, AssignWorkerOutput},
     get_worker::{GetWorker, GetWorkerInput, GetWorkerOutput},
     get_worksite::{GetWorksite, GetWorksiteFailure, GetWorksiteInput},
@@ -17,6 +18,7 @@ use crate::{
 #[derive(Clone)]
 pub struct WorksiteService {
     //##PLOP INSERT COMMAND HOOK##
+    pub add_shift: AddShift,
     pub add_location: AddLocation,
     pub update_worker: UpdateWorker,
     pub get_worker: GetWorker,
@@ -29,6 +31,9 @@ impl WorksiteService {
     pub fn new(worksite_repository: Arc<dyn WorksiteRepository>) -> Self {
         Self {
             //##PLOP INSERT COMMAND INSTANTIATION HOOK##
+            add_shift: AddShift {
+                worksite_repository: worksite_repository.clone(),
+            },
             add_location: AddLocation {
                 worksite_repository: worksite_repository.clone(),
             },
@@ -48,6 +53,10 @@ impl WorksiteService {
         }
     }
     //##PLOP INSERT DELEGATE HOOK##
+    pub async fn add_shift(&self, input: AddShiftInput) -> AddShiftOutput {
+        self.add_shift.add_shift(input).await
+    }
+
     pub async fn add_location(&self, input: AddLocationInput) -> AddLocationOutput {
         self.add_location.add_location(input).await
     }

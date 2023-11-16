@@ -22,7 +22,7 @@ use web_client::server::{
     notification::NotificationFlashes,
 };
 use worksite_service::{
-    add_location::AddLocationInput, get_worksite::GetWorksiteInput,
+    add_location::AddLocationInput, add_shift::AddShiftInput, get_worksite::GetWorksiteInput,
     remove_worker_from_shift::RemoveWorkerFromShiftInput,
 };
 
@@ -169,14 +169,15 @@ async fn post_shifts(
     flash: Flash,
     Form(form): Form<AddShiftFormData>,
 ) -> impl IntoResponse {
-    // worksite_service
-    //     .add_location(AddLocationInput {
-    //         worksite_id,
-    //         location_name: form.name,
-    //     })
-    //     .await
-    //     .expect("Failed to add new location");
-    //
+    worksite_service
+        .add_shift(AddShiftInput {
+            worksite_id,
+            location_id,
+            shift_name: form.name,
+        })
+        .await
+        .expect("Failed to add new shift");
+
     (
         StatusCode::OK,
         flash.success("Added new shift!"),

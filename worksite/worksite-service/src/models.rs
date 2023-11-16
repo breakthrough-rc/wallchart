@@ -32,6 +32,25 @@ impl Worksite {
             .find(|shift| shift.id == shift_id)
     }
 
+    pub fn add_shift(&self, location_id: String, shift_name: String) -> Option<Worksite> {
+        let mut updated_worksite = self.clone();
+
+        let shift = Shift {
+            id: uuid::Uuid::new_v4().to_string(),
+            name: shift_name,
+            workers: vec![],
+        };
+
+        let mut location = updated_worksite
+            .locations
+            .iter_mut()
+            .find(|l| l.id == location_id)?;
+
+        location.shifts.push(shift);
+
+        Some(updated_worksite)
+    }
+
     pub fn add_location(&self, location_name: String) -> Worksite {
         let mut updated_worksite = self.clone();
 

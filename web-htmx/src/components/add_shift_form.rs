@@ -19,7 +19,7 @@ pub fn AddShiftForm(props: AddShiftFormProps) -> String {
                     <GridLayout class="mt-10">
                         <GridCell span=4>
                             <Label for_input="name">Name</Label>
-                            <TextInput input_type="name" name="name" />
+                            <TextInput name="name" />
                         </GridCell>
                         <GridCell span=4>
                             <div class="mt-6 flex items-center justify-end gap-x-6">

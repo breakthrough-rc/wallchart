@@ -29,6 +29,8 @@ impl {{pascalCase command_name}} {
 
 #[derive(Error, Debug, PartialEq)]
 pub enum {{pascalCase command_name}}Failure {
+    #[error("Worksite does not exist")]
+    NotFound,
     #[error("Something went wrong")]
     Unknown(String),
 }
