@@ -1,5 +1,6 @@
 use crate::components::{
     add_location_form::AddLocationForm,
+    add_shift_form::AddShiftForm,
     page::{PageHeader, PageLayout},
     wallchart::Wallchart,
 };
@@ -108,7 +109,6 @@ async fn get_wallchart_page(
 
 async fn get_location_form_modal(
     extract::Path(worksite_id): extract::Path<String>,
-    State(state): State<WebHtmxState>,
 ) -> impl IntoResponse {
     Html(html! {
         <Modal size=ModalSize::MediumScreen>
@@ -147,12 +147,11 @@ async fn post_location(
 
 async fn get_shift_form_modal(
     extract::Path((worksite_id, location_id)): extract::Path<(String, String)>,
-    State(state): State<WebHtmxState>,
+    State(_): State<WebHtmxState>,
 ) -> impl IntoResponse {
-    // <AddLocationForm action=format!("/wallcharts/{}/locations", worksite_id) />
     Html(html! {
         <Modal size=ModalSize::MediumScreen>
-            <p>shift form</p>
+            <AddShiftForm action=format!("/wallcharts/{}/locations/{}/shifts", worksite_id, location_id) />
         </Modal>
     })
 }
