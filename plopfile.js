@@ -128,6 +128,70 @@ module.exports = function(plop) {
       },
     ],
   });
+  plop.setGenerator("worksite-service-command", {
+    description: "Create a command for the worksite service (more specific)",
+    prompts: [
+      {
+        type: "input",
+        name: "command_name",
+        message: "Command (usecase) name: ",
+      },
+    ],
+    actions: [
+      {
+        type: "addMany",
+        destination:
+          "worksite/worksite-service/src",
+        templateFiles: "plop-templates/worksite-service-command/*.hbs",
+        base: "plop-templates/worksite-service-command",
+      },
+      {
+        path: "worksite/worksite-service/src/lib.rs",
+        pattern: /(\/\/##PLOP INSERT MOD HOOK##)/g,
+        template: "$1\npub mod {{snakeCase command_name}};",
+        type: "modify",
+      },
+      {
+        path: "worksite/worksite-service/src/service.rs",
+        pattern: /(\/\/##PLOP INSERT COMMAND IMPORTS HOOK##)/g,
+        template: `$1
+    {{snakeCase command_name}}::{
+      {{pascalCase command_name}}, {{pascalCase command_name}}Input, {{pascalCase command_name}}Output, 
+    },`,
+        type: "modify",
+      },
+      {
+        path: "worksite/worksite-service/src/service.rs",
+        pattern: /(\/\/##PLOP INSERT COMMAND HOOK##)/g,
+        template: `$1
+    pub {{snakeCase command_name}}: {{pascalCase command_name}},`,
+        type: "modify",
+      },
+      {
+        path: "worksite/worksite-service/src/service.rs",
+        pattern: /(\/\/##PLOP INSERT COMMAND INSTANTIATION HOOK##)/g,
+        template: `$1
+            {{snakeCase command_name}}: {{pascalCase command_name}} {
+              // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
+              worksite_repository: worksite_repository.clone(),
+            },`,
+        type: "modify",
+      },
+      {
+        path: "worksite/worksite-service/src/service.rs",
+        pattern: /(\/\/##PLOP INSERT DELEGATE HOOK##)/g,
+        template: `$1
+    pub async fn {{snakeCase command_name}}(
+        &self,
+        input: {{pascalCase command_name}}Input,
+    ) -> {{pascalCase command_name}}Output {
+        self.{{snakeCase command_name}}.{{snakeCase command_name}}(input).await
+    }
+`,
+        type: "modify",
+      },
+    ],
+  });
   plop.setGenerator("service-skeleton", {
     description: "Create the skeleton of a new service",
     prompts: [

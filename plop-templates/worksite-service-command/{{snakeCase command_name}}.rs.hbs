@@ -1,0 +1,47 @@
+use std::sync::Arc;
+
+use thiserror::Error;
+
+use crate::ports::worksite_repository::WorksiteRepository;
+
+#[derive(Clone)]
+pub struct {{pascalCase command_name}} {
+    pub worksite_repository: Arc<dyn WorksiteRepository>,
+}
+
+#[derive(Clone, Debug)]
+pub struct {{pascalCase command_name}}Input {
+    // Put input fields here
+    pub worksite_id: String
+}
+
+// Change the return type, if needed
+pub type {{pascalCase command_name}}Output = Result<(), {{pascalCase command_name}}Failure>;
+
+impl {{pascalCase command_name}} {
+    pub async fn {{snakeCase command_name}}(&self, input: {{pascalCase command_name}}Input) -> {{pascalCase command_name}}Output {
+        let worksite = &self
+            .worksite_repository
+            .get_worksite(input.id)
+            .await
+            .map_err(|e| AssignWorkerFailure::Unknown(e.to_string()))?
+            .ok_or(AssignWorkerFailure::NotFound)?;
+
+        let worksite = todo!("update the worksite or whatever you like")
+
+        self.worksite_repository
+            .save(worksite)
+            .await
+            .map_err(|e| AssignWorkerFailure::Unknown(e.to_string()))?;
+            
+        Ok(())
+    }
+}
+
+#[derive(Error, Debug, PartialEq)]
+pub enum {{pascalCase command_name}}Failure {
+    #[error("Worksite does not exist")]
+    NotFound,
+    #[error("Something went wrong")]
+    Unknown(String),
+}
