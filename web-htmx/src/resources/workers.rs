@@ -1,6 +1,8 @@
 use crate::{
     components::{
-        add_worker_form::AddWorkerForm, page::PageLayout, worker_detail::WorkerDetail,
+        add_worker_form::AddWorkerForm,
+        page::{PageHeader, PageLayout},
+        worker_detail::WorkerDetail,
         workers::Workers,
     },
     state::WebHtmxState,
@@ -11,13 +13,15 @@ use axum::{
     routing::get,
     Form, Router,
 };
-use axum_flash::Flash;
+use axum_flash::{Flash, IncomingFlashes};
 use http::StatusCode;
 use rscx::html;
 use serde::Deserialize;
 use web_client::server::{
+    button::{PrimaryButton, SecondaryButton},
     flyout::Flyout,
     modal::{Modal, ModalSize},
+    notification::NotificationFlashes,
 };
 use worksite_service::{
     assign_worker::AssignWorkerInput, get_worker::GetWorkerInput, get_workers::GetWorkersInput,
@@ -45,17 +49,43 @@ pub fn workers_routes(state: WebHtmxState) -> Router {
 
 async fn get_workers(
     extract::Path(worksite_id): extract::Path<String>,
+    flashes: IncomingFlashes,
     State(state): State<WebHtmxState>,
 ) -> impl IntoResponse {
     let workers = state
         .worksite_service
-        .get_workers(GetWorkersInput { worksite_id })
+        .get_workers(GetWorkersInput {
+            worksite_id: worksite_id.clone(),
+        })
         .await
         .expect("Failed to get worker");
 
     Html(html! {
-        <PageLayout header="Workers">
-            <Workers workers=workers />
+        <PageLayout
+            header=PageHeader::Toolbar {
+                title: "Workers".into(),
+                buttons: html! {
+                    <PrimaryButton
+                        hx_get=format!("/wallcharts/{}/workers/new-modal", &worksite_id)
+                        hx_target="body"
+                        hx_swap="beforeend"
+                        hx_push_url=format!("/wallcharts/{}/workers/new", &worksite_id)
+                    >
+                        Add New Worker
+                    </PrimaryButton>
+                }
+            }
+        >
+            <NotificationFlashes flashes=flashes.clone() />
+            <div class="my-4">
+                <div class="mt-8 flow-root">
+                    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                            <Workers workers=workers/>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </PageLayout>
     })
 }
