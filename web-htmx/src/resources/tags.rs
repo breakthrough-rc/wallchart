@@ -5,8 +5,9 @@ use axum::{
     routing::get,
     Form, Router,
 };
-use rscx::html;
+use rscx::{html, CollectFragmentAsync};
 use serde::Deserialize;
+use worksite_service::get_tags::GetTagsInput;
 
 pub fn tags_routes(state: WebHtmxState) -> Router {
     Router::new()
@@ -21,10 +22,29 @@ pub fn tags_routes(state: WebHtmxState) -> Router {
         .with_state(state)
 }
 
-async fn get_tags(State(_): State<WebHtmxState>) -> impl IntoResponse {
+async fn get_tags(
+    extract::Path(worksite_id): extract::Path<String>,
+    State(state): State<WebHtmxState>,
+) -> impl IntoResponse {
+    let tags = state
+        .worksite_service
+        .get_tags(GetTagsInput {
+            worksite_id: worksite_id.clone(),
+        })
+        .await
+        .expect("Failed to get worker");
+
     Html(html! {
         <PageLayout header="Manage Tags">
-            <p>Managing tags... coming soon!</p>
+            {
+                tags.iter().map(|tag| async {
+                    html! {
+                        <div>{&tag.name}</div>
+                    }
+                })
+                .collect_fragment_async()
+                .await
+            }
         </PageLayout>
     })
 }

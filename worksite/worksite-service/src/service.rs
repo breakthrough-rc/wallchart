@@ -3,9 +3,10 @@ use std::sync::Arc;
 use crate::{
     add_location::{AddLocation, AddLocationInput, AddLocationOutput},
     add_shift::{AddShift, AddShiftInput, AddShiftOutput},
-    //##PLOP INSERT COMMAND IMPORTS HOOK##
     add_worker::{AddWorker, AddWorkerInput, AddWorkerOutput},
     assign_worker::{AssignWorker, AssignWorkerInput, AssignWorkerOutput},
+    //##PLOP INSERT COMMAND IMPORTS HOOK##
+    get_tags::{GetTags, GetTagsInput, GetTagsOutput},
     get_worker::{GetWorker, GetWorkerInput, GetWorkerOutput},
     get_workers::{GetWorkers, GetWorkersInput, GetWorkersOutput},
     get_worksite::{GetWorksite, GetWorksiteFailure, GetWorksiteInput},
@@ -20,6 +21,7 @@ use crate::{
 #[derive(Clone)]
 pub struct WorksiteService {
     //##PLOP INSERT COMMAND HOOK##
+    pub get_tags: GetTags,
     pub add_worker: AddWorker,
     pub get_workers: GetWorkers,
     pub add_shift: AddShift,
@@ -35,6 +37,9 @@ impl WorksiteService {
     pub fn new(worksite_repository: Arc<dyn WorksiteRepository>) -> Self {
         Self {
             //##PLOP INSERT COMMAND INSTANTIATION HOOK##
+            get_tags: GetTags {
+                worksite_repository: worksite_repository.clone(),
+            },
             add_worker: AddWorker {
                 worksite_repository: worksite_repository.clone(),
             },
@@ -63,6 +68,10 @@ impl WorksiteService {
         }
     }
     //##PLOP INSERT DELEGATE HOOK##
+    pub async fn get_tags(&self, input: GetTagsInput) -> GetTagsOutput {
+        self.get_tags.get_tags(input).await
+    }
+
     pub async fn add_worker(&self, input: AddWorkerInput) -> AddWorkerOutput {
         self.add_worker.add_worker(input).await
     }
