@@ -1,5 +1,8 @@
 use rscx::{component, html, props};
-use web_client::server::form::{Button, GridCell, GridLayout, Label, TextInput};
+use web_client::server::{
+    attrs::Attrs,
+    form::{Button, GridCell, GridLayout, Label, TextInput},
+};
 
 #[props]
 pub struct AddShiftFormProps {
@@ -23,6 +26,12 @@ pub fn AddShiftForm(props: AddShiftFormProps) -> String {
                         </GridCell>
                         <GridCell span=4>
                             <div class="mt-6 flex items-center justify-end gap-x-6">
+                                <Button
+                                    onclick="history.go(-1)"
+                                    attrs=Attrs::with("data-toggle-action", "close".into())
+                                >
+                                    Cancel
+                                </Button>
                                 <Button kind="submit">Add</Button>
                             </div>
                         </GridCell>
