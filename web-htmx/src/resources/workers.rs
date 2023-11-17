@@ -31,6 +31,10 @@ use worksite_service::{
 pub fn workers_routes(state: WebHtmxState) -> Router {
     Router::new()
         .route("/worksites/:worksite_id/workers", get(get_workers))
+        .route(
+            "/worksites/:worksite_id/workers/:worker_id",
+            get(get_worker_detail).post(post_worker_detail),
+        )
         .route("/workers", get(Redirect::temporary("/worksites/1/workers")))
         .route(
             "/wallcharts/:worksite_id/workers/new",
@@ -39,20 +43,6 @@ pub fn workers_routes(state: WebHtmxState) -> Router {
         .route(
             "/wallcharts/:worksite_id/workers/new-modal",
             get(get_worker_form_modal),
-        )
-        // TODO: posting a worker to a shift should be creating a shift assignment, not a new
-        // worker
-        .route(
-            "/worksites/:worksite_id/workers/:worker_id",
-            get(get_worker_detail).post(post_worker_detail),
-        )
-        .route(
-            "/wallcharts/:worksite_id/locations/:location_id/shifts/:shift_id/workers/new",
-            get(get_shift_assignment_form).post(post_shift_assignment),
-        )
-        .route(
-            "/wallcharts/:worksite_id/locations/:location_id/shifts/:shift_id/workers/new-modal",
-            get(get_shift_assignment_form_modal),
         )
         .with_state(state)
 }
@@ -186,28 +176,6 @@ async fn post_worker(
     )
 }
 
-async fn get_shift_assignment_form_modal(
-    extract::Path((wallchart_id, location_id, shift_id)): extract::Path<(String, String, String)>,
-    State(WebHtmxState { .. }): State<WebHtmxState>,
-) -> impl IntoResponse {
-    Html(html! {
-        <Modal size=ModalSize::MediumScreen>
-            <AddWorkerForm action=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new", wallchart_id, location_id, shift_id) />
-        </Modal>
-    })
-}
-
-async fn get_shift_assignment_form(
-    extract::Path((wallchart_id, location_id, shift_id)): extract::Path<(String, String, String)>,
-    State(WebHtmxState { .. }): State<WebHtmxState>,
-) -> impl IntoResponse {
-    Html(html! {
-        <PageLayout header="Add Worker">
-            <AddWorkerForm action=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new", wallchart_id, location_id, shift_id) />
-        </PageLayout>
-    })
-}
-
 #[derive(Deserialize, Debug)]
 struct AddWorkerFormData {
     first_name: String,
@@ -216,43 +184,6 @@ struct AddWorkerFormData {
     city: String,
     region: String,
     postal_code: String,
-}
-
-async fn post_shift_assignment(
-    State(WebHtmxState {
-        worksite_service, ..
-    }): State<WebHtmxState>,
-    flash: Flash,
-    extract::Path((wallchart_id, location_id, shift_id)): extract::Path<(String, String, String)>,
-    Form(form): Form<AddWorkerFormData>,
-) -> impl IntoResponse {
-    println!(
-        "wallchart_id: {}, location_id: {}, shift_id: {}",
-        wallchart_id, location_id, shift_id
-    );
-
-    println!("add_worker: {:?}", form);
-
-    worksite_service
-        .assign_worker(AssignWorkerInput {
-            id: wallchart_id,
-            location_id,
-            shift_id,
-            first_name: form.first_name,
-            last_name: form.last_name,
-            street_address: form.street_address,
-            city: form.city,
-            region: form.region,
-            postal_code: form.postal_code,
-        })
-        .await
-        .expect("Failed to assign worker");
-
-    (
-        StatusCode::OK,
-        flash.success("Worker added successfully!"),
-        [("hx-redirect", "/wallchart"), ("hx-retarget", "body")],
-    )
 }
 
 #[derive(Deserialize, Debug)]
