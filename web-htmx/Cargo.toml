@@ -9,6 +9,7 @@ edition = "2021"
 axum = { workspace = true }
 axum-flash = { workspace = true }
 axum-login = { workspace = true }
+axum-extra = { workspace = true }
 http = { workspace = true }
 once_cell = { workspace = true }
 rscx = { workspace = true }

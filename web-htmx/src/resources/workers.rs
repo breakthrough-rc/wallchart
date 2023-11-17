@@ -11,9 +11,10 @@ use crate::{
 use axum::{
     extract::{self, State},
     response::{Html, IntoResponse, Redirect},
-    routing::get,
+    routing::{get, put},
     Form, Router,
 };
+use axum_extra::extract::Form as FormExtra;
 use axum_flash::{Flash, IncomingFlashes};
 use http::StatusCode;
 use rscx::{html, CollectFragmentAsync};
@@ -37,7 +38,7 @@ pub fn workers_routes(state: WebHtmxState) -> Router {
             get(get_worker_details),
         )
         .route(
-            "/worksites/:worksite_id/workers/profile/:worker_id",
+            "/worksites/:worksite_id/workers/:worker_id/profile/",
             get(get_worker_profile_form).post(post_worker_profile_form),
         )
         .route("/workers", get(Redirect::temporary("/worksites/1/workers")))
@@ -48,6 +49,10 @@ pub fn workers_routes(state: WebHtmxState) -> Router {
         .route(
             "/wallcharts/:worksite_id/workers/new-modal",
             get(get_worker_form_modal),
+        )
+        .route(
+            "/worksites/:worksite_id/workers/:worker_id/tags",
+            put(put_worker_tags),
         )
         .with_state(state)
 }
@@ -153,7 +158,7 @@ async fn get_worker_details(
                                 </div>
                                 <div class="bg-gray-50 px-4 py-3 text-right sm:px-6">
                                     <PrimaryButton
-                                        hx_post=format!("/worksites/{}/workers/profile/{}", &worksite_id, &worker_id)
+                                        hx_post=format!("/worksites/{}/workers/{}profile/", &worksite_id, &worker_id)
                                     >
                                         Update Profile
                                     </PrimaryButton>
@@ -179,7 +184,7 @@ async fn get_worker_details(
                                     </div>
                                     <div class="mt-4 divide-y divide-gray-200 border-b border-t border-gray-200">
                                         {
-                                            // let worker = worker.clone();
+                                            #[allow(unused_braces)]
                                             worksite.tags.iter().map(|tag| async {
                                                 let tag = tag.clone();
                                                 html! {
@@ -190,10 +195,11 @@ async fn get_worker_details(
                                                         <div class="ml-3 flex h-6 items-center">
                                                             <input
                                                                 id=format!("inp-tag-{}", &tag.id)
-                                                                name="worker-tag"
+                                                                name="tags"
                                                                 type="checkbox"
                                                                 class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                                                                checked=worker.has_tag(&tag)
+                                                                { if worker.has_tag(&tag) { "checked" } else { "" } }
+                                                                value=tag.id.clone()
                                                             />
                                                         </div>
                                                     </div>
@@ -206,7 +212,7 @@ async fn get_worker_details(
                                 </div>
                                 <div class="bg-gray-50 px-4 py-3 text-right sm:px-6">
                                     <PrimaryButton
-                                        hx_post=format!("/worksites/{}/workers/tags/{}", &worksite_id, &worker_id)
+                                        hx_put=format!("/worksites/{}/workers/{}/tags", &worksite_id, &worker_id)
                                     >
                                         Assign Tags
                                     </PrimaryButton>
@@ -337,6 +343,28 @@ async fn post_worker_profile_form(
     (
         StatusCode::OK,
         flash.success("Worker updated successfully!"),
+        [("hx-redirect", "/wallchart"), ("hx-retarget", "body")],
+    )
+}
+
+#[derive(Deserialize, Debug)]
+struct AssignWorkerTagsFormData {
+    tags: Vec<String>,
+}
+
+async fn put_worker_tags(
+    State(WebHtmxState {
+        worksite_service: _,
+        ..
+    }): State<WebHtmxState>,
+    flash: Flash,
+    extract::Path((_worksite_id, _worker_id)): extract::Path<(String, String)>,
+    FormExtra(form): FormExtra<AssignWorkerTagsFormData>,
+) -> impl IntoResponse {
+    print!("form.tags: {:?}", form.tags);
+    (
+        StatusCode::OK,
+        flash.success("Worker tags assigned successfully!"),
         [("hx-redirect", "/wallchart"), ("hx-retarget", "body")],
     )
 }
