@@ -34,14 +34,6 @@ pub fn worksite_routes(state: WebHtmxState) -> Router {
             "/worksites/:worksite_id/locations/:location_id/shifts/:shift_id/workers/:worker_id",
             delete(delete_worker_from_shift),
         )
-        .route(
-            "/wallcharts/:worksite_id/locations/:location_id/shifts",
-            post(post_shifts),
-        )
-        .route(
-            "/wallcharts/:worksite_id/locations/:location_id/shifts/new-modal",
-            get(get_shift_form_modal),
-        )
         .with_state(state)
 }
 
@@ -106,45 +98,6 @@ async fn get_wallchart_page(
     (flashes, Html(html))
 }
 
-async fn get_shift_form_modal(
-    extract::Path((worksite_id, location_id)): extract::Path<(String, String)>,
-    State(_): State<WebHtmxState>,
-) -> impl IntoResponse {
-    Html(html! {
-        <Modal size=ModalSize::MediumScreen>
-            <AddShiftForm action=format!("/wallcharts/{}/locations/{}/shifts", worksite_id, location_id) />
-        </Modal>
-    })
-}
-
-#[derive(Deserialize, Debug)]
-struct AddShiftFormData {
-    name: String,
-}
-
-async fn post_shifts(
-    extract::Path((worksite_id, location_id)): extract::Path<(String, String)>,
-    State(WebHtmxState {
-        worksite_service, ..
-    }): State<WebHtmxState>,
-    flash: Flash,
-    Form(form): Form<AddShiftFormData>,
-) -> impl IntoResponse {
-    worksite_service
-        .add_shift(AddShiftInput {
-            worksite_id,
-            location_id,
-            shift_name: form.name,
-        })
-        .await
-        .expect("Failed to add new shift");
-
-    (
-        StatusCode::OK,
-        flash.success("Added new shift!"),
-        [("hx-redirect", "/wallchart"), ("hx-retarget", "body")],
-    )
-}
 async fn delete_worker_from_shift(
     extract::Path((worksite_id, location_id, shift_id, worker_id)): extract::Path<(
         String,

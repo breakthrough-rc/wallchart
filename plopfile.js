@@ -55,7 +55,7 @@ module.exports = function(plop) {
       {
         path: "web-htmx/src/lib.rs",
         pattern: /(\/\/##PLOP MERGE ROUTE HOOK##)/g,
-        template: "$1\n.merge({{snakeCase resource_name}}_routes(state))",
+        template: "$1\n.merge({{snakeCase resource_name}}_routes(state.clone()))",
         type: "modify",
       },
     ],

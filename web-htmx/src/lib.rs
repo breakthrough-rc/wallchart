@@ -5,6 +5,7 @@ use axum::{
 };
 use http::StatusCode;
 //##PLOP USE RESOURCE HOOK##
+use resources::shifts::shifts_routes;
 use components::{not_found_message::NotFoundMessage, page::PageLayout};
 use resources::locations::locations_routes;
 use resources::tags::tags_routes;
@@ -25,6 +26,7 @@ pub fn routes(state: WebHtmxState) -> Router {
     Router::new()
         .with_state(state.clone())
         //##PLOP MERGE ROUTE HOOK##
+.merge(shifts_routes(state))
         .merge(locations_routes(state.clone()))
         .merge(tags_routes(state.clone()))
         .merge(worksite_routes(state.clone()))
