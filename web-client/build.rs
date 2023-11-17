@@ -34,8 +34,18 @@ fn exec_bun_install() {
 
 fn exec_build_js_and_css() {
     // TODO! Sourcemaps, minification, etc - handle differently for production.
+    let profile = env::var("PROFILE").unwrap();
+    let minify_flag = if profile == "release" { "--minify" } else { "" };
+
+    let css_build = "bunx tailwindcss -i ./src/client/common.css -o ./out/common.css";
+    let js_build = format!(
+        "bun build ./src/client/common.js --outdir ./out --sourcemap=external {}",
+        minify_flag
+    );
+    let build_cmd = format!("{} && {}", css_build, js_build);
+
     let output = Command::new("sh")
-        .args(["-c", "bunx tailwindcss -i ./src/client/common.css -o ./out/common.css && bun build ./src/client/common.js --outdir ./out --sourcemap=external"])
+        .args(["-c", build_cmd.as_str()])
         .output()
         .expect("failed to execute tailwind and bun build process");
 
