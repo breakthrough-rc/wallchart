@@ -1,5 +1,4 @@
 use crate::components::{
-    add_location_form::AddLocationForm,
     add_shift_form::AddShiftForm,
     page::{PageHeader, PageLayout},
     wallchart::Wallchart,
@@ -22,7 +21,7 @@ use web_client::server::{
     notification::NotificationFlashes,
 };
 use worksite_service::{
-    add_location::AddLocationInput, add_shift::AddShiftInput, get_worksite::GetWorksiteInput,
+    add_shift::AddShiftInput, get_worksite::GetWorksiteInput,
     remove_worker_from_shift::RemoveWorkerFromShiftInput,
 };
 
@@ -34,12 +33,6 @@ pub fn worksite_routes(state: WebHtmxState) -> Router {
         .route(
             "/worksites/:worksite_id/locations/:location_id/shifts/:shift_id/workers/:worker_id",
             delete(delete_worker_from_shift),
-        )
-        // Worksite locations
-        .route("/wallcharts/:worksite_id/locations", post(post_location))
-        .route(
-            "/wallcharts/:worksite_id/locations/new-modal",
-            get(get_location_form_modal),
         )
         .route(
             "/wallcharts/:worksite_id/locations/:location_id/shifts",
@@ -111,44 +104,6 @@ async fn get_wallchart_page(
     };
 
     (flashes, Html(html))
-}
-
-async fn get_location_form_modal(
-    extract::Path(worksite_id): extract::Path<String>,
-) -> impl IntoResponse {
-    Html(html! {
-        <Modal size=ModalSize::MediumScreen>
-            <AddLocationForm action=format!("/wallcharts/{}/locations", worksite_id) />
-        </Modal>
-    })
-}
-
-#[derive(Deserialize, Debug)]
-struct AddLocationFormData {
-    name: String,
-}
-
-async fn post_location(
-    extract::Path(worksite_id): extract::Path<String>,
-    State(WebHtmxState {
-        worksite_service, ..
-    }): State<WebHtmxState>,
-    flash: Flash,
-    Form(form): Form<AddLocationFormData>,
-) -> impl IntoResponse {
-    worksite_service
-        .add_location(AddLocationInput {
-            worksite_id,
-            location_name: form.name,
-        })
-        .await
-        .expect("Failed to add new location");
-
-    (
-        StatusCode::OK,
-        flash.success("Added new location!"),
-        [("hx-redirect", "/wallchart"), ("hx-retarget", "body")],
-    )
 }
 
 async fn get_shift_form_modal(
