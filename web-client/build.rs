@@ -37,12 +37,16 @@ fn exec_build_js_and_css() {
     let profile = env::var("PROFILE").unwrap();
     let minify_flag = if profile == "release" { "--minify" } else { "" };
 
-    let css_build = "bunx tailwindcss -i ./src/client/common.css -o ./out/common.css";
+    let css_build = format!(
+        "bunx tailwindcss -i ./src/client/common.css -o ./out/common.css {}",
+        minify_flag
+    );
+
     let js_build = format!(
         "bun build ./src/client/common.js --outdir ./out --sourcemap=external {}",
         minify_flag
     );
-    let build_cmd = format!("{} && {}", css_build, js_build);
+    let build_cmd = format!("{} && {}", css_build.trim(), js_build.trim());
 
     let output = Command::new("sh")
         .args(["-c", build_cmd.as_str()])
