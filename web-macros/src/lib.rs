@@ -243,7 +243,7 @@ fn transform_attrs(transform: Transformer, attr_keys: &mut Vec<&str>, attr_ident
                             );
                         }
                         attr_keys.retain(|f| f != &ident.to_string());
-                        attr_idents.retain(|f| *ident != f.to_string());
+                        attr_idents.retain(|f| ident != &f.to_string());
                     },
                     _ => panic!("Expected a path"),
                 }
