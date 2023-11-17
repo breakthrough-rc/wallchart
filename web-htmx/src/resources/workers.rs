@@ -24,8 +24,8 @@ use web_client::server::{
     notification::NotificationFlashes,
 };
 use worksite_service::{
-    add_worker::AddWorkerInput, get_worker::GetWorkerInput,
-    get_workers::GetWorkersInput, get_worksite::GetWorksiteInput, update_worker::UpdateWorkerInput,
+    add_worker::AddWorkerInput, get_worker::GetWorkerInput, get_workers::GetWorkersInput,
+    get_worksite::GetWorksiteInput, update_worker::UpdateWorkerInput,
 };
 
 pub fn workers_routes(state: WebHtmxState) -> Router {
@@ -33,7 +33,7 @@ pub fn workers_routes(state: WebHtmxState) -> Router {
         .route("/worksites/:worksite_id/workers", get(get_workers))
         .route(
             "/worksites/:worksite_id/workers/:worker_id",
-            get(get_worker_detail).post(post_worker_detail),
+            get(get_worker_profile_form).post(post_worker_profile_form),
         )
         .route("/workers", get(Redirect::temporary("/worksites/1/workers")))
         .route(
@@ -100,7 +100,7 @@ async fn get_workers(
     })
 }
 
-async fn get_worker_detail(
+async fn get_worker_profile_form(
     extract::Path((worksite_id, worker_id)): extract::Path<(String, String)>,
     State(state): State<WebHtmxState>,
 ) -> impl IntoResponse {
@@ -196,7 +196,7 @@ struct UpdateWorkerFormData {
     // postal_code: String,
 }
 
-async fn post_worker_detail(
+async fn post_worker_profile_form(
     State(WebHtmxState {
         worksite_service, ..
     }): State<WebHtmxState>,
