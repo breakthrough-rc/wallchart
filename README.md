@@ -2,6 +2,12 @@
 
 ## Installing/Running
 
+Setup our prepush hook (to protect main)
+```bash
+git config core.hooksPath .git-hooks
+
+```
+
 ```bash
 cargo run
 ```

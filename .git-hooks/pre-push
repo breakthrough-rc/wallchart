@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+GIT_STASH_MESSAGE="pre-push hook ($(date +%s))"
+
+function pushTempStash() {
+  echo "Stashing uncommitted changes, if any exist."
+  git stash save -q "${GIT_STASH_MESSAGE}"
+}
+
+function popTempStash() {
+  found_stash=$(git stash list --grep="${GIT_STASH_MESSAGE}" --max-count=1 | sed -e 's/stash@{//' -e 's/}.*//')
+  if [ -n "$found_stash" ]; then
+    echo "Restoring stashed changes."
+    git stash pop -q
+  fi
+}
+
+pushTempStash
+
+echo "Checking that the app builds (Wow great CI)"
+cargo check
+
+BUILD_EXIT_CODE=$?
+if [ $BUILD_EXIT_CODE -ne 0 ]; then
+  echo -ne '\a' # Beep 🔊
+  echo -e "\031[31m***********************************************\031[0m"
+  echo -e "\031[31m                 Build failed                  \031[0m"
+  echo -e "\031[31m   Please fix the build before pushing         \031[0m"
+  echo -e "\031[31m***********************************************\031[0m"
+  popTempStash
+  exit $EXIT_CODE
+fi
+
+cargo clippy --fix
+
+if output="$(git status --porcelain)" && [ -n "$output" ]; then
+  git add -u
+  git commit -m 'style: fix formatting issues [pre-push hook]'
+
+  echo -ne '\a' # Beep 🔊
+  echo -e "\031[31m*******************************************************\031[0m"
+  echo -e "\031[31m                    Pre-push failed                    \031[0m"
+  echo -e "\031[31m The pre-push hook committed code style fixes for you  \031[0m"
+  echo -e "\031[31m       Please review the changes and push again        \031[0m"
+  echo -e "\031[31m*******************************************************\031[0m"
+  popTempStash
+  exit 1
+fi
+  
+echo "Running clippy..."
+
+OUTPUT="/tmp/clippy-$(date +%s)"
+cargo clippy --all-targets --all-features -- -D warnings >$OUTPUT
+EXIT_CODE=$?
+if [ $EXIT_CODE -ne 0 ]; then
+  cat $OUTPUT
+  rm $OUTPUT
+  echo -ne '\a' # Beep 🔊
+  echo -e "\031[31m***********************************************\031[0m"
+  echo -e "\031[31m                 Clippy failed                 \031[0m"
+  echo -e "\031[31m   Please fix the above issues before pushing  \031[0m"
+  echo -e "\031[31m***********************************************\031[0m"
+  popTempStash
+  exit $EXIT_CODE
+fi
+rm $OUTPUT
+echo "Completed clippy check."
+
+popTempStash
