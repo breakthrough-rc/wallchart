@@ -16,7 +16,7 @@ use axum::{
 };
 use axum_flash::{Flash, IncomingFlashes};
 use http::StatusCode;
-use rscx::html;
+use rscx::{html, CollectFragmentAsync};
 use serde::Deserialize;
 use web_client::server::{
     button::PrimaryButton,
@@ -109,6 +109,16 @@ async fn get_worker_details(
     extract::Path((worksite_id, worker_id)): extract::Path<(String, String)>,
     State(state): State<WebHtmxState>,
 ) -> impl IntoResponse {
+    let worksite = state
+        .worksite_service
+        .get_worksite(GetWorksiteInput {
+            id: worksite_id.to_string(),
+        })
+        .await
+        .unwrap()
+        .ok_or("Worksite not found")
+        .unwrap();
+
     let worker = state
         .worksite_service
         .get_worker(GetWorkerInput {
@@ -123,49 +133,92 @@ async fn get_worker_details(
     let full_name = worker.full_name();
 
     let profile_form_data = WorkerProfileFormData {
-        first_name: worker.first_name,
-        last_name: worker.last_name,
+        first_name: worker.first_name.clone(),
+        last_name: worker.last_name.clone(),
     };
 
     Html(html! {
         <Flyout title=format!("Worker Detail: {}", &full_name)>
-            <section aria-labelledby="payment-details-heading">
-                <form action="#" method="POST">
-                    <div class="shadow sm:overflow-hidden sm:rounded-md">
-                        <div class="bg-white px-4 py-6 sm:p-6">
-                            <div>
-                                <h2 id="payment-details-heading" class="text-lg font-medium leading-6 text-gray-900">Worker Profile</h2>
-                                <p class="mt-1 text-sm text-gray-500">Update worker profile details below.</p>
+            <div class="w-full border-t border-gray-200 py-6">
+                <div class="flex flex-col gap-10">
+                    <section aria-labelledby="worker-profile-heading">
+                        <form action="#" method="POST">
+                            <div class="shadow sm:overflow-hidden sm:rounded-md">
+                                <div class="bg-white px-4 py-6 sm:p-6">
+                                    <div>
+                                        <h2 id="worker-profile-heading" class="text-lg font-medium leading-6 text-gray-900">Worker Profile</h2>
+                                        <p class="mt-1 text-sm text-gray-500">Update worker profile details below.</p>
+                                    </div>
+                                    <WorkerProfileFieldset form=profile_form_data />
+                                </div>
+                                <div class="bg-gray-50 px-4 py-3 text-right sm:px-6">
+                                    <PrimaryButton
+                                        hx_post=format!("/worksites/{}/workers/profile/{}", &worksite_id, &worker_id)
+                                    >
+                                        Update Profile
+                                    </PrimaryButton>
+                                </div>
                             </div>
-                            <WorkerProfileFieldset form=profile_form_data />
+                        </form>
+                    </section>
+                    <div class="relative">
+                        <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                            <div class="w-full border-t border-gray-300"></div>
                         </div>
-                        <div class="bg-gray-50 px-4 py-3 text-right sm:px-6">
-                            <PrimaryButton
-                                hx_post=format!("/worksites/{}/workers/profile/{}", &worksite_id, &worker_id)
-                            >
-                                Save
-                            </PrimaryButton>
+                        <div class="relative flex justify-center">
+                            <span class="bg-white px-2 text-sm text-gray-500">Continue</span>
                         </div>
                     </div>
-                </form>
-            </section>
+                    <section aria-labelledby="worker-tags-heading">
+                        <form action="#" method="POST">
+                            <div class="shadow sm:overflow-hidden sm:rounded-md">
+                                <div class="bg-white px-4 py-6 sm:p-6">
+                                    <div>
+                                        <h2 id="worker-tags-heading" class="text-lg font-medium leading-6 text-gray-900">Tags</h2>
+                                        <p class="mt-1 text-sm text-gray-500">Assign tags.</p>
+                                    </div>
+                                    <div class="mt-4 divide-y divide-gray-200 border-b border-t border-gray-200">
+                                        {
+                                            // let worker = worker.clone();
+                                            worksite.tags.iter().map(|tag| async {
+                                                let tag = tag.clone();
+                                                html! {
+                                                    <div class="relative flex items-start py-4">
+                                                        <div class="min-w-0 flex-1 text-sm leading-6">
+                                                            <label for=format!("inp-tag-{}", &tag.id) class="select-none font-medium text-gray-900">{&tag.icon}" "{&tag.name}</label>
+                                                        </div>
+                                                        <div class="ml-3 flex h-6 items-center">
+                                                            <input
+                                                                id=format!("inp-tag-{}", &tag.id)
+                                                                name="worker-tag"
+                                                                type="checkbox"
+                                                                class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                                                                checked=worker.has_tag(&tag)
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                }
+                                            })
+                                            .collect_fragment_async()
+                                            .await
+                                        }
+                                    </div>
+                                </div>
+                                <div class="bg-gray-50 px-4 py-3 text-right sm:px-6">
+                                    <PrimaryButton
+                                        hx_post=format!("/worksites/{}/workers/tags/{}", &worksite_id, &worker_id)
+                                    >
+                                        Assign Tags
+                                    </PrimaryButton>
+                                </div>
+                            </div>
+                        </form>
+                    </section>
+                </div>
+            </div>
         </Flyout>
     })
 }
-// <div class="space-y-6 sm:px-6 lg:col-span-9 lg:px-0">
-// <div class="overflow-hidden rounded-md bg-white px-6 py-4 shadow">
-//     <div class="border-b border-gray-200 bg-white px-4 py-5 sm:px-6">
-//         <div class="-ml-4 -mt-2 flex flex-wrap items-center justify-between sm:flex-nowrap">
-//             <div class="ml-4 mt-2">
-//                 <h3 class="text-base font-semibold leading-6 text-gray-900">Job Postings</h3>
-//             </div>
-//             <div class="ml-4 mt-2 flex-shrink-0">
-//                 <button type="button" class="relative inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Remove Worker</button>
-//             </div>
-//         </div>
-//     </div>
-//     <WorkerDetail worker=worker />
-// </div>
 
 async fn get_worker_profile_form(
     extract::Path((worksite_id, worker_id)): extract::Path<(String, String)>,

@@ -205,6 +205,9 @@ impl Worker {
     pub fn full_name(&self) -> String {
         format!("{} {}", self.first_name, self.last_name)
     }
+    pub fn has_tag(&self, tag: &Tag) -> bool {
+        self.tags.iter().any(|t| t.0 == tag.id)
+    }
 }
 
 #[derive(Debug, Clone)]
