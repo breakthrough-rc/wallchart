@@ -4,13 +4,13 @@ use crate::components::{
 };
 use crate::state::WebHtmxState;
 use axum::{
-    extract::{self, State},
+    extract::{State},
     response::{Html, IntoResponse},
-    routing::{delete, get},
+    routing::{get},
     Router,
 };
 use axum_flash::IncomingFlashes;
-use http::StatusCode;
+
 use rscx::html;
 
 use web_client::server::{
@@ -18,7 +18,7 @@ use web_client::server::{
     notification::NotificationFlashes,
 };
 use worksite_service::{
-    get_worksite::GetWorksiteInput, remove_worker_from_shift::RemoveWorkerFromShiftInput,
+    get_worksite::GetWorksiteInput,
 };
 
 pub fn worksite_routes(state: WebHtmxState) -> Router {

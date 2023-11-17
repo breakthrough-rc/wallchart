@@ -1,32 +1,26 @@
 use crate::{
     components::{
         add_worker_form::AddWorkerForm,
-        page::{PageHeader, PageLayout},
-        worker_detail::WorkerDetail,
-        workers::Workers,
+        page::{PageLayout},
     },
     state::WebHtmxState,
 };
 use axum::{
     extract::{self, State},
-    response::{Html, IntoResponse, Redirect},
+    response::{Html, IntoResponse},
     routing::{delete, get},
     Form, Router,
 };
-use axum_flash::{Flash, IncomingFlashes};
+use axum_flash::{Flash};
 use http::StatusCode;
 use rscx::html;
 use serde::Deserialize;
 use web_client::server::{
-    button::PrimaryButton,
-    flyout::Flyout,
     modal::{Modal, ModalSize},
-    notification::NotificationFlashes,
 };
 use worksite_service::{
-    add_worker::AddWorkerInput, assign_worker::AssignWorkerInput, get_worker::GetWorkerInput,
-    get_workers::GetWorkersInput, get_worksite::GetWorksiteInput,
-    remove_worker_from_shift::RemoveWorkerFromShiftInput, update_worker::UpdateWorkerInput,
+    assign_worker::AssignWorkerInput,
+    remove_worker_from_shift::RemoveWorkerFromShiftInput,
 };
 
 pub fn shift_assignments_routes(state: WebHtmxState) -> Router {

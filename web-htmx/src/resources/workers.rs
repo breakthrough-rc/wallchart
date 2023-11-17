@@ -24,7 +24,7 @@ use web_client::server::{
     notification::NotificationFlashes,
 };
 use worksite_service::{
-    add_worker::AddWorkerInput, assign_worker::AssignWorkerInput, get_worker::GetWorkerInput,
+    add_worker::AddWorkerInput, get_worker::GetWorkerInput,
     get_workers::GetWorkersInput, get_worksite::GetWorksiteInput, update_worker::UpdateWorkerInput,
 };
 
