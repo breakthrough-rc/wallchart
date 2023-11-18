@@ -1,8 +1,7 @@
 use std::sync::Arc;
 
-use thiserror::Error;
-
 use crate::{models::Worker, ports::worksite_repository::WorksiteRepository};
+use thiserror::Error;
 
 #[derive(Clone)]
 pub struct AssignTags {
@@ -11,7 +10,6 @@ pub struct AssignTags {
 
 #[derive(Clone, Debug)]
 pub struct AssignTagsInput {
-    // Put input fields here
     pub worksite_id: String,
     pub worker_id: String,
     pub tags: Vec<String>,
@@ -30,7 +28,6 @@ impl AssignTags {
             .ok_or(AssignTagsFailure::NotFound)?;
 
         let updated_worksite = worksite.update_worker(input.worker_id, |worker| -> Worker {
-            
             worker.assign_tags(input.tags)
         });
 

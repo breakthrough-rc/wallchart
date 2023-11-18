@@ -26,9 +26,11 @@ use web_client::server::{
     notification::NotificationFlashes,
 };
 use worksite_service::{
-    add_worker::AddWorkerInput, get_worker::GetWorkerInput, get_workers::GetWorkersInput,
-    get_worksite::GetWorksiteInput, update_worker::UpdateWorkerInput,
+    add_worker::AddWorkerInput, assign_tags::AssignTagsInput, get_worker::GetWorkerInput,
+    get_workers::GetWorkersInput, get_worksite::GetWorksiteInput, update_worker::UpdateWorkerInput,
 };
+
+use super::worksite;
 
 pub fn workers_routes(state: WebHtmxState) -> Router {
     Router::new()
@@ -349,19 +351,27 @@ async fn post_worker_profile_form(
 
 #[derive(Deserialize, Debug)]
 struct AssignWorkerTagsFormData {
+    #[serde(default)]
     tags: Vec<String>,
 }
 
 async fn put_worker_tags(
     State(WebHtmxState {
-        worksite_service: _,
-        ..
+        worksite_service, ..
     }): State<WebHtmxState>,
     flash: Flash,
-    extract::Path((_worksite_id, _worker_id)): extract::Path<(String, String)>,
+    extract::Path((worksite_id, worker_id)): extract::Path<(String, String)>,
     FormExtra(form): FormExtra<AssignWorkerTagsFormData>,
 ) -> impl IntoResponse {
-    print!("form.tags: {:?}", form.tags);
+    worksite_service
+        .assign_tags(AssignTagsInput {
+            worker_id: worker_id,
+            worksite_id: worksite_id,
+            tags: form.tags,
+        })
+        .await
+        .expect("Failed to assign tags");
+
     (
         StatusCode::OK,
         flash.success("Worker tags assigned successfully!"),
