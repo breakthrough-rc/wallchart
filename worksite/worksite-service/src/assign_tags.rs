@@ -30,8 +30,8 @@ impl AssignTags {
             .ok_or(AssignTagsFailure::NotFound)?;
 
         let updated_worksite = worksite.update_worker(input.worker_id, |worker| -> Worker {
-            let updated_worker = worker.assign_tags(input.tags);
-            updated_worker
+            
+            worker.assign_tags(input.tags)
         });
 
         self.worksite_repository
