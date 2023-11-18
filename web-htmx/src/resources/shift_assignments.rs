@@ -105,20 +105,15 @@ async fn post_shift_assignment(
     extract::Path((wallchart_id, location_id, shift_id)): extract::Path<(String, String, String)>,
     Form(form): Form<AssignShiftFormData>,
 ) -> impl IntoResponse {
-    // worksite_service
-    //     .assign_worker(AssignWorkerInput {
-    //         id: wallchart_id,
-    //         location_id,
-    //         shift_id,
-    //         first_name: form.first_name,
-    //         last_name: form.last_name,
-    //         street_address: form.street_address,
-    //         city: form.city,
-    //         region: form.region,
-    //         postal_code: form.postal_code,
-    //     })
-    //     .await
-    //     .expect("Failed to assign worker");
+    worksite_service
+        .assign_worker(AssignWorkerInput {
+            worksite_id: wallchart_id,
+            location_id,
+            shift_id,
+            worker_id: form.worker_id,
+        })
+        .await
+        .expect("Failed to assign worker");
 
     (
         StatusCode::OK,
