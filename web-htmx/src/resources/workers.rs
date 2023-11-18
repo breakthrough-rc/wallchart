@@ -30,8 +30,6 @@ use worksite_service::{
     get_workers::GetWorkersInput, get_worksite::GetWorksiteInput, update_worker::UpdateWorkerInput,
 };
 
-
-
 pub fn workers_routes(state: WebHtmxState) -> Router {
     Router::new()
         .route("/worksites/:worksite_id/workers", get(get_workers))
@@ -103,7 +101,9 @@ async fn get_workers(
                 <div class="mt-8 flow-root">
                     <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                         <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                            <Workers worksite=worksite workers=workers/>
+                            <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+                                <Workers worksite=worksite workers=workers/>
+                            </div>
                         </div>
                     </div>
                 </div>
