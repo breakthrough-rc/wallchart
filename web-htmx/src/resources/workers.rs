@@ -30,7 +30,7 @@ use worksite_service::{
     get_workers::GetWorkersInput, get_worksite::GetWorksiteInput, update_worker::UpdateWorkerInput,
 };
 
-use super::worksite;
+
 
 pub fn workers_routes(state: WebHtmxState) -> Router {
     Router::new()
@@ -365,8 +365,8 @@ async fn put_worker_tags(
 ) -> impl IntoResponse {
     worksite_service
         .assign_tags(AssignTagsInput {
-            worker_id: worker_id,
-            worksite_id: worksite_id,
+            worker_id,
+            worksite_id,
             tags: form.tags,
         })
         .await
