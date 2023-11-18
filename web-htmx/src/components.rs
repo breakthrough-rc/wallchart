@@ -1,4 +1,5 @@
 //##PLOP COMPONENT MOD##
+pub mod assign_shift_form;
 pub mod add_location_form;
 pub mod add_shift_form;
 pub mod add_worker_form;

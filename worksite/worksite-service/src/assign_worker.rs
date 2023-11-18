@@ -14,15 +14,10 @@ pub struct AssignWorker {
 
 #[derive(Clone, Debug)]
 pub struct AssignWorkerInput {
-    pub id: String,
+    pub worksite_id: String,
     pub location_id: String,
     pub shift_id: String,
-    pub first_name: String,
-    pub last_name: String,
-    pub street_address: String,
-    pub city: String,
-    pub region: String,
-    pub postal_code: String,
+    pub worker_id: String,
 }
 
 // Change the return type, if needed
@@ -38,19 +33,14 @@ impl AssignWorker {
     pub async fn assign_worker(&self, input: AssignWorkerInput) -> AssignWorkerOutput {
         let worksite = &self
             .worksite_repository
-            .get_worksite(input.id)
+            .get_worksite(input.worksite_id)
             .await
             .map_err(|e| AssignWorkerFailure::Unknown(e.to_string()))?
             .ok_or(AssignWorkerFailure::NotFound)?;
 
-        // TODO! Implement uuid generation as a port
-        let worker = Worker {
-            id: uuid::Uuid::new_v4().to_string(),
-            first_name: input.first_name,
-            last_name: input.last_name,
-            last_assessment: None,
-            tags: Vec::new(),
-        };
+        let worker = worksite
+            .get_worker(input.worker_id)
+            .ok_or(AssignWorkerFailure::WorkerNotFound)?;
 
         let AssignWorkerInput {
             shift_id,
@@ -58,11 +48,10 @@ impl AssignWorker {
             ..
         } = input;
 
-        let updated_worksite = worksite.add_worker(worker.clone());
-        let updated_worksite = updated_worksite.assign_worker(worker, shift_id, location_id);
+        let worksite = worksite.assign_worker(worker, shift_id, location_id);
 
         self.worksite_repository
-            .save(updated_worksite)
+            .save(worksite)
             .await
             .map_err(|e| AssignWorkerFailure::Unknown(e.to_string()))?;
 
@@ -72,6 +61,8 @@ impl AssignWorker {
 
 #[derive(Error, Debug, PartialEq)]
 pub enum AssignWorkerFailure {
+    #[error("Worker does not exist")]
+    WorkerNotFound,
     #[error("Something went wrong")]
     Unknown(String),
     #[error("Worksite does not exist")]
