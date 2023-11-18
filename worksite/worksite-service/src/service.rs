@@ -6,6 +6,9 @@ use crate::{
     add_worker::{AddWorker, AddWorkerInput, AddWorkerOutput},
     assign_worker::{AssignWorker, AssignWorkerInput, AssignWorkerOutput},
     //##PLOP INSERT COMMAND IMPORTS HOOK##
+    assign_tags::{
+      AssignTags, AssignTagsInput, AssignTagsOutput, 
+    },
     get_tags::{GetTags, GetTagsInput, GetTagsOutput},
     get_worker::{GetWorker, GetWorkerInput, GetWorkerOutput},
     get_workers::{GetWorkers, GetWorkersInput, GetWorkersOutput},
@@ -21,6 +24,7 @@ use crate::{
 #[derive(Clone)]
 pub struct WorksiteService {
     //##PLOP INSERT COMMAND HOOK##
+    pub assign_tags: AssignTags,
     pub get_tags: GetTags,
     pub add_worker: AddWorker,
     pub get_workers: GetWorkers,
@@ -37,6 +41,10 @@ impl WorksiteService {
     pub fn new(worksite_repository: Arc<dyn WorksiteRepository>) -> Self {
         Self {
             //##PLOP INSERT COMMAND INSTANTIATION HOOK##
+            assign_tags: AssignTags {
+              // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
+              worksite_repository: worksite_repository.clone(),
+            },
             get_tags: GetTags {
                 worksite_repository: worksite_repository.clone(),
             },
@@ -68,6 +76,13 @@ impl WorksiteService {
         }
     }
     //##PLOP INSERT DELEGATE HOOK##
+    pub async fn assign_tags(
+        &self,
+        input: AssignTagsInput,
+    ) -> AssignTagsOutput {
+        self.assign_tags.assign_tags(input).await
+    }
+
     pub async fn get_tags(&self, input: GetTagsInput) -> GetTagsOutput {
         self.get_tags.get_tags(input).await
     }

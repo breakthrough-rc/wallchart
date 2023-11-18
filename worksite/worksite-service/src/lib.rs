@@ -1,4 +1,5 @@
 //##PLOP INSERT MOD HOOK##
+pub mod assign_tags;
 pub mod get_tags;
 pub mod add_worker;
 pub mod get_workers;

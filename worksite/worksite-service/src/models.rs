@@ -208,6 +208,12 @@ impl Worker {
     pub fn has_tag(&self, tag: &Tag) -> bool {
         self.tags.iter().any(|t| t.0 == tag.id)
     }
+    pub fn assign_tags(&self, tags: Vec<String>) -> Worker {
+        let mut updated_worker = self.clone();
+        updated_worker.tags = tags.into_iter().map(AssignedTag::new).collect();
+
+        updated_worker
+    }
 }
 
 #[derive(Debug, Clone)]
