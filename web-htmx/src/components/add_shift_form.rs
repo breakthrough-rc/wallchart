@@ -17,7 +17,7 @@ pub fn AddShiftForm(props: AddShiftFormProps) -> String {
             <form hx-post=props.action>
                 <div class="pb-12">
                     <p class="mt-1 text-sm leading-6 text-gray-600">
-                        Add a new form
+                        Add a new shift
                     </p>
                     <GridLayout class="mt-10">
                         <GridCell span=4>

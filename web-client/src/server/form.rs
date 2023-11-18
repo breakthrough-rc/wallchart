@@ -21,6 +21,26 @@ pub fn TextInput(props: TextInputProps) -> String {
 }
 
 #[html_element]
+pub struct SelectInputProps {
+    #[builder(setter(into))]
+    children: String,
+}
+
+#[component]
+pub fn SelectInput(props: SelectInputProps) -> String {
+    html! {
+        <HtmlElement
+            tag="select"
+            id=props.name.clone()
+            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            attrs=spread_attrs!(props | omit(id, class))
+        >
+            {props.children}
+        </HtmlElement>
+    }
+}
+
+#[html_element]
 pub struct LabelProps {
     #[builder(setter(into))]
     for_input: String,

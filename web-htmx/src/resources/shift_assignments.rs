@@ -16,7 +16,8 @@ use rscx::html;
 use serde::Deserialize;
 use web_client::server::modal::{Modal, ModalSize};
 use worksite_service::{
-    assign_worker::AssignWorkerInput, remove_worker_from_shift::RemoveWorkerFromShiftInput,
+    assign_worker::AssignWorkerInput, get_workers::GetWorkersInput,
+    remove_worker_from_shift::RemoveWorkerFromShiftInput,
 };
 
 pub fn shift_assignments_routes(state: WebHtmxState) -> Router {
@@ -72,22 +73,38 @@ async fn delete_worker_from_shift(
 
 async fn get_shift_assignment_form_modal(
     extract::Path((wallchart_id, location_id, shift_id)): extract::Path<(String, String, String)>,
-    State(WebHtmxState { .. }): State<WebHtmxState>,
+    State(state): State<WebHtmxState>,
 ) -> impl IntoResponse {
+    let workers = state
+        .worksite_service
+        .get_workers(GetWorkersInput {
+            worksite_id: wallchart_id.clone(),
+        })
+        .await
+        .expect("Failed to get worker");
+
     Html(html! {
         <Modal size=ModalSize::MediumScreen>
-            <AssignShiftForm workers=vec![] action=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new", wallchart_id, location_id, shift_id) />
+            <AssignShiftForm workers=workers action=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new", wallchart_id, location_id, shift_id) />
         </Modal>
     })
 }
 
 async fn get_shift_assignment_form(
     extract::Path((wallchart_id, location_id, shift_id)): extract::Path<(String, String, String)>,
-    State(WebHtmxState { .. }): State<WebHtmxState>,
+    State(state): State<WebHtmxState>,
 ) -> impl IntoResponse {
+    let workers = state
+        .worksite_service
+        .get_workers(GetWorkersInput {
+            worksite_id: wallchart_id.clone(),
+        })
+        .await
+        .expect("Failed to get worker");
+
     Html(html! {
         <PageLayout header="Assign Shift">
-            <AssignShiftForm workers=vec![] action=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new", wallchart_id, location_id, shift_id) />
+            <AssignShiftForm workers=workers action=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new", wallchart_id, location_id, shift_id) />
         </PageLayout>
     })
 }
