@@ -15,7 +15,7 @@ use axum::{
 };
 use axum_flash::{Flash, IncomingFlashes};
 use http::StatusCode;
-use rscx::{html, CollectFragmentAsync};
+use rscx::html;
 use serde::Deserialize;
 use web_client::server::{
     button::PrimaryButton,
@@ -110,16 +110,6 @@ async fn get_worker_details(
     extract::Path((worksite_id, worker_id)): extract::Path<(String, String)>,
     State(state): State<WebHtmxState>,
 ) -> impl IntoResponse {
-    let worksite = state
-        .worksite_service
-        .get_worksite(GetWorksiteInput {
-            id: worksite_id.to_string(),
-        })
-        .await
-        .unwrap()
-        .ok_or("Worksite not found")
-        .unwrap();
-
     let worker = state
         .worksite_service
         .get_worker(GetWorkerInput {
@@ -154,7 +144,7 @@ async fn get_worker_details(
                                 </div>
                                 <div class="bg-gray-50 px-4 py-3 text-right sm:px-6">
                                     <PrimaryButton
-                                        hx_post=format!("/worksites/{}/workers/{}profile/", &worksite_id, &worker_id)
+                                        hx_post=format!("/worksites/{}/workers/{}/profile/", &worksite_id, &worker_id)
                                     >
                                         Update Profile
                                     </PrimaryButton>
@@ -170,51 +160,14 @@ async fn get_worker_details(
                             <span class="bg-white px-2 text-sm text-gray-500">Continue</span>
                         </div>
                     </div>
-                    <section aria-labelledby="worker-tags-heading">
-                        <form action="#" method="POST">
-                            <div class="shadow sm:overflow-hidden sm:rounded-md">
-                                <div class="bg-white px-4 py-6 sm:p-6">
-                                    <div>
-                                        <h2 id="worker-tags-heading" class="text-lg font-medium leading-6 text-gray-900">Tags</h2>
-                                        <p class="mt-1 text-sm text-gray-500">Assign tags.</p>
-                                    </div>
-                                    <div class="mt-4 divide-y divide-gray-200 border-b border-t border-gray-200">
-                                        {
-                                            #[allow(unused_braces)]
-                                            worksite.tags.iter().map(|tag| async {
-                                                let tag = tag.clone();
-                                                html! {
-                                                    <div class="relative flex items-start py-4">
-                                                        <div class="min-w-0 flex-1 text-sm leading-6">
-                                                            <label for=format!("inp-tag-{}", &tag.id) class="select-none font-medium text-gray-900">{&tag.icon}" "{&tag.name}</label>
-                                                        </div>
-                                                        <div class="ml-3 flex h-6 items-center">
-                                                            <input
-                                                                id=format!("inp-tag-{}", &tag.id)
-                                                                name="tags"
-                                                                type="checkbox"
-                                                                class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                                                                { if worker.has_tag(&tag) { "checked" } else { "" } }
-                                                                value=tag.id.clone()
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                }
-                                            })
-                                            .collect_fragment_async()
-                                            .await
-                                        }
-                                    </div>
-                                </div>
-                                <div class="bg-gray-50 px-4 py-3 text-right sm:px-6">
-                                    <PrimaryButton
-                                        hx_put=format!("/worksites/{}/workers/{}/tags", &worksite_id, &worker_id)
-                                    >
-                                        Assign Tags
-                                    </PrimaryButton>
-                                </div>
-                            </div>
-                        </form>
+                    <section
+                        hx-get=format!("/worksites/{}/workers/{}/tags-form", &worksite_id, &worker_id)
+                        hx-trigger="revealed"
+                    >
+                        <svg class="animate-spin m-auto text-gray-100 h-10 w-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
                     </section>
                 </div>
             </div>
