@@ -1,7 +1,7 @@
-use rscx::{component, html, props, CollectFragment, CollectFragmentAsync};
+use rscx::{component, html, props, CollectFragmentAsync};
 use web_client::server::{
     attrs::Attrs,
-    form::{Button, GridCell, GridLayout, Label, SelectInput, TextInput},
+    form::{Button, GridCell, GridLayout, Label, SelectInput},
 };
 use worksite_service::models::Worker;
 

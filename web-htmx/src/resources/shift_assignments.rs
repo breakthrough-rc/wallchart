@@ -1,6 +1,6 @@
 use crate::{
     components::{
-        add_worker_form::AddWorkerForm, assign_shift_form::AssignShiftForm, page::PageLayout,
+        assign_shift_form::AssignShiftForm, page::PageLayout,
     },
     state::WebHtmxState,
 };
