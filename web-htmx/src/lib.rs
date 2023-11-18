@@ -5,10 +5,11 @@ use axum::{
 };
 use http::StatusCode;
 //##PLOP USE RESOURCE HOOK##
+use components::{not_found_message::NotFoundMessage, page::PageLayout};
+use resources::assigned_tags::assigned_tags_routes;
+use resources::locations::locations_routes;
 use resources::shift_assignments::shift_assignments_routes;
 use resources::shifts::shifts_routes;
-use components::{not_found_message::NotFoundMessage, page::PageLayout};
-use resources::locations::locations_routes;
 use resources::tags::tags_routes;
 use resources::users::users_routes;
 use resources::workers::workers_routes;
@@ -27,12 +28,13 @@ pub fn routes(state: WebHtmxState) -> Router {
     Router::new()
         .with_state(state.clone())
         //##PLOP MERGE ROUTE HOOK##
-.merge(shift_assignments_routes(state.clone()))
+        .merge(shift_assignments_routes(state.clone()))
         .merge(shifts_routes(state.clone()))
         .merge(locations_routes(state.clone()))
         .merge(tags_routes(state.clone()))
         .merge(worksite_routes(state.clone()))
         .merge(workers_routes(state.clone()))
+        .merge(assigned_tags_routes(state.clone()))
         // Anything above this RequireAuth route will require authentication
         // .route_layer(RequireAuth::login_or_redirect(
         //     Arc::new("/login".into()),

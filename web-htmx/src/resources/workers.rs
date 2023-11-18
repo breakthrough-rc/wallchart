@@ -11,10 +11,9 @@ use crate::{
 use axum::{
     extract::{self, State},
     response::{Html, IntoResponse, Redirect},
-    routing::{get, put},
+    routing::get,
     Form, Router,
 };
-use axum_extra::extract::Form as FormExtra;
 use axum_flash::{Flash, IncomingFlashes};
 use http::StatusCode;
 use rscx::{html, CollectFragmentAsync};
@@ -26,8 +25,8 @@ use web_client::server::{
     notification::NotificationFlashes,
 };
 use worksite_service::{
-    add_worker::AddWorkerInput, assign_tags::AssignTagsInput, get_worker::GetWorkerInput,
-    get_workers::GetWorkersInput, get_worksite::GetWorksiteInput, update_worker::UpdateWorkerInput,
+    add_worker::AddWorkerInput, get_worker::GetWorkerInput, get_workers::GetWorkersInput,
+    get_worksite::GetWorksiteInput, update_worker::UpdateWorkerInput,
 };
 
 pub fn workers_routes(state: WebHtmxState) -> Router {
@@ -49,10 +48,6 @@ pub fn workers_routes(state: WebHtmxState) -> Router {
         .route(
             "/wallcharts/:worksite_id/workers/new-modal",
             get(get_worker_form_modal),
-        )
-        .route(
-            "/worksites/:worksite_id/workers/:worker_id/tags",
-            put(put_worker_tags),
         )
         .with_state(state)
 }
@@ -353,28 +348,4 @@ async fn post_worker_profile_form(
 struct AssignWorkerTagsFormData {
     #[serde(default)]
     tags: Vec<String>,
-}
-
-async fn put_worker_tags(
-    State(WebHtmxState {
-        worksite_service, ..
-    }): State<WebHtmxState>,
-    flash: Flash,
-    extract::Path((worksite_id, worker_id)): extract::Path<(String, String)>,
-    FormExtra(form): FormExtra<AssignWorkerTagsFormData>,
-) -> impl IntoResponse {
-    worksite_service
-        .assign_tags(AssignTagsInput {
-            worker_id,
-            worksite_id,
-            tags: form.tags,
-        })
-        .await
-        .expect("Failed to assign tags");
-
-    (
-        StatusCode::OK,
-        flash.success("Worker tags assigned successfully!"),
-        [("hx-redirect", "/wallchart"), ("hx-retarget", "body")],
-    )
 }
