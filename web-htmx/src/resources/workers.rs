@@ -2,7 +2,6 @@ use crate::{
     components::{
         add_worker_form::AddWorkerForm,
         page::{PageHeader, PageLayout},
-        worker_detail::WorkerDetail,
         worker_profile_fieldset::{WorkerProfileFieldset, WorkerProfileFormData},
         workers::Workers,
     },
@@ -11,7 +10,7 @@ use crate::{
 use axum::{
     extract::{self, State},
     response::{Html, IntoResponse, Redirect},
-    routing::get,
+    routing::{get, post},
     Form, Router,
 };
 use axum_flash::{Flash, IncomingFlashes};
@@ -38,7 +37,7 @@ pub fn workers_routes(state: WebHtmxState) -> Router {
         )
         .route(
             "/worksites/:worksite_id/workers/:worker_id/profile/",
-            get(get_worker_profile_form).post(post_worker_profile_form),
+            post(post_worker_profile_form),
         )
         .route("/workers", get(Redirect::temporary("/worksites/1/workers")))
         .route(
@@ -223,30 +222,6 @@ async fn get_worker_details(
     })
 }
 
-async fn get_worker_profile_form(
-    extract::Path((worksite_id, worker_id)): extract::Path<(String, String)>,
-    State(state): State<WebHtmxState>,
-) -> impl IntoResponse {
-    let worker = state
-        .worksite_service
-        .get_worker(GetWorkerInput {
-            id: worker_id,
-            worksite_id,
-        })
-        .await
-        .expect("Failed to get worker")
-        .ok_or("Worker not found")
-        .expect("Worker not found");
-
-    let full_name = worker.full_name();
-
-    Html(html! {
-        <Flyout title=format!("Worker Detail: {}", full_name)>
-            <WorkerDetail worker=worker />
-        </Flyout>
-    })
-}
-
 async fn get_worker_form_modal(
     extract::Path(wallchart_id): extract::Path<String>,
 ) -> impl IntoResponse {
@@ -342,10 +317,4 @@ async fn post_worker_profile_form(
         flash.success("Worker updated successfully!"),
         [("hx-redirect", "/wallchart"), ("hx-retarget", "body")],
     )
-}
-
-#[derive(Deserialize, Debug)]
-struct AssignWorkerTagsFormData {
-    #[serde(default)]
-    tags: Vec<String>,
 }

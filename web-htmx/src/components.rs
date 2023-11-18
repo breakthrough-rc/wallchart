@@ -9,6 +9,5 @@ pub mod nav;
 pub mod not_found_message;
 pub mod page;
 pub mod wallchart;
-pub mod worker_detail;
 pub mod worker_profile_fieldset;
 pub mod workers;
