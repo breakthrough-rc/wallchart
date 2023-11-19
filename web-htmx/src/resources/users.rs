@@ -74,7 +74,7 @@ async fn post_login(
     }
 }
 
-async fn get_users(State(state): State<WebHtmxState>) -> impl IntoResponse {
+async fn get_users(State(_state): State<WebHtmxState>) -> impl IntoResponse {
     // let worksite = state
     //     .worksite_service
     //     .get_worksite(GetWorksiteInput {
