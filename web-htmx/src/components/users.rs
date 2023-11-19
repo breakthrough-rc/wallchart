@@ -1,5 +1,5 @@
 use auth_service::models::User;
-use rscx::{component, html, props, CollectFragment, CollectFragmentAsync};
+use rscx::{component, html, props, CollectFragmentAsync};
 
 #[props]
 pub struct UsersProps {
