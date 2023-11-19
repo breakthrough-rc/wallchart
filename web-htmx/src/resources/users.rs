@@ -2,6 +2,7 @@ use crate::{
     components::{
         login_form::LoginForm,
         page::{PageHeader, PageLayout},
+        users::Users,
     },
     state::WebHtmxState,
 };
@@ -74,26 +75,14 @@ async fn post_login(
     }
 }
 
-async fn get_users(State(_state): State<WebHtmxState>) -> impl IntoResponse {
-    // let worksite = state
-    //     .worksite_service
-    //     .get_worksite(GetWorksiteInput {
-    //         id: worksite_id.to_string(),
-    //     })
-    //     .await
-    //     .unwrap()
-    //     .ok_or("Worksite not found")
-    //     .unwrap();
-    //
-    // let workers = state
-    //     .worksite_service
-    //     .get_workers(GetWorkersInput {
-    //         worksite_id: worksite_id.clone(),
-    //     })
-    //     .await
-    //     .expect("Failed to get worker");
-    Html(html! {
+async fn get_users(State(state): State<WebHtmxState>) -> impl IntoResponse {
+    let users = state
+        .auth_service
+        .get_users()
+        .await
+        .expect("Failed to get users");
 
+    Html(html! {
         <PageLayout
             header=PageHeader::Toolbar {
                 title: "Users".into(),
@@ -106,7 +95,7 @@ async fn get_users(State(_state): State<WebHtmxState>) -> impl IntoResponse {
                 }
             }
         >
-            <div>Users</div>
+            <Users users=users />
         </PageLayout>
     })
 }

@@ -3,7 +3,7 @@ use std::sync::Arc;
 use async_trait::async_trait;
 use auth_service::models::User;
 use auth_service::ports::user_repository::{RepositoryFailure, UserRepository};
-use axum_login::{UserStore};
+use axum_login::UserStore;
 use tokio::sync::RwLock;
 
 #[derive(Clone, Debug)]
@@ -30,6 +30,11 @@ impl UserRepository for InMemoryUserRepository {
     async fn get_user(&self, id: String) -> Result<Option<User>, RepositoryFailure> {
         let users = self.users.read().await;
         Ok(users.iter().find(|u| u.id == id).map(|u| u.to_owned()))
+    }
+
+    async fn get_users(&self) -> Result<Vec<User>, RepositoryFailure> {
+        let users = self.users.read().await;
+        Ok(users.to_vec())
     }
 
     async fn find_by_email(&self, email: String) -> Result<Option<User>, RepositoryFailure> {

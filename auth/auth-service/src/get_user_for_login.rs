@@ -5,9 +5,6 @@ use thiserror::Error;
 
 use crate::{models::User, ports::user_repository::UserRepository};
 
-// Example repo dependency
-// use crate::ports::worksite_repository::WorksiteRepository;
-
 #[derive(Clone)]
 pub struct GetUserForLogin {
     pub user_repository: Arc<dyn UserRepository>,
