@@ -14,7 +14,7 @@ use axum::{
     Form, Router,
 };
 use axum_flash::{Flash, IncomingFlashes};
-use http::StatusCode;
+use http::{HeaderMap, StatusCode};
 use rscx::html;
 use serde::Deserialize;
 use web_client::server::{
@@ -185,9 +185,15 @@ async fn get_worker_form_modal(
     })
 }
 
-async fn get_worker_form(extract::Path(wallchart_id): extract::Path<String>) -> impl IntoResponse {
+async fn get_worker_form(
+    extract::Path(wallchart_id): extract::Path<String>,
+    headers: HeaderMap,
+) -> impl IntoResponse {
     Html(html! {
-        <PageLayout header="Add Worker">
+        <PageLayout
+            partial=headers.contains_key("Hx-Request")
+            header="Add Worker"
+        >
             <AddWorkerForm action=format!("/wallcharts/{}/workers/new", wallchart_id) />
         </PageLayout>
     })
