@@ -127,7 +127,7 @@ pub fn Shift(props: ShiftProps) -> String {
                     hx_swap="beforeend"
                     hx_push_url=props.new_worker_push_url
                 >
-                    "Add Worker"
+                    "Add Worker to Shift"
                 </SecondaryButton>
             </th>
         </tr>

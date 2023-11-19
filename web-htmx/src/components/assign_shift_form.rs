@@ -1,6 +1,7 @@
 use rscx::{component, html, props, CollectFragmentAsync};
 use web_client::server::{
     attrs::Attrs,
+    button::SecondaryButton,
     form::{Button, GridCell, GridLayout, Label, SelectInput},
 };
 use worksite_service::models::Worker;
@@ -12,6 +13,9 @@ pub struct AssignShiftFormProps {
 
     #[builder(setter(into))]
     action: String,
+
+    #[builder(setter(into))]
+    create_worker_action: String,
 }
 
 #[component]
@@ -48,6 +52,12 @@ pub fn AssignShiftForm(props: AssignShiftFormProps) -> String {
                                     attrs=Attrs::with("data-toggle-action", "close".into())
                                 >
                                     Cancel
+                                </Button>
+                                <Button
+                                    hx_get=props.create_worker_action
+                                    hx_target="closest form"
+                                >
+                                    Create a new worker
                                 </Button>
                                 <Button kind="submit">Assign</Button>
                             </div>

@@ -1,7 +1,5 @@
 use crate::{
-    components::{
-        assign_shift_form::AssignShiftForm, page::PageLayout,
-    },
+    components::{assign_shift_form::AssignShiftForm, page::PageLayout},
     state::WebHtmxState,
 };
 use axum::{
@@ -85,7 +83,11 @@ async fn get_shift_assignment_form_modal(
 
     Html(html! {
         <Modal size=ModalSize::MediumScreen>
-            <AssignShiftForm workers=workers action=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new", wallchart_id, location_id, shift_id) />
+            <AssignShiftForm
+                workers=workers
+                action=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new", &wallchart_id, location_id, shift_id)
+                create_worker_action=format!("/wallcharts/{}/workers/new", wallchart_id)
+            />
         </Modal>
     })
 }
@@ -104,7 +106,11 @@ async fn get_shift_assignment_form(
 
     Html(html! {
         <PageLayout header="Assign Shift">
-            <AssignShiftForm workers=workers action=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new", wallchart_id, location_id, shift_id) />
+            <AssignShiftForm
+                workers=workers
+                action=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new", &wallchart_id, location_id, shift_id)
+                create_worker_action=format!("/wallcharts/{}/workers/new", wallchart_id)
+            />
         </PageLayout>
     })
 }
