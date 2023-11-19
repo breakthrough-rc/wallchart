@@ -9,6 +9,7 @@ pub fn Nav() -> String {
         ("Wallchart", "/wallchart"),
         ("Workers", "/workers"),
         ("Report", "/report"),
+        ("Users", "/users"),
     ];
 
     let profile_links = [("Your Profile", "#"), ("Settings", "#"), ("Sign out", "#")];
