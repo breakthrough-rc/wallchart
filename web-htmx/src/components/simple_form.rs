@@ -17,7 +17,7 @@ pub struct SimpleFormProps {
 }
 
 #[component]
-pub fn SimpleForm(props: AddShiftFormProps) -> String {
+pub fn SimpleForm(props: SimpleFormProps) -> String {
     html! {
         <div>
             <form hx-post=props.action>
