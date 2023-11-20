@@ -143,7 +143,7 @@ async fn get_create_form(
 }
 
 async fn post_create_form(
-    extract::Path((worksite_id)): extract::Path<(String)>,
+    extract::Path(worksite_id): extract::Path<String>,
     State(WebHtmxState {
         worksite_service, ..
     }): State<WebHtmxState>,
