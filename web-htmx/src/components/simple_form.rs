@@ -4,6 +4,11 @@ use web_client::server::{
     form::{Button, GridCell, GridLayout, Label, TextInput},
 };
 
+#[derive(Default, Debug)]
+pub struct SimpleFormData {
+    pub name: String,
+}
+
 #[props]
 pub struct SimpleFormProps {
     #[builder(setter(into))]
@@ -14,6 +19,9 @@ pub struct SimpleFormProps {
 
     #[builder(default)]
     children: String,
+
+    #[builder(default=SimpleFormData::default())]
+    data: SimpleFormData,
 }
 
 #[component]
@@ -28,7 +36,7 @@ pub fn SimpleForm(props: SimpleFormProps) -> String {
                     <GridLayout class="mt-10">
                         <GridCell span=6>
                             <Label for_input="name">Name</Label>
-                            <TextInput name="name" />
+                            <TextInput name="name" value=&props.data.name />
                         </GridCell>
                         {props.children}
                         <GridCell span=6>

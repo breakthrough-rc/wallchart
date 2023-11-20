@@ -4,9 +4,9 @@ use crate::components::{
 };
 use crate::state::WebHtmxState;
 use axum::{
-    extract::{State},
+    extract::State,
     response::{Html, IntoResponse},
-    routing::{get},
+    routing::get,
     Router,
 };
 use axum_flash::IncomingFlashes;
@@ -17,9 +17,7 @@ use web_client::server::{
     button::{PrimaryButton, SecondaryButton},
     notification::NotificationFlashes,
 };
-use worksite_service::{
-    get_worksite::GetWorksiteInput,
-};
+use worksite_service::get_worksite::GetWorksiteInput;
 
 pub fn worksite_routes(state: WebHtmxState) -> Router {
     Router::new()
@@ -60,7 +58,7 @@ async fn get_wallchart_page(
                     </SecondaryButton>
                     <SecondaryButton
                         tag="a"
-                        href=format!("/wallcharts/{}/tags", &id)
+                        href=format!("/worksites/{}/tags", &id)
                     >
                         Manage Tags
                     </SecondaryButton>
