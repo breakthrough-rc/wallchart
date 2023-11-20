@@ -135,7 +135,6 @@ async fn get_edit_form(
     Html(html! {
         <Modal>
             <TagForm
-                worksite_id=worksite_id.clone()
                 action=format!("/worksites/{}/tags/{}/edit-form", &worksite_id, &tag_id)
                 data=TagFormData {
                     name: tag.name,
@@ -188,7 +187,6 @@ async fn get_create_form(
     Html(html! {
         <Modal>
             <TagForm
-                worksite_id=worksite_id.clone()
                 action=format!("/worksites/{}/tags/create-form", &worksite_id)
             />
         </Modal>
