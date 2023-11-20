@@ -112,7 +112,7 @@ async fn get_edit_form(
         worksite_service, ..
     }): State<WebHtmxState>,
 ) -> impl IntoResponse {
-    let tag = worksite_service
+    let _tag = worksite_service
         .get_tag(GetTagInput {
             worksite_id: worksite_id.clone(),
             tag_id,
