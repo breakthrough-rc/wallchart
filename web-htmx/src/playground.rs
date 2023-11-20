@@ -12,9 +12,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use web_client::server::{
     attrs::Attrs,
     button::{PrimaryButton, SecondaryButton},
-    flyout::Flyout,
     html_element::HtmlElement,
-    modal::Modal,
     notification::{
         NoticationCloseButton, NotificationCall, NotificationPresenter, NotificationTransition,
     },
