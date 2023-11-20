@@ -1,4 +1,5 @@
 //##PLOP INSERT MOD HOOK##
+pub mod update_tag;
 pub mod add_tag;
 pub mod assign_tags;
 pub mod get_tags;
