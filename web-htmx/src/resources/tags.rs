@@ -11,6 +11,8 @@ use axum::{
     routing::get,
     Form, Router,
 };
+use axum_flash::Flash;
+use http::StatusCode;
 use rscx::{component, html, props, CollectFragmentAsync};
 use serde::Deserialize;
 use web_client::server::{
@@ -18,7 +20,7 @@ use web_client::server::{
     form::{GridCell, Label, TextInput},
     modal::Modal,
 };
-use worksite_service::get_tags::GetTagsInput;
+use worksite_service::{add_tag::AddTagInput, get_tags::GetTagsInput};
 
 pub fn tags_routes(state: WebHtmxState) -> Router {
     Router::new()
@@ -141,15 +143,41 @@ async fn get_create_form(
 }
 
 async fn post_create_form(
-    State(_): State<WebHtmxState>,
-    Form(_): Form<ExampleForm>,
+    extract::Path((worksite_id)): extract::Path<(String)>,
+    State(WebHtmxState {
+        worksite_service, ..
+    }): State<WebHtmxState>,
+    flash: Flash,
+    Form(form): Form<AddTagFormData>,
 ) -> impl IntoResponse {
-    todo!()
+    worksite_service
+        .add_tag(AddTagInput {
+            worksite_id,
+            name: form.name,
+            icon: form.icon,
+        })
+        .await
+        .expect("Failed to add new tag");
+
+    (
+        StatusCode::OK,
+        flash.success("Added new tag!"),
+        [("hx-redirect", "/wallchart"), ("hx-retarget", "body")],
+    )
+}
+
+#[derive(Deserialize, Debug, Default)]
+struct AddTagFormData {
+    name: String,
+    icon: String,
 }
 
 #[props]
-pub struct AddTagFormProps {
+struct AddTagFormProps {
     worksite_id: String,
+
+    #[builder(default=AddTagFormData::default())]
+    _data: AddTagFormData, // TODO Support pre-populating form data
 }
 
 #[component]
