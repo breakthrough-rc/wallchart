@@ -5,8 +5,8 @@ use crate::{
     },
     state::WebHtmxState,
 };
-use auth_service::get_user_for_login::GetUserForLoginInput;
 use auth_service::models::User;
+use auth_service::{create_user::CreateUserInput, get_user_for_login::GetUserForLoginInput};
 use axum::{
     extract::State,
     response::{Html, IntoResponse},
@@ -14,16 +14,23 @@ use axum::{
     Form, Router,
 };
 use axum_flash::Flash;
-use http::StatusCode;
+use http::{HeaderMap, StatusCode};
 use in_memory_user_repository::AuthContext;
 use rscx::{component, html, props, CollectFragmentAsync};
 use serde::Deserialize;
-use web_client::server::button::PrimaryButton;
+use web_client::server::{
+    attrs::Attrs,
+    button::PrimaryButton,
+    form::{Button, GridCell, GridLayout, Label, TextInput},
+    modal::{Modal, ModalSize},
+};
 
 pub fn users_routes(state: WebHtmxState) -> Router {
     Router::new()
         .route("/login", get(get_login).post(post_login))
-        .route("/users", get(get_users))
+        .route("/users", get(get_users).post(post_users))
+        .route("/users/new", get(get_users_form))
+        .route("/users/new-modal", get(get_users_form_modal))
         .with_state(state)
 }
 
@@ -88,7 +95,10 @@ async fn get_users(State(state): State<WebHtmxState>) -> impl IntoResponse {
                 title: "Users".into(),
                 buttons: html! {
                     <PrimaryButton
-                        onclick="alert('Coming soon!')"
+                        hx_get="/users/new-modal"
+                        hx_target="body"
+                        hx_swap="beforeend"
+                        hx_push_url="/users/new"
                     >
                         Add New User
                     </PrimaryButton>
@@ -150,5 +160,89 @@ pub fn User(props: UserProps) -> String {
             </td>
             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">Organizer</td>
         </tr>
+    }
+}
+
+#[derive(Deserialize, Debug)]
+struct AddUserFormData {
+    email: String,
+    password: String,
+}
+
+async fn post_users(
+    State(WebHtmxState { auth_service, .. }): State<WebHtmxState>,
+    flash: Flash,
+    Form(form): Form<AddUserFormData>,
+) -> impl IntoResponse {
+    auth_service
+        .create_user(CreateUserInput {
+            email: form.email,
+            password: form.password,
+        })
+        .await
+        .expect("Failed to add user");
+    (
+        StatusCode::OK,
+        flash.success("User added successfully!"),
+        [("hx-redirect", "/users"), ("hx-retarget", "body".into())],
+    )
+}
+
+async fn get_users_form(headers: HeaderMap) -> impl IntoResponse {
+    Html(html! {
+        <PageLayout
+            partial=headers.contains_key("Hx-Request")
+            header="Add User"
+        >
+            <AddUserForm action="/users" />
+        </PageLayout>
+    })
+}
+
+async fn get_users_form_modal() -> impl IntoResponse {
+    Html(html! {
+        <Modal size=ModalSize::MediumScreen>
+            <AddUserForm action="/users" />
+        </Modal>
+    })
+}
+
+#[props]
+pub struct AddUserFormProps {
+    #[builder(setter(into))]
+    action: String,
+}
+
+#[component]
+pub fn AddUserForm(props: AddUserFormProps) -> String {
+    html! {
+        <form hx-post=props.action>
+            <div class="pb-12">
+                <p class="mt-1 text-sm leading-6 text-gray-600">
+                    "Please enter the user's information."
+                </p>
+
+                <GridLayout class="mt-10">
+                    <GridCell span=3>
+                        <Label for_input="email">Email</Label>
+                        <TextInput name="email" autocomplete="email" input_type="email" />
+                    </GridCell>
+
+                    <GridCell span=3>
+                        <Label for_input="password">Password</Label>
+                        <TextInput name="password" autocomplete="password" input_type="password" />
+                    </GridCell>
+                </GridLayout>
+            </div>
+            <div class="mt-6 flex items-center justify-end gap-x-6">
+                <Button
+                    onclick="history.go(-1)"
+                    attrs=Attrs::with("data-toggle-action", "close".into())
+                >
+                    Cancel
+                </Button>
+                <Button kind="submit">Save</Button>
+            </div>
+        </form>
     }
 }
