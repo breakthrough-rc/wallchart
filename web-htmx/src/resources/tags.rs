@@ -8,7 +8,7 @@ use crate::{
 use axum::{
     extract::{self, State},
     response::{Html, IntoResponse},
-    routing::get,
+    routing::{delete, get},
     Form, Router,
 };
 use axum_flash::Flash;
@@ -20,22 +20,20 @@ use web_client::server::{
     form::{GridCell, Label, TextInput},
     modal::Modal,
 };
-use worksite_service::{add_tag::AddTagInput, get_tags::GetTagsInput};
+use worksite_service::{add_tag::AddTagInput, get_tag::GetTagInput, get_tags::GetTagsInput};
 
 pub fn tags_routes(state: WebHtmxState) -> Router {
     Router::new()
-        .route(
-            "/wallcharts/:worksite_id/tags",
-            get(get_tags).post(post_tags),
-        )
+        .route("/wallcharts/:worksite_id/tags", get(get_tags))
         .route(
             "/wallcharts/:worksite_id/tags/create-form",
             get(get_create_form).post(post_create_form),
         )
         .route(
-            "/wallcharts/:worksite_id/tags/:id",
-            get(get_tags_detail).delete(delete_tags),
+            "/wallcharts/:worksite_id/tags/:id/edit-form",
+            get(get_edit_form).delete(post_edit_form),
         )
+        .route("/wallcharts/:worksite_id/tags/:id", delete(delete_tag))
         .with_state(state)
 }
 
@@ -108,21 +106,37 @@ async fn get_tags(
     })
 }
 
-async fn get_tags_detail(
-    extract::Path(_): extract::Path<(String,)>,
-    State(_): State<WebHtmxState>,
+async fn get_edit_form(
+    extract::Path((worksite_id, tag_id)): extract::Path<(String, String)>,
+    State(WebHtmxState {
+        worksite_service, ..
+    }): State<WebHtmxState>,
+) -> impl IntoResponse {
+    let tag = worksite_service
+        .get_tag(GetTagInput {
+            worksite_id: worksite_id.clone(),
+            tag_id,
+        })
+        .await
+        .expect("Failed to get tag")
+        .ok_or("Tag not found");
+
+    Html(html! {
+        <Modal>
+            <TagForm worksite_id=worksite_id />
+        </Modal>
+    })
+}
+
+async fn post_edit_form(
+    // extract::Path((worksite_id, tag_id)): extract::Path<(String, String)>,
+    State(WebHtmxState { .. }): State<WebHtmxState>,
+    Form(_): Form<TagFormData>,
 ) -> impl IntoResponse {
     todo!()
 }
 
-#[derive(Deserialize, Debug)]
-struct ExampleForm {}
-
-async fn post_tags(State(_): State<WebHtmxState>, Form(_): Form<ExampleForm>) -> impl IntoResponse {
-    todo!()
-}
-
-async fn delete_tags(
+async fn delete_tag(
     extract::Path(_): extract::Path<(String,)>,
     State(_): State<WebHtmxState>,
 ) -> impl IntoResponse {
@@ -135,9 +149,7 @@ async fn get_create_form(
 ) -> impl IntoResponse {
     Html(html! {
         <Modal>
-            <AddTagForm
-                worksite_id=worksite_id
-            />
+            <TagForm worksite_id=worksite_id />
         </Modal>
     })
 }
@@ -148,7 +160,7 @@ async fn post_create_form(
         worksite_service, ..
     }): State<WebHtmxState>,
     flash: Flash,
-    Form(form): Form<AddTagFormData>,
+    Form(form): Form<TagFormData>,
 ) -> impl IntoResponse {
     worksite_service
         .add_tag(AddTagInput {
@@ -167,21 +179,21 @@ async fn post_create_form(
 }
 
 #[derive(Deserialize, Debug, Default)]
-struct AddTagFormData {
+struct TagFormData {
     name: String,
     icon: String,
 }
 
 #[props]
-struct AddTagFormProps {
+struct TagFormProps {
     worksite_id: String,
 
-    #[builder(default=AddTagFormData::default())]
-    _data: AddTagFormData, // TODO Support pre-populating form data
+    #[builder(default=TagFormData::default())]
+    _data: TagFormData, // TODO Support pre-populating form data
 }
 
 #[component]
-fn AddTagForm(props: AddTagFormProps) -> String {
+fn TagForm(props: TagFormProps) -> String {
     html! {
         <SimpleForm
             action=format!("/wallcharts/{}/tags/create-form", props.worksite_id)
