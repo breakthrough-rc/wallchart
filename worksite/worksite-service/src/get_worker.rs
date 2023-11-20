@@ -30,9 +30,7 @@ impl GetWorker {
             .map_err(|e| GetWorkerFailure::Unknown(e.to_string()))?
             .ok_or(GetWorkerFailure::NotFound)?;
 
-        let worker = worksite.get_worker(input.id);
-
-        Ok(worker)
+        Ok(worksite.get_worker(input.id))
     }
 }
 
