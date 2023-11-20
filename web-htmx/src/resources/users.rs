@@ -184,7 +184,7 @@ async fn post_users(
     (
         StatusCode::OK,
         flash.success("User added successfully!"),
-        [("hx-redirect", "/users"), ("hx-retarget", "body".into())],
+        [("hx-redirect", "/users"), ("hx-retarget", "body")],
     )
 }
 
