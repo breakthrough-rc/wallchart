@@ -49,10 +49,10 @@ async fn get_wallchart_page(
                 title: format!("Wallchart: {}", worksite_name),
                 buttons: html! {
                     <SecondaryButton
-                        hx_get=format!("/wallcharts/{}/locations/new-modal", &id)
+                        hx_get=format!("/worksites/{}/locations/new-modal", &id)
                         hx_target="body"
                         hx_swap="beforeend"
-                        hx_push_url=format!("/wallcharts/{}/locations/new", &id)
+                        hx_push_url=format!("/worksites/{}/locations/new", &id)
                     >
                         Add New Location
                     </SecondaryButton>
