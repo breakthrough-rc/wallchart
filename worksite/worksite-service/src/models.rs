@@ -78,6 +78,13 @@ impl Worksite {
         updated_worksite
     }
 
+    pub fn add_tag(&self, tag: Tag) -> Worksite {
+        let mut updated_worksite = self.clone();
+        updated_worksite.tags.push(tag);
+
+        updated_worksite
+    }
+
     pub fn add_worker(&self, worker: Worker) -> Worksite {
         let mut updated_worksite = self.clone();
 
