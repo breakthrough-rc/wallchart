@@ -26,12 +26,12 @@ pub fn SimpleForm(props: SimpleFormProps) -> String {
                         {props.description}
                     </p>
                     <GridLayout class="mt-10">
-                        <GridCell span=4>
+                        <GridCell span=6>
                             <Label for_input="name">Name</Label>
                             <TextInput name="name" />
                         </GridCell>
                         {props.children}
-                        <GridCell span=4>
+                        <GridCell span=6>
                             <div class="mt-6 flex items-center justify-end gap-x-6">
                                 <Button
                                     onclick="history.go(-1)"

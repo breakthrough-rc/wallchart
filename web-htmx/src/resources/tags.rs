@@ -1,5 +1,8 @@
 use crate::{
-    components::page::{PageHeader, PageLayout},
+    components::{
+        page::{PageHeader, PageLayout},
+        simple_form::SimpleForm,
+    },
     state::WebHtmxState,
 };
 use axum::{
@@ -8,9 +11,13 @@ use axum::{
     routing::get,
     Form, Router,
 };
-use rscx::{html, CollectFragmentAsync};
+use rscx::{component, html, props, CollectFragmentAsync};
 use serde::Deserialize;
-use web_client::server::button::PrimaryButton;
+use web_client::server::{
+    button::PrimaryButton,
+    form::{GridCell, Label, TextInput},
+    modal::Modal,
+};
 use worksite_service::get_tags::GetTagsInput;
 
 pub fn tags_routes(state: WebHtmxState) -> Router {
@@ -18,6 +25,10 @@ pub fn tags_routes(state: WebHtmxState) -> Router {
         .route(
             "/wallcharts/:worksite_id/tags",
             get(get_tags).post(post_tags),
+        )
+        .route(
+            "/wallcharts/:worksite_id/tags/create-form",
+            get(get_create_form).post(post_create_form),
         )
         .route(
             "/wallcharts/:worksite_id/tags/:id",
@@ -44,7 +55,10 @@ async fn get_tags(
                 title: "Manage Tags".into(),
                 buttons: html! {
                     <PrimaryButton
-                        onclick="alert('Coming soon!')"
+                        hx_get=format!("/wallcharts/{}/tags/create-form", &worksite_id)
+                        hx_target="body"
+                        hx_swap="beforeend"
+                        hx_push_url=format!("/wallcharts/{}/tags/create-form", &worksite_id)
                     >
                         Add Tag
                     </PrimaryButton>
@@ -111,4 +125,44 @@ async fn delete_tags(
     State(_): State<WebHtmxState>,
 ) -> impl IntoResponse {
     todo!()
+}
+
+async fn get_create_form(
+    extract::Path(worksite_id): extract::Path<String>,
+    State(_): State<WebHtmxState>,
+) -> impl IntoResponse {
+    Html(html! {
+        <Modal>
+            <AddTagForm
+                worksite_id=worksite_id
+            />
+        </Modal>
+    })
+}
+
+async fn post_create_form(
+    State(_): State<WebHtmxState>,
+    Form(_): Form<ExampleForm>,
+) -> impl IntoResponse {
+    todo!()
+}
+
+#[props]
+pub struct AddTagFormProps {
+    worksite_id: String,
+}
+
+#[component]
+fn AddTagForm(props: AddTagFormProps) -> String {
+    html! {
+        <SimpleForm
+            action=format!("/wallcharts/{}/tags/create-form", props.worksite_id)
+            description="Add a new tag"
+        >
+            <GridCell span=6>
+                <Label for_input="icon">Icon</Label>
+                <TextInput name="icon" />
+            </GridCell>
+        </SimpleForm>
+    }
 }
