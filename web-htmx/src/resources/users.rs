@@ -2,11 +2,11 @@ use crate::{
     components::{
         login_form::LoginForm,
         page::{PageHeader, PageLayout},
-        users::Users,
     },
     state::WebHtmxState,
 };
 use auth_service::get_user_for_login::GetUserForLoginInput;
+use auth_service::models::User;
 use axum::{
     extract::State,
     response::{Html, IntoResponse},
@@ -16,7 +16,7 @@ use axum::{
 use axum_flash::Flash;
 use http::StatusCode;
 use in_memory_user_repository::AuthContext;
-use rscx::html;
+use rscx::{component, html, props, CollectFragmentAsync};
 use serde::Deserialize;
 use web_client::server::button::PrimaryButton;
 
@@ -98,4 +98,57 @@ async fn get_users(State(state): State<WebHtmxState>) -> impl IntoResponse {
             <Users users=users />
         </PageLayout>
     })
+}
+
+#[props]
+pub struct UsersProps {
+    users: Vec<User>,
+}
+
+#[component]
+pub fn Users(props: UsersProps) -> String {
+    html! {
+        <table class="min-w-full divide-y divide-gray-300">
+            <thead class="bg-gray-50">
+
+                <tr>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">Email</th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Role</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white">
+                {
+                    props
+                        .users
+                        .iter()
+                        .map(|user| async {
+                            html! {
+                                <User
+                                    user=user.clone()
+                                />
+                            }
+                        })
+                        .collect_fragment_async()
+                        .await
+                }
+            </tbody>
+        </table>
+    }
+}
+
+#[props]
+pub struct UserProps {
+    user: User,
+}
+
+#[component]
+pub fn User(props: UserProps) -> String {
+    html! {
+        <tr class="border-t border-gray-300" data-loading-states>
+            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
+                {props.user.email}
+            </td>
+            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">Organizer</td>
+        </tr>
+    }
 }
