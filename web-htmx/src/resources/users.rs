@@ -5,12 +5,12 @@ use crate::{
     },
     state::WebHtmxState,
 };
-use auth_service::models::User;
 use auth_service::{create_user::CreateUserInput, get_user_for_login::GetUserForLoginInput};
+use auth_service::{delete_user::DeleteUserInput, models::User};
 use axum::{
-    extract::State,
+    extract::{self, State},
     response::{Html, IntoResponse},
-    routing::get,
+    routing::{delete, get},
     Form, Router,
 };
 use axum_flash::Flash;
@@ -30,6 +30,7 @@ pub fn users_routes(state: WebHtmxState) -> Router {
         .route("/login", get(get_login).post(post_login))
         .route("/users", get(get_users).post(post_users))
         .route("/users/new", get(get_users_form))
+        .route("/users/:user_id", delete(delete_user))
         .route("/users/new-modal", get(get_users_form_modal))
         .with_state(state)
 }
@@ -244,5 +245,21 @@ pub fn AddUserForm(props: AddUserFormProps) -> String {
                 <Button kind="submit">Save</Button>
             </div>
         </form>
+    }
+}
+
+async fn delete_user(
+    extract::Path(user_id): extract::Path<String>,
+    State(WebHtmxState { auth_service, .. }): State<WebHtmxState>,
+) -> impl IntoResponse {
+    let result = auth_service
+        .delete_user(DeleteUserInput {
+            user_id: user_id.clone(),
+        })
+        .await;
+
+    match result {
+        Ok(_) => "".into_response(),
+        Err(_) => (StatusCode::INTERNAL_SERVER_ERROR, "Error deleting user").into_response(),
     }
 }
