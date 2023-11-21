@@ -1,4 +1,4 @@
-use crate::{components::simple_form::SimpleForm, state::WebHtmxState};
+use crate::{components::simple_form::SimpleForm, routes, state::WebHtmxState};
 use axum::{
     extract::{self, State},
     response::{Html, IntoResponse},
@@ -15,11 +15,8 @@ use worksite_service::add_location::AddLocationInput;
 pub fn locations_routes(state: WebHtmxState) -> Router {
     Router::new()
         // Worksite locations
-        .route("/worksites/:worksite_id/locations", post(post_location))
-        .route(
-            "/worksites/:worksite_id/locations/new-modal",
-            get(get_location_form_modal),
-        )
+        .route(routes::LOCATIONS, post(post_location))
+        .route(routes::LOCATIONS_NEW_MODAL, get(get_location_form_modal))
         .with_state(state)
 }
 
@@ -28,7 +25,7 @@ async fn get_location_form_modal(
 ) -> impl IntoResponse {
     Html(html! {
         <Modal>
-            <LocationForm action=format!("/wallcharts/{}/locations", worksite_id) />
+            <LocationForm action=routes::locations(&worksite_id) />
         </Modal>
     })
 }
@@ -57,7 +54,10 @@ async fn post_location(
     (
         StatusCode::OK,
         flash.success("Added new location!"),
-        [("hx-redirect", "/wallchart"), ("hx-retarget", "body")],
+        [
+            ("hx-redirect", routes::wallchart()),
+            ("hx-retarget", "body".into()),
+        ],
     )
 }
 

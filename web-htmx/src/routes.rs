@@ -37,6 +37,11 @@ pub fn wallchart() -> String {
     WALLCHART.into()
 }
 
+pub const LOCATIONS: &str = "/worksites/:worksite_id/locations";
+pub fn locations(worksite_id: &String) -> String {
+    format!("/worksites/{}/locations", worksite_id)
+}
+
 pub const LOCATIONS_NEW_MODAL: &str = "/worksites/:worksite_id/locations/new-modal";
 pub fn locations_new_modal(worksite_id: &String) -> String {
     format!("/worksites/{}/locations/new-modal", worksite_id)
