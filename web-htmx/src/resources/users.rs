@@ -125,6 +125,7 @@ pub fn Users(props: UsersProps) -> String {
                 <tr>
                     <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">Email</th>
                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Role</th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"></th>
                 </tr>
             </thead>
             <tbody class="bg-white">
@@ -160,6 +161,23 @@ pub fn User(props: UserProps) -> String {
                 {props.user.email}
             </td>
             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">Organizer</td>
+            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                <button
+                    type="button"
+                    hx-delete={format!("/users/{}", props.user.id)}
+                    class="text-center inline-flex items-center rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:bg-gray-50 disabled:shadow-none disabled:cursor-not-allowed disabled:text-gray-500"
+                    hx-swap="outerHTML swap:1s"
+                    hx-target="closest tr"
+                    data-loading-disable
+                >
+                    <div
+                        class="htmx-indicator inline-flex animate-spin mr-2 items-center justify-center rounded-full w-4 h-4 bg-gradient-to-tr from-gray-500 to-white"
+                    >
+                        <span class="inline h-3 w-3 rounded-full bg-white hover:bg-gray-50"></span>
+                    </div>
+                    Delete
+                </button>
+            </td>
         </tr>
     }
 }
