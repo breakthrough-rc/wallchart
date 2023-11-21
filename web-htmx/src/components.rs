@@ -1,6 +1,5 @@
 //##PLOP COMPONENT MOD##
 pub mod appshell;
-pub mod assign_shift_form;
 pub mod login_form;
 pub mod logo;
 pub mod nav;

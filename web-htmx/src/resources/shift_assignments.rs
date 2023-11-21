@@ -1,7 +1,3 @@
-use crate::{
-    components::{assign_shift_form::AssignShiftForm, page::PageLayout},
-    state::WebHtmxState,
-};
 use axum::{
     extract::{self, State},
     response::{Html, IntoResponse},
@@ -10,13 +6,20 @@ use axum::{
 };
 use axum_flash::Flash;
 use http::StatusCode;
-use rscx::html;
+use rscx::{component, html, props, CollectFragmentAsync};
 use serde::Deserialize;
-use web_client::server::modal::{Modal, ModalSize};
+
+use web_client::server::{
+    attrs::Attrs,
+    form::{Button, GridCell, GridLayout, Label, SelectInput},
+    modal::{Modal, ModalSize},
+};
 use worksite_service::{
-    assign_worker::AssignWorkerInput, get_workers::GetWorkersInput,
+    assign_worker::AssignWorkerInput, get_workers::GetWorkersInput, models::Worker,
     remove_worker_from_shift::RemoveWorkerFromShiftInput,
 };
+
+use crate::{components::page::PageLayout, state::WebHtmxState};
 
 pub fn shift_assignments_routes(state: WebHtmxState) -> Router {
     Router::new()
@@ -143,4 +146,67 @@ async fn post_shift_assignment(
         flash.success("Shift assigned successfully!"),
         [("hx-redirect", "/wallchart"), ("hx-retarget", "body")],
     )
+}
+
+#[props]
+struct AssignShiftFormProps {
+    #[builder(setter(into))]
+    workers: Vec<Worker>,
+
+    #[builder(setter(into))]
+    action: String,
+
+    #[builder(setter(into))]
+    create_worker_action: String,
+}
+
+#[component]
+fn AssignShiftForm(props: AssignShiftFormProps) -> String {
+    html! {
+        <div>
+            <form hx-post=props.action>
+                <div class="pb-12">
+                    <p class="mt-1 text-sm leading-6 text-gray-600">
+                        Assign a worker to this shift
+                    </p>
+                    <GridLayout class="mt-10">
+                        <GridCell span=4>
+                            <Label for_input="worker_id">Worker</Label>
+                            <SelectInput name="worker_id" >
+                            {
+                                props
+                                    .workers
+                                    .iter()
+                                    .map(|worker| async {
+                                        html! {
+                                            <option value=worker.id>{worker.full_name()}</option>
+                                        }
+                                    })
+                                    .collect_fragment_async()
+                                    .await
+                            }
+                            </SelectInput>
+                        </GridCell>
+                        <GridCell span=4>
+                            <div class="mt-6 flex items-center justify-end gap-x-6">
+                                <Button
+                                    onclick="history.go(-1)"
+                                    attrs=Attrs::with("data-toggle-action", "close".into())
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    hx_get=props.create_worker_action
+                                    hx_target="closest form"
+                                >
+                                    Create a new worker
+                                </Button>
+                                <Button kind="submit">Assign</Button>
+                            </div>
+                        </GridCell>
+                    </GridLayout>
+                </div>
+            </form>
+        </div>
+    }
 }
