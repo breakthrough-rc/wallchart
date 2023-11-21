@@ -41,35 +41,17 @@ async fn get_playground() -> Html<String> {
 #[component]
 pub fn PlaygroundPgContent() -> String {
     html! {
-        <Welcome
-            title="Yall Ready for This?"
-        >
+        <section>
+            <h1 class="text-xl text-slate-600">Yall Ready for This?</h1>
             <marquee>
                 "It's The Playground&#133; Let's have some fun!"
             </marquee>
-            <NotificationsPlayground />
-            <ModalPlayground />
-            <AuthPlayground />
-            <HtmxPlayground />
-            <PagePlayground />
-            <HtmlElementPlayground />
-        </Welcome>
-    }
-}
-
-#[props]
-struct WelcomeProps {
-    #[builder(setter(into), default = "Welcome!".to_string())]
-    title: String,
-
-    #[builder(default)]
-    children: String,
-}
-
-#[component]
-fn Welcome(props: WelcomeProps) -> String {
-    html! {
-        <h1 class="text-xl text-slate-600">{props.title}</h1>
-        {props.children}
+        </section>
+        <NotificationsPlayground />
+        <ModalPlayground />
+        <AuthPlayground />
+        <HtmxPlayground />
+        <PagePlayground />
+        <HtmlElementPlayground />
     }
 }
