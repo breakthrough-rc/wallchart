@@ -21,7 +21,8 @@ use web_client::server::{
     modal::Modal,
 };
 use worksite_service::{
-    add_tag::AddTagInput, get_tag::GetTagInput, get_tags::GetTagsInput, update_tag::UpdateTagInput,
+    add_tag::AddTagInput, get_tag::GetTagInput, get_tags::GetTagsInput, remove_tag::RemoveTagInput,
+    update_tag::UpdateTagInput,
 };
 
 pub fn tags_routes(state: WebHtmxState) -> Router {
@@ -79,6 +80,7 @@ async fn get_tags(
                                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Icon</th>
                                         <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
                                             <span class="sr-only">Edit</span>
+                                            <span class="sr-only">Remove</span>
                                         </th>
                                     </tr>
                                 </thead>
@@ -90,15 +92,28 @@ async fn get_tags(
                                                     <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{&tag.name}</td>
                                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{&tag.icon}</td>
                                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                                        <a
-                                                            hx-get=format!("/worksites/{}/tags/{}/edit-form", &worksite_id, &tag.id)
-                                                            hx-target="body"
-                                                            hx-swap="beforeend"
-                                                            hx-push-url=format!("/worksites/{}/tags/{}/edit-form", &worksite_id, &tag.id)
-                                                            class="text-indigo-600 hover:text-indigo-900"
-                                                        >
-                                                            Edit<span class="sr-only">, {&tag.name}</span>
-                                                        </a>
+                                                        <div class="flex gap-8">
+                                                            <a
+                                                                hx-get=format!("/worksites/{}/tags/{}/edit-form", &worksite_id, &tag.id)
+                                                                hx-target="body"
+                                                                hx-swap="beforeend"
+                                                                hx-push-url=format!("/worksites/{}/tags/{}/edit-form", &worksite_id, &tag.id)
+                                                                class="text-indigo-600 hover:text-indigo-900"
+                                                            >
+                                                                Edit<span class="sr-only">, {&tag.name}</span>
+                                                            </a>
+                                                            <a
+                                                                onclick="YcControls.confirmDelete({
+                                                                  title: 'Delete tag',
+                                                                  message: 'Are you sure you want to delete this tag?',
+                                                                  deleteHref: this.dataset.deleteHref,
+                                                                })"
+                                                                data-delete-href=format!("/worksites/{}/tags/{}", &worksite_id, &tag.id)
+                                                                class="text-indigo-600 hover:text-indigo-900"
+                                                            >
+                                                                Remove<span class="sr-only">, {&tag.name}</span>
+                                                            </a>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             }
@@ -174,10 +189,28 @@ async fn post_edit_form(
 }
 
 async fn delete_tag(
-    extract::Path(_): extract::Path<(String,)>,
-    State(_): State<WebHtmxState>,
+    extract::Path((worksite_id, tag_id)): extract::Path<(String, String)>,
+    State(WebHtmxState {
+        worksite_service, ..
+    }): State<WebHtmxState>,
+    flash: Flash,
 ) -> impl IntoResponse {
-    todo!()
+    worksite_service
+        .remove_tag(RemoveTagInput {
+            worksite_id: worksite_id.clone(),
+            tag_id: tag_id.clone(),
+        })
+        .await
+        .expect("Failed to remove tag");
+
+    (
+        StatusCode::OK,
+        flash.success("Tag removed!"),
+        [
+            ("hx-redirect", format!("/worksites/{}/tags", &worksite_id)),
+            ("hx-retarget", "body".into()),
+        ],
+    )
 }
 
 async fn get_create_form(
