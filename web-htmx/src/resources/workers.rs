@@ -5,8 +5,8 @@ use crate::{
         worker_profile_fieldset::{WorkerProfileFieldset, WorkerProfileFormData},
     },
     routes::{
-        worker, worker_profile, worker_tags_form, workers, workers_new, workers_new_modal, WORKER,
-        WORKERS, WORKERS_NEW, WORKERS_NEW_MODAL, WORKER_PROFILE,
+        self, worker, worker_profile, workers, workers_new, workers_new_modal, WORKER, WORKERS,
+        WORKERS_NEW, WORKERS_NEW_MODAL, WORKER_PROFILE,
     },
     state::WebHtmxState,
 };
@@ -156,7 +156,7 @@ async fn get_worker_details(
                         </div>
                     </div>
                     <section
-                        hx-get=worker_tags_form(&worksite_id, &worker_id)
+                        hx-get=routes::assigned_tags_form(&worksite_id, &worker_id)
                         hx-trigger="revealed"
                     >
                         <svg class="animate-spin m-auto text-gray-100 h-10 w-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

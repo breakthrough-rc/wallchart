@@ -47,7 +47,7 @@ pub fn locations_new_modal(worksite_id: &String) -> String {
     format!("/worksites/{}/locations/new-modal", worksite_id)
 }
 
-pub const LOCATIONS_NEW: &str = "/worksites/:worksite_id/locations/new";
+pub const _LOCATIONS_NEW: &str = "/worksites/:worksite_id/locations/new";
 pub fn locations_new(worksite_id: &String) -> String {
     format!("/worksites/{}/locations/new", worksite_id)
 }
@@ -69,7 +69,7 @@ pub fn shifts_new_modal(worksite_id: &String, location_id: &String) -> String {
     )
 }
 
-pub const SHIFTS_NEW: &str = "/worksites/:worksite_id/locations/:location_id/shifts/new";
+pub const _SHIFTS_NEW: &str = "/worksites/:worksite_id/locations/:location_id/shifts/new";
 pub fn shifts_new(worksite_id: &String, location_id: &String) -> String {
     format!(
         "/worksites/{}/locations/{}/shifts/new",
@@ -160,11 +160,6 @@ pub fn worker(worksite_id: &String, worker_id: &String) -> String {
 pub const WORKER_PROFILE: &str = "/worksites/:worksite_id/workers/:worker_id/profile";
 pub fn worker_profile(worksite_id: &String, worker_id: &String) -> String {
     format!("/worksites/{}/workers/{}/profile", worksite_id, worker_id)
-}
-
-pub const WORKER_TAGS_FORM: &str = "/worksites/:worksite_id/workers/:worker_id/tags-form";
-pub fn worker_tags_form(worksite_id: &String, worker_id: &String) -> String {
-    format!("/worksites/{}/workers/{}/tags-form", worksite_id, worker_id)
 }
 
 pub const USERS: &str = "/users";
