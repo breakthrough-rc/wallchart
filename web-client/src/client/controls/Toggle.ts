@@ -1,5 +1,6 @@
 import { ControlRegistry } from "../registery";
 import Transition from "./Transition";
+import events from "../events";
 
 type ToggleState = "opened" | "closed";
 
@@ -63,6 +64,10 @@ const Toggle_ = {
           document.body.addEventListener("click", handleBodyClick);
         }
         delegate.toggleOpened?.();
+        events.trigger({
+          event: "yc:toggleOpened",
+          target: element,
+        });
       },
 
       async close() {
@@ -73,6 +78,10 @@ const Toggle_ = {
           document.body.removeEventListener("click", handleBodyClick);
         }
         delegate.toggleClosed?.();
+        events.trigger({
+          event: "yc:toggleClosed",
+          target: element,
+        });
       },
     };
 
