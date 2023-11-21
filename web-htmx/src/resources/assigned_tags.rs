@@ -1,4 +1,4 @@
-use crate::state::WebHtmxState;
+use crate::{routes, state::WebHtmxState};
 use axum::{
     extract::{self, State},
     response::{Html, IntoResponse},
@@ -20,14 +20,8 @@ use worksite_service::{
 
 pub fn assigned_tags_routes(state: WebHtmxState) -> Router {
     Router::new()
-        .route(
-            "/worksites/:worksite_id/workers/:worker_id/tags-form",
-            get(get_worker_tags_form),
-        )
-        .route(
-            "/worksites/:worksite_id/workers/:worker_id/tags",
-            put(put_worker_tags),
-        )
+        .route(routes::ASSIGNED_TAGS_FORM, get(get_worker_tags_form))
+        .route(routes::ASSIGNED_TAGS, put(put_worker_tags))
         .with_state(state)
 }
 
@@ -58,7 +52,7 @@ async fn get_worker_tags_form(
 
     Html(html! {
         <AssignTagsForm
-            action=format!("/worksites/{}/workers/{}/tags", worksite_id, worker_id)
+            action=routes::assigned_tags(&worksite_id, &worker_id)
             tags=worksite.tags
             worker=worker
         />
@@ -91,7 +85,10 @@ async fn put_worker_tags(
     (
         StatusCode::OK,
         flash.success("Worker tags assigned successfully!"),
-        [("hx-redirect", "/wallchart"), ("hx-retarget", "body")],
+        [
+            ("hx-redirect", routes::wallchart()),
+            ("hx-retarget", "body".into()),
+        ],
     )
 }
 

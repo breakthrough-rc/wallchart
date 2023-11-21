@@ -178,3 +178,13 @@ pub const USER: &str = "/users/:user_id";
 pub fn user(user_id: &String) -> String {
     format!("/users/{}", user_id)
 }
+
+pub const ASSIGNED_TAGS: &str = "/worksites/:worksite_id/workers/:worker_id/tags";
+pub fn assigned_tags(worksite_id: &String, worker_id: &String) -> String {
+    format!("/worksites/{}/workers/{}/tags", worksite_id, worker_id)
+}
+
+pub const ASSIGNED_TAGS_FORM: &str = "/worksites/:worksite_id/workers/:worker_id/tags-form";
+pub fn assigned_tags_form(worksite_id: &String, worker_id: &String) -> String {
+    format!("/worksites/{}/workers/{}/tags-form", worksite_id, worker_id)
+}
