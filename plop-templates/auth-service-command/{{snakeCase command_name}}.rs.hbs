@@ -24,7 +24,7 @@ impl {{pascalCase command_name}} {
             .user_repository
             .find_by_email(input.email)
             .await
-            .map_err(|e| {{pascalCase command_name}}::Internal(e.to_string()))?;
+            .map_err(|e| {{pascalCase command_name}}Failure::Internal(e.to_string()))?;
 
         let user = todo!("update the user or whatever you like")
 

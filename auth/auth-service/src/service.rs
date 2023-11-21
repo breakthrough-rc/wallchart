@@ -3,6 +3,9 @@ use std::sync::Arc;
 use crate::{
     create_user::{CreateUser, CreateUserInput, CreateUserOutput},
     //##PLOP INSERT COMMAND IMPORTS HOOK##
+    get_user::{
+      GetUser, GetUserInput, GetUserOutput, 
+    },
     delete_user::{DeleteUser, DeleteUserInput, DeleteUserOutput},
     get_user_for_login::{GetUserForLogin, GetUserForLoginInput, GetUserForLoginOutput},
     get_users::{GetUsers, GetUsersOutput},
@@ -12,6 +15,7 @@ use crate::{
 #[derive(Clone)]
 pub struct AuthService {
     //##PLOP INSERT COMMAND HOOK##
+    pub get_user: GetUser,
     pub delete_user: DeleteUser,
     pub get_users: GetUsers,
     pub get_user_for_login: GetUserForLogin,
@@ -22,6 +26,10 @@ impl AuthService {
     pub fn new(user_repository: Arc<dyn UserRepository>) -> Self {
         Self {
             //##PLOP INSERT COMMAND INSTANTIATION HOOK##
+            get_user: GetUser {
+              // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
+              user_repository: user_repository.clone(),
+            },
             delete_user: DeleteUser {
                 user_repository: user_repository.clone(),
             },
@@ -35,6 +43,13 @@ impl AuthService {
         }
     }
     //##PLOP INSERT DELEGATE HOOK##
+    pub async fn get_user(
+        &self,
+        input: GetUserInput,
+    ) -> GetUserOutput {
+        self.get_user.get_user(input).await
+    }
+
     pub async fn delete_user(&self, input: DeleteUserInput) -> DeleteUserOutput {
         self.delete_user.delete_user(input).await
     }

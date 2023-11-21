@@ -5,7 +5,9 @@ use crate::{
     },
     state::WebHtmxState,
 };
-use auth_service::{create_user::CreateUserInput, get_user_for_login::GetUserForLoginInput};
+use auth_service::{
+    create_user::CreateUserInput, get_user::GetUserInput, get_user_for_login::GetUserForLoginInput,
+};
 use auth_service::{delete_user::DeleteUserInput, models::User};
 use axum::{
     extract::{self, State},
@@ -30,7 +32,7 @@ pub fn users_routes(state: WebHtmxState) -> Router {
         .route("/login", get(get_login).post(post_login))
         .route("/users", get(get_users).post(post_users))
         .route("/users/new", get(get_users_form))
-        .route("/users/:user_id", delete(delete_user))
+        .route("/users/:user_id", get(get_user_detail).delete(delete_user))
         .route("/users/new-modal", get(get_users_form_modal))
         .with_state(state)
 }
@@ -158,7 +160,12 @@ pub fn User(props: UserProps) -> String {
     html! {
         <tr class="border-t border-gray-300" data-loading-states>
             <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
-                {props.user.email}
+                  <button
+                      hx-get=format!("/users/{}", props.user.id)
+                      hx-target="body"
+                  >
+                      {props.user.email}
+                  </button>
             </td>
             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">Organizer</td>
             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
@@ -230,6 +237,12 @@ async fn get_users_form_modal() -> impl IntoResponse {
 pub struct AddUserFormProps {
     #[builder(setter(into))]
     action: String,
+
+    #[builder(setter(into), default)]
+    email: String,
+
+    #[builder(setter(into), default)]
+    role: String,
 }
 
 #[component]
@@ -244,12 +257,17 @@ pub fn AddUserForm(props: AddUserFormProps) -> String {
                 <GridLayout class="mt-10">
                     <GridCell span=3>
                         <Label for_input="email">Email</Label>
-                        <TextInput name="email" autocomplete="email" input_type="email" />
+                        <TextInput name="email" autocomplete="email" input_type="email" value=props.email/>
                     </GridCell>
 
                     <GridCell span=3>
                         <Label for_input="password">Password</Label>
                         <TextInput name="password" autocomplete="password" input_type="password" />
+                    </GridCell>
+
+                    <GridCell span=3>
+                        <Label for_input="role">Role</Label>
+                        <TextInput name="role" input_type="text" value=props.role />
                     </GridCell>
                 </GridLayout>
             </div>
@@ -280,4 +298,24 @@ async fn delete_user(
         Ok(_) => "".into_response(),
         Err(_) => (StatusCode::INTERNAL_SERVER_ERROR, "Error deleting user").into_response(),
     }
+}
+
+async fn get_user_detail(
+    extract::Path(user_id): extract::Path<String>,
+    State(WebHtmxState { auth_service, .. }): State<WebHtmxState>,
+) -> impl IntoResponse {
+    let user = auth_service
+        .get_user(GetUserInput {
+            user_id: user_id.clone(),
+        })
+        .await
+        .expect("Failed to get user")
+        .ok_or("User not found")
+        .expect("User not found");
+
+    Html(html! {
+        <PageLayout header=user.email.clone()>
+            <AddUserForm action=format!("/users/{}", user.id.clone()) email=user.email.clone() role="Organizer" />
+        </PageLayout>
+    })
 }
