@@ -5,11 +5,7 @@ import query from "../query"
 type ConfirmDeleteCommand = {
   title?: string,
   message?: string,
-  confirmText?: string,
-  cancelText?: string,
   deleteHref: string,
-  // actionConfirmed: () => void,
-  // actionCanceled?: () => void,
 };
 
 const Modal = {
@@ -32,8 +28,6 @@ const Modal = {
   confirmDelete({
     title,
     message,
-    confirmText = "Delete",
-    cancelText = "cancel",
     deleteHref,
   }: ConfirmDeleteCommand) {
     const tpl = query(document, "#tpl-confirm-delete-modal") as HTMLTemplateElement;
@@ -44,12 +38,8 @@ const Modal = {
       message: "[data-confirm-delete-message]",
     });
 
-    if (title) {
-      Elements.title.textContent = title;
-    }
-    if (message) {
-      Elements.message.textContent = message;
-    }
+    if (title) Elements.title.textContent = title;
+    if (message) Elements.message.textContent = message;
 
     const deleteActionElement = query(modalElement, "[data-confirm-action=\"delete\"]");
     deleteActionElement.addEventListener("click", () => {
