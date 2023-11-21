@@ -1,30 +1,29 @@
-use crate::{
-    components::{
-        login_form::LoginForm,
-        page::{PageHeader, PageLayout},
-    },
-    state::WebHtmxState,
-};
-use auth_service::{
-    create_user::CreateUserInput, get_user::GetUserInput, get_user_for_login::GetUserForLoginInput,
-};
-use auth_service::{delete_user::DeleteUserInput, models::User};
 use axum::{
     extract::{self, State},
     response::{Html, IntoResponse},
-    routing::{get},
+    routing::get,
     Form, Router,
 };
 use axum_flash::Flash;
 use http::{HeaderMap, StatusCode};
-use in_memory_user_repository::AuthContext;
 use rscx::{component, html, props, CollectFragmentAsync};
 use serde::Deserialize;
+
+use auth_service::{
+    create_user::CreateUserInput, delete_user::DeleteUserInput, get_user::GetUserInput,
+    get_user_for_login::GetUserForLoginInput, models::User,
+};
+use in_memory_user_repository::AuthContext;
 use web_client::server::{
     attrs::Attrs,
     button::PrimaryButton,
     form::{Button, GridCell, GridLayout, Label, TextInput},
     modal::{Modal, ModalSize},
+};
+
+use crate::{
+    components::page::{PageHeader, PageLayout},
+    state::WebHtmxState,
 };
 
 pub fn users_routes(state: WebHtmxState) -> Router {
@@ -318,4 +317,38 @@ async fn get_user_detail(
             <AddUserForm action=format!("/users/{}", user.id.clone()) email=user.email.clone() role="Organizer" />
         </PageLayout>
     })
+}
+
+#[props]
+struct LoginFormProps {
+    #[builder(setter(into))]
+    login_route: String,
+}
+
+#[component]
+fn LoginForm(props: LoginFormProps) -> String {
+    html! {
+        <form hx-post=props.login_route>
+            <div class="pb-12">
+                <p class="mt-1 text-sm leading-6 text-gray-600">
+                    "pssst: try user@yallchart.com / password"
+                </p>
+                <GridLayout class="mt-10">
+                    <GridCell span=4>
+                        <Label for_input="email">Email</Label>
+                        <TextInput input_type="email" name="email" autocomplete="email" />
+                    </GridCell>
+                    <GridCell span=4>
+                        <Label for_input="password">Password</Label>
+                        <TextInput input_type="password" name="password" autocomplete="password" />
+                    </GridCell>
+                    <GridCell span=4>
+                        <div class="mt-6 flex items-center justify-end gap-x-6">
+                            <Button kind="submit">Login</Button>
+                        </div>
+                    </GridCell>
+                </GridLayout>
+            </div>
+        </form>
+    }
 }
