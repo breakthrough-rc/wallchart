@@ -1,8 +1,12 @@
-use crate::components::{
-    page::{PageHeader, PageLayout},
-    wallchart::Wallchart,
-};
+use crate::routes::{locations_new, locations_new_modal, tags};
 use crate::state::WebHtmxState;
+use crate::{
+    components::{
+        page::{PageHeader, PageLayout},
+        wallchart::Wallchart,
+    },
+    routes::WALLCHART,
+};
 use axum::{
     extract::State,
     response::{Html, IntoResponse},
@@ -21,8 +25,7 @@ use worksite_service::get_worksite::GetWorksiteInput;
 
 pub fn worksite_routes(state: WebHtmxState) -> Router {
     Router::new()
-        // The actual wallchart
-        .route("/wallchart", get(get_wallchart_page))
+        .route(WALLCHART, get(get_wallchart_page))
         .with_state(state)
 }
 
@@ -49,16 +52,16 @@ async fn get_wallchart_page(
                 title: format!("Wallchart: {}", worksite_name),
                 buttons: html! {
                     <SecondaryButton
-                        hx_get=format!("/worksites/{}/locations/new-modal", &id)
+                        hx_get=locations_new_modal(&id.into())
                         hx_target="body"
                         hx_swap="beforeend"
-                        hx_push_url=format!("/worksites/{}/locations/new", &id)
+                        hx_push_url=locations_new(&id.into())
                     >
                         Add New Location
                     </SecondaryButton>
                     <SecondaryButton
                         tag="a"
-                        href=format!("/worksites/{}/tags", &id)
+                        href=tags(&id.into())
                     >
                         Manage Tags
                     </SecondaryButton>

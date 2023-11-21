@@ -4,6 +4,10 @@ use crate::{
         page::{PageHeader, PageLayout},
         worker_profile_fieldset::{WorkerProfileFieldset, WorkerProfileFormData},
     },
+    routes::{
+        worker, worker_profile, worker_tags_form, workers, workers_new, workers_new_modal, WORKER,
+        WORKERS, WORKERS_NEW, WORKERS_NEW_MODAL, WORKER_PROFILE,
+    },
     state::WebHtmxState,
 };
 use axum::{
@@ -33,24 +37,12 @@ use worksite_service::{
 
 pub fn workers_routes(state: WebHtmxState) -> Router {
     Router::new()
-        .route("/worksites/:worksite_id/workers", get(get_workers))
-        .route(
-            "/worksites/:worksite_id/workers/:worker_id",
-            get(get_worker_details),
-        )
-        .route(
-            "/worksites/:worksite_id/workers/:worker_id/profile/",
-            post(post_worker_profile_form),
-        )
-        .route("/workers", get(Redirect::temporary("/worksites/1/workers")))
-        .route(
-            "/wallcharts/:worksite_id/workers/new",
-            get(get_worker_form).post(post_worker),
-        )
-        .route(
-            "/wallcharts/:worksite_id/workers/new-modal",
-            get(get_worker_form_modal),
-        )
+        .route(WORKERS, get(get_workers))
+        .route(WORKER, get(get_worker_details))
+        .route(WORKER_PROFILE, post(post_worker_profile_form))
+        .route("/workers", get(workers(&"1".to_string())))
+        .route(WORKERS_NEW, get(get_worker_form).post(post_worker))
+        .route(WORKERS_NEW_MODAL, get(get_worker_form_modal))
         .with_state(state)
 }
 
@@ -83,10 +75,10 @@ async fn get_workers(
                 title: "Workers".into(),
                 buttons: html! {
                     <PrimaryButton
-                        hx_get=format!("/wallcharts/{}/workers/new-modal", &worksite_id)
+                        hx_get=workers_new_modal(&worksite_id)
                         hx_target="body"
                         hx_swap="beforeend"
-                        hx_push_url=format!("/wallcharts/{}/workers/new", &worksite_id)
+                        hx_push_url=workers_new(&worksite_id)
                     >
                         Add New Worker
                     </PrimaryButton>
@@ -147,7 +139,7 @@ async fn get_worker_details(
                                 </div>
                                 <div class="bg-gray-50 px-4 py-3 text-right sm:px-6">
                                     <PrimaryButton
-                                        hx_post=format!("/worksites/{}/workers/{}/profile/", &worksite_id, &worker_id)
+                                        hx_post=worker_profile(&worksite_id, &worker_id)
                                     >
                                         Update Profile
                                     </PrimaryButton>
@@ -164,7 +156,7 @@ async fn get_worker_details(
                         </div>
                     </div>
                     <section
-                        hx-get=format!("/worksites/{}/workers/{}/tags-form", &worksite_id, &worker_id)
+                        hx-get=worker_tags_form(&worksite_id, &worker_id)
                         hx-trigger="revealed"
                     >
                         <svg class="animate-spin m-auto text-gray-100 h-10 w-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -183,7 +175,7 @@ async fn get_worker_form_modal(
 ) -> impl IntoResponse {
     Html(html! {
         <Modal size=ModalSize::MediumScreen>
-            <AddWorkerForm action=format!("/wallcharts/{}/workers/new", wallchart_id) />
+            <AddWorkerForm action=workers_new(&wallchart_id) />
         </Modal>
     })
 }
@@ -197,7 +189,7 @@ async fn get_worker_form(
             partial=headers.contains_key("Hx-Request")
             header="Add Worker"
         >
-            <AddWorkerForm action=format!("/wallcharts/{}/workers/new", wallchart_id) />
+            <AddWorkerForm action=workers_new(&wallchart_id) />
         </PageLayout>
     })
 }
@@ -227,10 +219,7 @@ async fn post_worker(
         StatusCode::OK,
         flash.success("Worker added successfully!"),
         [
-            (
-                "hx-redirect",
-                format!("/worksites/{}/workers", wallchart_id),
-            ),
+            ("hx-redirect", workers(&wallchart_id)),
             ("hx-retarget", "body".into()),
         ],
     )
@@ -332,7 +321,7 @@ pub fn WorkerRow(props: WorkerRowProps) -> String {
         <tr class="border-t border-gray-300" data-loading-states>
             <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
                   <button
-                      hx-get=format!("/worksites/{}/workers/{}", 1, props.worker.id)
+                      hx-get=worker(&"1".to_string(), &props.worker.id)
                       hx-target="body"
                       hx-swap="beforeend"
                   >
