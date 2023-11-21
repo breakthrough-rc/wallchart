@@ -10,21 +10,21 @@
  */
 
 pub const HOME: &str = "/";
-pub fn home() -> String {
+pub fn _home() -> String {
     HOME.into()
 }
 
 pub const PLAYGROUND: &str = "/playground";
-pub fn playground() -> String {
+pub fn _playground() -> String {
     PLAYGROUND.into()
 }
 
 pub const CLIENT: &str = "/client";
-pub fn client() -> String {
+pub fn _client() -> String {
     CLIENT.into()
 }
 
 pub const LOGIN: &str = "/login";
-pub fn login() -> String {
+pub fn _login() -> String {
     LOGIN.into()
 }
