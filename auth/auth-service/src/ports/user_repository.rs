@@ -9,6 +9,7 @@ pub trait UserRepository: Send + Sync + 'static {
     async fn get_users(&self) -> Result<Vec<User>, RepositoryFailure>;
     async fn save(&self, user: User) -> Result<(), RepositoryFailure>;
     async fn find_by_email(&self, email: String) -> Result<Option<User>, RepositoryFailure>;
+    async fn delete_by_id(&self, id: String) -> Result<(), RepositoryFailure>;
 }
 
 #[derive(Error, Debug, PartialEq)]

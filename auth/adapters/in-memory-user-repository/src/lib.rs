@@ -53,6 +53,14 @@ impl UserRepository for InMemoryUserRepository {
 
         Ok(())
     }
+
+    async fn delete_by_id(&self, id: String) -> Result<(), RepositoryFailure> {
+        let mut users = self.users.write().await;
+
+        users.retain(|w| w.id != id);
+
+        Ok(())
+    }
 }
 
 #[derive(Clone)]
