@@ -3,7 +3,6 @@ use crate::{
         add_worker_form::AddWorkerForm,
         page::{PageHeader, PageLayout},
         worker_profile_fieldset::{WorkerProfileFieldset, WorkerProfileFormData},
-        workers::Workers,
     },
     state::WebHtmxState,
 };
@@ -15,7 +14,7 @@ use axum::{
 };
 use axum_flash::{Flash, IncomingFlashes};
 use http::{HeaderMap, StatusCode};
-use rscx::html;
+use rscx::{component, html, props, CollectFragment, CollectFragmentAsync};
 use serde::Deserialize;
 use web_client::server::{
     button::PrimaryButton,
@@ -24,8 +23,12 @@ use web_client::server::{
     notification::NotificationFlashes,
 };
 use worksite_service::{
-    add_worker::AddWorkerInput, get_worker::GetWorkerInput, get_workers::GetWorkersInput,
-    get_worksite::GetWorksiteInput, update_worker::UpdateWorkerInput,
+    add_worker::AddWorkerInput,
+    get_worker::GetWorkerInput,
+    get_workers::GetWorkersInput,
+    get_worksite::GetWorksiteInput,
+    models::{Tag, Worker, Worksite},
+    update_worker::UpdateWorkerInput,
 };
 
 pub fn workers_routes(state: WebHtmxState) -> Router {
@@ -96,7 +99,7 @@ async fn get_workers(
                     <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                         <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                             <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
-                                <Workers worksite=worksite workers=workers/>
+                                <WorkersTable worksite=worksite workers=workers/>
                             </div>
                         </div>
                     </div>
@@ -276,4 +279,68 @@ async fn post_worker_profile_form(
         flash.success("Worker updated successfully!"),
         [("hx-redirect", "/wallchart"), ("hx-retarget", "body")],
     )
+}
+
+#[props]
+struct WorkersTableProps {
+    worksite: Worksite,
+    workers: Vec<Worker>,
+}
+
+#[component]
+fn WorkersTable(props: WorkersTableProps) -> String {
+    html! {
+        <table class="min-w-full divide-y divide-gray-300">
+            <thead class="bg-gray-50">
+
+                <tr>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">Name</th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Last Assessment</th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Tags</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white">
+                {
+                    props
+                        .workers
+                        .iter()
+                        .map(|worker| async {
+                            html! {
+                                <WorkerRow
+                                    worker=worker.clone()
+                                    tags=props.worksite.get_tags_for_worker(worker.clone())
+                                />
+                            }
+                        })
+                        .collect_fragment_async()
+                        .await
+                }
+            </tbody>
+        </table>
+    }
+}
+
+#[props]
+pub struct WorkerRowProps {
+    worker: Worker,
+    tags: Vec<Tag>,
+}
+
+#[component]
+pub fn WorkerRow(props: WorkerRowProps) -> String {
+    html! {
+        <tr class="border-t border-gray-300" data-loading-states>
+            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
+                  <button
+                      hx-get=format!("/worksites/{}/workers/{}", 1, props.worker.id)
+                      hx-target="body"
+                      hx-swap="beforeend"
+                  >
+                      {format!("{} {}", props.worker.first_name, props.worker.last_name)}
+                  </button>
+            </td>
+            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{props.worker.last_assessment.map(|assessment| assessment.value).unwrap_or(0)}</td>
+            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{props.tags.into_iter().map(|tag| tag.icon).collect_fragment()}</td>
+        </tr>
+    }
 }

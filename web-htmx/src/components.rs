@@ -10,4 +10,3 @@ pub mod page;
 pub mod simple_form;
 pub mod wallchart;
 pub mod worker_profile_fieldset;
-pub mod workers;
