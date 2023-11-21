@@ -181,6 +181,13 @@ impl Worksite {
 
         updated_worksite
     }
+
+    pub fn remove_tag(&self, tag_id: String) -> Worksite {
+        let mut updated_worksite = self.clone();
+
+        updated_worksite.tags.retain(|tag| tag.id != tag_id);
+        updated_worksite
+    }
 }
 
 #[derive(Debug, Clone)]
