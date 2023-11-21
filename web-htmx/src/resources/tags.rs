@@ -103,7 +103,7 @@ async fn get_tags(
                                                             <a
                                                                 hx-delete=routes::tag(&worksite_id, &tag.id)
                                                                 hx-confirm="Delete Tag"
-                                                                data-confirm-message=format!("Are you sure you want to delete: {}", &tag.name)
+                                                                data-confirm-message=format!("Are you sure you want to delete tag: {}", &tag.name)
                                                                 class="text-indigo-600 hover:text-indigo-900"
                                                             >
                                                                 Remove<span class="sr-only">, {&tag.name}</span>

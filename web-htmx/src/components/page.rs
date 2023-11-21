@@ -58,7 +58,7 @@ pub fn PageLayout(props: PageLayoutProps) -> String {
                 document.addEventListener("htmx:confirm", function(e) {
                     e.preventDefault();
                     YcControls.confirm({
-                        title: e.target.dataset.hxConfirm,
+                        title: e.target.getAttribute("hx-confirm"),
                         message: e.target.dataset.confirmMessage,
                         actionConfirmed: function() {
                             e.detail.issueRequest(true);
