@@ -13,7 +13,7 @@
  */
 
 pub const HOME: &str = "/";
-pub fn _home() -> String {
+pub fn home() -> String {
     HOME.into()
 }
 
@@ -27,9 +27,9 @@ pub fn _client() -> String {
     CLIENT.into()
 }
 
-pub const _LOGIN: &str = "/login";
-pub fn _login() -> String {
-    _LOGIN.into()
+pub const LOGIN: &str = "/login";
+pub fn login() -> String {
+    LOGIN.into()
 }
 
 pub const WALLCHART: &str = "/wallchart";
@@ -80,4 +80,24 @@ pub fn worker_profile(worksite_id: &String, worker_id: &String) -> String {
 pub const WORKER_TAGS_FORM: &str = "/worksites/:worksite_id/workers/:worker_id/tags-form";
 pub fn worker_tags_form(worksite_id: &String, worker_id: &String) -> String {
     format!("/worksites/{}/workers/{}/tags-form", worksite_id, worker_id)
+}
+
+pub const USERS: &str = "/users";
+pub fn users() -> String {
+    USERS.into()
+}
+
+pub const USERS_NEW: &str = "/users/new";
+pub fn users_new() -> String {
+    USERS_NEW.into()
+}
+
+pub const USERS_NEW_MODAL: &str = "/users/new-modal";
+pub fn users_new_modal() -> String {
+    USERS_NEW_MODAL.into()
+}
+
+pub const USER: &str = "/users/:user_id";
+pub fn user(user_id: &String) -> String {
+    format!("/users/{}", user_id)
 }

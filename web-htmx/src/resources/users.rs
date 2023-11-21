@@ -3,6 +3,10 @@ use crate::{
         login_form::LoginForm,
         page::{PageHeader, PageLayout},
     },
+    routes::{
+        self, home, login, user, users, users_new, users_new_modal, LOGIN, USER, USERS, USERS_NEW,
+        USERS_NEW_MODAL,
+    },
     state::WebHtmxState,
 };
 use auth_service::{
@@ -12,7 +16,7 @@ use auth_service::{delete_user::DeleteUserInput, models::User};
 use axum::{
     extract::{self, State},
     response::{Html, IntoResponse},
-    routing::{get},
+    routing::get,
     Form, Router,
 };
 use axum_flash::Flash;
@@ -29,18 +33,18 @@ use web_client::server::{
 
 pub fn users_routes(state: WebHtmxState) -> Router {
     Router::new()
-        .route("/login", get(get_login).post(post_login))
-        .route("/users", get(get_users).post(post_users))
-        .route("/users/new", get(get_users_form))
-        .route("/users/:user_id", get(get_user_detail).delete(delete_user))
-        .route("/users/new-modal", get(get_users_form_modal))
+        .route(LOGIN, get(get_login).post(post_login))
+        .route(USERS, get(get_users).post(post_users))
+        .route(USERS_NEW, get(get_users_form))
+        .route(USER, get(get_user_detail).delete(delete_user))
+        .route(USERS_NEW_MODAL, get(get_users_form_modal))
         .with_state(state)
 }
 
 async fn get_login(State(_state): State<WebHtmxState>) -> impl IntoResponse {
     Html(html! {
         <PageLayout header="Login">
-            <LoginForm login_route="/login" />
+            <LoginForm login_route=login() />
         </PageLayout>
     })
 }
@@ -72,7 +76,7 @@ async fn post_login(
         Ok(user) => match auth.login(&user).await {
             Ok(_) => (
                 StatusCode::OK,
-                [("hx-redirect", "/"), ("hx-retarget", "body")],
+                [("hx-redirect", home()), ("hx-retarget", "body".to_string())],
             )
                 .into_response(),
             Err(_) => (StatusCode::BAD_REQUEST, "Login failed").into_response(),
@@ -98,10 +102,10 @@ async fn get_users(State(state): State<WebHtmxState>) -> impl IntoResponse {
                 title: "Users".into(),
                 buttons: html! {
                     <PrimaryButton
-                        hx_get="/users/new-modal"
+                        hx_get=users_new_modal()
                         hx_target="body"
                         hx_swap="beforeend"
-                        hx_push_url="/users/new"
+                        hx_push_url=users_new()
                     >
                         Add New User
                     </PrimaryButton>
@@ -161,7 +165,7 @@ pub fn User(props: UserProps) -> String {
         <tr class="border-t border-gray-300" data-loading-states>
             <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
                   <button
-                      hx-get=format!("/users/{}", props.user.id)
+                      hx-get=user(&props.user.id)
                       hx-target="body"
                   >
                       {props.user.email}
@@ -171,7 +175,7 @@ pub fn User(props: UserProps) -> String {
             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                 <button
                     type="button"
-                    hx-delete={format!("/users/{}", props.user.id)}
+                    hx-delete={user(&props.user.id)}
                     class="text-center inline-flex items-center rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:bg-gray-50 disabled:shadow-none disabled:cursor-not-allowed disabled:text-gray-500"
                     hx-swap="outerHTML swap:1s"
                     hx-target="closest tr"
@@ -210,7 +214,7 @@ async fn post_users(
     (
         StatusCode::OK,
         flash.success("User added successfully!"),
-        [("hx-redirect", "/users"), ("hx-retarget", "body")],
+        [("hx-redirect", users()), ("hx-retarget", "body".into())],
     )
 }
 
@@ -220,7 +224,7 @@ async fn get_users_form(headers: HeaderMap) -> impl IntoResponse {
             partial=headers.contains_key("Hx-Request")
             header="Add User"
         >
-            <AddUserForm action="/users" />
+            <AddUserForm action=users() />
         </PageLayout>
     })
 }
@@ -228,7 +232,7 @@ async fn get_users_form(headers: HeaderMap) -> impl IntoResponse {
 async fn get_users_form_modal() -> impl IntoResponse {
     Html(html! {
         <Modal size=ModalSize::MediumScreen>
-            <AddUserForm action="/users" />
+            <AddUserForm action=users() />
         </Modal>
     })
 }
@@ -315,7 +319,10 @@ async fn get_user_detail(
 
     Html(html! {
         <PageLayout header=user.email.clone()>
-            <AddUserForm action=format!("/users/{}", user.id.clone()) email=user.email.clone() role="Organizer" />
+            <AddUserForm
+                action=routes::user(&user.id)
+                email=user.email.clone()
+                role="Organizer" />
         </PageLayout>
     })
 }
