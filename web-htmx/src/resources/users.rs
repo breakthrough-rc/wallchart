@@ -1,8 +1,5 @@
 use crate::{
-    components::{
-        login_form::LoginForm,
-        page::{PageHeader, PageLayout},
-    },
+    components::page::{PageHeader, PageLayout},
     routes::{
         self, home, login, user, users, users_new, users_new_modal, LOGIN, USER, USERS, USERS_NEW,
         USERS_NEW_MODAL,
@@ -21,9 +18,10 @@ use axum::{
 };
 use axum_flash::Flash;
 use http::{HeaderMap, StatusCode};
-use in_memory_user_repository::AuthContext;
 use rscx::{component, html, props, CollectFragmentAsync};
 use serde::Deserialize;
+
+use in_memory_user_repository::AuthContext;
 use web_client::server::{
     attrs::Attrs,
     button::PrimaryButton,
@@ -325,4 +323,38 @@ async fn get_user_detail(
                 role="Organizer" />
         </PageLayout>
     })
+}
+
+#[props]
+struct LoginFormProps {
+    #[builder(setter(into))]
+    login_route: String,
+}
+
+#[component]
+fn LoginForm(props: LoginFormProps) -> String {
+    html! {
+        <form hx-post=props.login_route>
+            <div class="pb-12">
+                <p class="mt-1 text-sm leading-6 text-gray-600">
+                    "pssst: try user@yallchart.com / password"
+                </p>
+                <GridLayout class="mt-10">
+                    <GridCell span=4>
+                        <Label for_input="email">Email</Label>
+                        <TextInput input_type="email" name="email" autocomplete="email" />
+                    </GridCell>
+                    <GridCell span=4>
+                        <Label for_input="password">Password</Label>
+                        <TextInput input_type="password" name="password" autocomplete="password" />
+                    </GridCell>
+                    <GridCell span=4>
+                        <div class="mt-6 flex items-center justify-end gap-x-6">
+                            <Button kind="submit">Login</Button>
+                        </div>
+                    </GridCell>
+                </GridLayout>
+            </div>
+        </form>
+    }
 }

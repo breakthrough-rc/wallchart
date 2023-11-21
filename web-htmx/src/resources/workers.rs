@@ -1,6 +1,5 @@
 use crate::{
     components::{
-        add_worker_form::AddWorkerForm,
         page::{PageHeader, PageLayout},
         worker_profile_fieldset::{WorkerProfileFieldset, WorkerProfileFormData},
     },
@@ -20,9 +19,12 @@ use axum_flash::{Flash, IncomingFlashes};
 use http::{HeaderMap, StatusCode};
 use rscx::{component, html, props, CollectFragment, CollectFragmentAsync};
 use serde::Deserialize;
+
 use web_client::server::{
+    attrs::Attrs,
     button::PrimaryButton,
     flyout::Flyout,
+    form::Button,
     modal::{Modal, ModalSize},
     notification::NotificationFlashes,
 };
@@ -175,7 +177,7 @@ async fn get_worker_form_modal(
 ) -> impl IntoResponse {
     Html(html! {
         <Modal size=ModalSize::MediumScreen>
-            <AddWorkerForm action=workers_new(&wallchart_id) />
+            <WorkerForm action=format!("/wallcharts/{}/workers/new", wallchart_id) />
         </Modal>
     })
 }
@@ -189,9 +191,19 @@ async fn get_worker_form(
             partial=headers.contains_key("Hx-Request")
             header="Add Worker"
         >
-            <AddWorkerForm action=workers_new(&wallchart_id) />
+            <WorkerForm action=workers_new(&wallchart_id) />
         </PageLayout>
     })
+}
+
+#[derive(Deserialize, Debug)]
+struct WorkerFormData {
+    pub first_name: String,
+    pub last_name: String,
+    pub street_address: String,
+    pub city: String,
+    pub region: String,
+    pub postal_code: String,
 }
 
 async fn post_worker(
@@ -200,7 +212,7 @@ async fn post_worker(
     }): State<WebHtmxState>,
     flash: Flash,
     extract::Path(wallchart_id): extract::Path<String>,
-    Form(form): Form<AddWorkerFormData>,
+    Form(form): Form<WorkerFormData>,
 ) -> impl IntoResponse {
     worksite_service
         .add_worker(AddWorkerInput {
@@ -223,16 +235,6 @@ async fn post_worker(
             ("hx-retarget", "body".into()),
         ],
     )
-}
-
-#[derive(Deserialize, Debug)]
-struct AddWorkerFormData {
-    first_name: String,
-    last_name: String,
-    street_address: String,
-    city: String,
-    region: String,
-    postal_code: String,
 }
 
 #[derive(Deserialize, Debug)]
@@ -281,7 +283,6 @@ fn WorkersTable(props: WorkersTableProps) -> String {
     html! {
         <table class="min-w-full divide-y divide-gray-300">
             <thead class="bg-gray-50">
-
                 <tr>
                     <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">Name</th>
                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Last Assessment</th>
@@ -331,5 +332,34 @@ pub fn WorkerRow(props: WorkerRowProps) -> String {
             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{props.worker.last_assessment.map(|assessment| assessment.value).unwrap_or(0)}</td>
             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{props.tags.into_iter().map(|tag| tag.icon).collect_fragment()}</td>
         </tr>
+    }
+}
+
+#[props]
+struct WorkerFormProps {
+    #[builder(setter(into))]
+    action: String,
+}
+
+#[component]
+fn WorkerForm(props: WorkerFormProps) -> String {
+    html! {
+        <form hx-post=props.action>
+            <div class="pb-12">
+                <p class="mt-1 text-sm leading-6 text-gray-600">
+                    "Please enter the worker's information."
+                </p>
+                <WorkerProfileFieldset />
+            </div>
+            <div class="mt-6 flex items-center justify-end gap-x-6">
+                <Button
+                    onclick="history.go(-1)"
+                    attrs=Attrs::with("data-toggle-action", "close".into())
+                >
+                    Cancel
+                </Button>
+                <Button kind="submit">Save</Button>
+            </div>
+        </form>
     }
 }
