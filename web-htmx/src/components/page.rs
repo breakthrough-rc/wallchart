@@ -44,17 +44,28 @@ pub fn PageLayout(props: PageLayoutProps) -> String {
             <NotificationLiveRegion />
             <ModalLiveRegion />
             <script>{
-                "
-                htmx.on('htmx:sendError', function() {
-                    YcControls.showErrorNotification('Network Error!');
+                r#"
+                htmx.on("htmx:sendError", function() {
+                    YcControls.showErrorNotification("Network Error!");
                 });                
 
-                htmx.on('htmx:responseError', function(error) {
+                htmx.on("htmx:responseError", function(error) {
                     YcControls.showErrorNotification(
-                        error.detail.xhr.responseText || 'Unknown error'
+                        error.detail.xhr.responseText || "Unknown error"
                     );
                 });
-                "
+
+                document.addEventListener("htmx:confirm", function(e) {
+                    e.preventDefault();
+                    YcControls.confirm({
+                        title: e.target.dataset.hxConfirm,
+                        message: e.target.dataset.confirmMessage,
+                        actionConfirmed: function() {
+                            e.detail.issueRequest(true);
+                        },
+                    });
+                })
+                "#
             }</script>
         </HtmlLayout>
     }

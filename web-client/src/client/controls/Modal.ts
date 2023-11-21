@@ -1,11 +1,13 @@
 import { ControlRegistry } from "../registery";
 import Toggle from "./Toggle";
-import query from "../query"
+import query from "../query";
 
-type ConfirmDeleteCommand = {
+type ConfirmCommand = {
   title?: string,
   message?: string,
-  deleteHref: string,
+  template?: string,
+  actionConfirmed: () => void,
+  actionCancelled?: () => void,
 };
 
 const Modal = {
@@ -25,11 +27,13 @@ const Modal = {
     await togglePanel.open();
   },
 
-  confirmDelete({
+  confirm({
     title,
     message,
-    deleteHref,
-  }: ConfirmDeleteCommand) {
+    template = "#tpl-confirm-delete-modal",
+    actionConfirmed,
+    actionCancelled,
+  }: ConfirmCommand) {
     const tpl = query(document, "#tpl-confirm-delete-modal") as HTMLTemplateElement;
     const modalElement = tpl.content.cloneNode(true) as HTMLElement;
 
@@ -42,21 +46,18 @@ const Modal = {
     if (message) Elements.message.textContent = message;
 
     const deleteActionElement = query(modalElement, "[data-confirm-action=\"delete\"]");
-    deleteActionElement.addEventListener("click", () => {
-      // TODO REMOVE hard dependency on htmx
-      (window as any).htmx.ajax("DELETE", deleteHref, { target: document.body, swap: "beforeend" });
-    }, { once: true });
+    deleteActionElement.addEventListener("click", actionConfirmed, { once: true });
 
     const modalContentElement = query(document, "#modal-live-region [data-modal-content]");
     modalContentElement.appendChild(modalElement);
-  }
+  },
 };
 
 function init(registry: ControlRegistry) {
   registry.registerControl("modal", Modal);
 
   registry.registerGlobalApi({
-    confirmDelete: Modal.confirmDelete,
+    confirm: Modal.confirm,
   });
 }
 

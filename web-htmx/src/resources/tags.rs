@@ -101,12 +101,9 @@ async fn get_tags(
                                                                 Edit<span class="sr-only">, {&tag.name}</span>
                                                             </a>
                                                             <a
-                                                                onclick="YcControls.confirmDelete({
-                                                                  title: 'Delete tag',
-                                                                  message: 'Are you sure you want to delete this tag?',
-                                                                  deleteHref: this.dataset.deleteHref,
-                                                                })"
-                                                                data-delete-href=routes::tag(&worksite_id, &tag.id)
+                                                                hx-delete=routes::tag(&worksite_id, &tag.id)
+                                                                hx-confirm="Delete Tag"
+                                                                data-confirm-message=format!("Are you sure you want to delete: {}", &tag.name)
                                                                 class="text-indigo-600 hover:text-indigo-900"
                                                             >
                                                                 Remove<span class="sr-only">, {&tag.name}</span>
