@@ -207,7 +207,6 @@ async fn get_worker_form(
 
 #[derive(Deserialize, Debug)]
 struct WorkerFormData {
-    pub id: String,
     pub first_name: String,
     pub last_name: String,
     pub street_address: String,
