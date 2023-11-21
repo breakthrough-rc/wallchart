@@ -26,6 +26,10 @@ impl Worksite {
             .collect::<Vec<Worker>>()
     }
 
+    pub fn get_tag(&self, tag_id: String) -> Option<Tag> {
+        self.tags.iter().find(|t| t.id == tag_id).cloned()
+    }
+
     pub fn get_tags_for_worker(&self, worker: Worker) -> Vec<Tag> {
         let mut tags = vec![];
 
@@ -78,6 +82,13 @@ impl Worksite {
         updated_worksite
     }
 
+    pub fn add_tag(&self, tag: Tag) -> Worksite {
+        let mut updated_worksite = self.clone();
+        updated_worksite.tags.push(tag);
+
+        updated_worksite
+    }
+
     pub fn add_worker(&self, worker: Worker) -> Worksite {
         let mut updated_worksite = self.clone();
 
@@ -104,6 +115,27 @@ impl Worksite {
         });
 
         updated_worksite
+    }
+
+    pub fn update_tag(&self, tag_id: String, update_fn: impl FnOnce(Tag) -> Tag) -> Worksite {
+        let mut updated_worksite = self.clone();
+
+        let tag = self.get_tag(tag_id.clone());
+
+        match tag {
+            Some(tag) => {
+                let updated_tag = update_fn(tag);
+
+                updated_worksite.tags.iter_mut().for_each(|tag| {
+                    if tag.id == tag_id {
+                        *tag = updated_tag.clone();
+                    }
+                });
+
+                updated_worksite
+            }
+            None => updated_worksite,
+        }
     }
 
     pub fn update_worker(

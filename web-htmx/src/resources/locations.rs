@@ -1,4 +1,4 @@
-use crate::{components::add_location_form::AddLocationForm, state::WebHtmxState};
+use crate::{components::simple_form::SimpleForm, state::WebHtmxState};
 use axum::{
     extract::{self, State},
     response::{Html, IntoResponse},
@@ -7,17 +7,17 @@ use axum::{
 };
 use axum_flash::Flash;
 use http::StatusCode;
-use rscx::html;
+use rscx::{component, html, props};
 use serde::Deserialize;
-use web_client::server::modal::{Modal, ModalSize};
+use web_client::server::modal::Modal;
 use worksite_service::add_location::AddLocationInput;
 
 pub fn locations_routes(state: WebHtmxState) -> Router {
     Router::new()
         // Worksite locations
-        .route("/wallcharts/:worksite_id/locations", post(post_location))
+        .route("/worksites/:worksite_id/locations", post(post_location))
         .route(
-            "/wallcharts/:worksite_id/locations/new-modal",
+            "/worksites/:worksite_id/locations/new-modal",
             get(get_location_form_modal),
         )
         .with_state(state)
@@ -27,8 +27,8 @@ async fn get_location_form_modal(
     extract::Path(worksite_id): extract::Path<String>,
 ) -> impl IntoResponse {
     Html(html! {
-        <Modal size=ModalSize::MediumScreen>
-            <AddLocationForm action=format!("/wallcharts/{}/locations", worksite_id) />
+        <Modal>
+            <LocationForm action=format!("/wallcharts/{}/locations", worksite_id) />
         </Modal>
     })
 }
@@ -59,4 +59,20 @@ async fn post_location(
         flash.success("Added new location!"),
         [("hx-redirect", "/wallchart"), ("hx-retarget", "body")],
     )
+}
+
+#[props]
+struct LocationFormProps {
+    #[builder(setter(into))]
+    action: String,
+}
+
+#[component]
+fn LocationForm(props: LocationFormProps) -> String {
+    html! {
+        <SimpleForm
+            action=props.action
+            description="Add a new location"
+        />
+    }
 }

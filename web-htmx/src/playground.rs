@@ -1,4 +1,5 @@
 #![allow(unused_braces)]
+use super::playground::modal::{modal_routes, ModalPlayground};
 use crate::components::page::PageLayout;
 use axum::{
     response::Html,
@@ -11,14 +12,14 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use web_client::server::{
     attrs::Attrs,
     button::{PrimaryButton, SecondaryButton},
-    flyout::Flyout,
     html_element::HtmlElement,
-    modal::Modal,
     notification::{
         NoticationCloseButton, NotificationCall, NotificationPresenter, NotificationTransition,
     },
 };
 use web_macros::*;
+
+pub mod modal;
 
 pub fn routes() -> Router {
     Router::new()
@@ -28,8 +29,7 @@ pub fn routes() -> Router {
         .route("/ex-business-logic", post(ex_business_logic))
         .route("/custom-notification", get(get_custom_notification))
         .route("/custom-notification2", get(get_custom_notification2))
-        .route("/modal/one", get(get_modal_one))
-        .route("/flyout/one", get(get_flyout_one))
+        .nest("/modals", modal_routes())
 }
 
 #[component]
@@ -110,76 +110,55 @@ fn HtmlElementPlayground() -> String {
 }
 
 #[component]
-fn ModalPlayground() -> String {
-    html! {
-        <section class="py-8">
-            <h2 class="text-xl font-bold">Modal Playground</h2>
-            <p><em>Open models and flyouts for fun AND non-profit.</em></p>
-            <div class="flex gap-2">
-                <PrimaryButton
-                    hx_get="/playground/modal/one"
-                    hx_target="#modals-root"
-                >
-                    Open Simple Modal
-                </PrimaryButton>
-                <PrimaryButton
-                    hx_get="/playground/flyout/one"
-                    hx_target="#modals-root"
-                >
-                    Open Flyout
-                </PrimaryButton>
-            </div>
-            <div id="modals-root">
-            </div>
-        </section>
-    }
-}
-
-#[component]
 fn NotificationsPlayground() -> String {
     html! {
         <section class="py-8">
             <h2 class="text-xl font-bold">Notifications Playground</h2>
-            <p><em>Show a toast notification (client-side).</em></p>
-            <div class="flex gap-2">
-                <PrimaryButton
-                    onclick="YcControls.showSuccessNotification('Success feels so good!')"
-                >
-                    Show Success
-                </PrimaryButton>
-                <PrimaryButton
-                    onclick="YcControls.showErrorNotification('This is an error notification.')"
-                >
-                    Show Error
-                </PrimaryButton>
-                <PrimaryButton
-                    onclick="YcControls.showNotification('This just in', 'You are still not done!')"
-                >
-                    Show Generic
-                </PrimaryButton>
-            </div>
-            <br />
-            <p><em>Show a toast notification (server-side).</em></p>
-            <div class="flex gap-2">
-                <PrimaryButton
-                    hx_post="/playground/ex-business-logic"
-                >
-                    Show Success
-                </PrimaryButton>
-                <PrimaryButton
-                    hx_get="/playground/custom-notification"
-                    hx_target="body"
-                    hx_swap="beforeend"
-                >
-                    Show Custom
-                </PrimaryButton>
-                <PrimaryButton
-                    hx_get="/playground/custom-notification2"
-                    hx_target="body"
-                    hx_swap="beforeend"
-                >
-                    Show Custom w/ Standard Components
-                </PrimaryButton>
+            <div class="flex flex-col gap-4">
+                <section>
+                    <p><em>Show a toast notification (client-side).</em></p>
+                    <div class="flex gap-2">
+                        <PrimaryButton
+                            onclick="YcControls.showSuccessNotification('Success feels so good!')"
+                        >
+                            Show Success
+                        </PrimaryButton>
+                        <PrimaryButton
+                            onclick="YcControls.showErrorNotification('This is an error notification.')"
+                        >
+                            Show Error
+                        </PrimaryButton>
+                        <PrimaryButton
+                            onclick="YcControls.showNotification('This just in', 'You are still not done!')"
+                        >
+                            Show Generic
+                        </PrimaryButton>
+                    </div>
+                </section>
+                <section>
+                    <p><em>Show a toast notification (server-side).</em></p>
+                    <div class="flex gap-2">
+                        <PrimaryButton
+                            hx_post="/playground/ex-business-logic"
+                        >
+                            Show Success
+                        </PrimaryButton>
+                        <PrimaryButton
+                            hx_get="/playground/custom-notification"
+                            hx_target="body"
+                            hx_swap="beforeend"
+                        >
+                            Show Custom
+                        </PrimaryButton>
+                        <PrimaryButton
+                            hx_get="/playground/custom-notification2"
+                            hx_target="body"
+                            hx_swap="beforeend"
+                        >
+                            Show Custom w/ Standard Components
+                        </PrimaryButton>
+                    </div>
+                </section>
             </div>
         </section>
     }
@@ -271,22 +250,6 @@ pub fn PlaygroundPgContent() -> String {
 }
 
 // ### Route Handlers ###
-
-async fn get_modal_one() -> Html<String> {
-    Html(html! {
-        <Modal>
-            <h1>I am a very boring and simple modal!</h1>
-        </Modal>
-    })
-}
-
-async fn get_flyout_one() -> Html<String> {
-    Html(html! {
-        <Flyout title="Hello Playground!">
-            <h1>Sliding on in... its a flyout!</h1>
-        </Flyout>
-    })
-}
 
 async fn get_playground() -> Html<String> {
     Html(html! {

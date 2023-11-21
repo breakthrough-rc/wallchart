@@ -1,7 +1,7 @@
 use super::appshell::AppShell;
 pub use super::appshell::PageHeader;
 use rscx::{component, html, props};
-use web_client::server::notification::NotificationLiveRegion;
+use web_client::server::{modal::ModalLiveRegion, notification::NotificationLiveRegion};
 use web_client::HtmlLayout;
 
 #[props]
@@ -42,6 +42,7 @@ pub fn PageLayout(props: PageLayoutProps) -> String {
                 </main>
             </AppShell>
             <NotificationLiveRegion />
+            <ModalLiveRegion />
             <script>{
                 "
                 htmx.on('htmx:sendError', function() {

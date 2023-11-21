@@ -4,27 +4,42 @@ use web_client::server::{
     form::{Button, GridCell, GridLayout, Label, TextInput},
 };
 
+#[derive(Default, Debug)]
+pub struct SimpleFormData {
+    pub name: String,
+}
+
 #[props]
-pub struct AddShiftFormProps {
+pub struct SimpleFormProps {
     #[builder(setter(into))]
     action: String,
+
+    #[builder(setter(into), default = "Add a new item".into())]
+    description: String,
+
+    #[builder(default)]
+    children: String,
+
+    #[builder(default=SimpleFormData::default())]
+    data: SimpleFormData,
 }
 
 #[component]
-pub fn AddShiftForm(props: AddShiftFormProps) -> String {
+pub fn SimpleForm(props: SimpleFormProps) -> String {
     html! {
         <div>
             <form hx-post=props.action>
                 <div class="pb-12">
                     <p class="mt-1 text-sm leading-6 text-gray-600">
-                        Add a new shift
+                        {props.description}
                     </p>
                     <GridLayout class="mt-10">
-                        <GridCell span=4>
+                        <GridCell span=6>
                             <Label for_input="name">Name</Label>
-                            <TextInput name="name" />
+                            <TextInput name="name" value=&props.data.name />
                         </GridCell>
-                        <GridCell span=4>
+                        {props.children}
+                        <GridCell span=6>
                             <div class="mt-6 flex items-center justify-end gap-x-6">
                                 <Button
                                     onclick="history.go(-1)"

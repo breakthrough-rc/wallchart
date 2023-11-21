@@ -1,5 +1,4 @@
-use crate::components::add_shift_form::AddShiftForm;
-use crate::state::WebHtmxState;
+use crate::{components::simple_form::SimpleForm, state::WebHtmxState};
 use axum::{
     extract::{self, State},
     response::{Html, IntoResponse},
@@ -9,19 +8,19 @@ use axum::{
 };
 use axum_flash::Flash;
 use http::StatusCode;
-use rscx::html;
+use rscx::{component, html, props};
 use serde::Deserialize;
-use web_client::server::modal::{Modal, ModalSize};
+use web_client::server::modal::Modal;
 use worksite_service::add_shift::AddShiftInput;
 
 pub fn shifts_routes(state: WebHtmxState) -> Router {
     Router::new()
         .route(
-            "/wallcharts/:worksite_id/locations/:location_id/shifts",
+            "/worksites/:worksite_id/locations/:location_id/shifts",
             post(post_shifts),
         )
         .route(
-            "/wallcharts/:worksite_id/locations/:location_id/shifts/new-modal",
+            "/worksites/:worksite_id/locations/:location_id/shifts/new-modal",
             get(get_shift_form_modal),
         )
         .with_state(state)
@@ -32,8 +31,8 @@ async fn get_shift_form_modal(
     State(_): State<WebHtmxState>,
 ) -> impl IntoResponse {
     Html(html! {
-        <Modal size=ModalSize::MediumScreen>
-            <AddShiftForm action=format!("/wallcharts/{}/locations/{}/shifts", worksite_id, location_id) />
+        <Modal>
+            <ShiftForm action=format!("/worksites/{}/locations/{}/shifts", worksite_id, location_id) />
         </Modal>
     })
 }
@@ -65,4 +64,20 @@ async fn post_shifts(
         flash.success("Added new shift!"),
         [("hx-redirect", "/wallchart"), ("hx-retarget", "body")],
     )
+}
+
+#[props]
+struct ShiftFormProps {
+    #[builder(setter(into))]
+    action: String,
+}
+
+#[component]
+fn ShiftForm(props: ShiftFormProps) -> String {
+    html! {
+        <SimpleForm
+            action=props.action
+            description="Add a new shift"
+        />
+    }
 }
