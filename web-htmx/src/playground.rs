@@ -6,12 +6,13 @@ use rscx::{component, html, props};
 
 use auth::AuthPlayground;
 use html_element::HtmlElementPlayground;
+use htmx::{htmx_routes, HtmxPlayground};
 use modal::{modal_routes, ModalPlayground};
 use notifications::{notification_routes, NotificationsPlayground};
-use web_client::server::button::SecondaryButton;
 
 pub mod auth;
 pub mod html_element;
+pub mod htmx;
 pub mod modal;
 pub mod notifications;
 
@@ -19,7 +20,7 @@ pub fn routes() -> Router {
     Router::new()
         .route("/", get(get_playground))
         .route("/test-render", get(get_test_render))
-        .route("/htmx", get(htmx_test))
+        .nest("/htmx", htmx_routes())
         .nest("/modals", modal_routes())
         .nest("/notifications", notification_routes())
 }
@@ -34,10 +35,6 @@ async fn get_playground() -> Html<String> {
     })
 }
 
-async fn htmx_test() -> Html<String> {
-    Html("Is this the real life? Is this just fantasy?".into())
-}
-
 // ### Components ###
 
 #[component]
@@ -49,17 +46,7 @@ pub fn PlaygroundPgContent() -> String {
             <marquee>
                 "It's The Playground&#133; Let's have some fun!"
             </marquee>
-            <section class="py-8">
-                <h2 class="text-xl font-bold">HTMX Rendering</h2>
-                <div class="flex gap-2">
-                    <SecondaryButton
-                        hx_get="/playground/htmx"
-                        hx_swap="outerHTML"
-                    >
-                        Click me!
-                    </SecondaryButton>
-                </div>
-            </section>
+            <HtmxPlayground />
             <NotificationsPlayground />
             <ModalPlayground />
             <HtmlElementPlayground />
