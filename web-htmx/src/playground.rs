@@ -4,11 +4,13 @@ use axum::{response::Html, routing::get, Router};
 use http::HeaderMap;
 use rscx::{component, html, props};
 
+use auth::AuthPlayground;
 use html_element::HtmlElementPlayground;
 use modal::{modal_routes, ModalPlayground};
 use notifications::{notification_routes, NotificationsPlayground};
-use web_client::server::button::{PrimaryButton, SecondaryButton};
+use web_client::server::button::SecondaryButton;
 
+pub mod auth;
 pub mod html_element;
 pub mod modal;
 pub mod notifications;
@@ -62,17 +64,7 @@ pub fn PlaygroundPgContent() -> String {
             <ModalPlayground />
             <HtmlElementPlayground />
             <PartialRenderTest />
-            <section class="py-8">
-                <h2 class="text-xl font-bold">Auth Testing</h2>
-                <div class="flex gap-2">
-                    <PrimaryButton
-                        tag="a"
-                        href="/wallchart"
-                    >
-                        Authenticated page link
-                    </PrimaryButton>
-                </div>
-            </section>
+            <AuthPlayground />
         </Welcome>
     }
 }
