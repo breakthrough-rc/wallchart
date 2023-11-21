@@ -8,5 +8,4 @@ pub mod nav;
 pub mod not_found_message;
 pub mod page;
 pub mod simple_form;
-pub mod wallchart;
 pub mod worker_profile_fieldset;
