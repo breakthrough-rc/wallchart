@@ -1,4 +1,4 @@
-use crate::{components::simple_form::SimpleForm, state::WebHtmxState};
+use crate::{components::simple_form::SimpleForm, routes, state::WebHtmxState};
 use axum::{
     extract::{self, State},
     response::{Html, IntoResponse},
@@ -15,14 +15,8 @@ use worksite_service::add_shift::AddShiftInput;
 
 pub fn shifts_routes(state: WebHtmxState) -> Router {
     Router::new()
-        .route(
-            "/worksites/:worksite_id/locations/:location_id/shifts",
-            post(post_shifts),
-        )
-        .route(
-            "/worksites/:worksite_id/locations/:location_id/shifts/new-modal",
-            get(get_shift_form_modal),
-        )
+        .route(routes::SHIFTS, post(post_shifts))
+        .route(routes::SHIFTS_NEW_MODAL, get(get_shift_form_modal))
         .with_state(state)
 }
 
@@ -32,7 +26,7 @@ async fn get_shift_form_modal(
 ) -> impl IntoResponse {
     Html(html! {
         <Modal>
-            <ShiftForm action=format!("/worksites/{}/locations/{}/shifts", worksite_id, location_id) />
+            <ShiftForm action=routes::shifts(&worksite_id, &location_id) />
         </Modal>
     })
 }
@@ -62,7 +56,10 @@ async fn post_shifts(
     (
         StatusCode::OK,
         flash.success("Added new shift!"),
-        [("hx-redirect", "/wallchart"), ("hx-retarget", "body")],
+        [
+            ("hx-redirect", routes::wallchart()),
+            ("hx-retarget", "body".into()),
+        ],
     )
 }
 

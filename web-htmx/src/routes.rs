@@ -47,6 +47,23 @@ pub fn locations_new(worksite_id: &String) -> String {
     format!("/worksites/{}/locations/new", worksite_id)
 }
 
+pub const SHIFTS: &str = "/worksites/:worksite_id/locations/:location_id/shifts";
+pub fn shifts(worksite_id: &String, location_id: &String) -> String {
+    format!(
+        "/worksites/{}/locations/{}/shifts",
+        worksite_id, location_id
+    )
+}
+
+pub const SHIFTS_NEW_MODAL: &str =
+    "/worksites/:worksite_id/locations/:location_id/shifts/new-modal";
+pub fn shifts_new_modal(worksite_id: &String, location_id: &String) -> String {
+    format!(
+        "/worksites/{}/locations/{}/shifts/new-modal",
+        worksite_id, location_id
+    )
+}
+
 pub const TAGS: &str = "/worksites/:worksite_id/tags";
 pub fn tags(worksite_id: &String) -> String {
     format!("/worksites/{}/tags", worksite_id)
