@@ -32,7 +32,7 @@ impl UpdateTag {
 
         let worksite = worksite.update_tag(input.tag_id, |tag| -> Tag {
             Tag {
-                id: tag.id.clone(),
+                id: tag.id,
                 name: input.name,
                 icon: input.icon,
             }
