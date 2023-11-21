@@ -3,6 +3,7 @@ use crate::{
         page::{PageHeader, PageLayout},
         simple_form::{SimpleForm, SimpleFormData},
     },
+    routes::{self, tag_edit_form, tags_create_form, TAG, TAGS, TAGS_CREATE_FORM, TAG_EDIT_FORM},
     state::WebHtmxState,
 };
 use axum::{
@@ -27,16 +28,13 @@ use worksite_service::{
 
 pub fn tags_routes(state: WebHtmxState) -> Router {
     Router::new()
-        .route("/worksites/:worksite_id/tags", get(get_tags))
+        .route(TAGS, get(get_tags))
         .route(
-            "/worksites/:worksite_id/tags/create-form",
+            TAGS_CREATE_FORM,
             get(get_create_form).post(post_create_form),
         )
-        .route(
-            "/worksites/:worksite_id/tags/:tag_id/edit-form",
-            get(get_edit_form).post(post_edit_form),
-        )
-        .route("/worksites/:worksite_id/tags/:tag_id", delete(delete_tag))
+        .route(TAG_EDIT_FORM, get(get_edit_form).post(post_edit_form))
+        .route(TAG, delete(delete_tag))
         .with_state(state)
 }
 
@@ -58,10 +56,10 @@ async fn get_tags(
                 title: "Manage Tags".into(),
                 buttons: html! {
                     <PrimaryButton
-                        hx_get=format!("/worksites/{}/tags/create-form", &worksite_id)
+                        hx_get=tags_create_form(&worksite_id)
                         hx_target="body"
                         hx_swap="beforeend"
-                        hx_push_url=format!("/worksites/{}/tags/create-form", &worksite_id)
+                        hx_push_url=tags_create_form(&worksite_id)
                     >
                         Add Tag
                     </PrimaryButton>
@@ -94,10 +92,10 @@ async fn get_tags(
                                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                                                         <div class="inline-flex gap-4">
                                                             <a
-                                                                hx-get=format!("/worksites/{}/tags/{}/edit-form", &worksite_id, &tag.id)
+                                                                hx-get=tag_edit_form(&worksite_id, &tag.id)
                                                                 hx-target="body"
                                                                 hx-swap="beforeend"
-                                                                hx-push-url=format!("/worksites/{}/tags/{}/edit-form", &worksite_id, &tag.id)
+                                                                hx-push-url=tag_edit_form(&worksite_id, &tag.id)
                                                                 class="text-indigo-600 hover:text-indigo-900"
                                                             >
                                                                 Edit<span class="sr-only">, {&tag.name}</span>
@@ -108,7 +106,7 @@ async fn get_tags(
                                                                   message: 'Are you sure you want to delete this tag?',
                                                                   deleteHref: this.dataset.deleteHref,
                                                                 })"
-                                                                data-delete-href=format!("/worksites/{}/tags/{}", &worksite_id, &tag.id)
+                                                                data-delete-href=routes::tag(&worksite_id, &tag.id)
                                                                 class="text-indigo-600 hover:text-indigo-900"
                                                             >
                                                                 Remove<span class="sr-only">, {&tag.name}</span>
@@ -150,7 +148,7 @@ async fn get_edit_form(
     Html(html! {
         <Modal>
             <TagForm
-                action=format!("/worksites/{}/tags/{}/edit-form", &worksite_id, &tag_id)
+                action=tag_edit_form(&worksite_id, &tag_id)
                 data=TagFormData {
                     name: tag.name,
                     icon: tag.icon,
@@ -182,7 +180,7 @@ async fn post_edit_form(
         StatusCode::OK,
         flash.success("Tag updated!"),
         [
-            ("hx-redirect", format!("/worksites/{}/tags", &worksite_id)),
+            ("hx-redirect", routes::tags(&worksite_id)),
             ("hx-retarget", "body".into()),
         ],
     )
@@ -207,7 +205,7 @@ async fn delete_tag(
         StatusCode::OK,
         flash.success("Tag removed!"),
         [
-            ("hx-redirect", format!("/worksites/{}/tags", &worksite_id)),
+            ("hx-redirect", routes::tags(&worksite_id)),
             ("hx-retarget", "body".into()),
         ],
     )
@@ -220,7 +218,7 @@ async fn get_create_form(
     Html(html! {
         <Modal>
             <TagForm
-                action=format!("/worksites/{}/tags/create-form", &worksite_id)
+                action=tags_create_form(&worksite_id)
             />
         </Modal>
     })
@@ -247,7 +245,7 @@ async fn post_create_form(
         StatusCode::OK,
         flash.success("Added new tag!"),
         [
-            ("hx-redirect", format!("/worksites/{}/tags", &worksite_id)),
+            ("hx-redirect", routes::tags(&worksite_id)),
             ("hx-retarget", "body".into()),
         ],
     )

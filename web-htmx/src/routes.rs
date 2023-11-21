@@ -52,6 +52,21 @@ pub fn tags(worksite_id: &String) -> String {
     format!("/worksites/{}/tags", worksite_id)
 }
 
+pub const TAGS_CREATE_FORM: &str = "/worksites/:worksite_id/tags/create-form";
+pub fn tags_create_form(worksite_id: &String) -> String {
+    format!("/worksites/{}/tags/create-form", worksite_id)
+}
+
+pub const TAG: &str = "/worksites/:worksite_id/tags/:tag_id";
+pub fn tag(worksite_id: &String, tag_id: &String) -> String {
+    format!("/worksites/{}/tags/{}", worksite_id, tag_id)
+}
+
+pub const TAG_EDIT_FORM: &str = "/worksites/:worksite_id/tags/:tag_id/edit-form";
+pub fn tag_edit_form(worksite_id: &String, tag_id: &String) -> String {
+    format!("/worksites/{}/tags/{}/edit-form", worksite_id, tag_id)
+}
+
 pub const WORKERS: &str = "/worksites/:worksite_id/workers";
 pub fn workers(worksite_id: &String) -> String {
     format!("/worksites/{}/workers", worksite_id)
