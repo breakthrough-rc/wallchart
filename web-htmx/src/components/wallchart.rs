@@ -2,6 +2,8 @@ use rscx::{component, html, props, CollectFragment, CollectFragmentAsync};
 use web_client::server::button::SecondaryButton;
 use worksite_service::models::{Location as LocationModel, Tag, Worker, Worksite};
 
+use crate::routes;
+
 #[props]
 pub struct WallchartProps {
     #[builder(setter(into))]
@@ -60,8 +62,8 @@ pub fn Location(props: LocationProps) -> String {
             </th>
             <th colspan="3" scope="colgroup" class="bg-gray-200 py-2 pl-4 pr-3 text-right text-sm font-semibold text-gray-900 sm:pl-3">
                 <SecondaryButton
-                    hx_get=format!("/worksites/{}/locations/{}/shifts/new-modal", &props.worksite.id, &props.location.id)
-                    hx_push_url=format!("/worksites/{}/locations/{}/shifts/new", &props.worksite.id, &props.location.id)
+                    hx_get=routes::shifts_new_modal(&props.worksite.id, &props.location.id)
+                    hx_push_url=routes::shifts_new(&props.worksite.id, &props.location.id)
                     hx_target="body"
                     hx_swap="beforeend"
                 >
@@ -80,9 +82,9 @@ pub fn Location(props: LocationProps) -> String {
                             shift_name=shift.name.clone()
                             workers=props.worksite.get_workers_for_shift(shift.id.clone())
                             worksite=props.worksite.clone()
-                            new_worker_action=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new-modal", &props.worksite.id, props.location.id, shift.id)
-                            new_worker_push_url=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new", &props.worksite.id, props.location.id, shift.id)
-                            location_path=format!("/worksites/{}/locations/{}", &props.worksite.id, props.location.id)
+                            new_worker_action=routes::shift_assignments_new_modal(&props.worksite.id, &props.location.id, &shift.id)
+                            new_worker_push_url=routes::shift_assignments_new(&props.worksite.id, &props.location.id, &shift.id)
+                            location_id=props.location.id.clone()
                         />
                     }
                 })
@@ -104,7 +106,7 @@ pub struct ShiftProps {
     worksite: Worksite,
 
     #[builder(setter(into))]
-    location_path: String,
+    location_id: String,
 
     #[builder(setter(into))]
     new_worker_action: String,
@@ -139,8 +141,9 @@ pub fn Shift(props: ShiftProps) -> String {
                     html! {
                         <WorkerRow
                             tags=props.worksite.get_tags_for_worker(worker.clone())
+                            worker_action=routes::worker(&props.worksite.id, &worker.clone().id)
+                            shift_assignment_action=routes::shift_assignment(&props.worksite.id, &props.location_id, &props.shift_id, &worker.clone().id)
                             worker=worker
-                            shift_path=format!("{}/shifts/{}", props.location_path, props.shift_id)
                         />
                     }
                 })
@@ -156,7 +159,10 @@ pub struct WorkerRowProps {
     tags: Vec<Tag>,
 
     #[builder(setter(into))]
-    shift_path: String,
+    worker_action: String,
+
+    #[builder(setter(into))]
+    shift_assignment_action: String,
 }
 
 #[component]
@@ -165,7 +171,7 @@ pub fn WorkerRow(props: WorkerRowProps) -> String {
       <tr class="border-t border-gray-300" data-loading-states>
           <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
                 <button
-                    hx-get=format!("/worksites/{}/workers/{}", 1, props.worker.id)
+                    hx-get=props.worker_action
                     hx-target="body"
                     hx-swap="beforeend"
                 >
@@ -177,7 +183,7 @@ pub fn WorkerRow(props: WorkerRowProps) -> String {
           <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
               <button
                   type="button"
-                  hx-delete={format!("{}/workers/{}", props.shift_path, props.worker.id)}
+                  hx-delete={props.shift_assignment_action}
                   class="text-center inline-flex items-center rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:bg-gray-50 disabled:shadow-none disabled:cursor-not-allowed disabled:text-gray-500"
                   hx-swap="outerHTML swap:1s"
                   hx-target="closest tr"

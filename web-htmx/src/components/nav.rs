@@ -1,4 +1,5 @@
 use crate::components::logo::Logo;
+use crate::routes;
 use rscx::{component, html, props, CollectFragment};
 use web_client::server::transition::Transition;
 use web_client::server::yc_control::Toggle;
@@ -6,10 +7,10 @@ use web_client::server::yc_control::Toggle;
 #[component]
 pub fn Nav() -> String {
     let nav_links = [
-        ("Wallchart", "/wallchart"),
-        ("Workers", "/workers"),
-        ("Report", "/report"),
-        ("Users", "/users"),
+        ("Wallchart", routes::wallchart()),
+        ("Workers", routes::workers(&"1".into())),
+        ("Report", "/report".into()),
+        ("Users", routes::users()),
     ];
 
     let profile_links = [("Your Profile", "#"), ("Settings", "#"), ("Sign out", "#")];
@@ -29,6 +30,7 @@ pub fn Nav() -> String {
                         <div class="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                             {
                                 nav_links
+                                    .clone()
                                     .into_iter()
                                     .map(|(label, href)| {
                                         let is_current = false; // TODO! Need to support recognizing current page
