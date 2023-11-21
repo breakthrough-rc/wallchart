@@ -2,13 +2,17 @@ import { ControlRegistry } from "./registery";
 
 type YcEventDetail = any;
 type YcEventHandler = (detail: YcEventDetail, originalEvent: CustomEvent) => void;
+type TriggerCommand = {
+  target?: HTMLElement,
+  event: string,
+  detail?: YcEventDetail,
+};
 
 /**
  * event name should begin with prefix `yc:`
  */
-
-function trigger(event: string, detail: YcEventDetail = {}) {
-  document.body.dispatchEvent(new CustomEvent(event, { detail }));
+function trigger({ target = document.body, event, detail = {} }: TriggerCommand): void {
+  target.dispatchEvent(new CustomEvent(event, { detail }));
 }
 
 function on(eventName: string, handler: YcEventHandler) {
