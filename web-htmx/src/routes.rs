@@ -64,6 +64,46 @@ pub fn shifts_new_modal(worksite_id: &String, location_id: &String) -> String {
     )
 }
 
+pub const SHIFT_ASSIGNMENTS_NEW: &str =
+    "/worksites/:worksite_id/locations/:location_id/shifts/:shift_id/workers/new";
+pub fn shift_assignments_new(
+    worksite_id: &String,
+    location_id: &String,
+    shift_id: &String,
+) -> String {
+    format!(
+        "/worksites/{}/locations/{}/shifts/{}/workers/new",
+        worksite_id, location_id, shift_id
+    )
+}
+
+pub const SHIFT_ASSIGNMENTS_NEW_MODAL: &str =
+    "/worksites/:worksite_id/locations/:location_id/shifts/:shift_id/workers/new-modal";
+pub fn shift_assignments_new_modal(
+    worksite_id: &String,
+    location_id: &String,
+    shift_id: &String,
+) -> String {
+    format!(
+        "/worksites/{}/locations/{}/shifts/{}/workers/new-modal",
+        worksite_id, location_id, shift_id
+    )
+}
+
+pub const SHIFT_ASSIGNMENT: &str =
+    "/worksites/:worksite_id/locations/:location_id/shifts/:shift_id/workers/:worker_id";
+pub fn shift_assignment(
+    worksite_id: &String,
+    location_id: &String,
+    shift_id: &String,
+    worker_id: &String,
+) -> String {
+    format!(
+        "/worksites/{}/locations/{}/shifts/{}/workers/{}",
+        worksite_id, location_id, shift_id, worker_id
+    )
+}
+
 pub const TAGS: &str = "/worksites/:worksite_id/tags";
 pub fn tags(worksite_id: &String) -> String {
     format!("/worksites/{}/tags", worksite_id)

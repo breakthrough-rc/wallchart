@@ -1,5 +1,6 @@
 use crate::{
     components::{assign_shift_form::AssignShiftForm, page::PageLayout},
+    routes,
     state::WebHtmxState,
 };
 use axum::{
@@ -21,22 +22,19 @@ use worksite_service::{
 pub fn shift_assignments_routes(state: WebHtmxState) -> Router {
     Router::new()
         .route(
-            "/wallcharts/:worksite_id/locations/:location_id/shifts/:shift_id/workers/new",
+            routes::SHIFT_ASSIGNMENTS_NEW,
             get(get_shift_assignment_form).post(post_shift_assignment),
         )
         .route(
-            "/wallcharts/:worksite_id/locations/:location_id/shifts/:shift_id/workers/new-modal",
+            routes::SHIFT_ASSIGNMENTS_NEW_MODAL,
             get(get_shift_assignment_form_modal),
         )
-        .route(
-            "/worksites/:worksite_id/locations/:location_id/shifts/:shift_id/workers/:worker_id",
-            delete(delete_worker_from_shift),
-        )
+        .route(routes::SHIFT_ASSIGNMENT, delete(delete_worker_from_shift))
         .with_state(state)
 }
 
 async fn delete_worker_from_shift(
-    extract::Path((worksite_id, location_id, shift_id, worker_id)): extract::Path<(
+    extract::Path((worksite_id, _location_id, shift_id, worker_id)): extract::Path<(
         String,
         String,
         String,
@@ -46,11 +44,6 @@ async fn delete_worker_from_shift(
         worksite_service, ..
     }): State<WebHtmxState>,
 ) -> impl IntoResponse {
-    println!(
-        "Delete worker: {} from shift: {}, from worksite: {} in location: {}",
-        worker_id, shift_id, worksite_id, location_id,
-    );
-
     let result = worksite_service
         .remove_worker_from_shift(RemoveWorkerFromShiftInput {
             id: worksite_id,
@@ -85,8 +78,8 @@ async fn get_shift_assignment_form_modal(
         <Modal size=ModalSize::MediumScreen>
             <AssignShiftForm
                 workers=workers
-                action=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new", &wallchart_id, location_id, shift_id)
-                create_worker_action=format!("/wallcharts/{}/workers/new", wallchart_id)
+                action=routes::shift_assignments_new(&wallchart_id, &location_id, &shift_id)
+                create_worker_action=routes::workers_new(&wallchart_id)
             />
         </Modal>
     })
@@ -108,8 +101,8 @@ async fn get_shift_assignment_form(
         <PageLayout header="Assign Shift">
             <AssignShiftForm
                 workers=workers
-                action=format!("/wallcharts/{}/locations/{}/shifts/{}/workers/new", &wallchart_id, location_id, shift_id)
-                create_worker_action=format!("/wallcharts/{}/workers/new", wallchart_id)
+                action=routes::shift_assignments_new(&wallchart_id, &location_id, &shift_id)
+                create_worker_action=routes::workers_new(&wallchart_id)
             />
         </PageLayout>
     })
@@ -141,6 +134,9 @@ async fn post_shift_assignment(
     (
         StatusCode::OK,
         flash.success("Shift assigned successfully!"),
-        [("hx-redirect", "/wallchart"), ("hx-retarget", "body")],
+        [
+            ("hx-redirect", routes::wallchart()),
+            ("hx-retarget", "body".into()),
+        ],
     )
 }
