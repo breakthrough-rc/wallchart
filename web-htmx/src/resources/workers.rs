@@ -12,7 +12,7 @@ use crate::{
 };
 use axum::{
     extract::{self, State},
-    response::{Html, IntoResponse, Redirect},
+    response::{Html, IntoResponse},
     routing::{get, post},
     Form, Router,
 };
