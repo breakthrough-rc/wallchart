@@ -12,7 +12,7 @@ use auth_service::{delete_user::DeleteUserInput, models::User};
 use axum::{
     extract::{self, State},
     response::{Html, IntoResponse},
-    routing::{delete, get},
+    routing::{get},
     Form, Router,
 };
 use axum_flash::Flash;
