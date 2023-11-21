@@ -14,6 +14,7 @@ use resources::tags::tags_routes;
 use resources::users::users_routes;
 use resources::workers::workers_routes;
 use resources::worksite::worksite_routes;
+use routes::{CLIENT, HOME, PLAYGROUND};
 use rscx::html;
 use state::WebHtmxState;
 use web_client::routes as client_routes;
@@ -22,6 +23,7 @@ pub mod components;
 pub mod livereload;
 pub mod playground;
 pub mod resources;
+mod routes;
 pub mod state;
 
 pub fn routes(state: WebHtmxState) -> Router {
@@ -37,12 +39,12 @@ pub fn routes(state: WebHtmxState) -> Router {
         .merge(assigned_tags_routes(state.clone()))
         // Anything above this RequireAuth route will require authentication
         // .route_layer(RequireAuth::login_or_redirect(
-        //     Arc::new("/login".into()),
+        //     Arc::new(LOGIN.into()),
         //     None,
         // ))
-        .route("/", get(Redirect::temporary("/playground")))
-        .nest("/playground", playground::routes())
-        .nest_service("/client", client_routes())
+        .route(HOME, get(Redirect::temporary("/playground")))
+        .nest(PLAYGROUND, playground::routes())
+        .nest_service(CLIENT, client_routes())
         .merge(users_routes(state))
         .fallback(fallback)
 }
