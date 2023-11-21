@@ -1,0 +1,46 @@
+use std::sync::Arc;
+
+use thiserror::Error;
+
+use crate::ports::user_repository::UserRepository;
+
+#[derive(Clone)]
+pub struct {{pascalCase command_name}} {
+    pub user_repository: Arc<dyn UserRepository>,
+}
+
+#[derive(Clone, Debug)]
+pub struct {{pascalCase command_name}}Input {
+    // Put input fields here
+    pub user_id: String
+}
+
+// Change the return type, if needed
+pub type {{pascalCase command_name}}Output = Result<(), {{pascalCase command_name}}Failure>;
+
+impl {{pascalCase command_name}} {
+    pub async fn {{snakeCase command_name}}(&self, input: {{pascalCase command_name}}Input) -> {{pascalCase command_name}}Output {
+        let user = self
+            .user_repository
+            .find_by_email(input.email)
+            .await
+            .map_err(|e| {{pascalCase command_name}}::Internal(e.to_string()))?;
+
+        let user = todo!("update the user or whatever you like")
+
+        self.user_repository
+            .save(user)
+            .await
+            .map_err(|e| {{pascalCase command_name}}Failure::Internal(e.to_string()))?;
+            
+        Ok(())
+    }
+}
+
+#[derive(Error, Debug, PartialEq)]
+pub enum {{pascalCase command_name}}Failure {
+    #[error("Internal Error")]
+    Internal(String),
+    #[error("Something went wrong")]
+    Unknown(String),
+}

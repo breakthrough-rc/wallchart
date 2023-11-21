@@ -4,9 +4,6 @@ use thiserror::Error;
 
 use crate::ports::user_repository::UserRepository;
 
-// Example repo dependency
-// use crate::ports::worksite_repository::WorksiteRepository;
-
 #[derive(Clone)]
 pub struct DeleteUser {
     pub user_repository: Arc<dyn UserRepository>,
