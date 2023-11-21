@@ -114,46 +114,51 @@ fn NotificationsPlayground() -> String {
     html! {
         <section class="py-8">
             <h2 class="text-xl font-bold">Notifications Playground</h2>
-            <p><em>Show a toast notification (client-side).</em></p>
-            <div class="flex gap-2">
-                <PrimaryButton
-                    onclick="YcControls.showSuccessNotification('Success feels so good!')"
-                >
-                    Show Success
-                </PrimaryButton>
-                <PrimaryButton
-                    onclick="YcControls.showErrorNotification('This is an error notification.')"
-                >
-                    Show Error
-                </PrimaryButton>
-                <PrimaryButton
-                    onclick="YcControls.showNotification('This just in', 'You are still not done!')"
-                >
-                    Show Generic
-                </PrimaryButton>
-            </div>
-            <br />
-            <p><em>Show a toast notification (server-side).</em></p>
-            <div class="flex gap-2">
-                <PrimaryButton
-                    hx_post="/playground/ex-business-logic"
-                >
-                    Show Success
-                </PrimaryButton>
-                <PrimaryButton
-                    hx_get="/playground/custom-notification"
-                    hx_target="body"
-                    hx_swap="beforeend"
-                >
-                    Show Custom
-                </PrimaryButton>
-                <PrimaryButton
-                    hx_get="/playground/custom-notification2"
-                    hx_target="body"
-                    hx_swap="beforeend"
-                >
-                    Show Custom w/ Standard Components
-                </PrimaryButton>
+            <div class="flex flex-col gap-4">
+                <section>
+                    <p><em>Show a toast notification (client-side).</em></p>
+                    <div class="flex gap-2">
+                        <PrimaryButton
+                            onclick="YcControls.showSuccessNotification('Success feels so good!')"
+                        >
+                            Show Success
+                        </PrimaryButton>
+                        <PrimaryButton
+                            onclick="YcControls.showErrorNotification('This is an error notification.')"
+                        >
+                            Show Error
+                        </PrimaryButton>
+                        <PrimaryButton
+                            onclick="YcControls.showNotification('This just in', 'You are still not done!')"
+                        >
+                            Show Generic
+                        </PrimaryButton>
+                    </div>
+                </section>
+                <section>
+                    <p><em>Show a toast notification (server-side).</em></p>
+                    <div class="flex gap-2">
+                        <PrimaryButton
+                            hx_post="/playground/ex-business-logic"
+                        >
+                            Show Success
+                        </PrimaryButton>
+                        <PrimaryButton
+                            hx_get="/playground/custom-notification"
+                            hx_target="body"
+                            hx_swap="beforeend"
+                        >
+                            Show Custom
+                        </PrimaryButton>
+                        <PrimaryButton
+                            hx_get="/playground/custom-notification2"
+                            hx_target="body"
+                            hx_swap="beforeend"
+                        >
+                            Show Custom w/ Standard Components
+                        </PrimaryButton>
+                    </div>
+                </section>
             </div>
         </section>
     }
