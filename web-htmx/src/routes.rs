@@ -24,7 +24,7 @@ pub fn _client() -> String {
     CLIENT.into()
 }
 
-pub const LOGIN: &str = "/login";
+pub const _LOGIN: &str = "/login";
 pub fn _login() -> String {
-    LOGIN.into()
+    _LOGIN.into()
 }
