@@ -54,18 +54,18 @@ pub fn PageLayout(props: PageLayoutProps) -> String {
                         error.detail.xhr.responseText || "Unknown error"
                     );
                 });
-
-                document.addEventListener("htmx:confirm", function(e) {
-                    e.preventDefault();
-                    YcControls.confirm({
-                        title: e.target.getAttribute("hx-confirm"),
-                        message: e.target.dataset.confirmMessage,
-                        actionConfirmed: function() {
-                            e.detail.issueRequest(true);
-                        },
-                    });
-                })
                 "#
+                // document.addEventListener("htmx:confirm", function(e) {
+                //     e.preventDefault();
+                //     YcControls.confirm({
+                //         title: e.target.getAttribute("hx-confirm"),
+                //         message: e.target.dataset.confirmMessage,
+                //         actionConfirmed: function() {
+                //             e.detail.issueRequest(true);
+                //         },
+                //     });
+                // })
+
             }</script>
         </HtmlLayout>
     }
