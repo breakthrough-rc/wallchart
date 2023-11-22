@@ -27,12 +27,12 @@ pub fn PageLayout(props: PageLayoutProps) -> String {
             head_scripts={
                 html! {
                     // Use unminified source for debugging.
-                    // <script src="https://unpkg.com/htmx.org@1.9.9/dist/htmx.js"></script>
-                    <script
-                        src="https://unpkg.com/htmx.org@1.9.9"
-                        integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX"
-                        crossorigin="anonymous"
-                    ></script>
+                    <script src="https://unpkg.com/htmx.org@1.9.9/dist/htmx.js"></script>
+                    // <script
+                    //     src="https://unpkg.com/htmx.org@1.9.9"
+                    //     integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX"
+                    //     crossorigin="anonymous"
+                    // ></script>
                     <script src="https://unpkg.com/htmx.org/dist/ext/loading-states.js"></script>
                 }
             }
@@ -46,27 +46,34 @@ pub fn PageLayout(props: PageLayoutProps) -> String {
             <ModalLiveRegion />
             <script>{
                 r#"
-                htmx.on("htmx:sendError", function() {
-                    YcControls.showErrorNotification("Network Error!");
-                });                
+                (function addHtmxSubscriptions() {
+                    if (document.body.hasAttribute("data-yc-htmx")) return;
 
-                htmx.on("htmx:responseError", function(error) {
-                    YcControls.showErrorNotification(
-                        error.detail.xhr.responseText || "Unknown error"
-                    );
-                });
+                    htmx.on("htmx:sendError", function() {
+                        YcControls.showErrorNotification("Network Error!");
+                    });                
+
+                    htmx.on("htmx:responseError", function(error) {
+                        YcControls.showErrorNotification(
+                            error.detail.xhr.responseText || "Unknown error"
+                        );
+                    });
+
+                    document.addEventListener("htmx:confirm", function(e) {
+                        if (!e.target.hasAttribute("hx-confirm")) return true;            
+                        e.preventDefault();
+                        YcControls.confirm({
+                            title: e.target.getAttribute("hx-confirm"),
+                            message: e.target.dataset.confirmMessage,
+                            actionConfirmed: function() {
+                                e.detail.issueRequest(true);
+                            }
+                        });
+                    });
+
+                    document.body.setAttribute("data-yc-htmx", "subscribed");
+                })();
                 "#
-                // document.addEventListener("htmx:confirm", function(e) {
-                //     e.preventDefault();
-                //     YcControls.confirm({
-                //         title: e.target.getAttribute("hx-confirm"),
-                //         message: e.target.dataset.confirmMessage,
-                //         actionConfirmed: function() {
-                //             e.detail.issueRequest(true);
-                //         },
-                //     });
-                // })
-
             }</script>
         </HtmlLayout>
     }
