@@ -17,9 +17,8 @@ module.exports = function(plop) {
       },
       {
         path: "web-htmx/src/components.rs",
-        pattern: /(\/\/##PLOP COMPONENT MOD##)/g,
-        template: "$1\npub mod {{snakeCase component_name}};",
-        type: "modify",
+        template: "pub mod {{snakeCase component_name}};",
+        type: "append",
       },
     ],
   });
@@ -41,9 +40,8 @@ module.exports = function(plop) {
       },
       {
         path: "web-htmx/src/resources.rs",
-        pattern: /(\/\/##PLOP RESOURCE MOD HOOK##)/g,
-        template: "$1\npub mod {{snakeCase resource_name}};",
-        type: "modify",
+        template: "pub mod {{snakeCase resource_name}};",
+        type: "append",
       },
       {
         path: "web-htmx/src/lib.rs",
@@ -84,9 +82,8 @@ module.exports = function(plop) {
       },
       {
         path: "{{kabobCase service_name}}/{{kabobCase service_name}}-service/src/lib.rs",
-        pattern: /(\/\/##PLOP INSERT MOD HOOK##)/g,
-        template: "$1\npub mod {{snakeCase command_name}};",
-        type: "modify",
+        template: "pub mod {{snakeCase command_name}};",
+        type: "append",
       },
       {
         path: "{{kabobCase service_name}}/{{kabobCase service_name}}-service/src/service.rs",
@@ -147,9 +144,8 @@ module.exports = function(plop) {
       },
       {
         path: "auth/auth-service/src/lib.rs",
-        pattern: /(\/\/##PLOP INSERT MOD HOOK##)/g,
-        template: "$1\npub mod {{snakeCase command_name}};",
-        type: "modify",
+        template: "pub mod {{snakeCase command_name}};",
+        type: "append",
       },
       {
         path: "auth/auth-service/src/service.rs",
@@ -211,9 +207,8 @@ module.exports = function(plop) {
       },
       {
         path: "worksite/worksite-service/src/lib.rs",
-        pattern: /(\/\/##PLOP INSERT MOD HOOK##)/g,
-        template: "$1\npub mod {{snakeCase command_name}};",
-        type: "modify",
+        template: "pub mod {{snakeCase command_name}};",
+        type: "append",
       },
       {
         path: "worksite/worksite-service/src/service.rs",
@@ -305,9 +300,8 @@ module.exports = function(plop) {
       },
       {
         path: "{{kabobCase service_name}}/{{kabobCase service_name}}-service/src/ports.rs",
-        pattern: /(\/\/##PLOP INSERT MOD HOOK##)/g,
-        template: "$1\npub mod {{snakeCase aggregate_name}}_repository;",
-        type: "modify",
+        template: "pub mod {{snakeCase aggregate_name}}_repository;",
+        type: "append",
       },
       {
         type: "addMany",

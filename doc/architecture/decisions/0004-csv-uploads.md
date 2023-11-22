@@ -28,6 +28,7 @@ In particular, I am looking into a few different tools/resources:
 ### File uploads
 
 - https://docs.rs/axum/latest/axum/extract/struct.Multipart.html
+- https://htmx.org/examples/file-upload/
 
 ## Consequences
 
