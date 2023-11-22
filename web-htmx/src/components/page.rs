@@ -26,10 +26,11 @@ pub fn PageLayout(props: PageLayoutProps) -> String {
         <HtmlLayout
             head_scripts={
                 html! {
-                    // For debugging use this -> <script src="https://unpkg.com/htmx.org@1.9.8/dist/htmx.js"></script>
+                    // Use unminified source for debugging.
+                    // <script src="https://unpkg.com/htmx.org@1.9.9/dist/htmx.js"></script>
                     <script
-                        src="https://unpkg.com/htmx.org@1.9.5"
-                        integrity="sha384-xcuj3WpfgjlKF+FXhSQFQ0ZNr39ln+hwjN3npfM9VBnUskLolQAcN80McRIVOPuO"
+                        src="https://unpkg.com/htmx.org@1.9.9"
+                        integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX"
                         crossorigin="anonymous"
                     ></script>
                     <script src="https://unpkg.com/htmx.org/dist/ext/loading-states.js"></script>
