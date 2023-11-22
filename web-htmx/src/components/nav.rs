@@ -11,6 +11,7 @@ pub fn Nav() -> String {
         ("Workers", routes::workers(&"1".into())),
         ("Report", "/report".into()),
         ("Users", routes::users()),
+        ("CSV Upload", routes::csv_upload()),
     ];
 
     let profile_links = [("Your Profile", "#"), ("Settings", "#"), ("Sign out", "#")];

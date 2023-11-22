@@ -5,6 +5,7 @@ use axum::{
 };
 use http::StatusCode;
 //##PLOP USE RESOURCE HOOK##
+use resources::csv_upload::csv_upload_routes;
 use components::{not_found_message::NotFoundMessage, page::PageLayout};
 use resources::assigned_tags::assigned_tags_routes;
 use resources::locations::locations_routes;
@@ -30,6 +31,7 @@ pub fn routes(state: WebHtmxState) -> Router {
     Router::new()
         .with_state(state.clone())
         //##PLOP MERGE ROUTE HOOK##
+.merge(csv_upload_routes(state.clone()))
         .merge(shift_assignments_routes(state.clone()))
         .merge(shifts_routes(state.clone()))
         .merge(locations_routes(state.clone()))

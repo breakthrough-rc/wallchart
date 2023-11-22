@@ -191,3 +191,8 @@ pub const ASSIGNED_TAGS_FORM: &str = "/worksites/:worksite_id/workers/:worker_id
 pub fn assigned_tags_form(worksite_id: &String, worker_id: &String) -> String {
     format!("/worksites/{}/workers/{}/tags-form", worksite_id, worker_id)
 }
+
+pub const CSV_UPLOAD: &str = "/csv-upload";
+pub fn csv_upload() -> String {
+    "/csv-upload".into()
+}
