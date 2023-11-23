@@ -22,21 +22,21 @@ module.exports = function(plop) {
       },
     ],
   });
-  plop.setGenerator("web-htmx-resource", {
-    description: "web-htmx resource handlers",
+  plop.setGenerator("web-htmx-resource-singular", {
+    description: "web-htmx resource handlers for a singular resource (e.g. /workers/:worker_id, not /workers)",
     prompts: [
       {
         type: "input",
         name: "resource_name",
-        message: "Resource name (plural): ",
+        message: "Resource name (singular): ",
       },
     ],
     actions: [
       {
         type: "addMany",
         destination: "web-htmx/src/resources",
-        templateFiles: "plop-templates/web-htmx-resource/*.hbs",
-        base: "plop-templates/web-htmx-resource",
+        templateFiles: "plop-templates/web-htmx-resource-singular/*.hbs",
+        base: "plop-templates/web-htmx-resource-singular",
       },
       {
         path: "web-htmx/src/resources.rs",
@@ -58,6 +58,44 @@ module.exports = function(plop) {
       },
     ],
   });
+
+  plop.setGenerator("web-htmx-resource-plural", {
+    description: "web-htmx resource handlers for a plural resource (e.g. /workers, not /workers/:worker_id)",
+    prompts: [
+      {
+        type: "input",
+        name: "resource_name",
+        message: "Resource name (plural): ",
+      },
+    ],
+    actions: [
+      {
+        type: "addMany",
+        destination: "web-htmx/src/resources",
+        templateFiles: "plop-templates/web-htmx-resource-plural/*.hbs",
+        base: "plop-templates/web-htmx-resource-plural",
+      },
+      {
+        path: "web-htmx/src/resources.rs",
+        template: "pub mod {{snakeCase resource_name}};",
+        type: "append",
+      },
+      {
+        path: "web-htmx/src/lib.rs",
+        pattern: /(\/\/##PLOP USE RESOURCE HOOK##)/g,
+        template:
+          "$1\nuse resources::{{snakeCase resource_name}}::{{snakeCase resource_name}}_routes;",
+        type: "modify",
+      },
+      {
+        path: "web-htmx/src/lib.rs",
+        pattern: /(\/\/##PLOP MERGE ROUTE HOOK##)/g,
+        template: "$1\n.merge({{snakeCase resource_name}}_routes(state.clone()))",
+        type: "modify",
+      },
+    ],
+  });
+
   plop.setGenerator("service-command", {
     description: "Create a command for a service",
     prompts: [

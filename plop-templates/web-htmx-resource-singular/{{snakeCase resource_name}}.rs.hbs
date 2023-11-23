@@ -1,0 +1,50 @@
+use crate::state::WebHtmxState;
+use axum::{
+    extract::{self, State},
+    response::IntoResponse,
+    routing::get,
+    Form, Router,
+};
+use serde::Deserialize;
+
+pub fn {{snakeCase resource_name}}_routes(state: WebHtmxState) -> Router {
+    Router::new()
+        .route(
+            "/{{kebabCase resource_name}}/:id", 
+            get(get_{{snakeCase resource_name}})
+                .put(put_{{snakeCase resource_name}})
+                .delete(delete_{{snakeCase resource_name}})
+        )
+        .with_state(state)
+}
+
+async fn get_{{snakeCase resource_name}}(
+    extract::Path((id)): extract::Path<(
+        String,
+    )>,
+    State(state): State<WebHtmxState>,
+) -> impl IntoResponse {
+  todo!()
+}
+
+#[derive(Deserialize, Debug)]
+struct ExampleForm {
+    foo: String,
+    bar: String,
+}
+
+async fn put_{{snakeCase resource_name}}(
+    State(state): State<WebHtmxState>,
+    Form(example_form): Form<ExampleForm>,
+) -> impl IntoResponse {
+  todo!()
+}
+
+async fn delete_{{snakeCase resource_name}}(
+    extract::Path((id)): extract::Path<(
+        String,
+    )>,
+    State(state): State<WebHtmxState>,
+) -> impl IntoResponse {
+  todo!()
+}
