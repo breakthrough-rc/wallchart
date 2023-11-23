@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-axum = { workspace = true }
+axum = { workspace = true, features = ["multipart"] }
 axum-flash = { workspace = true }
 axum-login = { workspace = true }
 axum-extra = { workspace = true }
