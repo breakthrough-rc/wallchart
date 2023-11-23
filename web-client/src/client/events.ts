@@ -1,18 +1,21 @@
 import { ControlRegistry } from "./registery";
+import query from "./query";
 
 type YcEventDetail = any;
 type YcEventHandler = (detail: YcEventDetail, originalEvent: CustomEvent) => void;
 type TriggerCommand = {
-  target?: HTMLElement,
+  target?: Element,
   event: string,
   detail?: YcEventDetail,
 };
 
+let appElement: Element | null = null;
+
 /**
  * event name should begin with prefix `yc:`
  */
-function trigger({ target = document.body, event, detail = {} }: TriggerCommand): void {
-  target.dispatchEvent(new CustomEvent(event, { detail }));
+function trigger({ target = appElement!, event, detail = {} }: TriggerCommand): void {
+  target!.dispatchEvent(new CustomEvent(event, { detail }));
 }
 
 function on(eventName: string, handler: YcEventHandler) {
@@ -21,14 +24,16 @@ function on(eventName: string, handler: YcEventHandler) {
     return handler(detail, event as CustomEvent);
   }
 
-  document.body.addEventListener(eventName, cb);
+  appElement!.addEventListener(eventName, cb);
 
   return () => {
-    document.body.removeEventListener(eventName, cb);
+    appElement!.removeEventListener(eventName, cb);
   };
 }
 
 function init(register: ControlRegistry) {
+  appElement = query(document, "[data-yc-app]");
+
   register.registerGlobalApi({
     on,
     trigger,
