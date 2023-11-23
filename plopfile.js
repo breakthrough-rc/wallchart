@@ -63,7 +63,7 @@ module.exports = function(plop) {
       },
       {
         path: "web-htmx/src/routes.rs",
-        template: "pub fn {{snake_case resource_name}}() -> String { todo!(\"Return hydrated route here\") }",
+        template: "pub fn {{snakeCase resource_name}}() -> String { todo!(\"Return hydrated route here\") }",
         type: "append",
       },
     ],
@@ -110,7 +110,7 @@ module.exports = function(plop) {
       },
       {
         path: "web-htmx/src/routes.rs",
-        template: "pub fn {{snake_case resource_name}}() -> String { todo!(\"Return hydrated route here\") }",
+        template: "pub fn {{snakeCase resource_name}}() -> String { todo!(\"Return hydrated route here\") }",
         type: "append",
       },
     ],
