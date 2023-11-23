@@ -56,6 +56,16 @@ module.exports = function(plop) {
         template: "$1\n.merge({{snakeCase resource_name}}_routes(state.clone()))",
         type: "modify",
       },
+      {
+        path: "web-htmx/src/routes.rs",
+        template: "pub const {{constCase resource_name}}: &str = todo!(\"Add route here\");",
+        type: "append",
+      },
+      {
+        path: "web-htmx/src/routes.rs",
+        template: "pub fn {{snake_case resource_name}}() -> String { todo!(\"Return hydrated route here\") }",
+        type: "append",
+      },
     ],
   });
 
@@ -92,6 +102,16 @@ module.exports = function(plop) {
         pattern: /(\/\/##PLOP MERGE ROUTE HOOK##)/g,
         template: "$1\n.merge({{snakeCase resource_name}}_routes(state.clone()))",
         type: "modify",
+      },
+      {
+        path: "web-htmx/src/routes.rs",
+        template: "pub const {{constCase resource_name}}: &str = todo!(\"Add route here\");",
+        type: "append",
+      },
+      {
+        path: "web-htmx/src/routes.rs",
+        template: "pub fn {{snake_case resource_name}}() -> String { todo!(\"Return hydrated route here\") }",
+        type: "append",
       },
     ],
   });
