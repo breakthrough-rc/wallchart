@@ -37,7 +37,7 @@ pub struct AppShellProps {
 #[component]
 pub fn AppShell(props: AppShellProps) -> String {
     html! {
-        <div class="min-h-full">
+        <div class="min-h-full" data-yc-app>
             <Nav />
             <MainContent header=props.header>
                 {props.children}

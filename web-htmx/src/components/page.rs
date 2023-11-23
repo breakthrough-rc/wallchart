@@ -34,6 +34,31 @@ pub fn PageLayout(props: PageLayoutProps) -> String {
                         crossorigin="anonymous"
                     ></script>
                     <script src="https://unpkg.com/htmx.org/dist/ext/loading-states.js"></script>
+                    <script>{
+                        r#"
+                        htmx.on("htmx:sendError", function() {
+                            YcControls.showErrorNotification("Network Error!");
+                        });                
+    
+                        htmx.on("htmx:responseError", function(error) {
+                            YcControls.showErrorNotification(
+                                error.detail.xhr.responseText || "Unknown error"
+                            );
+                        });
+    
+                        document.addEventListener("htmx:confirm", function(e) {
+                            if (!e.target.hasAttribute("hx-confirm")) return true;            
+                            e.preventDefault();
+                            YcControls.confirm({
+                                title: e.target.getAttribute("hx-confirm"),
+                                message: e.target.dataset.confirmMessage,
+                                actionConfirmed: function() {
+                                    e.detail.issueRequest(true);
+                                }
+                            });
+                        });
+                        "#
+                    }</script>
                 }
             }
         >
@@ -44,30 +69,6 @@ pub fn PageLayout(props: PageLayoutProps) -> String {
             </AppShell>
             <NotificationLiveRegion />
             <ModalLiveRegion />
-            <script>{
-                r#"
-                htmx.on("htmx:sendError", function() {
-                    YcControls.showErrorNotification("Network Error!");
-                });                
-
-                htmx.on("htmx:responseError", function(error) {
-                    YcControls.showErrorNotification(
-                        error.detail.xhr.responseText || "Unknown error"
-                    );
-                });
-                "#
-                // document.addEventListener("htmx:confirm", function(e) {
-                //     e.preventDefault();
-                //     YcControls.confirm({
-                //         title: e.target.getAttribute("hx-confirm"),
-                //         message: e.target.dataset.confirmMessage,
-                //         actionConfirmed: function() {
-                //             e.detail.issueRequest(true);
-                //         },
-                //     });
-                // })
-
-            }</script>
         </HtmlLayout>
     }
 }
