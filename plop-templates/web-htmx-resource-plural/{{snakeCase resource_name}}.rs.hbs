@@ -1,4 +1,5 @@
 use crate::state::WebHtmxState;
+use crate::routes;
 use axum::{
     extract::{self, State},
     response::IntoResponse,
@@ -10,7 +11,7 @@ use serde::Deserialize;
 pub fn {{snakeCase resource_name}}_routes(state: WebHtmxState) -> Router {
     Router::new()
         .route(
-            "/{{kebabCase resource_name}}", 
+            routes::{{constCase resource_name}}, 
             get(get_{{snakeCase resource_name}})
                 .post(post_{{snakeCase resource_name}})
         )
