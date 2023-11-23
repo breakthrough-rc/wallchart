@@ -58,7 +58,7 @@ module.exports = function(plop) {
       },
       {
         path: "web-htmx/src/routes.rs",
-        template: "pub const {{constCase resource_name}}: &str = todo!(\"Add route here\");",
+        template: "pub const {{constantCase resource_name}}: &str = todo!(\"Add route here\");",
         type: "append",
       },
       {
@@ -105,7 +105,7 @@ module.exports = function(plop) {
       },
       {
         path: "web-htmx/src/routes.rs",
-        template: "pub const {{constCase resource_name}}: &str = todo!(\"Add route here\");",
+        template: "pub const {{constantCase resource_name}}: &str = todo!(\"Add route here\");",
         type: "append",
       },
       {

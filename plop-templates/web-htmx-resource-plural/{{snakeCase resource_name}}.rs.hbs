@@ -11,7 +11,7 @@ use serde::Deserialize;
 pub fn {{snakeCase resource_name}}_routes(state: WebHtmxState) -> Router {
     Router::new()
         .route(
-            routes::{{constCase resource_name}}, 
+            routes::{{constantCase resource_name}}, 
             get(get_{{snakeCase resource_name}})
                 .post(post_{{snakeCase resource_name}})
         )
