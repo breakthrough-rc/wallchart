@@ -1,4 +1,3 @@
-use crate::{routes, state::WebHtmxState};
 use axum::{
     extract::{self, State},
     response::{Html, IntoResponse},
@@ -10,13 +9,19 @@ use axum_flash::Flash;
 use http::StatusCode;
 use rscx::{component, html, props, CollectFragmentAsync};
 use serde::Deserialize;
-use web_client::server::button::PrimaryButton;
+
+use web_client::server::{
+    button::PrimaryButton,
+    card::{Card, CardContent, CardFooter},
+};
 use worksite_service::{
     assign_tags::AssignTagsInput,
     get_worker::GetWorkerInput,
     get_worksite::GetWorksiteInput,
     models::{Tag, Worker},
 };
+
+use crate::{routes, state::WebHtmxState};
 
 pub fn assigned_tags_routes(state: WebHtmxState) -> Router {
     Router::new()
@@ -104,8 +109,8 @@ fn AssignTagsForm(props: AssignTagsFormProps) -> String {
     html! {
         <section aria-labelledby="worker-tags-heading">
             <form action="#" method="POST">
-                <div class="shadow sm:overflow-hidden sm:rounded-md">
-                    <div class="bg-white px-4 py-6 sm:p-6">
+                <Card>
+                    <CardContent padded=true>
                         <div>
                             <h2 id="worker-tags-heading" class="text-lg font-medium leading-6 text-gray-900">Tags</h2>
                             <p class="mt-1 text-sm text-gray-500">Assign tags.</p>
@@ -137,15 +142,15 @@ fn AssignTagsForm(props: AssignTagsFormProps) -> String {
                                 .await
                             }
                         </div>
-                    </div>
-                    <div class="bg-gray-50 px-4 py-3 text-right sm:px-6">
+                    </CardContent>
+                    <CardFooter>
                         <PrimaryButton
                             hx_put=props.action
                         >
                             Assign Tags
                         </PrimaryButton>
-                    </div>
-                </div>
+                    </CardFooter>
+                </Card>
             </form>
         </section>
     }

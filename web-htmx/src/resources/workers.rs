@@ -12,7 +12,7 @@ use serde::Deserialize;
 use web_client::server::{
     attrs::Attrs,
     button::PrimaryButton,
-    card::Card,
+    card::{Card, CardContent, CardFooter},
     flyout::Flyout,
     form::Button,
     modal::{modal_target, Modal, ModalSize},
@@ -126,26 +126,11 @@ async fn get_worker_details(
         <Flyout title=format!("Worker Detail: {}", &full_name)>
             <div class="w-full border-t border-gray-200 py-6">
                 <div class="flex flex-col gap-10">
-                    <section aria-labelledby="worker-profile-heading">
-                        <form action="#" method="POST">
-                            <div class="shadow sm:overflow-hidden sm:rounded-md">
-                                <div class="bg-white px-4 py-6 sm:p-6">
-                                    <div>
-                                        <h2 id="worker-profile-heading" class="text-lg font-medium leading-6 text-gray-900">Worker Profile</h2>
-                                        <p class="mt-1 text-sm text-gray-500">Update worker profile details below.</p>
-                                    </div>
-                                    <WorkerProfileFieldset form=profile_form_data />
-                                </div>
-                                <div class="bg-gray-50 px-4 py-3 text-right sm:px-6">
-                                    <PrimaryButton
-                                        hx_post=worker_profile(&worksite_id, &worker_id)
-                                    >
-                                        Update Profile
-                                    </PrimaryButton>
-                                </div>
-                            </div>
-                        </form>
-                    </section>
+                    <WorkerProfileSection
+                        worker_id=worker_id.clone()
+                        worksite_id=worksite_id.clone()
+                        profile_form_data=profile_form_data
+                    />
                     <div class="relative">
                         <div class="absolute inset-0 flex items-center" aria-hidden="true">
                             <div class="w-full border-t border-gray-300"></div>
@@ -358,5 +343,43 @@ fn WorkerForm(props: WorkerFormProps) -> String {
                 <Button kind="submit">Save</Button>
             </div>
         </form>
+    }
+}
+
+#[props]
+struct WorkerProfileSectionProps {
+    worksite_id: String,
+    worker_id: String,
+    profile_form_data: WorkerProfileFormData,
+}
+
+#[component]
+fn WorkerProfileSection(props: WorkerProfileSectionProps) -> String {
+    html! {
+        <section aria-labelledby="worker-profile-heading">
+            <form>
+                <Card>
+                    <CardContent padded=true>
+                        <h2
+                            id="worker-profile-heading"
+                            class="text-lg font-medium leading-6 text-gray-900"
+                        >
+                            Worker Profile
+                        </h2>
+                        <p class="mt-1 text-sm text-gray-500">
+                            Update worker profile details below.
+                        </p>
+                        <WorkerProfileFieldset form=props.profile_form_data />
+                    </CardContent>
+                    <CardFooter>
+                        <PrimaryButton
+                            hx_post=worker_profile(&props.worksite_id, &props.worker_id)
+                        >
+                            Update Profile
+                        </PrimaryButton>
+                    </CardFooter>
+                </Card>
+            </form>
+        </section>
     }
 }
