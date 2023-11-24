@@ -1,5 +1,6 @@
 pub mod attrs;
 pub mod button;
+pub mod card;
 pub mod flyout;
 pub mod form;
 pub mod html_element;
