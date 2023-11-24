@@ -1,15 +1,3 @@
-use crate::{
-    components::page::{PageHeader, PageLayout},
-    routes::{
-        self, home, login, user, users, users_new, users_new_modal, LOGIN, USER, USERS, USERS_NEW,
-        USERS_NEW_MODAL,
-    },
-    state::WebHtmxState,
-};
-use auth_service::{
-    create_user::CreateUserInput, get_user::GetUserInput, get_user_for_login::GetUserForLoginInput,
-};
-use auth_service::{delete_user::DeleteUserInput, models::User};
 use axum::{
     extract::{self, State},
     response::{Html, IntoResponse},
@@ -21,6 +9,10 @@ use http::{HeaderMap, StatusCode};
 use rscx::{component, html, props, CollectFragmentAsync};
 use serde::Deserialize;
 
+use auth_service::{
+    create_user::CreateUserInput, get_user::GetUserInput, get_user_for_login::GetUserForLoginInput,
+};
+use auth_service::{delete_user::DeleteUserInput, models::User};
 use in_memory_user_repository::AuthContext;
 use web_client::server::{
     attrs::Attrs,
@@ -28,6 +20,18 @@ use web_client::server::{
     card::Card,
     form::{Button, GridCell, GridLayout, Label, TextInput},
     modal::{modal_target, Modal, ModalSize},
+};
+
+use crate::{
+    components::{
+        page::{PageHeader, PageLayout},
+        page_content::PageContent,
+    },
+    routes::{
+        self, home, login, user, users, users_new, users_new_modal, LOGIN, USER, USERS, USERS_NEW,
+        USERS_NEW_MODAL,
+    },
+    state::WebHtmxState,
 };
 
 pub fn users_routes(state: WebHtmxState) -> Router {
@@ -111,9 +115,12 @@ async fn get_users(State(state): State<WebHtmxState>) -> impl IntoResponse {
                 }
             }
         >
-            <Card>
-                <UsersTable users=users />
-            </Card>
+            <p><em>Add, edit, remove Users</em></p>
+            <PageContent>
+                <Card>
+                    <UsersTable users=users />
+                </Card>
+            </PageContent>
         </PageLayout>
     })
 }

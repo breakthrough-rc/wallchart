@@ -1,11 +1,3 @@
-use crate::{
-    components::{
-        page::{PageHeader, PageLayout},
-        simple_form::{SimpleForm, SimpleFormData},
-    },
-    routes::{self, tag_edit_form, tags_create_form, TAG, TAGS, TAGS_CREATE_FORM, TAG_EDIT_FORM},
-    state::WebHtmxState,
-};
 use axum::{
     extract::{self, State},
     response::{Html, IntoResponse},
@@ -16,6 +8,7 @@ use axum_flash::Flash;
 use http::StatusCode;
 use rscx::{component, html, props, CollectFragmentAsync};
 use serde::Deserialize;
+
 use web_client::server::{
     button::PrimaryButton,
     card::Card,
@@ -25,6 +18,16 @@ use web_client::server::{
 use worksite_service::{
     add_tag::AddTagInput, get_tag::GetTagInput, get_tags::GetTagsInput, models::Tag,
     remove_tag::RemoveTagInput, update_tag::UpdateTagInput,
+};
+
+use crate::{
+    components::{
+        page::{PageHeader, PageLayout},
+        page_content::PageContent,
+        simple_form::{SimpleForm, SimpleFormData},
+    },
+    routes::{self, tag_edit_form, tags_create_form, TAG, TAGS, TAGS_CREATE_FORM, TAG_EDIT_FORM},
+    state::WebHtmxState,
 };
 
 pub fn tags_routes(state: WebHtmxState) -> Router {
@@ -68,18 +71,14 @@ async fn get_tags(
             }
         >
             <p><em>Add, edit, remove tags</em></p>
-            <div class="mt-8 flow-root">
-                <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                    <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                        <Card>
-                            <TagsTable
-                                worksite_id=worksite_id.clone()
-                                tags=tags
-                            />
-                        </Card>
-                    </div>
-                </div>
-            </div>
+            <PageContent>
+                <Card>
+                    <TagsTable
+                        worksite_id=worksite_id.clone()
+                        tags=tags
+                    />
+                </Card>
+            </PageContent>
         </PageLayout>
     })
 }

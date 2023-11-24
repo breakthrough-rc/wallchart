@@ -1,14 +1,3 @@
-use crate::{
-    components::{
-        page::{PageHeader, PageLayout},
-        worker_profile_fieldset::{WorkerProfileFieldset, WorkerProfileFormData},
-    },
-    routes::{
-        self, worker, worker_profile, workers, workers_new, workers_new_modal, WORKER, WORKERS,
-        WORKERS_NEW, WORKERS_NEW_MODAL, WORKER_PROFILE,
-    },
-    state::WebHtmxState,
-};
 use axum::{
     extract::{self, State},
     response::{Html, IntoResponse},
@@ -36,6 +25,19 @@ use worksite_service::{
     get_worksite::GetWorksiteInput,
     models::{Tag, Worker, Worksite},
     update_worker::UpdateWorkerInput,
+};
+
+use crate::{
+    components::{
+        page::{PageHeader, PageLayout},
+        page_content::PageContent,
+        worker_profile_fieldset::{WorkerProfileFieldset, WorkerProfileFormData},
+    },
+    routes::{
+        self, worker, worker_profile, workers, workers_new, workers_new_modal, WORKER, WORKERS,
+        WORKERS_NEW, WORKERS_NEW_MODAL, WORKER_PROFILE,
+    },
+    state::WebHtmxState,
 };
 
 pub fn workers_routes(state: WebHtmxState) -> Router {
@@ -89,17 +91,11 @@ async fn get_workers(
             }
         >
             <NotificationFlashes flashes=flashes.clone() />
-            <div class="my-4">
-                <div class="mt-8 flow-root">
-                    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                            <Card>
-                                <WorkersTable worksite=worksite workers=workers/>
-                            </Card>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <PageContent>
+                <Card>
+                    <WorkersTable worksite=worksite workers=workers/>
+                </Card>
+            </PageContent>
         </PageLayout>
     })
 }

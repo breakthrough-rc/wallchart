@@ -1,9 +1,3 @@
-use crate::routes::{self, locations_new, locations_new_modal, tags};
-use crate::state::WebHtmxState;
-use crate::{
-    components::page::{PageHeader, PageLayout},
-    routes::WALLCHART,
-};
 use axum::{
     extract::State,
     response::{Html, IntoResponse},
@@ -22,6 +16,15 @@ use web_client::server::{
 use worksite_service::{
     get_worksite::GetWorksiteInput,
     models::{Location as LocationModel, Tag, Worker, Worksite},
+};
+
+use crate::{
+    components::{
+        page::{PageHeader, PageLayout},
+        page_content::PageContent,
+    },
+    routes::{self, locations_new, locations_new_modal, tags, WALLCHART},
+    state::WebHtmxState,
 };
 
 pub fn worksite_routes(state: WebHtmxState) -> Router {
@@ -75,18 +78,12 @@ async fn get_wallchart_page(
             }
         >
             <NotificationFlashes flashes=flashes.clone() />
-            <div class="my-4">
-                <p><em>Manage your worksite and more.</em></p>
-                <div class="mt-8 flow-root">
-                    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                            <Card>
-                                <WallchartTable worksite=worksite/>
-                            </Card>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <p><em>Manage your worksite and more.</em></p>
+            <PageContent>
+                <Card>
+                    <WallchartTable worksite=worksite/>
+                </Card>
+            </PageContent>
         </PageLayout>
     };
 
@@ -114,19 +111,18 @@ pub fn WallchartTable(props: WallchartTableProps) -> String {
             </thead>
             <tbody class="bg-white">
                 {
-                    &worksite
-                    .locations
-                    .iter()
-                    .map(|location| async {
-                        html! {
-                            <LocationRow
-                                location=location.clone()
-                                worksite=worksite.clone()
-                            />
-                        }
-                    })
-                    .collect_fragment_async()
-                    .await
+                    &worksite.locations
+                        .iter()
+                        .map(|location| async {
+                            html! {
+                                <LocationRow
+                                    location=location.clone()
+                                    worksite=worksite.clone()
+                                />
+                            }
+                        })
+                        .collect_fragment_async()
+                        .await
                 }
             </tbody>
         </table>

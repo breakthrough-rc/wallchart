@@ -1,6 +1,3 @@
-use std::str::from_utf8;
-
-use crate::{components::page::PageLayout, routes, state::WebHtmxState};
 use axum::{
     extract::{Multipart, State},
     response::{Html, IntoResponse},
@@ -8,7 +5,15 @@ use axum::{
     Router,
 };
 use rscx::html;
-use web_client::server::form::Button;
+use std::str::from_utf8;
+
+use web_client::server::{card::Card, form::Button};
+
+use crate::{
+    components::{page::PageLayout, page_content::PageContent},
+    routes,
+    state::WebHtmxState,
+};
 
 pub fn csv_upload_routes(state: WebHtmxState) -> Router {
     Router::new()
@@ -21,12 +26,18 @@ pub fn csv_upload_routes(state: WebHtmxState) -> Router {
 
 async fn get_csv_upload(State(_state): State<WebHtmxState>) -> impl IntoResponse {
     Html(html! {
-    <PageLayout header="Upload a CSV">
-        <form id="form" hx-encoding="multipart/form-data" hx-post=routes::csv_upload()>
-            <input type="file" name="file">
-            <Button kind="submit">Upload</Button>
-        </form>
-    </PageLayout>
+        <PageLayout header="Upload a CSV">
+            <p><em>Bulk upload data into your worksites.</em></p>
+            <PageContent>
+                <Card padded=true>
+                    <form id="form" hx-encoding="multipart/form-data" hx-post=routes::csv_upload()>
+                        <p>Select a file to upload.</p>
+                        <input type="file" name="file" />
+                        <Button kind="submit">Upload</Button>
+                    </form>
+                </Card>
+            </PageContent>
+        </PageLayout>
     })
 }
 
@@ -43,7 +54,7 @@ async fn post_csv_upload(
 
     Html(html! {
         <PageLayout header="Upload a CSV">
-            <p> You uploaded: {context.join(", ")}</p>
+            <p>You uploaded: {context.join(", ")}</p>
         </PageLayout>
     })
 }
