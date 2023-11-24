@@ -23,6 +23,7 @@ use serde::Deserialize;
 use web_client::server::{
     attrs::Attrs,
     button::PrimaryButton,
+    card::Card,
     flyout::Flyout,
     form::Button,
     modal::{modal_target, Modal, ModalSize},
@@ -92,9 +93,9 @@ async fn get_workers(
                 <div class="mt-8 flow-root">
                     <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                         <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                            <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+                            <Card>
                                 <WorkersTable worksite=worksite workers=workers/>
-                            </div>
+                            </Card>
                         </div>
                     </div>
                 </div>

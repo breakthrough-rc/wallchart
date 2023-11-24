@@ -25,6 +25,7 @@ use in_memory_user_repository::AuthContext;
 use web_client::server::{
     attrs::Attrs,
     button::PrimaryButton,
+    card::Card,
     form::{Button, GridCell, GridLayout, Label, TextInput},
     modal::{modal_target, Modal, ModalSize},
 };
@@ -110,18 +111,20 @@ async fn get_users(State(state): State<WebHtmxState>) -> impl IntoResponse {
                 }
             }
         >
-            <Users users=users />
+            <Card>
+                <UsersTable users=users />
+            </Card>
         </PageLayout>
     })
 }
 
 #[props]
-pub struct UsersProps {
+struct UsersTableProps {
     users: Vec<User>,
 }
 
 #[component]
-pub fn Users(props: UsersProps) -> String {
+fn UsersTable(props: UsersTableProps) -> String {
     html! {
         <table class="min-w-full divide-y divide-gray-300">
             <thead class="bg-gray-50">

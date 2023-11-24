@@ -18,6 +18,7 @@ use rscx::{component, html, props, CollectFragmentAsync};
 use serde::Deserialize;
 use web_client::server::{
     button::PrimaryButton,
+    card::Card,
     form::{GridCell, Label, TextInput},
     modal::{modal_target, Modal},
 };
@@ -70,7 +71,7 @@ async fn get_tags(
             <div class="mt-8 flow-root">
                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+                        <Card>
                             <table class="min-w-full divide-y divide-gray-300">
                                 <thead class="bg-gray-50">
                                     <tr>
@@ -118,7 +119,7 @@ async fn get_tags(
                                     }
                                 </tbody>
                             </table>
-                        </div>
+                        </Card>
                     </div>
                 </div>
             </div>
