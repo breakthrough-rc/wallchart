@@ -15,7 +15,7 @@ use resources::tags::tags_routes;
 use resources::users::users_routes;
 use resources::workers::workers_routes;
 use resources::worksite::worksite_routes;
-use routes::{CLIENT, HOME, PLAYGROUND};
+use routes::{CLIENT, HOME, PLAYGROUND, WALLCHART};
 use rscx::html;
 use state::WebHtmxState;
 use web_client::routes as client_routes;
@@ -26,6 +26,12 @@ pub mod playground;
 pub mod resources;
 mod routes;
 pub mod state;
+
+#[cfg(debug_assertions)]
+const HOME_REDIRECT: &'static str = PLAYGROUND;
+
+#[cfg(not(debug_assertions))]
+const HOME_REDIRECT: &'static str = WALLCHART;
 
 pub fn routes(state: WebHtmxState) -> Router {
     Router::new()
@@ -44,7 +50,7 @@ pub fn routes(state: WebHtmxState) -> Router {
         //     Arc::new(LOGIN.into()),
         //     None,
         // ))
-        .route(HOME, get(Redirect::temporary("/playground")))
+        .route(HOME, get(Redirect::temporary(HOME_REDIRECT)))
         .nest(PLAYGROUND, playground::routes())
         .nest_service(CLIENT, client_routes())
         .merge(users_routes(state))
