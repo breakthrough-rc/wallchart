@@ -67,8 +67,10 @@ pub fn PageLayout(props: PageLayoutProps) -> String {
                     {props.children}
                 </main>
             </AppShell>
-            <NotificationLiveRegion />
-            <ModalLiveRegion />
+            <div hx-history-elt>
+                <NotificationLiveRegion />
+                <ModalLiveRegion />
+            </div>
         </HtmlLayout>
     }
 }

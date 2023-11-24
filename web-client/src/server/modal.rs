@@ -3,6 +3,11 @@ use super::yc_control::YcControl;
 use crate::server::attrs::Attrs;
 use rscx::{component, html, props};
 
+const MODALS_ID: &str = "modal-live-region";
+pub fn modal_target() -> String {
+    format!("#{}", MODALS_ID)
+}
+
 pub enum ModalSize {
     Small,
     Medium,
@@ -117,7 +122,7 @@ pub fn ConfirmDeleteModal() -> String {
 #[component]
 pub fn ModalLiveRegion() -> String {
     html! {
-      <div id="modal-live-region">
+      <div id=MODALS_ID>
           <section data-modal-content>
           </section>
           <template id="tpl-confirm-delete-modal">

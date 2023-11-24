@@ -19,7 +19,7 @@ use serde::Deserialize;
 use web_client::server::{
     button::PrimaryButton,
     form::{GridCell, Label, TextInput},
-    modal::Modal,
+    modal::{modal_target, Modal},
 };
 use worksite_service::{
     add_tag::AddTagInput, get_tag::GetTagInput, get_tags::GetTagsInput, remove_tag::RemoveTagInput,
@@ -57,7 +57,7 @@ async fn get_tags(
                 buttons: html! {
                     <PrimaryButton
                         hx_get=tags_create_form(&worksite_id)
-                        hx_target="body"
+                        hx_target=modal_target()
                         hx_swap="beforeend"
                         hx_push_url=tags_create_form(&worksite_id)
                     >
@@ -93,7 +93,7 @@ async fn get_tags(
                                                         <div class="inline-flex gap-4">
                                                             <a
                                                                 hx-get=tag_edit_form(&worksite_id, &tag.id)
-                                                                hx-target="body"
+                                                                hx-target=modal_target()
                                                                 hx-swap="beforeend"
                                                                 hx-push-url=tag_edit_form(&worksite_id, &tag.id)
                                                                 class="text-indigo-600 hover:text-indigo-900"

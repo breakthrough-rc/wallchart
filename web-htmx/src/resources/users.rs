@@ -26,7 +26,7 @@ use web_client::server::{
     attrs::Attrs,
     button::PrimaryButton,
     form::{Button, GridCell, GridLayout, Label, TextInput},
-    modal::{Modal, ModalSize},
+    modal::{modal_target, Modal, ModalSize},
 };
 
 pub fn users_routes(state: WebHtmxState) -> Router {
@@ -101,7 +101,7 @@ async fn get_users(State(state): State<WebHtmxState>) -> impl IntoResponse {
                 buttons: html! {
                     <PrimaryButton
                         hx_get=users_new_modal()
-                        hx_target="body"
+                        hx_target=modal_target()
                         hx_swap="beforeend"
                         hx_push_url=users_new()
                     >
@@ -164,8 +164,8 @@ pub fn User(props: UserProps) -> String {
             <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
                   <button
                       hx-get=user(&props.user.id)
-                      hx-target="body"
-                  >
+                      hx-target=modal_target()
+                      >
                       {props.user.email}
                   </button>
             </td>

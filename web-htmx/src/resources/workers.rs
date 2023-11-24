@@ -25,7 +25,7 @@ use web_client::server::{
     button::PrimaryButton,
     flyout::Flyout,
     form::Button,
-    modal::{Modal, ModalSize},
+    modal::{modal_target, Modal, ModalSize},
     notification::NotificationFlashes,
 };
 use worksite_service::{
@@ -78,7 +78,7 @@ async fn get_workers(
                 buttons: html! {
                     <PrimaryButton
                         hx_get=workers_new_modal(&worksite_id)
-                        hx_target="body"
+                        hx_target=modal_target()
                         hx_swap="beforeend"
                         hx_push_url=workers_new(&worksite_id)
                     >
@@ -323,7 +323,7 @@ pub fn WorkerRow(props: WorkerRowProps) -> String {
             <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
                   <button
                       hx-get=worker(&"1".to_string(), &props.worker.id)
-                      hx-target="body"
+                      hx-target=modal_target()
                       hx-swap="beforeend"
                   >
                       {format!("{} {}", props.worker.first_name, props.worker.last_name)}
