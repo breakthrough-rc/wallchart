@@ -15,7 +15,7 @@ use resources::tags::tags_routes;
 use resources::users::users_routes;
 use resources::workers::workers_routes;
 use resources::worksite::worksite_routes;
-use routes::{CLIENT, HOME, PLAYGROUND};
+use routes::{CLIENT, HOME, HOME_REDIRECT, PLAYGROUND};
 use rscx::html;
 use state::WebHtmxState;
 use web_client::routes as client_routes;
@@ -26,12 +26,6 @@ pub mod playground;
 pub mod resources;
 mod routes;
 pub mod state;
-
-#[cfg(debug_assertions)]
-const HOME_REDIRECT: &str = PLAYGROUND;
-
-#[cfg(not(debug_assertions))]
-const HOME_REDIRECT: &'static str = WALLCHART;
 
 pub fn routes(state: WebHtmxState) -> Router {
     Router::new()

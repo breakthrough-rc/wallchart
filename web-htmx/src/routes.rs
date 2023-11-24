@@ -17,6 +17,12 @@ pub fn home() -> String {
     HOME.into()
 }
 
+#[cfg(debug_assertions)]
+pub const HOME_REDIRECT: &str = PLAYGROUND;
+
+#[cfg(not(debug_assertions))]
+pub const HOME_REDIRECT: &str = WALLCHART;
+
 pub const PLAYGROUND: &str = "/playground";
 pub fn _playground() -> String {
     PLAYGROUND.into()
