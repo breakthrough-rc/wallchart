@@ -23,8 +23,8 @@ use web_client::server::{
     modal::{modal_target, Modal},
 };
 use worksite_service::{
-    add_tag::AddTagInput, get_tag::GetTagInput, get_tags::GetTagsInput, remove_tag::RemoveTagInput,
-    update_tag::UpdateTagInput,
+    add_tag::AddTagInput, get_tag::GetTagInput, get_tags::GetTagsInput, models::Tag,
+    remove_tag::RemoveTagInput, update_tag::UpdateTagInput,
 };
 
 pub fn tags_routes(state: WebHtmxState) -> Router {
@@ -72,53 +72,10 @@ async fn get_tags(
                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                         <Card>
-                            <table class="min-w-full divide-y divide-gray-300">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Tag</th>
-                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Icon</th>
-                                        <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
-                                            <span class="sr-only">Edit</span>
-                                            <span class="sr-only">Remove</span>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200 bg-white">
-                                    {
-                                        tags.iter().map(|tag| async {
-                                            html! {
-                                                <tr>
-                                                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{&tag.name}</td>
-                                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{&tag.icon}</td>
-                                                    <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                                        <div class="inline-flex gap-4">
-                                                            <a
-                                                                hx-get=tag_edit_form(&worksite_id, &tag.id)
-                                                                hx-target=modal_target()
-                                                                hx-swap="beforeend"
-                                                                hx-push-url=tag_edit_form(&worksite_id, &tag.id)
-                                                                class="text-indigo-600 hover:text-indigo-900"
-                                                            >
-                                                                Edit<span class="sr-only">, {&tag.name}</span>
-                                                            </a>
-                                                            <a
-                                                                hx-delete=routes::tag(&worksite_id, &tag.id)
-                                                                hx-confirm="Delete Tag"
-                                                                data-confirm-message=format!("Are you sure you want to delete tag: {}", &tag.name)
-                                                                class="text-indigo-600 hover:text-indigo-900"
-                                                            >
-                                                                Remove<span class="sr-only">, {&tag.name}</span>
-                                                            </a>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            }
-                                        })
-                                        .collect_fragment_async()
-                                        .await
-                                    }
-                                </tbody>
-                            </table>
+                            <TagsTable
+                                worksite_id=worksite_id.clone()
+                                tags=tags
+                            />
                         </Card>
                     </div>
                 </div>
@@ -278,5 +235,64 @@ fn TagForm(props: TagFormProps) -> String {
                 <TextInput name="icon" value=props.data.icon />
             </GridCell>
         </SimpleForm>
+    }
+}
+
+#[props]
+struct TagsTableProps {
+    worksite_id: String,
+    tags: Vec<Tag>,
+}
+
+#[component]
+fn TagsTable(props: TagsTableProps) -> String {
+    html! {
+        <table class="min-w-full divide-y divide-gray-300">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Tag</th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Icon</th>
+                    <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                        <span class="sr-only">Edit</span>
+                        <span class="sr-only">Remove</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 bg-white">
+                {
+                    props.tags.iter().map(|tag| async {
+                        html! {
+                            <tr>
+                                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{&tag.name}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{&tag.icon}</td>
+                                <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                                    <div class="inline-flex gap-4">
+                                        <a
+                                            hx-get=tag_edit_form(&props.worksite_id, &tag.id)
+                                            hx-target=modal_target()
+                                            hx-swap="beforeend"
+                                            hx-push-url=tag_edit_form(&props.worksite_id, &tag.id)
+                                            class="text-indigo-600 hover:text-indigo-900"
+                                        >
+                                            Edit<span class="sr-only">, {&tag.name}</span>
+                                        </a>
+                                        <a
+                                            hx-delete=routes::tag(&props.worksite_id, &tag.id)
+                                            hx-confirm="Delete Tag"
+                                            data-confirm-message=format!("Are you sure you want to delete tag: {}", &tag.name)
+                                            class="text-indigo-600 hover:text-indigo-900"
+                                        >
+                                            Remove<span class="sr-only">, {&tag.name}</span>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    })
+                    .collect_fragment_async()
+                    .await
+                }
+            </tbody>
+        </table>
     }
 }
