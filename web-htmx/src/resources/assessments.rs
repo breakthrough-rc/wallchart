@@ -21,7 +21,6 @@ use worksite_service::{
 };
 
 use crate::{
-    components::simple_form::{SimpleForm, SimpleFormData},
     routes,
     state::WebHtmxState,
 };
