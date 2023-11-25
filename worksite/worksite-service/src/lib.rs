@@ -21,3 +21,5 @@ pub mod add_assessment;
 pub mod get_assessment;
 pub mod get_assessments;
 pub mod update_assessment;
+
+pub mod remove_assessment;

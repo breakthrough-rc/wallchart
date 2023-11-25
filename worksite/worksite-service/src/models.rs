@@ -315,6 +315,15 @@ impl Worker {
             None => updated_worker,
         }
     }
+    pub fn remove_assessment(&self, assessment_id: String) -> Worker {
+        let mut updated_worker = self.clone();
+
+        updated_worker
+            .assessments
+            .retain(|assessment| assessment.id != assessment_id);
+
+        updated_worker
+    }
 }
 
 #[derive(Debug, Clone)]
