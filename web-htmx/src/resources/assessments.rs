@@ -232,7 +232,7 @@ fn AssessmentHistoryList(props: AssessmentHistoryListProps) -> String {
                         <div class="flex flex-none items-center gap-x-4">
                             <PopupMenuButton
                                 route={
-                                    routes::assessment(&worksite_id, &worker_id, &assessment.id)
+                                    routes::assessment(worksite_id, worker_id, &assessment.id)
                                 }
                             />
                         </div>
