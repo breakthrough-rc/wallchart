@@ -1,9 +1,4 @@
-use axum::{
-    extract::{State},
-    response::IntoResponse,
-    routing::get,
-    Form, Router,
-};
+use axum::{extract::State, response::IntoResponse, routing::get, Form, Router};
 use rscx::html;
 use serde::Deserialize;
 
@@ -27,14 +22,11 @@ async fn get_assessments(State(_state): State<WebHtmxState>) -> impl IntoRespons
 }
 
 #[derive(Deserialize, Debug)]
-struct ExampleForm {
-    foo: String,
-    bar: String,
-}
+struct AssessmentForm {}
 
 async fn post_assessments(
     State(_state): State<WebHtmxState>,
-    Form(_example_form): Form<ExampleForm>,
+    Form(__form): Form<AssessmentForm>,
 ) -> impl IntoResponse {
     todo!()
 }
