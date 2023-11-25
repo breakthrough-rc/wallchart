@@ -19,3 +19,4 @@ pub mod update_worker;
 
 
 pub mod get_assessments;
+pub mod add_assessment;

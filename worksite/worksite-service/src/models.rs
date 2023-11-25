@@ -263,6 +263,12 @@ impl Worker {
     pub fn last_assessment(&self) -> Option<Assessment> {
         self.assessments.last().cloned()
     }
+    pub fn add_assessment(&self, assessment: Assessment) -> Worker {
+        let mut updated_worker = self.clone();
+        updated_worker.assessments.push(assessment);
+
+        updated_worker
+    }
 }
 
 #[derive(Debug, Clone)]

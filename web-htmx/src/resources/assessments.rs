@@ -80,7 +80,7 @@ async fn get_assessments(
 
 #[derive(Deserialize, Debug)]
 struct AssessmentForm {
-    value: usize,
+    value: u8,
     notes: String,
 }
 
