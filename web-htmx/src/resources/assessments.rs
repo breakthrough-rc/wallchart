@@ -1,5 +1,5 @@
 use axum::{
-    extract::{self, State},
+    extract::{State},
     response::IntoResponse,
     routing::get,
     Form, Router,
@@ -34,7 +34,7 @@ struct ExampleForm {
 
 async fn post_assessments(
     State(_state): State<WebHtmxState>,
-    Form(example_form): Form<ExampleForm>,
+    Form(_example_form): Form<ExampleForm>,
 ) -> impl IntoResponse {
     todo!()
 }
