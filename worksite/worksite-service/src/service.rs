@@ -6,6 +6,9 @@ use crate::{
     add_worker::{AddWorker, AddWorkerInput, AddWorkerOutput},
     assign_worker::{AssignWorker, AssignWorkerInput, AssignWorkerOutput},
     //##PLOP INSERT COMMAND IMPORTS HOOK##
+    get_assessments::{
+      GetAssessments, GetAssessmentsInput, GetAssessmentsOutput, 
+    },
     remove_tag::{
       RemoveTag, RemoveTagInput, RemoveTagOutput, 
     },
@@ -36,6 +39,7 @@ use crate::{
 #[derive(Clone)]
 pub struct WorksiteService {
     //##PLOP INSERT COMMAND HOOK##
+    pub get_assessments: GetAssessments,
     pub remove_tag: RemoveTag,
     pub get_tag: GetTag,
     pub update_tag: UpdateTag,
@@ -57,6 +61,10 @@ impl WorksiteService {
     pub fn new(worksite_repository: Arc<dyn WorksiteRepository>) -> Self {
         Self {
             //##PLOP INSERT COMMAND INSTANTIATION HOOK##
+            get_assessments: GetAssessments {
+              // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
+              worksite_repository: worksite_repository.clone(),
+            },
             remove_tag: RemoveTag {
               // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
               worksite_repository: worksite_repository.clone(),
@@ -108,6 +116,13 @@ impl WorksiteService {
         }
     }
     //##PLOP INSERT DELEGATE HOOK##
+    pub async fn get_assessments(
+        &self,
+        input: GetAssessmentsInput,
+    ) -> GetAssessmentsOutput {
+        self.get_assessments.get_assessments(input).await
+    }
+
     pub async fn remove_tag(
         &self,
         input: RemoveTagInput,

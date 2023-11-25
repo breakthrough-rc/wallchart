@@ -42,6 +42,13 @@ impl Worksite {
         tags
     }
 
+    pub fn get_assessments_for_worker(&self, worker_id: String) -> Vec<Assessment> {
+        match self.get_worker(worker_id) {
+            Some(worker) => worker.assessments,
+            None => vec![],
+        }
+    }
+
     fn get_shift(&self, shift_id: String) -> Option<Shift> {
         self.locations
             .iter()
