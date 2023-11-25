@@ -10,26 +10,30 @@ use rscx::{component, html, props, CollectFragmentAsync};
 use serde::Deserialize;
 
 use web_client::server::{
+    attrs::Attrs,
     button::PrimaryButton,
     card::{Card, CardContent, CardFooter},
-    form::{GridCell, GridLayout, Label, TextInput},
+    form::{Button, GridCell, GridLayout, Label, TextInput},
+    modal::{modal_target, Modal},
     transition::Transition,
     yc_control::Toggle,
 };
 use worksite_service::{
-    add_assessment::AddAssessmentInput, get_assessments::GetAssessmentsInput, models::Assessment,
+    add_assessment::AddAssessmentInput, edit_assessment::EditAssessmentInput,
+    get_assessment::GetAssessmentInput, get_assessments::GetAssessmentsInput, models::Assessment,
 };
 
-use crate::{
-    routes,
-    state::WebHtmxState,
-};
+use crate::{routes, state::WebHtmxState};
 
 pub fn assessments_routes(state: WebHtmxState) -> Router {
     Router::new()
         .route(
             routes::ASSESSMENTS,
             get(get_assessments).post(post_assessments),
+        )
+        .route(
+            routes::ASSESSMENT,
+            get(get_assessment_form).put(put_assessment),
         )
         .with_state(state)
 }
@@ -58,12 +62,14 @@ async fn get_assessments(
                         </div>
                         <section class="mt-4 divide-y divide-gray-200 border-b border-t border-gray-200">
                             <AssessmentHistoryList
+                                worksite_id=worksite_id.clone()
+                                worker_id=worker_id.clone()
                                 assessments=assessments
                             />
                         </section>
                         <section class="mt-4">
                             <h3 class="text-md mb-2 font-medium leading-6 text-gray-900">"Add a new assessment"</h3>
-                            <AssessmentForm />
+                            <AssessmentFormFields />
                         </section>
                     </CardContent>
                     <CardFooter>
@@ -79,8 +85,8 @@ async fn get_assessments(
     }
 }
 
-#[derive(Deserialize, Debug)]
-struct AssessmentForm {
+#[derive(Deserialize, Debug, Default)]
+struct AssessmentFormData {
     value: u8,
     notes: String,
 }
@@ -91,7 +97,7 @@ async fn post_assessments(
         worksite_service, ..
     }): State<WebHtmxState>,
     flash: Flash,
-    Form(form): Form<AssessmentForm>,
+    Form(form): Form<AssessmentFormData>,
 ) -> impl IntoResponse {
     worksite_service
         .add_assessment(AddAssessmentInput {
@@ -113,13 +119,83 @@ async fn post_assessments(
     )
 }
 
+async fn get_assessment_form(
+    extract::Path((worksite_id, worker_id, assesment_id)): extract::Path<(String, String, String)>,
+    State(WebHtmxState {
+        worksite_service, ..
+    }): State<WebHtmxState>,
+) -> impl IntoResponse {
+    let assessment = worksite_service
+        .get_assessment(GetAssessmentInput {
+            worksite_id: worksite_id.clone(),
+            worker_id: worker_id.clone(),
+            assessment_id: assesment_id.clone(),
+        })
+        .await
+        .expect("Failed to get assessment")
+        .ok_or("Tag not found")
+        .expect("Tag not found");
+
+    html! {
+        <Modal>
+            <div>
+                <h2 id="worker-tags-heading" class="text-lg font-medium leading-6 text-gray-900">"🏅 Update Assessment"</h2>
+                <p class="mt-1 text-sm text-gray-500">Enter new values below.</p>
+            </div>
+            <div class="mt-4">
+                <AssessmentForm
+                    action=routes::assessment(&worksite_id, &worker_id, &assesment_id)
+                    form_data=AssessmentFormData {
+                        value: assessment.value,
+                        notes: assessment.notes,
+                    }
+                />
+            </div>
+        </Modal>
+    }
+}
+
+async fn put_assessment(
+    extract::Path((worksite_id, worker_id, assessment_id)): extract::Path<(String, String, String)>,
+    State(WebHtmxState {
+        worksite_service, ..
+    }): State<WebHtmxState>,
+    flash: Flash,
+    Form(form): Form<AssessmentFormData>,
+) -> impl IntoResponse {
+    worksite_service
+        .edit_assessment(EditAssessmentInput {
+            worksite_id,
+            worker_id,
+            assessment_id,
+            value: form.value,
+            notes: form.notes,
+        })
+        .await
+        .expect("Failed to update assessment");
+
+    (
+        StatusCode::OK,
+        flash.success("Assessment updated successfully!"),
+        [
+            ("hx-redirect", routes::wallchart()),
+            ("hx-retarget", "body".into()),
+        ],
+    )
+}
+
 #[props]
 struct AssessmentHistoryListProps {
+    worksite_id: String,
+    worker_id: String,
     assessments: Vec<Assessment>,
 }
 
 #[component]
 fn AssessmentHistoryList(props: AssessmentHistoryListProps) -> String {
+    let worksite_id = &props.worksite_id;
+    let worker_id = &props.worker_id;
+
     html! {
         <ul role="list" class="divide-y divide-gray-100">
             {
@@ -154,7 +230,11 @@ fn AssessmentHistoryList(props: AssessmentHistoryListProps) -> String {
                             </div>
                         </div>
                         <div class="flex flex-none items-center gap-x-4">
-                            <PopupMenuButton />
+                            <PopupMenuButton
+                                route={
+                                    routes::assessment(&worksite_id, &worker_id, &assessment.id)
+                                }
+                            />
                         </div>
                     </li>
                 }})
@@ -165,8 +245,13 @@ fn AssessmentHistoryList(props: AssessmentHistoryListProps) -> String {
     }
 }
 
+#[props]
+struct PopupMenuButtonProps {
+    route: String,
+}
+
 #[component]
-fn PopupMenuButton() -> String {
+fn PopupMenuButton(props: PopupMenuButtonProps) -> String {
     html! {
         <Toggle class="relative flex-none">
             <button
@@ -195,32 +280,87 @@ fn PopupMenuButton() -> String {
                 aria_labelledby="options-menu-0-button"
                 tabindex="-1"
             >
-                // <!-- Active: "bg-gray-50", Not Active: "" -->
-                <a href="#" class="block px-3 py-1 text-sm leading-6 text-gray-900" role="menuitem" tabindex="-1" id="options-menu-0-item-0" onclick="alert('Coming soon!')">Edit<span class="sr-only">, Assessment</span></a>
-                <a href="#" class="block px-3 py-1 text-sm leading-6 text-gray-900" role="menuitem" tabindex="-1" id="options-menu-0-item-2" onclick="alert('Coming soon!')">Delete<span class="sr-only">, Assessment</span></a>
+                <a
+                    hx-get=props.route
+                    hx-target=modal_target()
+                    hx-swap="beforeend"
+                    class="block px-3 py-1 text-sm leading-6 text-gray-900"
+                    role="menuitem"
+                    tabindex="-1"
+                    id="options-menu-0-item-0"
+                >
+                    Edit<span class="sr-only">, Assessment</span>
+                </a>
+                <a
+                    href="#"
+                    class="block px-3 py-1 text-sm leading-6 text-gray-900"
+                    role="menuitem"
+                    tabindex="-1"
+                    id="options-menu-0-item-2"
+                    onclick="alert('Coming soon!')"
+                >
+                    Delete<span class="sr-only">, Assessment</span>
+                </a>
             </Transition>
         </Toggle>
     }
 }
 
 #[props]
-struct AssessmentFormProps {}
+struct AssessmentFormFieldsProps {
+    #[builder(default = AssessmentFormData::default())]
+    form_data: AssessmentFormData,
+}
 
 #[component]
-fn AssessmentForm(_props: AssessmentFormProps) -> String {
+fn AssessmentFormFields(props: AssessmentFormFieldsProps) -> String {
     html! {
         <GridLayout>
             <GridCell span=6>
                 <Label for_input="value">Assessment Value</Label>
-                <TextInput name="value" value="" />
+                <TextInput name="value" value=&props.form_data.value.to_string() />
             </GridCell>
             <GridCell span=6>
                 <Label for_input="notes">Notes</Label>
                 <textarea
                     class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     name="notes"
-                />
+                >
+                    {&props.form_data.notes}
+                </textarea>
             </GridCell>
         </GridLayout>
+    }
+}
+
+#[props]
+struct AssessmentFormProps {
+    action: String,
+
+    #[builder(default = AssessmentFormData::default())]
+    form_data: AssessmentFormData,
+}
+
+#[component]
+fn AssessmentForm(props: AssessmentFormProps) -> String {
+    html! {
+        <form hx-put=props.action>
+            <AssessmentFormFields
+                form_data=props.form_data
+            />
+            <GridLayout>
+                <GridCell span=6>
+                    <div class="mt-6 flex items-center justify-end gap-x-6">
+                        <Button
+                            onclick="history.go(-1)"
+                            attrs=Attrs::with("data-toggle-action", "close".into())
+                        >
+                            Cancel
+                        </Button>
+                        <Button kind="submit">Save</Button>
+                    </div>
+                </GridCell>
+            </GridLayout>
+        </form>
     }
 }

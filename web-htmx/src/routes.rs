@@ -210,3 +210,12 @@ pub fn assessments(worksite_id: &String, worker_id: &String) -> String {
         worksite_id, worker_id
     )
 }
+
+pub const ASSESSMENT: &str =
+    "/worksites/:worksite_id/workers/:worker_id/assessments/:assessment_id";
+pub fn assessment(worksite_id: &String, worker_id: &String, assessment_id: &String) -> String {
+    format!(
+        "/worksites/{}/workers/{}/assessments/{}",
+        worksite_id, worker_id, assessment_id
+    )
+}
