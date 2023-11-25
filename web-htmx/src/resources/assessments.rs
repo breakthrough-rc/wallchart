@@ -16,7 +16,9 @@ use web_client::server::{
     transition::Transition,
     yc_control::Toggle,
 };
-use worksite_service::{get_assessments::GetAssessmentsInput, models::Assessment};
+use worksite_service::{
+    add_assessment::AddAssessmentInput, get_assessments::GetAssessmentsInput, models::Assessment,
+};
 
 use crate::{
     components::simple_form::{SimpleForm, SimpleFormData},
@@ -85,11 +87,22 @@ struct AssessmentForm {
 }
 
 async fn post_assessments(
-    State(_state): State<WebHtmxState>,
+    extract::Path((worksite_id, worker_id)): extract::Path<(String, String)>,
+    State(WebHtmxState {
+        worksite_service, ..
+    }): State<WebHtmxState>,
     flash: Flash,
     Form(form): Form<AssessmentForm>,
 ) -> impl IntoResponse {
-    println!("form: {:?}", form);
+    worksite_service
+        .add_assessment(AddAssessmentInput {
+            worker_id: worker_id.clone(),
+            worksite_id: worksite_id.clone(),
+            value: form.value,
+            notes: form.notes,
+        })
+        .await
+        .expect("Failed to add assessment");
 
     (
         StatusCode::OK,
@@ -131,12 +144,12 @@ fn AssessmentHistoryList(props: AssessmentHistoryListProps) -> String {
                                 </svg>
                                 <p class="truncate">Assessment by Leslie Alexander</p>
                             </div>
-                            <div class="mt-5 flex flex-col gap-x-3">
-                                <p class="text-sm font-semibold leading-6 text-gray-900">Notes</p>
+                            <div class="mt-5 flex flex-col gap-x-3 text-xs ">
+                                <p class="font-semibold leading-6 text-gray-900">Notes</p>
                                 {
                                     match assessment.notes.is_empty() {
-                                        true => html! { <p class="text-xs text-gray-500">No notes.</p> },
-                                        false => html! { <p class="text-xs">{&assessment.notes}</p> },
+                                        true => html! { <p class="text-gray-500">No notes.</p> },
+                                        false => html! { <p>{&assessment.notes}</p> },
                                     }
                                 }
                             </div>
