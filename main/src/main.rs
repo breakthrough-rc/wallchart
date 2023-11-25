@@ -78,6 +78,11 @@ async fn main() {
                     value: 1,
                     notes: "".into(),
                 }),
+                assessments: vec![Assessment {
+                    id: "1".into(),
+                    value: 1,
+                    notes: "".into(),
+                }],
                 tags: vec![
                     AssignedTag::new("1".into()),
                     AssignedTag::new("2".into()),
@@ -93,6 +98,11 @@ async fn main() {
                     value: 2,
                     notes: "".into(),
                 }),
+                assessments: vec![Assessment {
+                    id: "2".into(),
+                    value: 2,
+                    notes: "".into(),
+                }],
                 tags: vec![
                     AssignedTag::new("1".into()),
                     AssignedTag::new("2".into()),
@@ -108,6 +118,11 @@ async fn main() {
                     value: 4,
                     notes: "".into(),
                 }),
+                assessments: vec![Assessment {
+                    id: "3".into(),
+                    value: 4,
+                    notes: "".into(),
+                }],
                 tags: vec![AssignedTag::new("3".into())],
             },
             Worker {
@@ -119,6 +134,11 @@ async fn main() {
                     value: 1,
                     notes: "".into(),
                 }),
+                assessments: vec![Assessment {
+                    id: "4".into(),
+                    value: 1,
+                    notes: "".into(),
+                }],
                 tags: vec![AssignedTag::new("2".into()), AssignedTag::new("3".into())],
             },
             Worker {
@@ -130,6 +150,11 @@ async fn main() {
                     value: 3,
                     notes: "".into(),
                 }),
+                assessments: vec![Assessment {
+                    id: "5".into(),
+                    value: 3,
+                    notes: "".into(),
+                }],
                 tags: vec![AssignedTag::new("1".into())],
             },
             Worker {
@@ -141,6 +166,11 @@ async fn main() {
                     value: 3,
                     notes: "".into(),
                 }),
+                assessments: vec![Assessment {
+                    id: "3".into(),
+                    value: 3,
+                    notes: "".into(),
+                }],
                 tags: vec![AssignedTag::new("2".into()), AssignedTag::new("3".into())],
             },
             Worker {
@@ -152,6 +182,11 @@ async fn main() {
                     value: 2,
                     notes: "".into(),
                 }),
+                assessments: vec![Assessment {
+                    id: "7".into(),
+                    value: 2,
+                    notes: "".into(),
+                }],
                 tags: vec![
                     AssignedTag::new("1".into()),
                     AssignedTag::new("2".into()),

@@ -237,6 +237,7 @@ pub struct Worker {
     pub first_name: String,
     pub last_name: String,
     pub last_assessment: Option<Assessment>,
+    pub assessments: Vec<Assessment>,
     pub tags: Vec<AssignedTag>,
 }
 
