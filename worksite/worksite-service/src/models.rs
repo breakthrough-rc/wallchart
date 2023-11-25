@@ -269,6 +269,37 @@ impl Worker {
 
         updated_worker
     }
+    pub fn update_assessment(
+        &self,
+        assessment_id: String,
+        update_fn: impl FnOnce(Assessment) -> Assessment,
+    ) -> Worker {
+        let mut updated_worker = self.clone();
+
+        let assessment = self
+            .assessments
+            .iter()
+            .find(|a| a.id == assessment_id)
+            .cloned();
+
+        match assessment {
+            Some(assessment) => {
+                let updated_assessment = update_fn(assessment);
+
+                updated_worker
+                    .assessments
+                    .iter_mut()
+                    .for_each(|assessment| {
+                        if assessment.id == assessment_id {
+                            *assessment = updated_assessment.clone();
+                        }
+                    });
+
+                updated_worker
+            }
+            None => updated_worker,
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
