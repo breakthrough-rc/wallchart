@@ -21,3 +21,4 @@ pub mod update_worker;
 pub mod get_assessments;
 pub mod add_assessment;
 pub mod edit_assessment;
+pub mod get_assessment;

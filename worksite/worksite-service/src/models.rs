@@ -49,6 +49,15 @@ impl Worksite {
         }
     }
 
+    pub fn get_assessment_for_worker(
+        &self,
+        worker_id: String,
+        assessment_id: String,
+    ) -> Option<Assessment> {
+        let worker = self.get_worker(worker_id)?;
+        worker.get_assessment(assessment_id)
+    }
+
     fn get_shift(&self, shift_id: String) -> Option<Shift> {
         self.locations
             .iter()
@@ -259,6 +268,12 @@ impl Worker {
         updated_worker.tags = tags.into_iter().map(AssignedTag::new).collect();
 
         updated_worker
+    }
+    pub fn get_assessment(&self, assessment_id: String) -> Option<Assessment> {
+        self.assessments
+            .iter()
+            .find(|a| a.id == assessment_id)
+            .cloned()
     }
     pub fn last_assessment(&self) -> Option<Assessment> {
         self.assessments.last().cloned()
