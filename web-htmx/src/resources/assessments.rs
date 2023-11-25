@@ -232,7 +232,7 @@ fn AssessmentHistoryList(props: AssessmentHistoryListProps) -> String {
                     <li class="flex items-center justify-between gap-x-6 py-5">
                         <div class="min-w-0">
                             <div class="flex items-start gap-x-3">
-                                <p class="text-sm font-semibold leading-6 text-gray-900">{format!("Assessment: {}", assessment.value.to_string())}</p>
+                                <p class="text-sm font-semibold leading-6 text-gray-900">{format!("Assessment: {}", assessment.value)}</p>
                                 {
                                     if i == 0 {
                                         html! { <p class="rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset text-green-700 bg-green-50 ring-green-600/20">Last Assessment</p> }
