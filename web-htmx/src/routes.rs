@@ -202,3 +202,11 @@ pub const CSV_UPLOAD: &str = "/csv-upload";
 pub fn csv_upload() -> String {
     "/csv-upload".into()
 }
+
+pub const ASSESSMENTS: &str = "/worksites/:worksite_id/workers/:worker_id/assessments";
+pub fn assessments(worksite_id: &String, worker_id: &String) -> String {
+    format!(
+        "/worksites/{}/workers/{}/assessments",
+        worksite_id, worker_id
+    )
+}

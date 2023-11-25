@@ -8,3 +8,5 @@ pub mod users;
 pub mod workers;
 pub mod worksite;
 
+
+pub mod assessments;
