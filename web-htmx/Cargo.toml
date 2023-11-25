@@ -10,6 +10,7 @@ axum = { workspace = true, features = ["multipart"] }
 axum-flash = { workspace = true }
 axum-login = { workspace = true }
 axum-extra = { workspace = true }
+csv = { workspace = true }
 http = { workspace = true }
 once_cell = { workspace = true }
 rscx = { workspace = true }
