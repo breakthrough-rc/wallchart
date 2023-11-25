@@ -17,6 +17,12 @@ pub struct SimpleFormProps {
     #[builder(setter(into), default = "Add a new item".into())]
     description: String,
 
+    #[builder(setter(into), default = "Name".into())]
+    label_text: String,
+
+    #[builder(setter(into), default = "name".into())]
+    input_name: String,
+
     #[builder(default)]
     children: String,
 
@@ -35,8 +41,8 @@ pub fn SimpleForm(props: SimpleFormProps) -> String {
                     </p>
                     <GridLayout class="mt-10">
                         <GridCell span=6>
-                            <Label for_input="name">Name</Label>
-                            <TextInput name="name" value=&props.data.name />
+                            <Label for_input=&props.input_name>{&props.label_text}</Label>
+                            <TextInput name=&props.input_name value=&props.data.name />
                         </GridCell>
                         {props.children}
                         <GridCell span=6>

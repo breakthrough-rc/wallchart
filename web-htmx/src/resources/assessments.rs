@@ -4,19 +4,25 @@ use axum::{
     routing::get,
     Form, Router,
 };
+use axum_flash::Flash;
+use http::StatusCode;
 use rscx::{component, html, props, CollectFragmentAsync};
 use serde::Deserialize;
 
 use web_client::server::{
     button::PrimaryButton,
     card::{Card, CardContent, CardFooter},
+    form::{GridCell, GridLayout, Label, TextInput},
     transition::Transition,
     yc_control::Toggle,
 };
 use worksite_service::{get_assessments::GetAssessmentsInput, models::Assessment};
 
-use crate::routes;
-use crate::state::WebHtmxState;
+use crate::{
+    components::simple_form::{SimpleForm, SimpleFormData},
+    routes,
+    state::WebHtmxState,
+};
 
 pub fn assessments_routes(state: WebHtmxState) -> Router {
     Router::new()
@@ -34,44 +40,65 @@ async fn get_assessments(
     let assessments = state
         .worksite_service
         .get_assessments(GetAssessmentsInput {
-            worksite_id,
-            worker_id,
+            worksite_id: worksite_id.clone(),
+            worker_id: worker_id.clone(),
         })
         .await
         .expect("Failed to get worker");
 
     html! {
         <section>
-            <Card>
-                <CardContent padded=true>
-                    <div>
-                        <h2 id="worker-tags-heading" class="text-lg font-medium leading-6 text-gray-900">"🏅 Assessments"</h2>
-                        <p class="mt-1 text-sm text-gray-500">View Assessment History</p>
-                    </div>
-                    <div class="mt-4 divide-y divide-gray-200 border-b border-t border-gray-200">
-                        <AssessmentHistoryList
-                            assessments=assessments
-                        />
-                    </div>
-                </CardContent>
-                <CardFooter>
-                    <PrimaryButton>
-                        New Assessment
-                    </PrimaryButton>
-                </CardFooter>
-            </Card>
+            <form>
+                <Card>
+                    <CardContent padded=true>
+                        <div>
+                            <h2 id="worker-tags-heading" class="text-lg font-medium leading-6 text-gray-900">"🏅 Assessments"</h2>
+                            <p class="mt-1 text-sm text-gray-500">View Assessment History</p>
+                        </div>
+                        <section class="mt-4 divide-y divide-gray-200 border-b border-t border-gray-200">
+                            <AssessmentHistoryList
+                                assessments=assessments
+                            />
+                        </section>
+                        <section class="mt-4">
+                            <h3 class="text-md mb-2 font-medium leading-6 text-gray-900">"Add a new assessment"</h3>
+                            <AssessmentForm />
+                        </section>
+                    </CardContent>
+                    <CardFooter>
+                        <PrimaryButton
+                            hx_post=routes::assessments(&worksite_id, &worker_id)
+                        >
+                            Add New Assessment
+                        </PrimaryButton>
+                    </CardFooter>
+                </Card>
+            </form>
         </section>
     }
 }
 
 #[derive(Deserialize, Debug)]
-struct AssessmentForm {}
+struct AssessmentForm {
+    value: usize,
+    notes: String,
+}
 
 async fn post_assessments(
     State(_state): State<WebHtmxState>,
-    Form(__form): Form<AssessmentForm>,
+    flash: Flash,
+    Form(form): Form<AssessmentForm>,
 ) -> impl IntoResponse {
-    todo!()
+    println!("form: {:?}", form);
+
+    (
+        StatusCode::OK,
+        flash.success("New assessment added successfully!"),
+        [
+            ("hx-redirect", routes::wallchart()),
+            ("hx-retarget", "body".into()),
+        ],
+    )
 }
 
 #[props]
@@ -161,5 +188,27 @@ fn PopupMenuButton() -> String {
                 <a href="#" class="block px-3 py-1 text-sm leading-6 text-gray-900" role="menuitem" tabindex="-1" id="options-menu-0-item-2" onclick="alert('Coming soon!')">Delete<span class="sr-only">, Assessment</span></a>
             </Transition>
         </Toggle>
+    }
+}
+
+#[props]
+struct AssessmentFormProps {}
+
+#[component]
+fn AssessmentForm(_props: AssessmentFormProps) -> String {
+    html! {
+        <GridLayout>
+            <GridCell span=6>
+                <Label for_input="value">Assessment Value</Label>
+                <TextInput name="value" value="" />
+            </GridCell>
+            <GridCell span=6>
+                <Label for_input="notes">Notes</Label>
+                <textarea
+                    class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    name="notes"
+                />
+            </GridCell>
+        </GridLayout>
     }
 }
