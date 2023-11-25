@@ -259,6 +259,7 @@ impl Worker {
 pub struct Assessment {
     pub id: String,
     pub value: u8,
+    pub notes: String,
 }
 
 #[derive(Debug, Clone)]
