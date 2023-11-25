@@ -112,7 +112,7 @@ fn AssignTagsForm(props: AssignTagsFormProps) -> String {
                 <Card>
                     <CardContent padded=true>
                         <div>
-                            <h2 id="worker-tags-heading" class="text-lg font-medium leading-6 text-gray-900">Tags</h2>
+                            <h2 id="worker-tags-heading" class="text-lg font-medium leading-6 text-gray-900">"🏷️ Tags"</h2>
                             <p class="mt-1 text-sm text-gray-500">Assign tags.</p>
                         </div>
                         <div class="mt-4 divide-y divide-gray-200 border-b border-t border-gray-200">

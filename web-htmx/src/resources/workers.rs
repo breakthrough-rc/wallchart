@@ -355,7 +355,7 @@ fn WorkerProfileSection(props: WorkerProfileSectionProps) -> String {
                             id="worker-profile-heading"
                             class="text-lg font-medium leading-6 text-gray-900"
                         >
-                            Worker Profile
+                            "👤 Profile"
                         </h2>
                         <p class="mt-1 text-sm text-gray-500">
                             Update worker profile details below.

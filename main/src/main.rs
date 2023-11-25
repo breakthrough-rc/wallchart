@@ -103,11 +103,18 @@ async fn main() {
                 id: "3".into(),
                 first_name: "Dwight".into(),
                 last_name: "Schrute".into(),
-                assessments: vec![Assessment {
-                    id: "3".into(),
-                    value: 4,
-                    notes: "".into(),
-                }],
+                assessments: vec![
+                    Assessment {
+                        id: "3".into(),
+                        value: 4,
+                        notes: "".into(),
+                    },
+                    Assessment {
+                        id: "33".into(),
+                        value: 5,
+                        notes: "Wow, what a worker!".into(),
+                    },
+                ],
                 tags: vec![AssignedTag::new("3".into())],
             },
             Worker {

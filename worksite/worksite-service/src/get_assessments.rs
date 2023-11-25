@@ -28,7 +28,10 @@ impl GetAssessments {
             .map_err(|e| GetAssessmentsFailure::Unknown(e.to_string()))?
             .ok_or(GetAssessmentsFailure::NotFound)?;
 
-        Ok(worksite.get_assessments_for_worker(input.worker_id))
+        let mut assessments = worksite.get_assessments_for_worker(input.worker_id);
+        assessments.reverse(); // Show most recent first (descending order)
+
+        Ok(assessments)
     }
 }
 
