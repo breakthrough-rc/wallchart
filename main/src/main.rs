@@ -73,11 +73,6 @@ async fn main() {
                 id: "1".into(),
                 first_name: "Jim".into(),
                 last_name: "Halpert".into(),
-                last_assessment: Some(Assessment {
-                    id: "1".into(),
-                    value: 1,
-                    notes: "".into(),
-                }),
                 assessments: vec![Assessment {
                     id: "1".into(),
                     value: 1,
@@ -93,11 +88,6 @@ async fn main() {
                 id: "2".into(),
                 first_name: "Pam".into(),
                 last_name: "Beesly".into(),
-                last_assessment: Some(Assessment {
-                    id: "2".into(),
-                    value: 2,
-                    notes: "".into(),
-                }),
                 assessments: vec![Assessment {
                     id: "2".into(),
                     value: 2,
@@ -113,11 +103,6 @@ async fn main() {
                 id: "3".into(),
                 first_name: "Dwight".into(),
                 last_name: "Schrute".into(),
-                last_assessment: Some(Assessment {
-                    id: "3".into(),
-                    value: 4,
-                    notes: "".into(),
-                }),
                 assessments: vec![Assessment {
                     id: "3".into(),
                     value: 4,
@@ -129,11 +114,6 @@ async fn main() {
                 id: "4".into(),
                 first_name: "Darryl".into(),
                 last_name: "Philbin".into(),
-                last_assessment: Some(Assessment {
-                    id: "4".into(),
-                    value: 1,
-                    notes: "".into(),
-                }),
                 assessments: vec![Assessment {
                     id: "4".into(),
                     value: 1,
@@ -145,11 +125,6 @@ async fn main() {
                 id: "5".into(),
                 first_name: "Nate".into(),
                 last_name: "Nickerson".into(),
-                last_assessment: Some(Assessment {
-                    id: "5".into(),
-                    value: 3,
-                    notes: "".into(),
-                }),
                 assessments: vec![Assessment {
                     id: "5".into(),
                     value: 3,
@@ -161,11 +136,6 @@ async fn main() {
                 id: "6".into(),
                 first_name: "Roy".into(),
                 last_name: "Anderson".into(),
-                last_assessment: Some(Assessment {
-                    id: "3".into(),
-                    value: 3,
-                    notes: "".into(),
-                }),
                 assessments: vec![Assessment {
                     id: "3".into(),
                     value: 3,
@@ -177,11 +147,6 @@ async fn main() {
                 id: "7".into(),
                 first_name: "Val".into(),
                 last_name: "johnson".into(),
-                last_assessment: Some(Assessment {
-                    id: "7".into(),
-                    value: 2,
-                    notes: "".into(),
-                }),
                 assessments: vec![Assessment {
                     id: "7".into(),
                     value: 2,

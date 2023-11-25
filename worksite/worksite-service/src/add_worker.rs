@@ -37,7 +37,6 @@ impl AddWorker {
             id: uuid::Uuid::new_v4().to_string(),
             first_name: input.first_name,
             last_name: input.last_name,
-            last_assessment: None,
             assessments: Vec::new(),
             tags: Vec::new(),
         };

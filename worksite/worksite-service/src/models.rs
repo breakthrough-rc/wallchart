@@ -236,7 +236,6 @@ pub struct Worker {
     pub id: String,
     pub first_name: String,
     pub last_name: String,
-    pub last_assessment: Option<Assessment>,
     pub assessments: Vec<Assessment>,
     pub tags: Vec<AssignedTag>,
 }
@@ -253,6 +252,9 @@ impl Worker {
         updated_worker.tags = tags.into_iter().map(AssignedTag::new).collect();
 
         updated_worker
+    }
+    pub fn last_assessment(&self) -> Option<Assessment> {
+        self.assessments.last().cloned()
     }
 }
 

@@ -311,7 +311,7 @@ pub fn WorkerRow(props: WorkerRowProps) -> String {
                       {format!("{} {}", props.worker.first_name, props.worker.last_name)}
                   </button>
             </td>
-            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{props.worker.last_assessment.map(|assessment| assessment.value).unwrap_or(0)}</td>
+            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{props.worker.last_assessment().map(|assessment| assessment.value).unwrap_or(0)}</td>
             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{props.tags.into_iter().map(|tag| tag.icon).collect_fragment()}</td>
         </tr>
     }
