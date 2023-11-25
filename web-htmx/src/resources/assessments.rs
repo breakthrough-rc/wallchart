@@ -19,8 +19,9 @@ use web_client::server::{
     yc_control::Toggle,
 };
 use worksite_service::{
-    add_assessment::AddAssessmentInput, edit_assessment::EditAssessmentInput,
-    get_assessment::GetAssessmentInput, get_assessments::GetAssessmentsInput, models::Assessment,
+    add_assessment::AddAssessmentInput, get_assessment::GetAssessmentInput,
+    get_assessments::GetAssessmentsInput, models::Assessment,
+    update_assessment::UpdateAssessmentInput,
 };
 
 use crate::{routes, state::WebHtmxState};
@@ -164,7 +165,7 @@ async fn put_assessment(
     Form(form): Form<AssessmentFormData>,
 ) -> impl IntoResponse {
     worksite_service
-        .edit_assessment(EditAssessmentInput {
+        .update_assessment(UpdateAssessmentInput {
             worksite_id,
             worker_id,
             assessment_id,

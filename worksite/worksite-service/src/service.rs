@@ -1,47 +1,29 @@
 use std::sync::Arc;
 
 use crate::{
+    add_assessment::{AddAssessment, AddAssessmentInput, AddAssessmentOutput},
     add_location::{AddLocation, AddLocationInput, AddLocationOutput},
     add_shift::{AddShift, AddShiftInput, AddShiftOutput},
+    add_tag::{AddTag, AddTagInput, AddTagOutput},
     add_worker::{AddWorker, AddWorkerInput, AddWorkerOutput},
+    assign_tags::{AssignTags, AssignTagsInput, AssignTagsOutput},
     assign_worker::{AssignWorker, AssignWorkerInput, AssignWorkerOutput},
     //##PLOP INSERT COMMAND IMPORTS HOOK##
-    get_assessment::{
-      GetAssessment, GetAssessmentInput, GetAssessmentOutput, 
-    },
-    edit_assessment::{
-      EditAssessment, EditAssessmentInput, EditAssessmentOutput, 
-    },
-    add_assessment::{
-      AddAssessment, AddAssessmentInput, AddAssessmentOutput, 
-    },
-    get_assessments::{
-      GetAssessments, GetAssessmentsInput, GetAssessmentsOutput, 
-    },
-    remove_tag::{
-      RemoveTag, RemoveTagInput, RemoveTagOutput, 
-    },
-    get_tag::{
-      GetTag, GetTagInput, GetTagOutput, 
-    },
-    update_tag::{
-      UpdateTag, UpdateTagInput, UpdateTagOutput, 
-    },
-    add_tag::{
-      AddTag, AddTagInput, AddTagOutput, 
-    },
-    assign_tags::{
-      AssignTags, AssignTagsInput, AssignTagsOutput, 
-    },
+    get_assessment::{GetAssessment, GetAssessmentInput, GetAssessmentOutput},
+    get_assessments::{GetAssessments, GetAssessmentsInput, GetAssessmentsOutput},
+    get_tag::{GetTag, GetTagInput, GetTagOutput},
     get_tags::{GetTags, GetTagsInput, GetTagsOutput},
     get_worker::{GetWorker, GetWorkerInput, GetWorkerOutput},
     get_workers::{GetWorkers, GetWorkersInput, GetWorkersOutput},
     get_worksite::{GetWorksite, GetWorksiteFailure, GetWorksiteInput},
     models::Worksite,
     ports::worksite_repository::WorksiteRepository,
+    remove_tag::{RemoveTag, RemoveTagInput, RemoveTagOutput},
     remove_worker_from_shift::{
         RemoveWorkerFromShift, RemoveWorkerFromShiftFailure, RemoveWorkerFromShiftInput,
     },
+    update_assessment::{UpdateAssessment, UpdateAssessmentInput, UpdateAssessmentOutput},
+    update_tag::{UpdateTag, UpdateTagInput, UpdateTagOutput},
     update_worker::{UpdateWorker, UpdateWorkerInput, UpdateWorkerOutput},
 };
 
@@ -49,7 +31,7 @@ use crate::{
 pub struct WorksiteService {
     //##PLOP INSERT COMMAND HOOK##
     pub get_assessment: GetAssessment,
-    pub edit_assessment: EditAssessment,
+    pub update_assessment: UpdateAssessment,
     pub add_assessment: AddAssessment,
     pub get_assessments: GetAssessments,
     pub remove_tag: RemoveTag,
@@ -74,40 +56,40 @@ impl WorksiteService {
         Self {
             //##PLOP INSERT COMMAND INSTANTIATION HOOK##
             get_assessment: GetAssessment {
-              // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
-              worksite_repository: worksite_repository.clone(),
+                // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
+                worksite_repository: worksite_repository.clone(),
             },
-            edit_assessment: EditAssessment {
-              // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
-              worksite_repository: worksite_repository.clone(),
+            update_assessment: UpdateAssessment {
+                // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
+                worksite_repository: worksite_repository.clone(),
             },
             add_assessment: AddAssessment {
-              // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
-              worksite_repository: worksite_repository.clone(),
+                // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
+                worksite_repository: worksite_repository.clone(),
             },
             get_assessments: GetAssessments {
-              // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
-              worksite_repository: worksite_repository.clone(),
+                // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
+                worksite_repository: worksite_repository.clone(),
             },
             remove_tag: RemoveTag {
-              // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
-              worksite_repository: worksite_repository.clone(),
+                // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
+                worksite_repository: worksite_repository.clone(),
             },
             get_tag: GetTag {
-              // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
-              worksite_repository: worksite_repository.clone(),
+                // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
+                worksite_repository: worksite_repository.clone(),
             },
             update_tag: UpdateTag {
-              // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
-              worksite_repository: worksite_repository.clone(),
+                // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
+                worksite_repository: worksite_repository.clone(),
             },
             add_tag: AddTag {
-              // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
-              worksite_repository: worksite_repository.clone(),
+                // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
+                worksite_repository: worksite_repository.clone(),
             },
             assign_tags: AssignTags {
-              // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
-              worksite_repository: worksite_repository.clone(),
+                // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
+                worksite_repository: worksite_repository.clone(),
             },
             get_tags: GetTags {
                 worksite_repository: worksite_repository.clone(),
@@ -140,66 +122,39 @@ impl WorksiteService {
         }
     }
     //##PLOP INSERT DELEGATE HOOK##
-    pub async fn get_assessment(
-        &self,
-        input: GetAssessmentInput,
-    ) -> GetAssessmentOutput {
+    pub async fn get_assessment(&self, input: GetAssessmentInput) -> GetAssessmentOutput {
         self.get_assessment.get_assessment(input).await
     }
 
-    pub async fn edit_assessment(
-        &self,
-        input: EditAssessmentInput,
-    ) -> EditAssessmentOutput {
-        self.edit_assessment.edit_assessment(input).await
+    pub async fn update_assessment(&self, input: UpdateAssessmentInput) -> UpdateAssessmentOutput {
+        self.update_assessment.update_assessment(input).await
     }
 
-    pub async fn add_assessment(
-        &self,
-        input: AddAssessmentInput,
-    ) -> AddAssessmentOutput {
+    pub async fn add_assessment(&self, input: AddAssessmentInput) -> AddAssessmentOutput {
         self.add_assessment.add_assessment(input).await
     }
 
-    pub async fn get_assessments(
-        &self,
-        input: GetAssessmentsInput,
-    ) -> GetAssessmentsOutput {
+    pub async fn get_assessments(&self, input: GetAssessmentsInput) -> GetAssessmentsOutput {
         self.get_assessments.get_assessments(input).await
     }
 
-    pub async fn remove_tag(
-        &self,
-        input: RemoveTagInput,
-    ) -> RemoveTagOutput {
+    pub async fn remove_tag(&self, input: RemoveTagInput) -> RemoveTagOutput {
         self.remove_tag.remove_tag(input).await
     }
 
-    pub async fn get_tag(
-        &self,
-        input: GetTagInput,
-    ) -> GetTagOutput {
+    pub async fn get_tag(&self, input: GetTagInput) -> GetTagOutput {
         self.get_tag.get_tag(input).await
     }
 
-    pub async fn update_tag(
-        &self,
-        input: UpdateTagInput,
-    ) -> UpdateTagOutput {
+    pub async fn update_tag(&self, input: UpdateTagInput) -> UpdateTagOutput {
         self.update_tag.update_tag(input).await
     }
 
-    pub async fn add_tag(
-        &self,
-        input: AddTagInput,
-    ) -> AddTagOutput {
+    pub async fn add_tag(&self, input: AddTagInput) -> AddTagOutput {
         self.add_tag.add_tag(input).await
     }
 
-    pub async fn assign_tags(
-        &self,
-        input: AssignTagsInput,
-    ) -> AssignTagsOutput {
+    pub async fn assign_tags(&self, input: AssignTagsInput) -> AssignTagsOutput {
         self.assign_tags.assign_tags(input).await
     }
 

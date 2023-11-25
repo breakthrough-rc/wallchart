@@ -8,12 +8,12 @@ use crate::{
 };
 
 #[derive(Clone)]
-pub struct EditAssessment {
+pub struct UpdateAssessment {
     pub worksite_repository: Arc<dyn WorksiteRepository>,
 }
 
 #[derive(Clone, Debug)]
-pub struct EditAssessmentInput {
+pub struct UpdateAssessmentInput {
     // Put input fields here
     pub worksite_id: String,
     pub worker_id: String,
@@ -23,16 +23,16 @@ pub struct EditAssessmentInput {
 }
 
 // Change the return type, if needed
-pub type EditAssessmentOutput = Result<(), EditAssessmentFailure>;
+pub type UpdateAssessmentOutput = Result<(), UpdateAssessmentFailure>;
 
-impl EditAssessment {
-    pub async fn edit_assessment(&self, input: EditAssessmentInput) -> EditAssessmentOutput {
+impl UpdateAssessment {
+    pub async fn update_assessment(&self, input: UpdateAssessmentInput) -> UpdateAssessmentOutput {
         let worksite = self
             .worksite_repository
             .get_worksite(input.worksite_id)
             .await
-            .map_err(|e| EditAssessmentFailure::Unknown(e.to_string()))?
-            .ok_or(EditAssessmentFailure::NotFound)?;
+            .map_err(|e| UpdateAssessmentFailure::Unknown(e.to_string()))?
+            .ok_or(UpdateAssessmentFailure::NotFound)?;
 
         let updated_worksite = worksite.update_worker(input.worker_id, |worker| -> Worker {
             worker.update_assessment(input.assessment_id, |assessment| -> Assessment {
@@ -47,14 +47,14 @@ impl EditAssessment {
         self.worksite_repository
             .save(updated_worksite)
             .await
-            .map_err(|e| EditAssessmentFailure::Unknown(e.to_string()))?;
+            .map_err(|e| UpdateAssessmentFailure::Unknown(e.to_string()))?;
 
         Ok(())
     }
 }
 
 #[derive(Error, Debug, PartialEq)]
-pub enum EditAssessmentFailure {
+pub enum UpdateAssessmentFailure {
     #[error("Worksite does not exist")]
     NotFound,
     #[error("Something went wrong")]
