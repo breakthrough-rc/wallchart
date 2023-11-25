@@ -21,7 +21,7 @@ use web_client::server::{
 use worksite_service::{
     add_assessment::AddAssessmentInput, get_assessment::GetAssessmentInput,
     get_assessments::GetAssessmentsInput, models::Assessment,
-    update_assessment::UpdateAssessmentInput,
+    remove_assessment::RemoveAssessmentInput, update_assessment::UpdateAssessmentInput,
 };
 
 use crate::{routes, state::WebHtmxState};
@@ -34,7 +34,9 @@ pub fn assessments_routes(state: WebHtmxState) -> Router {
         )
         .route(
             routes::ASSESSMENT,
-            get(get_assessment_form).put(put_assessment),
+            get(get_assessment_form)
+                .put(put_assessment)
+                .delete(delete_assessment),
         )
         .with_state(state)
 }
@@ -185,6 +187,32 @@ async fn put_assessment(
     )
 }
 
+async fn delete_assessment(
+    extract::Path((worksite_id, worker_id, assessment_id)): extract::Path<(String, String, String)>,
+    State(WebHtmxState {
+        worksite_service, ..
+    }): State<WebHtmxState>,
+    flash: Flash,
+) -> impl IntoResponse {
+    worksite_service
+        .remove_assessment(RemoveAssessmentInput {
+            worksite_id,
+            worker_id,
+            assessment_id,
+        })
+        .await
+        .expect("Failed to update assessment");
+
+    (
+        StatusCode::OK,
+        flash.success("Assessment removed successfully!"),
+        [
+            ("hx-redirect", routes::wallchart()),
+            ("hx-retarget", "body".into()),
+        ],
+    )
+}
+
 #[props]
 struct AssessmentHistoryListProps {
     worksite_id: String,
@@ -293,12 +321,15 @@ fn PopupMenuButton(props: PopupMenuButtonProps) -> String {
                     Edit<span class="sr-only">, Assessment</span>
                 </a>
                 <a
-                    href="#"
+                    hx-delete=props.route
+                    hx-target=modal_target()
+                    hx-swap="beforeend"
+                    hx-confirm="Delete Assessment"
+                    data-confirm-title="Are you sure you want to delete this assessment?"
                     class="block px-3 py-1 text-sm leading-6 text-gray-900"
                     role="menuitem"
                     tabindex="-1"
                     id="options-menu-0-item-2"
-                    onclick="alert('Coming soon!')"
                 >
                     Delete<span class="sr-only">, Assessment</span>
                 </a>

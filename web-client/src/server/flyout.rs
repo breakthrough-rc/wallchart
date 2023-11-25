@@ -15,7 +15,7 @@ pub fn Flyout(props: FlyoutProps) -> String {
     html! {
         <YcControl
             control="flyout"
-            class="relative z-10"
+            class="relative z-8"
             role="dialog"
             aria_labelledby="slide-over-title"
             attrs=Attrs::with("aria-modal", "true".into())
