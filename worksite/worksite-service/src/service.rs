@@ -9,6 +9,9 @@ use crate::{
     assign_tags::{AssignTags, AssignTagsInput, AssignTagsOutput},
     assign_worker::{AssignWorker, AssignWorkerInput, AssignWorkerOutput},
     //##PLOP INSERT COMMAND IMPORTS HOOK##
+    csv_upload::{
+      CsvUpload, CsvUploadInput, CsvUploadOutput, 
+    },
     remove_assessment::{
       RemoveAssessment, RemoveAssessmentInput, RemoveAssessmentOutput, 
     },
@@ -33,6 +36,7 @@ use crate::{
 #[derive(Clone)]
 pub struct WorksiteService {
     //##PLOP INSERT COMMAND HOOK##
+    pub csv_upload: CsvUpload,
     pub remove_assessment: RemoveAssessment,
     pub get_assessment: GetAssessment,
     pub update_assessment: UpdateAssessment,
@@ -59,6 +63,10 @@ impl WorksiteService {
     pub fn new(worksite_repository: Arc<dyn WorksiteRepository>) -> Self {
         Self {
             //##PLOP INSERT COMMAND INSTANTIATION HOOK##
+            csv_upload: CsvUpload {
+              // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
+              worksite_repository: worksite_repository.clone(),
+            },
             remove_assessment: RemoveAssessment {
               // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
               worksite_repository: worksite_repository.clone(),
@@ -130,6 +138,13 @@ impl WorksiteService {
         }
     }
     //##PLOP INSERT DELEGATE HOOK##
+    pub async fn csv_upload(
+        &self,
+        input: CsvUploadInput,
+    ) -> CsvUploadOutput {
+        self.csv_upload.csv_upload(input).await
+    }
+
     pub async fn remove_assessment(
         &self,
         input: RemoveAssessmentInput,

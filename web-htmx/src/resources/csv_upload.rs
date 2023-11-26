@@ -83,8 +83,6 @@ async fn post_csv_upload(
         content.push(data.to_string());
     }
 
-    println!("context: {:#?}", content);
-
     /*
      * Now we have the file contents, we can process it as a CSV
      *
@@ -92,13 +90,7 @@ async fn post_csv_upload(
      */
     let content: String = content.join("");
     let mut rdr = csv::Reader::from_reader(content.as_bytes());
-    let mut records: Vec<WorkerRecord> = vec![];
-    for result in rdr.deserialize() {
-        let record: WorkerRecord = result.unwrap();
-        records.push(record);
-    }
-
-    println!("records: {:#?}", records);
+    let records: Vec<WorkerRecord> = rdr.deserialize().map(|result| result.unwrap()).collect();
 
     Html(html! {
         <PageLayout header="Upload a CSV">
