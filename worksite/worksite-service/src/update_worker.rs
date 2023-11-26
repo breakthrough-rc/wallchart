@@ -1,10 +1,10 @@
-use crate::{models::Worker, ports::worksite_repository::WorksiteRepository};
+use crate::{
+    models::{Address, Worker},
+    ports::worksite_repository::WorksiteRepository,
+};
 
 use std::sync::Arc;
 use thiserror::Error;
-
-// Example repo dependency
-// use crate::ports::worksite_repository::WorksiteRepository;
 
 #[derive(Clone)]
 pub struct UpdateWorker {
@@ -13,14 +13,17 @@ pub struct UpdateWorker {
 
 #[derive(Clone, Debug)]
 pub struct UpdateWorkerInput {
-    // Put input fields here
     pub worker_id: String,
     pub worksite_id: String,
     pub first_name: String,
     pub last_name: String,
+    pub email: String,
+    pub street_address: String,
+    pub city: String,
+    pub region: String,
+    pub postal_code: String,
 }
 
-// Change the return type, if needed
 pub type UpdateWorkerOutput = Result<(), UpdateWorkerFailure>;
 
 impl UpdateWorker {
@@ -38,6 +41,13 @@ impl UpdateWorker {
             Worker {
                 first_name: input.first_name,
                 last_name: input.last_name,
+                email: input.email,
+                address: Address {
+                    street_address: input.street_address,
+                    city: input.city,
+                    region: input.region,
+                    postal_code: input.postal_code,
+                },
                 ..worker
             }
         });

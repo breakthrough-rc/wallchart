@@ -7,7 +7,6 @@ use axum::{
 use axum_flash::{Flash, IncomingFlashes};
 use http::{HeaderMap, StatusCode};
 use rscx::{component, html, props, CollectFragment, CollectFragmentAsync};
-use serde::Deserialize;
 
 use web_client::server::{
     attrs::Attrs,
@@ -210,19 +209,13 @@ async fn post_worker(
     )
 }
 
-#[derive(Deserialize, Debug)]
-struct UpdateWorkerFormData {
-    first_name: String,
-    last_name: String,
-}
-
 async fn post_worker_profile_form(
     State(WebHtmxState {
         worksite_service, ..
     }): State<WebHtmxState>,
     flash: Flash,
     extract::Path((worksite_id, worker_id)): extract::Path<(String, String)>,
-    Form(form): Form<UpdateWorkerFormData>,
+    Form(form): Form<WorkerProfileFormData>,
 ) -> impl IntoResponse {
     worksite_service
         .update_worker(UpdateWorkerInput {
@@ -230,9 +223,14 @@ async fn post_worker_profile_form(
             worksite_id,
             first_name: form.first_name,
             last_name: form.last_name,
+            email: form.email,
+            street_address: form.street_address,
+            city: form.city,
+            region: form.region,
+            postal_code: form.postal_code,
         })
         .await
-        .expect("Failed to assign worker");
+        .expect("Failed to update worker");
 
     (
         StatusCode::OK,
