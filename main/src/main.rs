@@ -4,13 +4,16 @@ use axum_login::{
     axum_sessions::{async_session::MemoryStore, SessionLayer},
     AuthLayer,
 };
-use in_memory_user_repository::{InMemoryUserRepository, InMemoryUserStore};
-use in_memory_worksite_repository::InMemoryWorksiteRepository;
 use rand::Rng;
 use std::{net::SocketAddr, sync::Arc};
+
+use in_memory_user_repository::{InMemoryUserRepository, InMemoryUserStore};
+use in_memory_worksite_repository::InMemoryWorksiteRepository;
 use web_htmx::{livereload, routes as web_routes, state::WebHtmxState};
 use worksite_service::{
-    models::{Assessment, AssignedTag, Location, Shift, ShiftWorker, Tag, Worker, Worksite},
+    models::{
+        Address, Assessment, AssignedTag, Location, Shift, ShiftWorker, Tag, Worker, Worksite,
+    },
     service::WorksiteService,
 };
 
@@ -73,6 +76,7 @@ async fn main() {
                 id: "1".into(),
                 first_name: "Jim".into(),
                 last_name: "Halpert".into(),
+                email: "jim.halpert@skynet.org".into(),
                 assessments: vec![Assessment {
                     id: "1".into(),
                     value: 1,
@@ -83,11 +87,13 @@ async fn main() {
                     AssignedTag::new("2".into()),
                     AssignedTag::new("3".into()),
                 ],
+                address: Address::default(),
             },
             Worker {
                 id: "2".into(),
                 first_name: "Pam".into(),
                 last_name: "Beesly".into(),
+                email: "pam.beesly@skynet.org".into(),
                 assessments: vec![Assessment {
                     id: "2".into(),
                     value: 2,
@@ -98,11 +104,13 @@ async fn main() {
                     AssignedTag::new("2".into()),
                     AssignedTag::new("3".into()),
                 ],
+                address: Address::default(),
             },
             Worker {
                 id: "3".into(),
                 first_name: "Dwight".into(),
                 last_name: "Schrute".into(),
+                email: "dwight.schrute@skynet.org".into(),
                 assessments: vec![
                     Assessment {
                         id: "3".into(),
@@ -116,44 +124,52 @@ async fn main() {
                     },
                 ],
                 tags: vec![AssignedTag::new("3".into())],
+                address: Address::default(),
             },
             Worker {
                 id: "4".into(),
                 first_name: "Darryl".into(),
                 last_name: "Philbin".into(),
+                email: "darryl.philbin@skynet.org".into(),
                 assessments: vec![Assessment {
                     id: "4".into(),
                     value: 1,
                     notes: "".into(),
                 }],
                 tags: vec![AssignedTag::new("2".into()), AssignedTag::new("3".into())],
+                address: Address::default(),
             },
             Worker {
                 id: "5".into(),
                 first_name: "Nate".into(),
                 last_name: "Nickerson".into(),
+                email: "nate.nickerson@skynet.org".into(),
                 assessments: vec![Assessment {
                     id: "5".into(),
                     value: 3,
                     notes: "".into(),
                 }],
                 tags: vec![AssignedTag::new("1".into())],
+                address: Address::default(),
             },
             Worker {
                 id: "6".into(),
                 first_name: "Roy".into(),
                 last_name: "Anderson".into(),
+                email: "roy.anderson@skynet.org".into(),
                 assessments: vec![Assessment {
                     id: "3".into(),
                     value: 3,
                     notes: "".into(),
                 }],
                 tags: vec![AssignedTag::new("2".into()), AssignedTag::new("3".into())],
+                address: Address::default(),
             },
             Worker {
                 id: "7".into(),
                 first_name: "Val".into(),
-                last_name: "johnson".into(),
+                last_name: "Johnson".into(),
+                email: "val.johnson@skynet.org".into(),
                 assessments: vec![Assessment {
                     id: "7".into(),
                     value: 2,
@@ -164,6 +180,7 @@ async fn main() {
                     AssignedTag::new("2".into()),
                     AssignedTag::new("3".into()),
                 ],
+                address: Address::default(),
             },
         ],
     };

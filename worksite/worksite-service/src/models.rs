@@ -247,6 +247,14 @@ impl Shift {
     }
 }
 
+#[derive(Debug, Default, Clone)]
+pub struct Address {
+    pub street_address: String,
+    pub city: String,
+    pub region: String,
+    pub postal_code: String,
+}
+
 #[derive(Debug, Clone)]
 pub struct Worker {
     pub id: String,
@@ -254,6 +262,8 @@ pub struct Worker {
     pub last_name: String,
     pub assessments: Vec<Assessment>,
     pub tags: Vec<AssignedTag>,
+    pub email: String,
+    pub address: Address,
 }
 
 impl Worker {

@@ -154,7 +154,7 @@ async fn get_worker_form_modal(
                 title="👤 Add Worker"
                 subtitle="Add a new worker to this worksite."
             />
-            <WorkerForm action=format!("/wallcharts/{}/workers/new", wallchart_id) />
+            <WorkerForm action=workers_new(&wallchart_id) />
         </Modal>
     })
 }
@@ -177,6 +177,7 @@ async fn get_worker_form(
 struct WorkerFormData {
     pub first_name: String,
     pub last_name: String,
+    pub email: String,
     pub street_address: String,
     pub city: String,
     pub region: String,
@@ -196,6 +197,7 @@ async fn post_worker(
             worksite_id: wallchart_id.clone(),
             first_name: form.first_name,
             last_name: form.last_name,
+            email: form.email,
             street_address: form.street_address,
             city: form.city,
             region: form.region,
@@ -218,10 +220,6 @@ async fn post_worker(
 struct UpdateWorkerFormData {
     first_name: String,
     last_name: String,
-    // street_address: String,
-    // city: String,
-    // region: String,
-    // postal_code: String,
 }
 
 async fn post_worker_profile_form(

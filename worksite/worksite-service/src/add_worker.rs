@@ -2,7 +2,10 @@ use std::sync::Arc;
 
 use thiserror::Error;
 
-use crate::{models::Worker, ports::worksite_repository::WorksiteRepository};
+use crate::{
+    models::{Address, Worker},
+    ports::worksite_repository::WorksiteRepository,
+};
 
 #[derive(Clone)]
 pub struct AddWorker {
@@ -14,6 +17,7 @@ pub struct AddWorkerInput {
     pub worksite_id: String,
     pub first_name: String,
     pub last_name: String,
+    pub email: String,
     pub street_address: String,
     pub city: String,
     pub region: String,
@@ -39,6 +43,13 @@ impl AddWorker {
             last_name: input.last_name,
             assessments: Vec::new(),
             tags: Vec::new(),
+            email: input.email,
+            address: Address {
+                street_address: input.street_address,
+                city: input.city,
+                region: input.region,
+                postal_code: input.postal_code,
+            },
         };
 
         let updated_worksite = worksite.add_worker(worker.clone());
