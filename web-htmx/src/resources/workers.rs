@@ -120,6 +120,11 @@ async fn get_worker_details(
     let profile_form_data = WorkerProfileFormData {
         first_name: worker.first_name.clone(),
         last_name: worker.last_name.clone(),
+        email: worker.email.clone(),
+        street_address: worker.address.street_address.clone(),
+        city: worker.address.city.clone(),
+        region: worker.address.region.clone(),
+        postal_code: worker.address.postal_code.clone(),
     };
 
     Html(html! {
@@ -173,24 +178,13 @@ async fn get_worker_form(
     })
 }
 
-#[derive(Deserialize, Debug)]
-struct WorkerFormData {
-    pub first_name: String,
-    pub last_name: String,
-    pub email: String,
-    pub street_address: String,
-    pub city: String,
-    pub region: String,
-    pub postal_code: String,
-}
-
 async fn post_worker(
     State(WebHtmxState {
         worksite_service, ..
     }): State<WebHtmxState>,
     flash: Flash,
     extract::Path(wallchart_id): extract::Path<String>,
-    Form(form): Form<WorkerFormData>,
+    Form(form): Form<WorkerProfileFormData>,
 ) -> impl IntoResponse {
     worksite_service
         .add_worker(AddWorkerInput {

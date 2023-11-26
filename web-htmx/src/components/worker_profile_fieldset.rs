@@ -1,10 +1,17 @@
 use rscx::{component, html, props};
+use serde::Deserialize;
+
 use web_client::server::form::{CellSpan, GridCell, GridLayout, Label, Select, TextInput};
 
-#[derive(Default, Clone)]
+#[derive(Default, Deserialize, Debug, Clone)]
 pub struct WorkerProfileFormData {
     pub first_name: String,
     pub last_name: String,
+    pub email: String,
+    pub street_address: String,
+    pub city: String,
+    pub region: String,
+    pub postal_code: String,
 }
 
 #[props]
@@ -29,36 +36,27 @@ pub fn WorkerProfileFieldset(props: WorkerProfileFieldsetProps) -> String {
 
             <GridCell span=4>
                 <Label for_input="email">Email address</Label>
-                <TextInput input_type="email" name="email" autocomplete="email" />
-            </GridCell>
-
-            <GridCell span=3>
-                <Label for_input="country">Country</Label>
-                <Select id="country" name="country" autocomplete="country-name">
-                    <option default>United States</option>
-                    <option>Canada</option>
-                    <option>Mexico</option>
-                </Select>
+                <TextInput input_type="email" name="email" autocomplete="email" value=props.form.email />
             </GridCell>
 
             <GridCell span=CellSpan::Full>
                 <Label for_input="street_address">Street address</Label>
-                <TextInput name="street_address" autocomplete="street-address" />
+                <TextInput name="street_address" autocomplete="street-address" value=props.form.street_address />
             </GridCell>
 
             <GridCell span=2 start=1>
                 <Label for_input="city">City</Label>
-                <TextInput name="city" autocomplete="address-level2" />
+                <TextInput name="city" autocomplete="address-level2" value=props.form.city />
             </GridCell>
 
             <GridCell span=2>
                 <Label for_input="region">State</Label>
-                <TextInput name="region" autocomplete="address-level1" />
+                <TextInput name="region" autocomplete="address-level1" value=props.form.region />
             </GridCell>
 
             <GridCell span=2>
                 <Label for_input="postal_code">Zip Code</Label>
-                <TextInput name="postal_code" autocomplete="postal-code" />
+                <TextInput name="postal_code" autocomplete="postal-code" value=props.form.postal_code />
             </GridCell>
         </GridLayout>
     }
