@@ -9,7 +9,7 @@ use axum_flash::Flash;
 use http::StatusCode;
 use rscx::{component, html, props};
 use serde::Deserialize;
-use web_client::server::modal::Modal;
+use web_client::server::{headers::SecondaryHeader, modal::Modal};
 use worksite_service::add_location::AddLocationInput;
 
 pub fn locations_routes(state: WebHtmxState) -> Router {
@@ -25,6 +25,10 @@ async fn get_location_form_modal(
 ) -> impl IntoResponse {
     Html(html! {
         <Modal>
+            <SecondaryHeader
+                title="Add Location"
+                subtitle="Add a new location to this worksite."
+            />
             <LocationForm action=routes::locations(&worksite_id) />
         </Modal>
     })
@@ -72,7 +76,6 @@ fn LocationForm(props: LocationFormProps) -> String {
     html! {
         <SimpleForm
             action=props.action
-            description="Add a new location"
         />
     }
 }

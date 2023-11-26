@@ -205,7 +205,7 @@ pub fn ShiftRow(props: ShiftRowProps) -> String {
     html! {
         <tr class="border-t border-gray-200">
             <th colspan="3" scope="colgroup" class="bg-gray-50 py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
-                {props.shift_name}
+                {&props.shift_name}
             </th>
             <th colspan="3" scope="colgroup" class="bg-gray-50 py-2 pl-4 pr-3 text-right text-sm font-semibold text-gray-900 sm:pl-3">
                 <SecondaryButton
@@ -229,6 +229,7 @@ pub fn ShiftRow(props: ShiftRowProps) -> String {
                             worker_action=routes::worker(&props.worksite.id, &worker.clone().id)
                             shift_assignment_action=routes::shift_assignment(&props.worksite.id, &props.location_id, &props.shift_id, &worker.clone().id)
                             worker=worker
+                            shift_name=props.shift_name.clone()
                         />
                     }
                 })
@@ -248,6 +249,8 @@ pub struct WorkerRowProps {
 
     #[builder(setter(into))]
     shift_assignment_action: String,
+
+    shift_name: String,
 }
 
 #[component]
@@ -256,7 +259,7 @@ pub fn WorkerRow(props: WorkerRowProps) -> String {
         <tr class="border-t border-gray-300" data-loading-states>
             <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
                   <button
-                      hx-get=props.worker_action
+                      hx-get=props.worker_action.clone()
                       hx-target=modal_target()
                       hx-swap="beforeend"
                   >
@@ -265,22 +268,34 @@ pub fn WorkerRow(props: WorkerRowProps) -> String {
             </td>
             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{props.worker.last_assessment().map(|assessment| assessment.value).unwrap_or(0)}</td>
             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{props.tags.into_iter().map(|tag| tag.icon).collect_fragment()}</td>
-            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                <button
-                    type="button"
-                    hx-delete={props.shift_assignment_action}
-                    class="text-center inline-flex items-center rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:bg-gray-50 disabled:shadow-none disabled:cursor-not-allowed disabled:text-gray-500"
-                    hx-swap="outerHTML swap:1s"
-                    hx-target="closest tr"
-                    data-loading-disable
-                >
-                    <div
-                        class="htmx-indicator inline-flex animate-spin mr-2 items-center justify-center rounded-full w-4 h-4 bg-gradient-to-tr from-gray-500 to-white"
+            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 text-right">
+                <div class="inline-flex align-right gap-4">
+                    <a
+                        hx-get=props.worker_action.clone()
+                        hx-target=modal_target()
+                        hx-swap="beforeend"
+                        class="cursor-pointer text-indigo-600 hover:text-indigo-900"
                     >
-                        <span class="inline h-3 w-3 rounded-full bg-white hover:bg-gray-50"></span>
-                    </div>
-                    Remove
-                </button>
+                        Edit<span class="sr-only">, {format!("{}", &props.worker.full_name())}</span>
+                    </a>
+                    <a
+                        hx-delete=props.shift_assignment_action
+                        hx-swap="outerHTML swap:1s"
+                        hx-target="closest tr"
+                        data-loading-disable
+                        hx-confirm="Remove Worker"
+                        data-confirm-message=format!("Are you sure you want to remove {} from shift: {}?", &props.worker.full_name(), &props.shift_name)
+                        class="cursor-pointer text-indigo-600 hover:text-indigo-900"
+                    >
+                        <div
+                            class="htmx-indicator inline-flex animate-spin mr-2 items-center justify-center rounded-full w-4 h-4 bg-gradient-to-tr from-gray-500 to-white"
+                        >
+                            <span class="inline h-3 w-3 rounded-full bg-white hover:bg-gray-50"></span>
+                        </div>
+
+                        Remove<span class="sr-only">, {format!("{}", &props.worker.full_name())}</span>
+                    </a>
+                </div>
             </td>
         </tr>
     }

@@ -14,7 +14,7 @@ pub struct SimpleFormProps {
     #[builder(setter(into))]
     action: String,
 
-    #[builder(setter(into), default = "Add a new item".into())]
+    #[builder(setter(into), default)]
     description: String,
 
     #[builder(setter(into), default = "Name".into())]
@@ -36,16 +36,23 @@ pub fn SimpleForm(props: SimpleFormProps) -> String {
         <div>
             <form hx-post=props.action>
                 <div class="pb-12">
-                    <p class="mt-1 text-sm leading-6 text-gray-600">
-                        {props.description}
-                    </p>
+                    {
+                        match !props.description.is_empty() {
+                            true => html! {
+                                <p class="mt-1 text-sm leading-6 text-gray-600">
+                                    {&props.description}
+                                </p>
+                            },
+                            false => "".into(),
+                        }
+                    }
                     <GridLayout class="mt-10">
-                        <GridCell span=6>
+                        <GridCell>
                             <Label for_input=&props.input_name>{&props.label_text}</Label>
                             <TextInput name=&props.input_name value=&props.data.name />
                         </GridCell>
                         {props.children}
-                        <GridCell span=6>
+                        <GridCell>
                             <div class="mt-6 flex items-center justify-end gap-x-6">
                                 <Button
                                     onclick="history.go(-1)"

@@ -19,6 +19,7 @@ use web_client::server::{
     button::PrimaryButton,
     card::Card,
     form::{Button, GridCell, GridLayout, Label, TextInput},
+    headers::SecondaryHeader,
     modal::{modal_target, Modal, ModalSize},
 };
 
@@ -176,26 +177,28 @@ pub fn User(props: UserProps) -> String {
                       hx-get=user(&props.user.id)
                       hx-target=modal_target()
                       >
-                      {props.user.email}
+                      {&props.user.email}
                   </button>
             </td>
             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">Organizer</td>
-            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                <button
-                    type="button"
+            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 text-right">
+                <a
                     hx-delete={user(&props.user.id)}
-                    class="text-center inline-flex items-center rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:bg-gray-50 disabled:shadow-none disabled:cursor-not-allowed disabled:text-gray-500"
                     hx-swap="outerHTML swap:1s"
                     hx-target="closest tr"
                     data-loading-disable
+                    hx-confirm="Remove User"
+                    data-confirm-message=format!("Are you sure you want to remove this user: {}?", &props.user.email)
+                    class="cursor-pointer text-indigo-600 hover:text-indigo-900"
                 >
                     <div
                         class="htmx-indicator inline-flex animate-spin mr-2 items-center justify-center rounded-full w-4 h-4 bg-gradient-to-tr from-gray-500 to-white"
                     >
                         <span class="inline h-3 w-3 rounded-full bg-white hover:bg-gray-50"></span>
                     </div>
-                    Delete
-                </button>
+
+                    Remove<span class="sr-only">, {&props.user.email}</span>
+                </a>
             </td>
         </tr>
     }
@@ -240,6 +243,10 @@ async fn get_users_form(headers: HeaderMap) -> impl IntoResponse {
 async fn get_users_form_modal() -> impl IntoResponse {
     Html(html! {
         <Modal size=ModalSize::MediumScreen>
+            <SecondaryHeader
+                title="Add User"
+                subtitle="Enter user details below."
+            />
             <AddUserForm action=users() />
         </Modal>
     })
@@ -330,7 +337,8 @@ async fn get_user_detail(
             <AddUserForm
                 action=routes::user(&user.id)
                 email=user.email.clone()
-                role="Organizer" />
+                role="Organizer"
+             />
         </PageLayout>
     })
 }

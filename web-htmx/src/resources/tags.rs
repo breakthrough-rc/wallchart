@@ -13,6 +13,7 @@ use web_client::server::{
     button::PrimaryButton,
     card::Card,
     form::{GridCell, Label, TextInput},
+    headers::SecondaryHeader,
     modal::{modal_target, Modal},
 };
 use worksite_service::{
@@ -101,6 +102,10 @@ async fn get_edit_form(
 
     Html(html! {
         <Modal>
+            <SecondaryHeader
+                title="🏷️ Edit Tag"
+                subtitle="Edit details below."
+            />
             <TagForm
                 action=tag_edit_form(&worksite_id, &tag_id)
                 data=TagFormData {
@@ -171,6 +176,10 @@ async fn get_create_form(
 ) -> impl IntoResponse {
     Html(html! {
         <Modal>
+            <SecondaryHeader
+                title="🏷️ Add Tag"
+                subtitle="Add a new tag to this worksite."
+            />
             <TagForm
                 action=tags_create_form(&worksite_id)
             />
@@ -224,7 +233,6 @@ fn TagForm(props: TagFormProps) -> String {
     html! {
         <SimpleForm
             action=props.action
-            description="Add a new tag"
             data=SimpleFormData {
                 name: props.data.name,
             }
@@ -271,7 +279,7 @@ fn TagsTable(props: TagsTableProps) -> String {
                                             hx-target=modal_target()
                                             hx-swap="beforeend"
                                             hx-push-url=tag_edit_form(&props.worksite_id, &tag.id)
-                                            class="text-indigo-600 hover:text-indigo-900"
+                                            class="cursor-pointer text-indigo-600 hover:text-indigo-900"
                                         >
                                             Edit<span class="sr-only">, {&tag.name}</span>
                                         </a>
@@ -279,7 +287,7 @@ fn TagsTable(props: TagsTableProps) -> String {
                                             hx-delete=routes::tag(&props.worksite_id, &tag.id)
                                             hx-confirm="Delete Tag"
                                             data-confirm-message=format!("Are you sure you want to delete tag: {}", &tag.name)
-                                            class="text-indigo-600 hover:text-indigo-900"
+                                            class="cursor-pointer text-indigo-600 hover:text-indigo-900"
                                         >
                                             Remove<span class="sr-only">, {&tag.name}</span>
                                         </a>
