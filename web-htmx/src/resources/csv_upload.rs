@@ -31,7 +31,11 @@ async fn get_csv_upload(State(_state): State<WebHtmxState>) -> impl IntoResponse
             <p><em>Bulk upload data into your worksites.</em></p>
             <PageContent>
                 <Card padded=true>
-                    <form id="form" hx-encoding="multipart/form-data" hx-post=routes::csv_upload()>
+                    <form id="form"
+                        hx-encoding="multipart/form-data"
+                        hx-post=routes::csv_upload()
+                        hx-target="#form"
+                    >
                         <p>Select a file to upload.</p>
                         <input type="file" name="file" />
                         <Button kind="submit">Upload</Button>
@@ -93,14 +97,7 @@ async fn post_csv_upload(
     let records: Vec<WorkerRecord> = rdr.deserialize().map(|result| result.unwrap()).collect();
 
     Html(html! {
-        <PageLayout header="Upload a CSV">
-            <p><em>Bulk upload data into your worksites.</em></p>
-            <PageContent>
-                <Card padded=true>
-                    <p>Here is the data we received:</p>
-                    <pre>{format!("{:#?}", records)}</pre>
-                </Card>
-            </PageContent>
-        </PageLayout>
+        <p>Here is the data we received:</p>
+        <pre>{format!("{:#?}", records)}</pre>
     })
 }
