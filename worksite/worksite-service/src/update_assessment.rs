@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use chrono::Utc;
 use thiserror::Error;
 
 use crate::{
@@ -20,6 +21,7 @@ pub struct UpdateAssessmentInput {
     pub assessment_id: String,
     pub value: u8,
     pub notes: String,
+    pub assessor: String,
 }
 
 // Change the return type, if needed
@@ -40,6 +42,9 @@ impl UpdateAssessment {
                     id: assessment.id,
                     value: input.value,
                     notes: input.notes,
+                    created_at: assessment.created_at,
+                    updated_at: Utc::now(),
+                    assessor: input.assessor,
                 }
             })
         });

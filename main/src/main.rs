@@ -4,6 +4,7 @@ use axum_login::{
     axum_sessions::{async_session::MemoryStore, SessionLayer},
     AuthLayer,
 };
+use chrono::prelude::*;
 use rand::Rng;
 use std::{net::SocketAddr, sync::Arc};
 
@@ -81,6 +82,9 @@ async fn main() {
                     id: "1".into(),
                     value: 1,
                     notes: "".into(),
+                    assessor: "Victoria Hall".into(),
+                    created_at: Utc.with_ymd_and_hms(2021, 1, 1, 0, 0, 0).unwrap(),
+                    updated_at: Utc.with_ymd_and_hms(2021, 1, 1, 0, 0, 0).unwrap(),
                 }],
                 tags: vec![
                     AssignedTag::new("1".into()),
@@ -98,6 +102,9 @@ async fn main() {
                     id: "2".into(),
                     value: 2,
                     notes: "".into(),
+                    assessor: "Victoria Hall".into(),
+                    created_at: Utc.with_ymd_and_hms(2022, 10, 12, 0, 0, 0).unwrap(),
+                    updated_at: Utc.with_ymd_and_hms(2022, 10, 12, 0, 0, 0).unwrap(),
                 }],
                 tags: vec![
                     AssignedTag::new("1".into()),
@@ -116,11 +123,17 @@ async fn main() {
                         id: "3".into(),
                         value: 4,
                         notes: "".into(),
+                        assessor: "Victoria Hall".into(),
+                        created_at: Utc.with_ymd_and_hms(2023, 3, 24, 0, 0, 0).unwrap(),
+                        updated_at: Utc.with_ymd_and_hms(2023, 3, 24, 0, 0, 0).unwrap(),
                     },
                     Assessment {
                         id: "33".into(),
                         value: 5,
                         notes: "Wow, what a worker!".into(),
+                        assessor: "Victoria Hall".into(),
+                        created_at: Utc.with_ymd_and_hms(2022, 5, 4, 0, 0, 0).unwrap(),
+                        updated_at: Utc.with_ymd_and_hms(2022, 6, 2, 0, 0, 0).unwrap(),
                     },
                 ],
                 tags: vec![AssignedTag::new("3".into())],
@@ -135,6 +148,9 @@ async fn main() {
                     id: "4".into(),
                     value: 1,
                     notes: "".into(),
+                    assessor: "Raymond Sears".into(),
+                    created_at: Utc.with_ymd_and_hms(2023, 7, 4, 0, 0, 0).unwrap(),
+                    updated_at: Utc.with_ymd_and_hms(2023, 7, 4, 0, 0, 0).unwrap(),
                 }],
                 tags: vec![AssignedTag::new("2".into()), AssignedTag::new("3".into())],
                 address: Address::default(),
@@ -148,6 +164,9 @@ async fn main() {
                     id: "5".into(),
                     value: 3,
                     notes: "".into(),
+                    assessor: "Victoria Hall".into(),
+                    created_at: Utc.with_ymd_and_hms(2023, 2, 6, 0, 0, 0).unwrap(),
+                    updated_at: Utc.with_ymd_and_hms(2023, 2, 6, 0, 0, 0).unwrap(),
                 }],
                 tags: vec![AssignedTag::new("1".into())],
                 address: Address::default(),
@@ -161,6 +180,9 @@ async fn main() {
                     id: "3".into(),
                     value: 3,
                     notes: "".into(),
+                    assessor: "Victoria Hall".into(),
+                    created_at: Utc.with_ymd_and_hms(2023, 4, 9, 0, 0, 0).unwrap(),
+                    updated_at: Utc.with_ymd_and_hms(2023, 4, 9, 0, 0, 0).unwrap(),
                 }],
                 tags: vec![AssignedTag::new("2".into()), AssignedTag::new("3".into())],
                 address: Address::default(),
@@ -174,6 +196,9 @@ async fn main() {
                     id: "7".into(),
                     value: 2,
                     notes: "".into(),
+                    assessor: "Victoria Hall".into(),
+                    created_at: Utc.with_ymd_and_hms(2023, 10, 18, 0, 0, 0).unwrap(),
+                    updated_at: Utc.with_ymd_and_hms(2023, 10, 18, 0, 0, 0).unwrap(),
                 }],
                 tags: vec![
                     AssignedTag::new("1".into()),

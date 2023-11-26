@@ -413,8 +413,10 @@ checksum = "7f2c685bad3eb3d45a01354cedb7d5faa66194d1d58ba6e267a8de788f79db38"
 dependencies = [
  "android-tzdata",
  "iana-time-zone",
+ "js-sys",
  "num-traits",
  "serde",
+ "wasm-bindgen",
  "windows-targets",
 ]
 
@@ -939,6 +941,7 @@ dependencies = [
  "axum",
  "axum-flash",
  "axum-login",
+ "chrono",
  "in-memory-user-repository",
  "in-memory-worksite-repository",
  "rand",
@@ -2051,6 +2054,7 @@ name = "worksite-service"
 version = "0.1.0"
 dependencies = [
  "async-trait",
+ "chrono",
  "nonempty",
  "thiserror",
  "tokio",

@@ -94,6 +94,7 @@ async fn get_assessments(
 struct AssessmentFormData {
     value: u8,
     notes: String,
+    assessor: String,
 }
 
 async fn post_assessments(
@@ -110,6 +111,7 @@ async fn post_assessments(
             worksite_id: worksite_id.clone(),
             value: form.value,
             notes: form.notes,
+            assessor: form.assessor,
         })
         .await
         .expect("Failed to add assessment");
@@ -153,6 +155,7 @@ async fn get_assessment_form(
                     form_data=AssessmentFormData {
                         value: assessment.value,
                         notes: assessment.notes,
+                        assessor: assessment.assessor,
                     }
                 />
             </div>
@@ -175,6 +178,7 @@ async fn put_assessment(
             assessment_id,
             value: form.value,
             notes: form.notes,
+            assessor: form.assessor,
         })
         .await
         .expect("Failed to update assessment");
@@ -362,6 +366,10 @@ fn AssessmentFormFields(props: AssessmentFormFieldsProps) -> String {
                 >
                     {&props.form_data.notes}
                 </textarea>
+            </GridCell>
+            <GridCell span=6>
+                <Label for_input="assessor">Assessor</Label>
+                <TextInput name="assessor" value=&props.form_data.assessor.to_string() />
             </GridCell>
         </GridLayout>
     }

@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use chrono::Utc;
 use thiserror::Error;
 
 use crate::{
@@ -19,6 +20,7 @@ pub struct AddAssessmentInput {
     pub worker_id: String,
     pub value: u8,
     pub notes: String,
+    pub assessor: String,
 }
 
 // Change the return type, if needed
@@ -38,6 +40,9 @@ impl AddAssessment {
                 id: uuid::Uuid::new_v4().to_string(),
                 value: input.value,
                 notes: input.notes,
+                assessor: input.assessor,
+                created_at: Utc::now(),
+                updated_at: Utc::now(),
             })
         });
         self.worksite_repository

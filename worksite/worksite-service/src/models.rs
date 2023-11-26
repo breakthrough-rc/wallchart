@@ -1,3 +1,5 @@
+use chrono::{DateTime, Utc};
+
 #[derive(Debug, Clone)]
 pub struct Worksite {
     pub id: String,
@@ -341,6 +343,9 @@ pub struct Assessment {
     pub id: String,
     pub value: u8,
     pub notes: String,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
+    pub assessor: String,
 }
 
 #[derive(Debug, Clone)]

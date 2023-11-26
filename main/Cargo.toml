@@ -10,6 +10,7 @@ auth-service = { path = "../auth/auth-service" }
 axum = { workspace = true }
 axum-flash = { workspace = true }
 axum-login = { workspace = true }
+chrono = { workspace = true }
 in-memory-user-repository = { path = "../auth/adapters/in-memory-user-repository" }
 in-memory-worksite-repository = { path = "../worksite/adapters/in-memory-worksite-repository" }
 rand = { workspace = true, features = ["min_const_gen"] }
