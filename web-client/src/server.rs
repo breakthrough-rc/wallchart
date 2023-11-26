@@ -3,6 +3,7 @@ pub mod button;
 pub mod card;
 pub mod flyout;
 pub mod form;
+pub mod headers;
 pub mod html_element;
 pub mod html_layout;
 pub mod modal;
