@@ -15,6 +15,7 @@ use web_client::server::{
     card::{Card, CardContent, CardFooter},
     flyout::Flyout,
     form::Button,
+    headers::SecondaryHeader,
     modal::{modal_target, Modal, ModalSize},
     notification::NotificationFlashes,
 };
@@ -150,6 +151,10 @@ async fn get_worker_form_modal(
 ) -> impl IntoResponse {
     Html(html! {
         <Modal size=ModalSize::MediumScreen>
+            <SecondaryHeader
+                title="👤 Add Worker"
+                subtitle="Add a new worker to this worksite."
+            />
             <WorkerForm action=format!("/wallcharts/{}/workers/new", wallchart_id) />
         </Modal>
     })
@@ -351,15 +356,11 @@ fn WorkerProfileSection(props: WorkerProfileSectionProps) -> String {
             <form>
                 <Card>
                     <CardContent padded=true>
-                        <h2
+                        <SecondaryHeader
                             id="worker-profile-heading"
-                            class="text-lg font-medium leading-6 text-gray-900"
-                        >
-                            "👤 Profile"
-                        </h2>
-                        <p class="mt-1 text-sm text-gray-500">
-                            Update worker profile details below.
-                        </p>
+                            title="👤 Profile"
+                            subtitle="Update worker profile details below."
+                        />
                         <WorkerProfileFieldset form=props.profile_form_data />
                     </CardContent>
                     <CardFooter>

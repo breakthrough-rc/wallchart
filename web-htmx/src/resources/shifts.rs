@@ -10,7 +10,7 @@ use axum_flash::Flash;
 use http::StatusCode;
 use rscx::{component, html, props};
 use serde::Deserialize;
-use web_client::server::modal::Modal;
+use web_client::server::{headers::SecondaryHeader, modal::Modal};
 use worksite_service::add_shift::AddShiftInput;
 
 pub fn shifts_routes(state: WebHtmxState) -> Router {
@@ -26,6 +26,10 @@ async fn get_shift_form_modal(
 ) -> impl IntoResponse {
     Html(html! {
         <Modal>
+            <SecondaryHeader
+                title="Add Shift"
+                subtitle="Add a new shift to this location."
+            />
             <ShiftForm action=routes::shifts(&worksite_id, &location_id) />
         </Modal>
     })
@@ -74,7 +78,6 @@ fn ShiftForm(props: ShiftFormProps) -> String {
     html! {
         <SimpleForm
             action=props.action
-            description="Add a new shift"
         />
     }
 }

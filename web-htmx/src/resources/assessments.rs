@@ -14,6 +14,7 @@ use web_client::server::{
     button::PrimaryButton,
     card::{Card, CardContent, CardFooter},
     form::{Button, GridCell, GridLayout, Label, TextInput},
+    headers::SecondaryHeader,
     modal::{modal_target, Modal},
     transition::Transition,
     yc_control::Toggle,
@@ -59,10 +60,11 @@ async fn get_assessments(
             <form>
                 <Card>
                     <CardContent padded=true>
-                        <div>
-                            <h2 id="worker-tags-heading" class="text-lg font-medium leading-6 text-gray-900">"🏅 Assessments"</h2>
-                            <p class="mt-1 text-sm text-gray-500">View Assessment History</p>
-                        </div>
+                        <SecondaryHeader
+                            id="worker-tags-heading"
+                            title="🏅 Assessments"
+                            subtitle="View Assessment History."
+                        />
                         <section class="mt-4 divide-y divide-gray-200 border-b border-t border-gray-200">
                             <AssessmentHistoryList
                                 worksite_id=worksite_id.clone()
@@ -141,10 +143,10 @@ async fn get_assessment_form(
 
     html! {
         <Modal>
-            <div>
-                <h2 id="worker-tags-heading" class="text-lg font-medium leading-6 text-gray-900">"🏅 Update Assessment"</h2>
-                <p class="mt-1 text-sm text-gray-500">Enter new values below.</p>
-            </div>
+            <SecondaryHeader
+                title="🏅 Update Assessment"
+                subtitle="Enter new values below."
+            />
             <div class="mt-4">
                 <AssessmentForm
                     action=routes::assessment(&worksite_id, &worker_id, &assesment_id)

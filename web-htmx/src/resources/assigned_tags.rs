@@ -13,6 +13,7 @@ use serde::Deserialize;
 use web_client::server::{
     button::PrimaryButton,
     card::{Card, CardContent, CardFooter},
+    headers::SecondaryHeader,
 };
 use worksite_service::{
     assign_tags::AssignTagsInput,
@@ -111,10 +112,11 @@ fn AssignTagsForm(props: AssignTagsFormProps) -> String {
             <form action="#" method="POST">
                 <Card>
                     <CardContent padded=true>
-                        <div>
-                            <h2 id="worker-tags-heading" class="text-lg font-medium leading-6 text-gray-900">"🏷️ Tags"</h2>
-                            <p class="mt-1 text-sm text-gray-500">Assign tags.</p>
-                        </div>
+                        <SecondaryHeader
+                            id="worker-tags-heading"
+                            title="🏷️ Tags"
+                            subtitle="Assign tags."
+                        />
                         <div class="mt-4 divide-y divide-gray-200 border-b border-t border-gray-200">
                             {
                                 #[allow(unused_braces)]

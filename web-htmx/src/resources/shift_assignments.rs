@@ -1,8 +1,4 @@
-use crate::{
-    components::page::PageLayout,
-    routes,
-    state::WebHtmxState,
-};
+use crate::{components::page::PageLayout, routes, state::WebHtmxState};
 use axum::{
     extract::{self, State},
     response::{Html, IntoResponse},
@@ -16,7 +12,9 @@ use serde::Deserialize;
 
 use web_client::server::{
     attrs::Attrs,
+    button::SecondaryButton,
     form::{Button, GridCell, GridLayout, Label, SelectInput},
+    headers::SecondaryHeader,
     modal::{Modal, ModalSize},
 };
 use worksite_service::{
@@ -81,6 +79,10 @@ async fn get_shift_assignment_form_modal(
 
     Html(html! {
         <Modal size=ModalSize::MediumScreen>
+            <SecondaryHeader
+                title="Assign a Shift"
+                subtitle="Assign a worker to this shift."
+            />
             <AssignShiftForm
                 workers=workers
                 action=routes::shift_assignments_new(&wallchart_id, &location_id, &shift_id)
@@ -164,11 +166,8 @@ fn AssignShiftForm(props: AssignShiftFormProps) -> String {
         <div>
             <form hx-post=props.action>
                 <div class="pb-12">
-                    <p class="mt-1 text-sm leading-6 text-gray-600">
-                        Assign a worker to this shift
-                    </p>
                     <GridLayout class="mt-10">
-                        <GridCell span=4>
+                        <GridCell>
                             <Label for_input="worker_id">Worker</Label>
                             <SelectInput name="worker_id" >
                             {
@@ -185,7 +184,7 @@ fn AssignShiftForm(props: AssignShiftFormProps) -> String {
                             }
                             </SelectInput>
                         </GridCell>
-                        <GridCell span=4>
+                        <GridCell>
                             <div class="mt-6 flex items-center justify-end gap-x-6">
                                 <Button
                                     onclick="history.go(-1)"
@@ -193,12 +192,12 @@ fn AssignShiftForm(props: AssignShiftFormProps) -> String {
                                 >
                                     Cancel
                                 </Button>
-                                <Button
+                                <SecondaryButton
                                     hx_get=props.create_worker_action
                                     hx_target="closest form"
                                 >
                                     Create a new worker
-                                </Button>
+                                </SecondaryButton>
                                 <Button kind="submit">Assign</Button>
                             </div>
                         </GridCell>

@@ -19,6 +19,7 @@ use web_client::server::{
     button::PrimaryButton,
     card::Card,
     form::{Button, GridCell, GridLayout, Label, TextInput},
+    headers::SecondaryHeader,
     modal::{modal_target, Modal, ModalSize},
 };
 
@@ -240,6 +241,10 @@ async fn get_users_form(headers: HeaderMap) -> impl IntoResponse {
 async fn get_users_form_modal() -> impl IntoResponse {
     Html(html! {
         <Modal size=ModalSize::MediumScreen>
+            <SecondaryHeader
+                title="Add User"
+                subtitle="Enter user details below."
+            />
             <AddUserForm action=users() />
         </Modal>
     })
@@ -330,7 +335,8 @@ async fn get_user_detail(
             <AddUserForm
                 action=routes::user(&user.id)
                 email=user.email.clone()
-                role="Organizer" />
+                role="Organizer"
+             />
         </PageLayout>
     })
 }

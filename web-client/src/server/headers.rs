@@ -27,10 +27,8 @@ pub fn SecondaryHeader(props: SecondaryHeaderProps) -> String {
             <h2
                 class="text-lg font-medium leading-6 text-gray-900"
             >
-            {props.title}
+                {props.title}
             </h2>
-
-            <p class="mt-1 text-sm text-gray-500">View Assessment History</p>
             {
                 if props.subtitle != "" {
                     html! {
