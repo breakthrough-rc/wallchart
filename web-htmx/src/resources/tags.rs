@@ -271,7 +271,7 @@ fn TagsTable(props: TagsTableProps) -> String {
                                             hx-target=modal_target()
                                             hx-swap="beforeend"
                                             hx-push-url=tag_edit_form(&props.worksite_id, &tag.id)
-                                            class="text-indigo-600 hover:text-indigo-900"
+                                            class="cursor-pointer text-indigo-600 hover:text-indigo-900"
                                         >
                                             Edit<span class="sr-only">, {&tag.name}</span>
                                         </a>
@@ -279,7 +279,7 @@ fn TagsTable(props: TagsTableProps) -> String {
                                             hx-delete=routes::tag(&props.worksite_id, &tag.id)
                                             hx-confirm="Delete Tag"
                                             data-confirm-message=format!("Are you sure you want to delete tag: {}", &tag.name)
-                                            class="text-indigo-600 hover:text-indigo-900"
+                                            class="cursor-pointer text-indigo-600 hover:text-indigo-900"
                                         >
                                             Remove<span class="sr-only">, {&tag.name}</span>
                                         </a>
