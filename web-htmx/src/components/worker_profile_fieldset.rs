@@ -1,7 +1,7 @@
 use rscx::{component, html, props};
 use serde::Deserialize;
 
-use web_client::server::form::{CellSpan, GridCell, GridLayout, Label, Select, TextInput};
+use web_client::server::form::{CellSpan, GridCell, GridLayout, Label, TextInput};
 
 #[derive(Default, Deserialize, Debug, Clone)]
 pub struct WorkerProfileFormData {
