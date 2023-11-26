@@ -54,6 +54,7 @@ async fn get_csv_upload(State(_state): State<WebHtmxState>) -> impl IntoResponse
 * are relatively unique (to their context) so we can create/reuse these resources
 * as needed
 */
+#[allow(dead_code)]
 #[derive(Debug, Deserialize)]
 struct WorkerRecord {
     worksite: String,
