@@ -46,7 +46,6 @@ pub fn workers_routes(state: WebHtmxState) -> Router {
         .route(WORKERS, get(get_workers))
         .route(WORKER, get(get_worker_details))
         .route(WORKER_PROFILE, post(post_worker_profile_form))
-        .route("/workers", get(workers(&"1".to_string())))
         .route(WORKERS_NEW, get(get_worker_form).post(post_worker))
         .route(WORKERS_NEW_MODAL, get(get_worker_form_modal))
         .with_state(state)
