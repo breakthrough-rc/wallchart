@@ -37,7 +37,7 @@ pub fn SimpleForm(props: SimpleFormProps) -> String {
             <form hx-post=props.action>
                 <div class="pb-12">
                     {
-                        match &props.description != "" {
+                        match !props.description.is_empty() {
                             true => html! {
                                 <p class="mt-1 text-sm leading-6 text-gray-600">
                                     {&props.description}

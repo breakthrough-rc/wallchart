@@ -30,7 +30,7 @@ pub fn SecondaryHeader(props: SecondaryHeaderProps) -> String {
                 {props.title}
             </h2>
             {
-                if props.subtitle != "" {
+                if !props.subtitle.is_empty() {
                     html! {
                         <p class="mt-1 text-sm text-gray-500">{props.subtitle}</p>
                     }
