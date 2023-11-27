@@ -16,7 +16,7 @@ use web_client::server::{
     form::{Button, GridCell, GridLayout, Label, TextInput},
     headers::SecondaryHeader,
     modal::{modal_target, Modal},
-    popup_menu::{Menu, MenuItem, MenuLink, MenuSize, PopupMenu},
+    popup_menu::{MenuItem, MenuSize, PopupMenu},
 };
 use worksite_service::{
     add_assessment::AddAssessmentInput, get_assessment::GetAssessmentInput,
