@@ -1,8 +1,17 @@
+use rscx::{component, html, props, CollectFragment};
+
+use web_client::server::popup_menu::{Menu, PopupMenu};
+
 use crate::components::logo::Logo;
 use crate::routes;
-use rscx::{component, html, props, CollectFragment};
-use web_client::server::transition::Transition;
-use web_client::server::yc_control::Toggle;
+
+fn profile_links() -> Vec<(String, String)> {
+    vec![
+        ("Your Profile".into(), "#".into()),
+        ("Settings".into(), "#".into()),
+        ("Sign out".into(), "#".into()),
+    ]
+}
 
 #[component]
 pub fn Nav() -> String {
@@ -13,8 +22,6 @@ pub fn Nav() -> String {
         ("Users", routes::users()),
         ("CSV Upload", routes::csv_upload()),
     ];
-
-    let profile_links = [("Your Profile", "#"), ("Settings", "#"), ("Sign out", "#")];
 
     html! {
         <nav class="border-b border-gray-200 bg-white">
@@ -65,7 +72,7 @@ pub fn Nav() -> String {
                             </svg>
                         </button>
 
-                        <ProfileDropdown links=profile_links />
+                        <ProfileDropdown />
                     </div>
 
                     <div class="-mr-2 flex items-center sm:hidden">
@@ -136,7 +143,7 @@ pub fn Nav() -> String {
                     </div>
                     <div class="mt-3 space-y-1">
                         {
-                            profile_links
+                            profile_links()
                                 .into_iter()
                                 .map(|(label, href)| html! {
                                     <a href=href class="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800">{label}</a>
@@ -150,48 +157,25 @@ pub fn Nav() -> String {
     }
 }
 
-// TODO! Fix links type to allow dynamic number of links.
-#[props]
-struct ProfileDropdownProps {
-    #[builder(default)]
-    links: [(&'static str, &'static str); 3],
-}
-
 #[component]
-fn ProfileDropdown(props: ProfileDropdownProps) -> String {
+fn ProfileDropdown() -> String {
     html! {
-        <Toggle class="relative ml-3">
-            <div>
-                <button type="button" data-toggle-action class="relative flex max-w-xs items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
-                    <span class="absolute -inset-1.5"></span>
-                    <span class="sr-only">Open user menu</span>
-                    <img class="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
-                </button>
-            </div>
-            <Transition
-                class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-                role="menu"
-                aria_orientation="vertical"
-                aria_labelledby="user-menu-button"
-                tabindex="-1"
-                enter="transition ease-out duration-200"
-                enter_from="transform opacity-0 scale-95"
-                enter_to="transform opacity-100 scale-100"
-                leave="transition ease-in duration-75"
-                leave_from="transform opacity-100 scale-100"
-                leave_to="transform opacity-0 scale-95"
-            >
-                // Active: "bg-gray-100", Not Active: "
-                {
-                    props.links
-                        .into_iter()
-                        .enumerate()
-                        .map(|(i, (label, href))| html! {
-                            <a href=href class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id={format!("user-menu-item-{}", i)}>{label}</a>
-                        })
-                        .collect_fragment()
-                }
-            </Transition>
-        </Toggle>
+        <PopupMenu
+            id="user-nav-popupmenu"
+            class="ml-3"
+            button_class="flex max-w-xs items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            button_content=html! {
+                <img
+                    class="h-8 w-8 rounded-full"
+                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                    alt="user-avatar"
+                />
+            }
+        >
+            <Menu
+                id="user-nav-menu"
+                links=profile_links().into_iter().map(|link| link.into()).collect()
+            />
+        </PopupMenu>
     }
 }

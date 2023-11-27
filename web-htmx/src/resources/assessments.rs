@@ -16,8 +16,7 @@ use web_client::server::{
     form::{Button, GridCell, GridLayout, Label, TextInput},
     headers::SecondaryHeader,
     modal::{modal_target, Modal},
-    transition::Transition,
-    yc_control::Toggle,
+    popup_menu::{Menu, MenuItem, MenuLink, MenuSize, PopupMenu},
 };
 use worksite_service::{
     add_assessment::AddAssessmentInput, get_assessment::GetAssessmentInput,
@@ -322,59 +321,36 @@ struct PopupMenuButtonProps {
 #[component]
 fn PopupMenuButton(props: PopupMenuButtonProps) -> String {
     html! {
-        <Toggle class="relative flex-none">
-            <button
-                type="button"
-                class="-m-2.5 block p-2.5 text-gray-500 hover:text-gray-900"
-                id="options-menu-0-button"
-                aria-expanded="false"
-                aria-haspopup="true"
-                data-toggle-action
-            >
-                <span class="sr-only">Open options</span>
+        <PopupMenu
+            id="assessment-menu"
+            class="flex-none"
+            size=MenuSize::Small
+            button_class="-m-2.5 block p-2.5 text-gray-500 hover:text-gray-900"
+            button_content=html! {
                 <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM10 8.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM11.5 15.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z" />
+                    <path d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM10 8.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM11.5 15.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z" />
                 </svg>
-            </button>
-            <Transition
-                class="absolute hidden right-0 z-10 mt-2 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none"
-                enter="transition ease-out duration-100"
-                enter_from="transform opacity-0 scale-95"
-                enter_to="transform opacity-100 scale-100"
-                leave="transition ease-in duration-75"
-                leave_from="transform opacity-100 scale-100"
-                leave_to="transform opacity-0 scale-95"
-                role="menu"
-                aria_orientation="vertical"
-                aria_labelledby="options-menu-0-button"
-                tabindex="-1"
-            >
-                <a
-                    hx-get=props.route
-                    hx-target=modal_target()
-                    hx-swap="beforeend"
-                    class="block px-3 py-1 text-sm leading-6 text-gray-900"
-                    role="menuitem"
-                    tabindex="-1"
-                    id="options-menu-0-item-0"
-                >
-                    Edit<span class="sr-only">, Assessment</span>
-                </a>
-                <a
-                    hx-delete=props.route
-                    hx-target=modal_target()
-                    hx-swap="beforeend"
-                    hx-confirm="Delete Assessment"
-                    data-confirm-title="Are you sure you want to delete this assessment?"
-                    class="block px-3 py-1 text-sm leading-6 text-gray-900"
-                    role="menuitem"
-                    tabindex="-1"
-                    id="options-menu-0-item-2"
-                >
-                    Delete<span class="sr-only">, Assessment</span>
-                </a>
-            </Transition>
-        </Toggle>
+            }
+        >
+            <MenuItem
+                title="Edit"
+                sr_suffix=", Assessment"
+                hx_get=props.route.clone()
+                hx_target=modal_target()
+                hx_swap="beforeend"
+            />
+            <MenuItem
+                title="Remove"
+                sr_suffix=", Assessment"
+                hx_get=props.route.clone()
+                hx_target=modal_target()
+                hx_swap="beforeend"
+                hx_confirm="Delete Assessment"
+                attrs=Attrs::with(
+                    "data-confirm-title", "Are you sure you want to delete this assessment?".into()
+                )
+            />
+        </PopupMenu>
     }
 }
 
