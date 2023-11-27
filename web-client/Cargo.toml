@@ -13,6 +13,7 @@ tower-http = { workspace = true, features = ["fs"] }
 rscx = { workspace = true }
 once_cell = { workspace = true }
 web-macros = { path = "../web-macros" }
+typed-builder = { workspace = true }
 
 [build-dependencies]
 sha256 = { workspace = true }
