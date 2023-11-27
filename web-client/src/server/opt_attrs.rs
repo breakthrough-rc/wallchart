@@ -1,20 +1,20 @@
 use std::collections::HashMap;
 
-pub fn opt_attr(key: &str, val: String) -> String {
-    if val.is_empty() {
+pub fn opt_attr<S: AsRef<str>, T: AsRef<str>>(key: S, val: T) -> String {
+    if val.as_ref().is_empty() {
         String::from("")
     } else {
-        format!("{}=\"{}\"", key, val)
+        format!("{}=\"{}\"", key.as_ref(), val.as_ref())
     }
 }
 
-pub fn opt_attrs(map: HashMap<&str, String>) -> String {
+pub fn opt_attrs<S: AsRef<str>, T: AsRef<str>>(map: HashMap<S, T>) -> String {
     if map.is_empty() {
         String::from("")
     } else {
         let mut attrs = map
             .iter()
-            .map(|(key, val)| opt_attr(key, val.to_string()))
+            .map(|(key, val)| opt_attr(key, val))
             .collect::<Vec<String>>();
 
         // Output attributes in alpha order.
@@ -30,7 +30,7 @@ mod tests {
 
     #[test]
     fn test_opt_attr_with_empty_string() {
-        assert_eq!(opt_attr("foo", String::from("")), String::from(""));
+        assert_eq!(opt_attr("foo", ""), String::from(""));
     }
 
     #[test]
@@ -51,20 +51,17 @@ mod tests {
 
     #[test]
     fn test_opt_attrs_with_empty_map() {
-        assert_eq!(opt_attrs(HashMap::new()), String::from(""));
+        assert_eq!(opt_attrs(HashMap::<&str, &str>::new()), String::from(""));
     }
 
     #[test]
     fn test_opt_attrs_with_empty_map_empty_array() {
-        assert_eq!(opt_attrs(HashMap::from([])), String::from(""));
+        assert_eq!(opt_attrs(HashMap::<&str, &str>::from([])), String::from(""));
     }
 
     #[test]
     fn test_opt_attrs_with_single_attr_that_is_empty() {
-        assert_eq!(
-            opt_attrs(HashMap::from([("foo", String::from(""))])),
-            String::from("")
-        );
+        assert_eq!(opt_attrs(HashMap::from([("foo", "")])), String::from(""));
     }
 
     #[test]
