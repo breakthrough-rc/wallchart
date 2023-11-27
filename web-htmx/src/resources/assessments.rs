@@ -248,11 +248,28 @@ fn AssessmentHistoryList(props: AssessmentHistoryListProps) -> String {
                                 }
                             </div>
                             <div class="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
-                                <p class="whitespace-nowrap">"Created "<time datetime="2023-03-17T00:00Z">March 17, 2023</time></p>
+                                <p class="whitespace-nowrap">
+                                {
+                                    match assessment.updated_at != assessment.created_at {
+                                        true => html! {
+                                            <Time
+                                                title="Updated"
+                                                datetime=assessment.updated_at
+                                            />
+                                        },
+                                        false => html! {
+                                            <Time
+                                                title="Created"
+                                                datetime=assessment.updated_at
+                                            />
+                                        },
+                                    }
+                                }
+                                </p>
                                 <svg viewBox="0 0 2 2" class="h-0.5 w-0.5 fill-current">
                                     <circle cx="1" cy="1" r="1" />
                                 </svg>
-                                <p class="truncate">Assessment by Leslie Alexander</p>
+                                <p class="truncate">{format!("Assessment by {}", &assessment.assessor)}</p>
                             </div>
                             <div class="mt-5 flex flex-col gap-x-3 text-xs ">
                                 <p class="font-semibold leading-6 text-gray-900">Notes</p>
@@ -277,6 +294,23 @@ fn AssessmentHistoryList(props: AssessmentHistoryListProps) -> String {
                 .await
             }
         </ul>
+    }
+}
+
+#[props]
+struct TimeProps {
+    #[builder(setter(into))]
+    title: String,
+    datetime: chrono::DateTime<chrono::Utc>,
+}
+
+#[component]
+fn Time(props: TimeProps) -> String {
+    html! {
+        {format!("{} ", props.title)}
+        <time datetime=props.datetime.to_rfc3339()>
+            {props.datetime.format("%b %e, %Y").to_string()}
+        </time>
     }
 }
 
@@ -359,6 +393,10 @@ fn AssessmentFormFields(props: AssessmentFormFieldsProps) -> String {
                 <TextInput name="value" value=&props.form_data.value.to_string() />
             </GridCell>
             <GridCell span=6>
+                <Label for_input="assessor">Assessor</Label>
+                <TextInput name="assessor" value=&props.form_data.assessor.to_string() />
+            </GridCell>
+            <GridCell span=6>
                 <Label for_input="notes">Notes</Label>
                 <textarea
                     class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -366,10 +404,6 @@ fn AssessmentFormFields(props: AssessmentFormFieldsProps) -> String {
                 >
                     {&props.form_data.notes}
                 </textarea>
-            </GridCell>
-            <GridCell span=6>
-                <Label for_input="assessor">Assessor</Label>
-                <TextInput name="assessor" value=&props.form_data.assessor.to_string() />
             </GridCell>
         </GridLayout>
     }
