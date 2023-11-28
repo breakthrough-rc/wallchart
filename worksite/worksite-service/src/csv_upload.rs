@@ -51,8 +51,7 @@ impl CsvUpload {
 
         for record in records.iter() {
             let _worksite = worksites
-                .get(&record.worksite)
-                .map(|w| w.clone())
+                .get(&record.worksite).cloned()
                 .unwrap_or_else(|| Worksite::new(record.worksite.clone()));
 
             // TODO:
