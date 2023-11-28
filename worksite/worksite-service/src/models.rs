@@ -1,15 +1,27 @@
 use chrono::{DateTime, Utc};
 
+pub type WorksiteName = String;
+
 #[derive(Debug, Clone)]
 pub struct Worksite {
     pub id: String,
-    pub name: String,
+    pub name: WorksiteName,
     pub locations: Vec<Location>,
     pub tags: Vec<Tag>,
     pub workers: Vec<Worker>,
 }
 
 impl Worksite {
+    pub fn new(name: WorksiteName) -> Self {
+        Self {
+            id: uuid::Uuid::new_v4().to_string(),
+            name,
+            locations: vec![],
+            tags: vec![],
+            workers: vec![],
+        }
+    }
+
     pub fn get_worker(&self, worker_id: String) -> Option<Worker> {
         self.workers.iter().find(|w| w.id == worker_id).cloned()
     }

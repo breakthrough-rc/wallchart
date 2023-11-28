@@ -1941,7 +1941,6 @@ dependencies = [
  "axum-flash",
  "axum-login",
  "chrono",
- "csv",
  "http",
  "in-memory-user-repository",
  "once_cell",
