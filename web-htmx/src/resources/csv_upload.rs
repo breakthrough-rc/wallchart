@@ -7,6 +7,7 @@ use axum::{
 use rscx::html;
 use serde::Deserialize;
 use std::str::from_utf8;
+use worksite_service::csv_upload::CsvUploadInput;
 
 use web_client::server::{card::Card, form::Button};
 
@@ -71,7 +72,7 @@ struct WorkerRecord {
     phone: String,
 }
 async fn post_csv_upload(
-    State(_state): State<WebHtmxState>,
+    State(state): State<WebHtmxState>,
     mut multipart: Multipart,
 ) -> impl IntoResponse {
     let mut content: Vec<String> = vec![];
@@ -93,8 +94,12 @@ async fn post_csv_upload(
      * We combine the "chunks" into a single string and then deserialize row by row
      */
     let content: String = content.join("");
-    let mut rdr = csv::Reader::from_reader(content.as_bytes());
-    let records: Vec<WorkerRecord> = rdr.deserialize().map(|result| result.unwrap()).collect();
+
+    let records = state
+        .worksite_service
+        .csv_upload(CsvUploadInput { csv_input: content })
+        .await
+        .unwrap();
 
     Html(html! {
         <p>Here is the data we received:</p>

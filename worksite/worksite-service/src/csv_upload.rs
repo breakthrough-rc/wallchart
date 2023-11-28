@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use serde::Deserialize;
 use thiserror::Error;
 
 use crate::ports::worksite_repository::WorksiteRepository;
@@ -11,30 +12,35 @@ pub struct CsvUpload {
 
 #[derive(Clone, Debug)]
 pub struct CsvUploadInput {
-    // Put input fields here
-    pub worksite_id: String,
+    /*
+     * The stringified CSV content. We will attempt to deserialize this into
+     *  worker records
+     */
+    pub csv_input: String,
+}
+
+#[allow(dead_code)]
+#[derive(Clone, Debug, Deserialize)]
+pub struct WorkerRecord {
+    worksite: String,
+    location: String,
+    shift1: String,
+    shift2: String,
+    shift3: String,
+    name: String,
+    email: String,
+    phone: String,
 }
 
 // Change the return type, if needed
-pub type CsvUploadOutput = Result<(), CsvUploadFailure>;
+pub type CsvUploadOutput = Result<Vec<WorkerRecord>, CsvUploadFailure>;
 
 impl CsvUpload {
-    pub async fn csv_upload(&self, _input: CsvUploadInput) -> CsvUploadOutput {
-        // let worksite = self
-        //     .worksite_repository
-        //     .get_worksite(input.worksite_id)
-        //     .await
-        //     .map_err(|e| CsvUploadFailure::Unknown(e.to_string()))?
-        //     .ok_or(CsvUploadFailure::NotFound)?;
-        //
-        // let worksite = todo!("update the worksite or whatever you like")
-        //
-        // self.worksite_repository
-        //     .save(worksite)
-        //     .await
-        //     .map_err(|e| CsvUploadFailure::Unknown(e.to_string()))?;
+    pub async fn csv_upload(&self, input: CsvUploadInput) -> CsvUploadOutput {
+        let mut rdr = csv::Reader::from_reader(input.csv_input.as_bytes());
+        let records: Vec<WorkerRecord> = rdr.deserialize().map(|result| result.unwrap()).collect();
 
-        Ok(())
+        Ok(records)
     }
 }
 
