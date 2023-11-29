@@ -23,7 +23,7 @@ use crate::{
         page::{PageHeader, PageLayout},
         page_content::PageContent,
     },
-    routes::{self, locations_new, locations_new_modal, tags, WALLCHART},
+    routes::{self, locations_new, locations_new_modal, WALLCHART},
     state::WebHtmxState,
 };
 
