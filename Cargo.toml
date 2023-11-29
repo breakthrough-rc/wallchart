@@ -27,6 +27,7 @@ csv = { version = "1.3.0" }
 diesel = { version = "2.1.3", features = ["postgres", "chrono"] }
 diesel-async = { version = "0.4.1" }
 diesel_migrations = { version = "2.1.0" }
+futures = { version = "0.3.29" }
 http = { version = "0.2.9" }
 nonempty = { version = "0.8.1" }
 once_cell = { version = "1.18.0" }

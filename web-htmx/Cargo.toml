@@ -25,3 +25,4 @@ worksite-service = { path = "../worksite/worksite-service" }
 auth-service = { path = "../auth/auth-service" }
 # It is bad that this is here. We should find a way to get the AuthContext type out
 in-memory-user-repository = { path = "../auth/adapters/in-memory-user-repository" }
+futures = { workspace = true }
