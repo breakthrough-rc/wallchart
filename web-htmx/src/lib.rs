@@ -24,6 +24,7 @@ use resources::worksite::worksite_routes;
 use routes::{CLIENT, HOME, HOME_REDIRECT, PLAYGROUND};
 
 pub mod components;
+pub mod context;
 pub mod livereload;
 pub mod playground;
 pub mod resources;
