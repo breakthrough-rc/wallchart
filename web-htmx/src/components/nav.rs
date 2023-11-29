@@ -18,6 +18,7 @@ pub fn Nav() -> String {
     let nav_links = [
         ("Wallchart", routes::wallchart()),
         ("Workers", routes::workers(&"1".into())),
+        ("Tags", routes::tags(&"1".into())),
         ("Report", "/report".into()),
         ("Users", routes::users()),
         ("CSV Upload", routes::csv_upload()),

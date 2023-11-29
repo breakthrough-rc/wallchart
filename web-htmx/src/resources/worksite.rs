@@ -63,12 +63,6 @@ async fn get_wallchart_page(
                     >
                         Add New Location
                     </SecondaryButton>
-                    <SecondaryButton
-                        tag="a"
-                        href=tags(&id.into())
-                    >
-                        Manage Tags
-                    </SecondaryButton>
                     <PrimaryButton
                         onclick="alert('Coming soon!')"
                     >
