@@ -261,6 +261,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "axum-macros"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5a2edad600410b905404c594e2523549f1bcd4bded1e252c8f74524ccce0b867"
+dependencies = [
+ "heck",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "axum-sessions"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -735,6 +747,12 @@ checksum = "e7f66481bfee273957b1f20485a4ff3362987f85b2c236580d81b4eb7a326429"
 dependencies = [
  "http",
 ]
+
+[[package]]
+name = "heck"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "95505c38b4572b2d910cecb0281560f54b440a19336cbbcb27bf6ce6adc6f5a8"
 
 [[package]]
 name = "hermit-abi"
@@ -1940,6 +1958,7 @@ dependencies = [
  "axum-extra 0.8.0",
  "axum-flash",
  "axum-login",
+ "axum-macros",
  "chrono",
  "http",
  "in-memory-user-repository",
