@@ -23,6 +23,8 @@ pub fn Nav() -> String {
         ("CSV Upload", routes::csv_upload()),
     ];
 
+    let ctx = crate::context::context().expect("Unable to retrieve htmx context.");
+
     html! {
         <nav class="border-b border-gray-200 bg-white">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -41,7 +43,7 @@ pub fn Nav() -> String {
                                     .clone()
                                     .into_iter()
                                     .map(|(label, href)| {
-                                        let is_current = false; // TODO! Need to support recognizing current page
+                                        let is_current = ctx.page_url == href;
                                         let link_css = "inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium";
                                         let link_css = if is_current {
                                             format!("border-indigo-500 text-gray-900 {}", link_css)

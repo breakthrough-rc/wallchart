@@ -1,4 +1,5 @@
 use axum::{
+    middleware,
     response::{Html, Redirect},
     routing::get,
     Router,
@@ -11,6 +12,7 @@ use web_client::routes as client_routes;
 
 //##PLOP USE RESOURCE HOOK##
 use components::{not_found_message::NotFoundMessage, page::PageLayout};
+use context::context_provider_layer;
 use resources::assessments::assessments_routes;
 use resources::assigned_tags::assigned_tags_routes;
 use resources::csv_upload::csv_upload_routes;
@@ -54,6 +56,7 @@ pub fn routes(state: WebHtmxState) -> Router {
         .nest_service(CLIENT, client_routes())
         .merge(users_routes(state))
         .fallback(fallback)
+        .layer(middleware::from_fn(context_provider_layer))
 }
 
 async fn fallback() -> (StatusCode, Html<String>) {
