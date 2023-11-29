@@ -22,10 +22,7 @@ use web_client::server::{
     form::{Button, GridCell, GridLayout, Label, TextInput},
     headers::SecondaryHeader,
     modal::{modal_target, Modal, ModalSize},
-    table::{
-        ActionLink, Confirm, DeleteActionLink, TDVariant, Table, TableData, TableDataActions,
-        TableHeading,
-    },
+    table::{Confirm, DeleteActionLink, TDVariant, Table, TableData, TableHeading},
 };
 
 use crate::{
