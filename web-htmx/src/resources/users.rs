@@ -128,13 +128,8 @@ async fn get_users(State(state): State<WebHtmxState>) -> impl IntoResponse {
     })
 }
 
-#[props]
-struct UsersTableProps {
-    users: Vec<User>,
-}
-
 #[component]
-fn UsersTable(props: UsersTableProps) -> String {
+fn UsersTable(users: Vec<User>) -> String {
     html! {
         <Table
             headings=vec![
@@ -142,8 +137,7 @@ fn UsersTable(props: UsersTableProps) -> String {
                 TableHeading::title("Role"),
                 TableHeading::empty("Actions"),
             ]
-            body=join_all(props
-                .users
+            body=join_all(users
                 .iter()
                 .map(|user| async {
                     html! {
