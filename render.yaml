@@ -6,6 +6,8 @@ services:
     # Install bun, build client, then build rust app
     buildCommand: |
       curl -fsSL https://bun.sh/install | bash 
+      export BUN_INSTALL="$HOME/.bun"
+      export PATH=$BUN_INSTALL/bin:$PATH
       ./build-client.sh
       cargo build --release
     startCommand: cargo run --release
