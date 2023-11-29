@@ -42,12 +42,12 @@ impl UpdateWorker {
                 first_name: input.first_name,
                 last_name: input.last_name,
                 email: input.email,
-                address: Address {
+                address: Some(Address {
                     street_address: input.street_address,
                     city: input.city,
                     region: input.region,
                     postal_code: input.postal_code,
-                },
+                }),
                 ..worker
             }
         });

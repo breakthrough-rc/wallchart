@@ -91,7 +91,7 @@ async fn main() {
                     AssignedTag::new("2".into()),
                     AssignedTag::new("3".into()),
                 ],
-                address: Address::default(),
+                address: Some(Address::default()),
             },
             Worker {
                 id: "2".into(),
@@ -111,7 +111,7 @@ async fn main() {
                     AssignedTag::new("2".into()),
                     AssignedTag::new("3".into()),
                 ],
-                address: Address::default(),
+                address: Some(Address::default()),
             },
             Worker {
                 id: "3".into(),
@@ -137,7 +137,7 @@ async fn main() {
                     },
                 ],
                 tags: vec![AssignedTag::new("3".into())],
-                address: Address::default(),
+                address: Some(Address::default()),
             },
             Worker {
                 id: "4".into(),
@@ -153,7 +153,7 @@ async fn main() {
                     updated_at: Utc.with_ymd_and_hms(2023, 7, 4, 0, 0, 0).unwrap(),
                 }],
                 tags: vec![AssignedTag::new("2".into()), AssignedTag::new("3".into())],
-                address: Address::default(),
+                address: Some(Address::default()),
             },
             Worker {
                 id: "5".into(),
@@ -169,7 +169,7 @@ async fn main() {
                     updated_at: Utc.with_ymd_and_hms(2023, 2, 6, 0, 0, 0).unwrap(),
                 }],
                 tags: vec![AssignedTag::new("1".into())],
-                address: Address::default(),
+                address: Some(Address::default()),
             },
             Worker {
                 id: "6".into(),
@@ -185,7 +185,7 @@ async fn main() {
                     updated_at: Utc.with_ymd_and_hms(2023, 4, 9, 0, 0, 0).unwrap(),
                 }],
                 tags: vec![AssignedTag::new("2".into()), AssignedTag::new("3".into())],
-                address: Address::default(),
+                address: Some(Address::default()),
             },
             Worker {
                 id: "7".into(),
@@ -205,7 +205,7 @@ async fn main() {
                     AssignedTag::new("2".into()),
                     AssignedTag::new("3".into()),
                 ],
-                address: Address::default(),
+                address: Some(Address::default()),
             },
         ],
     };

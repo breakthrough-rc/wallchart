@@ -32,6 +32,12 @@ async fn get_csv_upload(State(_state): State<WebHtmxState>) -> impl IntoResponse
             <p><em>Bulk upload data into your worksites.</em></p>
             <PageContent>
                 <Card padded=true>
+                    <h2>Upload a CSV</h2>
+                    <p>The file is expected have a header of "worksite,location,shift1,shift2,shift3,first_name,last_name,email"</p>
+                    <p>Shifts are optional. If you do not specify a shift, the worker will be created but not assigned to any shifts.</p>
+                    <p>This upload assumes all data is net new, so you will not be able to add data to existing worksites here.</p>
+                    <p>Here is an example CSV row:</p>
+                    <p>Dunder Miflin,Office,Day,,,Jim,Halpert,jim@dundermiflin.com</p>
                     <form id="form"
                         hx-encoding="multipart/form-data"
                         hx-post=routes::csv_upload()

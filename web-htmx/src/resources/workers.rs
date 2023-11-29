@@ -120,10 +120,22 @@ async fn get_worker_details(
         first_name: worker.first_name.clone(),
         last_name: worker.last_name.clone(),
         email: worker.email.clone(),
-        street_address: worker.address.street_address.clone(),
-        city: worker.address.city.clone(),
-        region: worker.address.region.clone(),
-        postal_code: worker.address.postal_code.clone(),
+        street_address: worker
+            .address
+            .clone()
+            .map(|a| a.street_address)
+            .unwrap_or("".into()),
+        city: worker.address.clone().map(|a| a.city).unwrap_or("".into()),
+        region: worker
+            .address
+            .clone()
+            .map(|a| a.region)
+            .unwrap_or("".into()),
+        postal_code: worker
+            .address
+            .clone()
+            .map(|a| a.postal_code)
+            .unwrap_or("".into()),
     };
 
     Html(html! {

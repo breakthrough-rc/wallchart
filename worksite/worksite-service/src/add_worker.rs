@@ -44,12 +44,12 @@ impl AddWorker {
             assessments: Vec::new(),
             tags: Vec::new(),
             email: input.email,
-            address: Address {
+            address: Some(Address {
                 street_address: input.street_address,
                 city: input.city,
                 region: input.region,
                 postal_code: input.postal_code,
-            },
+            }),
         };
 
         let updated_worksite = worksite.add_worker(worker.clone());

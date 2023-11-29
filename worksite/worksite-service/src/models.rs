@@ -1,10 +1,14 @@
 use chrono::{DateTime, Utc};
 
 pub type WorksiteName = String;
+pub type WorksiteId = String;
+pub type WorkerId = String;
+pub type LocationId = String;
+pub type ShiftId = String;
 
 #[derive(Debug, Clone)]
 pub struct Worksite {
-    pub id: String,
+    pub id: WorksiteId,
     pub name: WorksiteName,
     pub locations: Vec<Location>,
     pub tags: Vec<Tag>,
@@ -98,7 +102,21 @@ impl Worksite {
         Some(updated_worksite)
     }
 
-    pub fn add_location(&self, location_name: String) -> Worksite {
+    pub fn get_location_by_name(&self, location_name: String) -> Option<Location> {
+        self.locations
+            .iter()
+            .find(|location| location.name == location_name)
+            .cloned()
+    }
+
+    pub fn add_location(&self, location: Location) -> Worksite {
+        let mut updated_worksite = self.clone();
+
+        updated_worksite.locations.push(location);
+
+        updated_worksite
+    }
+    pub fn add_new_location(&self, location_name: String) -> Worksite {
         let mut updated_worksite = self.clone();
 
         let location = Location {
@@ -130,16 +148,16 @@ impl Worksite {
     // TODO! Should assign_worker take an owned worker?
     pub fn assign_worker(
         &self,
-        worker: Worker,
-        shift_id: String,
-        _location_id: String,
+        worker_id: WorkerId,
+        shift_id: ShiftId,
+        _location_id: LocationId,
     ) -> Worksite {
         let mut updated_worksite = self.clone();
 
         updated_worksite.locations.iter_mut().for_each(|location| {
             location.shifts.iter_mut().for_each(|shift| {
                 if shift.id == shift_id {
-                    *shift = shift.assign_worker(&worker);
+                    *shift = shift.assign_worker(worker_id.clone());
                 }
             })
         });
@@ -220,11 +238,34 @@ impl Worksite {
     }
 }
 
+pub type LocationName = String;
+
 #[derive(Debug, Clone)]
 pub struct Location {
     pub id: String,
-    pub name: String,
+    pub name: LocationName,
     pub shifts: Vec<Shift>,
+}
+
+impl Location {
+    pub fn new(name: LocationName) -> Self {
+        Self {
+            id: uuid::Uuid::new_v4().to_string(),
+            name,
+            shifts: vec![],
+        }
+    }
+
+    pub fn add_shift(&self, shift: Shift) -> Location {
+        let mut updated_location = self.clone();
+
+        if updated_location.shifts.iter().any(|s| s.id == shift.id) {
+            return updated_location;
+        }
+
+        updated_location.shifts.push(shift);
+        updated_location
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -236,17 +277,27 @@ impl ShiftWorker {
     }
 }
 
+pub type ShiftName = String;
+
 #[derive(Debug, Clone)]
 pub struct Shift {
     pub id: String,
-    pub name: String,
+    pub name: ShiftName,
     pub workers: Vec<ShiftWorker>,
 }
 
 impl Shift {
-    pub fn assign_worker(&self, worker: &Worker) -> Shift {
+    pub fn new(name: ShiftName) -> Self {
+        Self {
+            id: uuid::Uuid::new_v4().to_string(),
+            name,
+            workers: vec![],
+        }
+    }
+
+    pub fn assign_worker(&self, worker_id: String) -> Shift {
         let mut updated_shift = self.clone();
-        updated_shift.workers.push(ShiftWorker(worker.id.clone()));
+        updated_shift.workers.push(ShiftWorker(worker_id));
 
         updated_shift
     }
@@ -277,10 +328,26 @@ pub struct Worker {
     pub assessments: Vec<Assessment>,
     pub tags: Vec<AssignedTag>,
     pub email: String,
-    pub address: Address,
+    pub address: Option<Address>,
 }
 
+pub type FirstName = String;
+pub type LastName = String;
+pub type Email = String;
+
 impl Worker {
+    pub fn new(first_name: FirstName, last_name: LastName, email: Email) -> Self {
+        Self {
+            id: uuid::Uuid::new_v4().to_string(),
+            first_name,
+            last_name,
+            assessments: vec![],
+            tags: vec![],
+            email,
+            address: None,
+        }
+    }
+
     pub fn full_name(&self) -> String {
         format!("{} {}", self.first_name, self.last_name)
     }

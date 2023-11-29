@@ -28,7 +28,7 @@ impl AddLocation {
             .map_err(|e| AddLocationFailure::Unknown(e.to_string()))?
             .ok_or(AddLocationFailure::NotFound)?;
 
-        let updated_worksite = worksite.add_location(input.location_name);
+        let updated_worksite = worksite.add_new_location(input.location_name);
 
         self.worksite_repository
             .save(updated_worksite.clone())

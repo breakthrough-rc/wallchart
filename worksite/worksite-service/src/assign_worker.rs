@@ -48,7 +48,7 @@ impl AssignWorker {
             ..
         } = input;
 
-        let worksite = worksite.assign_worker(worker, shift_id, location_id);
+        let worksite = worksite.assign_worker(worker.id, shift_id, location_id);
 
         self.worksite_repository
             .save(worksite)
