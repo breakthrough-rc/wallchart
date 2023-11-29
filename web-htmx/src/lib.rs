@@ -4,9 +4,14 @@ use axum::{
     Router,
 };
 use http::StatusCode;
+use rscx::html;
+use state::WebHtmxState;
+
+use web_client::routes as client_routes;
+
 //##PLOP USE RESOURCE HOOK##
-use resources::assessments::assessments_routes;
 use components::{not_found_message::NotFoundMessage, page::PageLayout};
+use resources::assessments::assessments_routes;
 use resources::assigned_tags::assigned_tags_routes;
 use resources::csv_upload::csv_upload_routes;
 use resources::locations::locations_routes;
@@ -17,9 +22,6 @@ use resources::users::users_routes;
 use resources::workers::workers_routes;
 use resources::worksite::worksite_routes;
 use routes::{CLIENT, HOME, HOME_REDIRECT, PLAYGROUND};
-use rscx::html;
-use state::WebHtmxState;
-use web_client::routes as client_routes;
 
 pub mod components;
 pub mod livereload;
@@ -32,7 +34,7 @@ pub fn routes(state: WebHtmxState) -> Router {
     Router::new()
         .with_state(state.clone())
         //##PLOP MERGE ROUTE HOOK##
-.merge(assessments_routes(state.clone()))
+        .merge(assessments_routes(state.clone()))
         .merge(csv_upload_routes(state.clone()))
         .merge(shift_assignments_routes(state.clone()))
         .merge(shifts_routes(state.clone()))
