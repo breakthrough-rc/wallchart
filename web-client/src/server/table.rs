@@ -62,7 +62,7 @@ pub fn TableData(props: TableDataProps) -> String {
             "relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6"
         }
         TDVariant::LastNonEmptyHeading => {
-            "whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6"
+            "whitespace-nowrap py-4 pl-3 pr-4 text-left text-sm font-medium sm:pr-6"
         }
     };
 
@@ -82,7 +82,7 @@ fn TableHeadingsRow(headings: TableHeadings) -> String {
                     0 => "py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6",
 
                     // last heading:
-                    _ if i == headings.len() - 1 => "py-3.5 pl-3 pr-4 sm:pr-6",
+                    _ if i == headings.len() - 1 => "py-3.5 pl-3 pr-4 text-left text-sm font-semibold text-gray-900 sm:pr-6",
 
                     // middle headings:
                     _ => "px-3 py-3.5 text-left text-sm font-semibold text-gray-900",

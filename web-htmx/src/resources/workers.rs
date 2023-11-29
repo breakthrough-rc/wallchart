@@ -5,6 +5,7 @@ use axum::{
     Form, Router,
 };
 use axum_flash::{Flash, IncomingFlashes};
+use futures::future::join_all;
 use http::{HeaderMap, StatusCode};
 use rscx::{component, html, props, CollectFragment, CollectFragmentAsync};
 
@@ -17,6 +18,7 @@ use web_client::server::{
     headers::SecondaryHeader,
     modal::{modal_target, Modal, ModalSize},
     notification::NotificationFlashes,
+    table::{TDVariant, Table, TableData, TableHeading},
 };
 use worksite_service::{
     add_worker::AddWorkerInput,
@@ -260,57 +262,52 @@ struct WorkersTableProps {
 #[component]
 fn WorkersTable(props: WorkersTableProps) -> String {
     html! {
-        <table class="min-w-full divide-y divide-gray-300">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">Name</th>
-                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Last Assessment</th>
-                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Tags</th>
-                </tr>
-            </thead>
-            <tbody class="bg-white">
-                {
-                    props
-                        .workers
-                        .iter()
-                        .map(|worker| async {
-                            html! {
-                                <WorkerRow
-                                    worker=worker.clone()
-                                    tags=props.worksite.get_tags_for_worker(worker.clone())
-                                />
-                            }
-                        })
-                        .collect_fragment_async()
-                        .await
-                }
-            </tbody>
-        </table>
+        <Table
+            headings=vec![
+                TableHeading::title("Name"),
+                TableHeading::title("Last Assessment"),
+                TableHeading::title("Tags"),
+            ]
+            body=join_all(props
+                .workers
+                .iter()
+                .map(|worker| async {
+                    html! {
+                        <WorkerTableRow
+                            worker=worker.clone()
+                            tags=props.worksite.get_tags_for_worker(worker.clone())
+                        />
+                    }
+                }))
+                .await
+        />
     }
 }
 
 #[props]
-pub struct WorkerRowProps {
+pub struct WorkerTableRowProps {
     worker: Worker,
     tags: Vec<Tag>,
 }
 
 #[component]
-pub fn WorkerRow(props: WorkerRowProps) -> String {
+pub fn WorkerTableRow(props: WorkerTableRowProps) -> String {
     html! {
-        <tr class="border-t border-gray-300" data-loading-states>
-            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
-                  <button
-                      hx-get=worker(&"1".to_string(), &props.worker.id)
-                      hx-target=modal_target()
-                      hx-swap="beforeend"
-                  >
-                      {format!("{} {}", props.worker.first_name, props.worker.last_name)}
-                  </button>
-            </td>
-            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{props.worker.last_assessment().map(|assessment| assessment.value).unwrap_or(0)}</td>
-            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{props.tags.into_iter().map(|tag| tag.icon).collect_fragment()}</td>
-        </tr>
+        <TableData variant=TDVariant::First>
+            <button
+                hx-get=worker(&"1".to_string(), &props.worker.id)
+                hx-target=modal_target()
+                hx-swap="beforeend"
+            >
+                {format!("{} {}", props.worker.first_name, props.worker.last_name)}
+            </button>
+        </TableData>
+        <TableData>
+            {props.worker.last_assessment().map(|assessment| assessment.value).unwrap_or(0)}
+        </TableData>
+        <TableData variant=TDVariant::LastNonEmptyHeading>
+            {props.tags.into_iter().map(|tag| tag.icon).collect_fragment()}
+        </TableData>
     }
 }
 
