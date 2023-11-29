@@ -11,5 +11,6 @@ pub mod notification;
 pub mod opt_attrs;
 pub mod page_header;
 pub mod popup_menu;
+pub mod table;
 pub mod transition;
 pub mod yc_control;
