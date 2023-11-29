@@ -5,8 +5,9 @@ use axum::{
     Form, Router,
 };
 use axum_flash::Flash;
+use futures::future::join_all;
 use http::{HeaderMap, StatusCode};
-use rscx::{component, html, props, CollectFragmentAsync};
+use rscx::{component, html, props};
 use serde::Deserialize;
 
 use auth_service::{
@@ -21,6 +22,10 @@ use web_client::server::{
     form::{Button, GridCell, GridLayout, Label, TextInput},
     headers::SecondaryHeader,
     modal::{modal_target, Modal, ModalSize},
+    table::{
+        ActionLink, Confirm, DeleteActionLink, TDVariant, Table, TableData, TableDataActions,
+        TableHeading,
+    },
 };
 
 use crate::{
@@ -29,7 +34,7 @@ use crate::{
         page_content::PageContent,
     },
     routes::{
-        self, home, login, user, users, users_new, users_new_modal, LOGIN, USER, USERS, USERS_NEW,
+        self, home, login, users, users_new, users_new_modal, LOGIN, USER, USERS, USERS_NEW,
         USERS_NEW_MODAL,
     },
     state::WebHtmxState,
@@ -134,73 +139,59 @@ struct UsersTableProps {
 #[component]
 fn UsersTable(props: UsersTableProps) -> String {
     html! {
-        <table class="min-w-full divide-y divide-gray-300">
-            <thead class="bg-gray-50">
-
-                <tr>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">Email</th>
-                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Role</th>
-                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"></th>
-                </tr>
-            </thead>
-            <tbody class="bg-white">
-                {
-                    props
-                        .users
-                        .iter()
-                        .map(|user| async {
-                            html! {
-                                <User
-                                    user=user.clone()
-                                />
-                            }
-                        })
-                        .collect_fragment_async()
-                        .await
-                }
-            </tbody>
-        </table>
+        <Table
+            headings=vec![
+                TableHeading::title("Email"),
+                TableHeading::title("Role"),
+                TableHeading::empty("Actions"),
+            ]
+            body=join_all(props
+                .users
+                .iter()
+                .map(|user| async {
+                    html! {
+                        <UserTableRow user=user.clone() />
+                    }
+                }))
+                .await
+        />
     }
 }
 
-#[props]
-pub struct UserProps {
-    user: User,
-}
-
 #[component]
-pub fn User(props: UserProps) -> String {
+pub fn UserTableRow(user: User) -> String {
     html! {
-        <tr class="border-t border-gray-300" data-loading-states>
-            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
-                  <button
-                      hx-get=user(&props.user.id)
-                      hx-target=modal_target()
-                      >
-                      {&props.user.email}
-                  </button>
-            </td>
-            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">Organizer</td>
-            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 text-right">
-                <a
-                    hx-delete={user(&props.user.id)}
-                    hx-swap="outerHTML swap:1s"
-                    hx-target="closest tr"
-                    data-loading-disable
-                    hx-confirm="Remove User"
-                    data-confirm-message=format!("Are you sure you want to remove this user: {}?", &props.user.email)
-                    class="cursor-pointer text-indigo-600 hover:text-indigo-900"
+        <TableData variant=TDVariant::First>
+                <button
+                    hx-get=routes::user(&user.id)
+                    hx-target=modal_target()
                 >
-                    <div
-                        class="htmx-indicator inline-flex animate-spin mr-2 items-center justify-center rounded-full w-4 h-4 bg-gradient-to-tr from-gray-500 to-white"
-                    >
-                        <span class="inline h-3 w-3 rounded-full bg-white hover:bg-gray-50"></span>
-                    </div>
-
-                    Remove<span class="sr-only">, {&props.user.email}</span>
-                </a>
-            </td>
-        </tr>
+                    {&user.email}
+                </button>
+        </TableData>
+        <TableData>
+            Organizer
+        </TableData>
+        <TableData variant=TDVariant::Last>
+            <DeleteActionLink
+                hx_delete=routes::user(&user.id)
+                hx_swap="outerHTML swap:1s"
+                hx_target="closest tr"
+                attrs=Attrs::with("data-loading-states", "loading".into())
+                confirm=Confirm {
+                    title: "Remove User".into(),
+                    message: format!("Are you sure you want to remove this user: {}?", &user.email),
+                }
+                sr_text=&user.email
+            >
+                <div
+                    class="htmx-indicator inline-flex animate-spin mr-2 items-center justify-center rounded-full w-4 h-4 bg-gradient-to-tr from-gray-500 to-white"
+                >
+                    <span class="inline h-3 w-3 rounded-full bg-white hover:bg-gray-50"></span>
+                </div>
+                Remove
+            </DeleteActionLink>
+        </TableData>
     }
 }
 
