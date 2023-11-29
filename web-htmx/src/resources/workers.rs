@@ -7,7 +7,7 @@ use axum::{
 use axum_flash::{Flash, IncomingFlashes};
 use futures::future::join_all;
 use http::{HeaderMap, StatusCode};
-use rscx::{component, html, props, CollectFragment, CollectFragmentAsync};
+use rscx::{component, html, props, CollectFragment};
 
 use web_client::server::{
     attrs::Attrs,
