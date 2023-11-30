@@ -110,7 +110,7 @@ fn TableBody(body: Vec<String>) -> String {
         <tbody class="divide-y divide-gray-200 bg-white">
             {
                 body.iter().map(|row| html! {
-                    <tr>{row}</tr>
+                    <tr data-loading-states>{row}</tr>
                 })
                 .collect_fragment()
             }
@@ -151,6 +151,9 @@ pub struct DeleteActionLinkProps {
 
     #[builder(setter(into))]
     sr_text: String,
+
+    #[builder(default = false)]
+    show_loader_on_delete: bool,
 }
 
 #[component]
@@ -161,7 +164,15 @@ pub fn DeleteActionLink(props: DeleteActionLinkProps) -> String {
             attrs=spread_attrs!(props)
                 .set("hx-confirm", props.confirm.title)
                 .set("data-confirm-message", props.confirm.message)
+                .set_if("data-loading-disable", "true".into(), props.show_loader_on_delete)
         >
+            {if props.show_loader_on_delete {
+                html! {
+                    <div class="htmx-indicator inline-flex animate-spin mr-2 items-center justify-center rounded-full w-4 h-4 bg-gradient-to-tr from-gray-500 to-white">
+                        <span class="inline h-3 w-3 rounded-full bg-white hover:bg-gray-50"></span>
+                    </div>
+                }
+            } else { String::from("") }}
             {props.children}
         </ActionLink>
     }

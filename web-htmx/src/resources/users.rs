@@ -168,18 +168,13 @@ pub fn UserTableRow(user: User) -> String {
                 hx_delete=routes::user(&user.id)
                 hx_swap="outerHTML swap:1s"
                 hx_target="closest tr"
-                attrs=Attrs::with("data-loading-states", "loading".into())
                 confirm=Confirm {
                     title: "Remove User".into(),
                     message: format!("Are you sure you want to remove this user: {}?", &user.email),
                 }
                 sr_text=&user.email
+                show_loader_on_delete=true
             >
-                <div
-                    class="htmx-indicator inline-flex animate-spin mr-2 items-center justify-center rounded-full w-4 h-4 bg-gradient-to-tr from-gray-500 to-white"
-                >
-                    <span class="inline h-3 w-3 rounded-full bg-white hover:bg-gray-50"></span>
-                </div>
                 Remove
             </DeleteActionLink>
         </TableData>
