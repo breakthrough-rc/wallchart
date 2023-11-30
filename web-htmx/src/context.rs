@@ -13,10 +13,6 @@ tokio::task_local! {
     pub(crate) static CONTEXT: Context;
 }
 
-pub struct ContextProvider {
-    worksite_id: String,
-}
-
 pub async fn provide_context_layer<B>(
     State(state): State<WebHtmxState>,
     request: Request<B>,
