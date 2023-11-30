@@ -12,7 +12,7 @@ use web_client::routes as client_routes;
 
 //##PLOP USE RESOURCE HOOK##
 use components::{not_found_message::NotFoundMessage, page::PageLayout};
-use context::context_provider_layer;
+use context::provide_context_layer;
 use resources::assessments::assessments_routes;
 use resources::assigned_tags::assigned_tags_routes;
 use resources::csv_upload::csv_upload_routes;
@@ -54,9 +54,12 @@ pub fn routes(state: WebHtmxState) -> Router {
         .route(HOME, get(Redirect::temporary(HOME_REDIRECT)))
         .nest(PLAYGROUND, playground::routes())
         .nest_service(CLIENT, client_routes())
-        .merge(users_routes(state))
+        .merge(users_routes(state.clone()))
         .fallback(fallback)
-        .layer(middleware::from_fn(context_provider_layer))
+        .layer(middleware::from_fn_with_state(
+            state.clone(),
+            provide_context_layer,
+        ))
 }
 
 async fn fallback() -> (StatusCode, Html<String>) {

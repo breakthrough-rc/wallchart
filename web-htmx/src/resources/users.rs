@@ -62,11 +62,7 @@ struct LoginForm {
 }
 
 async fn post_login(
-    State(WebHtmxState {
-        worksite_service: _,
-        auth_service,
-        flash_config: _,
-    }): State<WebHtmxState>,
+    State(WebHtmxState { auth_service, .. }): State<WebHtmxState>,
     mut auth: AuthContext,
     _flash: Flash,
     Form(login_form): Form<LoginForm>,

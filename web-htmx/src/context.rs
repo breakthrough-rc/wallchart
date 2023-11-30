@@ -1,5 +1,7 @@
-use axum::{http::Request, middleware::Next, response::Response};
+use axum::{extract::State, http::Request, middleware::Next, response::Response};
 use std::future::Future;
+
+use crate::state::WebHtmxState;
 
 #[derive(Clone)]
 pub struct Context {
@@ -11,10 +13,18 @@ tokio::task_local! {
     pub(crate) static CONTEXT: Context;
 }
 
-pub async fn context_provider_layer<B>(request: Request<B>, next: Next<B>) -> Response {
+pub struct ContextProvider {
+    worksite_id: String,
+}
+
+pub async fn provide_context_layer<B>(
+    State(state): State<WebHtmxState>,
+    request: Request<B>,
+    next: Next<B>,
+) -> Response {
     let context = Context {
         page_url: request.uri().path().to_string(),
-        worksite_id: "1".to_string(),
+        worksite_id: state.default_worksite_id.clone(),
     };
 
     // Set the context for this request.
