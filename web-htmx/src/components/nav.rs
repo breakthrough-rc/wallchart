@@ -15,16 +15,19 @@ fn profile_links() -> Vec<(String, String)> {
 
 #[component]
 pub fn Nav() -> String {
+    let ctx: crate::context::Context =
+        crate::context::context().expect("Unable to retrieve htmx context.");
+
+    let worksite_id = ctx.worksite_id.clone();
+
     let nav_links = [
         ("Wallchart", routes::wallchart()),
-        ("Workers", routes::workers(&"1".into())),
-        ("Tags", routes::tags(&"1".into())),
+        ("Workers", routes::workers(&worksite_id)),
+        ("Tags", routes::tags(&worksite_id)),
         ("Report", "/report".into()),
         ("Users", routes::users()),
         ("CSV Upload", routes::csv_upload()),
     ];
-
-    let ctx = crate::context::context().expect("Unable to retrieve htmx context.");
 
     html! {
         <nav class="border-b border-gray-200 bg-white">

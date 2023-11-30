@@ -39,10 +39,12 @@ async fn get_wallchart_page(
         worksite_service, ..
     }): State<WebHtmxState>,
 ) -> impl IntoResponse {
-    let id: &str = "1";
+    let ctx: crate::context::Context =
+        crate::context::context().expect("Unable to retrieve htmx context.");
+    let id = ctx.worksite_id.clone();
 
     let worksite = worksite_service
-        .get_worksite(GetWorksiteInput { id: id.to_string() })
+        .get_worksite(GetWorksiteInput { id: id.clone() })
         .await
         .unwrap()
         .ok_or("Worksite not found")
@@ -56,10 +58,10 @@ async fn get_wallchart_page(
                 title: format!("Wallchart: {}", worksite_name),
                 buttons: html! {
                     <SecondaryButton
-                        hx_get=locations_new_modal(&id.into())
+                        hx_get=locations_new_modal(&id)
                         hx_target=modal_target()
                         hx_swap="beforeend"
-                        hx_push_url=locations_new(&id.into())
+                        hx_push_url=locations_new(&id)
                     >
                         Add New Location
                     </SecondaryButton>

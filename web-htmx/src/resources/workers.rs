@@ -276,6 +276,7 @@ fn WorkersTable(props: WorkersTableProps) -> String {
                 .map(|worker| async {
                     html! {
                         <WorkerTableRow
+                            worksite_id=props.worksite.id.clone()
                             worker=worker.clone()
                             tags=props.worksite.get_tags_for_worker(worker.clone())
                         />
@@ -288,6 +289,7 @@ fn WorkersTable(props: WorkersTableProps) -> String {
 
 #[props]
 pub struct WorkerTableRowProps {
+    worksite_id: String,
     worker: Worker,
     tags: Vec<Tag>,
 }
@@ -297,7 +299,7 @@ pub fn WorkerTableRow(props: WorkerTableRowProps) -> String {
     html! {
         <TableData variant=TDVariant::First>
             <button
-                hx-get=worker(&"1".to_string(), &props.worker.id)
+                hx-get=worker(&props.worksite_id, &props.worker.id)
                 hx-target=modal_target()
                 hx-swap="beforeend"
             >
