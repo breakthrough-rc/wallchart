@@ -153,12 +153,12 @@ fn UsersTable(users: Vec<User>) -> String {
 pub fn UserTableRow(user: User) -> String {
     html! {
         <TableData variant=TDVariant::First>
-                <button
-                    hx-get=routes::user(&user.id)
-                    hx-target=modal_target()
-                >
-                    {&user.email}
-                </button>
+            <button
+                hx-get=routes::user(&user.id)
+                hx-target=modal_target()
+            >
+                {&user.email}
+            </button>
         </TableData>
         <TableData>
             Organizer
