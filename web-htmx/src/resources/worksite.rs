@@ -72,8 +72,7 @@ async fn get_wallchart_page(
             }
         >
             <NotificationFlashes flashes=flashes.clone() />
-            <p><em>Manage your worksite and more.</em></p>
-            <PageContent>
+            <PageContent title="Manage your worksite and more">
                 <Card>
                     <WallchartTable worksite=worksite/>
                 </Card>

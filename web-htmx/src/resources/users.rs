@@ -118,8 +118,7 @@ async fn get_users(State(state): State<WebHtmxState>) -> impl IntoResponse {
                 }
             }
         >
-            <p><em>Add, edit, remove Users</em></p>
-            <PageContent>
+            <PageContent title="Add, edit, remove Users">
                 <Card>
                     <UsersTable users=users />
                 </Card>

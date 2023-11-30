@@ -75,6 +75,8 @@ async fn get_workers(
         .await
         .expect("Failed to get worker");
 
+    let worksite_name = worksite.name.clone();
+
     Html(html! {
         <PageLayout
             header=PageHeader::Toolbar {
@@ -92,7 +94,7 @@ async fn get_workers(
             }
         >
             <NotificationFlashes flashes=flashes.clone() />
-            <PageContent>
+            <PageContent title=format!("Manage all workers for {}", worksite_name)>
                 <Card>
                     <WorkersTable worksite=worksite workers=workers/>
                 </Card>

@@ -76,8 +76,7 @@ async fn get_tags(
                 }
             }
         >
-            <p><em>Add, edit, remove tags</em></p>
-            <PageContent>
+            <PageContent title="Add, edit, remove tags">
                 <Card>
                     <TagsTable
                         worksite_id=worksite_id.clone()
