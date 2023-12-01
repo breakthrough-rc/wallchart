@@ -33,22 +33,18 @@ async fn get_csv_upload(State(_state): State<WebHtmxState>) -> impl IntoResponse
             <PageContent>
                 <Card padded=true>
                     <h2>Upload a CSV</h2>
-                    <p class="my-2 text-sm text-gray-600 whitespace-break-spaces">
-                        You can upload a CSV to create worksites, locations, shifts and workers.
-
+                    <div class="my-2 text-sm text-gray-600 whitespace-pre-line">
+                        "You can upload a CSV to create worksites, locations, shifts and workers.
 
                         The CSV requires a header row, and then each following row describes a worker for a worksite, and their shift assignments for a single location.
 
-
                         The shift columns are optional. If a worker is present in multiple locations/worksites, including those as extra rows.
-
 
                         This upload will only produce completely new worksites, and the names of the worksites, locations, shifts, and workers will be used to decide uniqueness within a single CSV upload batch.
 
-
-                        See the following example:
-                    </p>
-                    <pre class="whitespace-pre-line">
+                        See the following example:"
+                    </div>
+                    <pre class="my-2 px-2 whitespace-pre-line bg-gray-200 rounded">
                         "worksite,location,shift1,shift2,shift3,first_name,last_name,email
                         Dunder Miflin,Office,Day,,,Jim,Halpert,jim@dundermiflin.com
                         Dunder Miflin,Warehouse,Day,Night,,Doug,Worker,doug@dundermiflin.com
