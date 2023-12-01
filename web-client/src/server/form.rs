@@ -1,6 +1,9 @@
-use super::html_element::HtmlElement;
 use rscx::{component, html, props};
+
 use web_macros::*;
+
+use super::{attrs::Attrs, html_element::HtmlElement};
+use crate::server::yc_control::YcControl;
 
 #[html_element]
 pub struct TextInputProps {
@@ -102,6 +105,63 @@ pub fn Button(props: ButtonProps) -> String {
         >
             {props.children}
         </HtmlElement>
+    }
+}
+
+#[props]
+pub struct FileInputProps {
+    #[builder(setter(into))]
+    id: String,
+
+    #[builder(setter(into))]
+    name: String,
+
+    #[builder(setter(into), default = "Any file up to 10MB".into())]
+    file_hint_message: String,
+
+    #[builder(setter(into), default)]
+    accept: String,
+
+    #[builder(default = false)]
+    multiple: bool,
+}
+
+#[component]
+pub fn FileInput(props: FileInputProps) -> String {
+    html! {
+        <YcControl
+            control="file-input"
+            class="mt-2 group flex justify-center transition-all rounded-lg border border-dashed border-gray-900/25 px-6 py-10 data-[dragover]:border-2 data-[dragover]:border-indigo-600/50 data-[dragover]:bg-gray-900/10"
+        >
+            <div class="text-center">
+                <svg class="mx-auto h-12 w-12 text-gray-300" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z" clip-rule="evenodd" />
+                </svg>
+                <div class="mt-4 flex text-sm leading-6 text-gray-600">
+                    <label for=props.id.as_ref() class="relative cursor-pointer rounded-md font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
+                        <span>Upload a file</span>
+                        <input
+                            type="file"
+                            id=props.id.as_ref()
+                            name=props.name.as_ref()
+                            class="sr-only"
+                            {
+                                String::from(
+                                    Attrs::default()
+                                        .set_if("accept", props.accept.clone(), !props.accept.is_empty())
+                                        .set_if("multiple", "true".into(), props.multiple)
+                                )
+                            }
+                        />
+                    </label>
+                    <p class="pl-1">or drag and drop</p>
+                </div>
+                <p class="text-xs leading-5 text-gray-600">
+                    <span class="group-[.file-selected]:hidden">{props.file_hint_message}</span>
+                    <span class="hidden font-bold text-sm group-[.file-selected]:inline" data-file-input-selected-message>File Selected!</span>
+                </p>
+            </div>
+        </YcControl>
     }
 }
 
