@@ -57,7 +57,7 @@ pub fn routes(state: WebHtmxState) -> Router {
         .merge(users_routes(state.clone()))
         .fallback(fallback)
         .layer(middleware::from_fn_with_state(
-            state.clone(),
+            state,
             provide_context_layer,
         ))
 }
