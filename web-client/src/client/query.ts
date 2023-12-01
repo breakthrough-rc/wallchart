@@ -6,7 +6,7 @@ function query(rootElement: Document | Element, selector: string) {
 
 // Create a helper to query 1 or more elements.
 // Lazily queries element and errors if not found.
-function queryAll(rootElement: Element, selectors: Record<string, string>) {
+function bulkQuery(rootElement: Element, selectors: Record<string, string>) {
   const elements: Record<string, HTMLElement> = {};
   const memo = new Map<string, HTMLElement>();
 
@@ -28,6 +28,6 @@ function queryAll(rootElement: Element, selectors: Record<string, string>) {
   return elements;
 }
 
-query.all = queryAll;
+query.bulk = bulkQuery;
 
 export default query;

@@ -21,17 +21,17 @@ function renderStandardTemplate({ title, message, ...delegate }: NotificationCom
   const tpl = query(document, "#tpl-notification") as HTMLTemplateElement;
   const notification = tpl.content.cloneNode(true) as HTMLElement;
 
-  const Elements = query.all(notification, {
+  const elements = query.bulk(notification, {
     title: "[data-notification-title]",
     message: "[data-notification-message]",
     defaultIcon: "[data-notification-icon]",
   });
 
-  Elements.title.textContent = title;
-  Elements.message.textContent = message || "Everything is all good!";
+  elements.title.textContent = title;
+  elements.message.textContent = message || "Everything is all good!";
 
   if (delegate.iconElement) {
-    Elements.defaultIcon.replaceWith(delegate.iconElement);
+    elements.defaultIcon.replaceWith(delegate.iconElement);
   }
 
   delegate.notificationWillAppend?.(notification);
