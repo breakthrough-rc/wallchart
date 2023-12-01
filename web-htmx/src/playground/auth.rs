@@ -1,5 +1,3 @@
-#![allow(unused_braces)]
-
 use rscx::{component, html, props};
 
 use web_client::server::button::PrimaryButton;

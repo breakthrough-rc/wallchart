@@ -1,9 +1,9 @@
-#![allow(unused_braces)]
 use crate::components::page::PageLayout;
 use axum::{response::Html, routing::get, Router};
 use rscx::{component, html, props};
 
 use auth::AuthPlayground;
+use file_input::{file_input_routes, FileInputPlayground};
 use html_element::HtmlElementPlayground;
 use htmx::{htmx_routes, HtmxPlayground};
 use modal::{modal_routes, ModalPlayground};
@@ -11,6 +11,7 @@ use notifications::{notification_routes, NotificationsPlayground};
 use page::{page_routes, PagePlayground};
 
 pub mod auth;
+pub mod file_input;
 pub mod html_element;
 pub mod htmx;
 pub mod modal;
@@ -24,6 +25,7 @@ pub fn routes() -> Router {
         .nest("/htmx", htmx_routes())
         .nest("/modals", modal_routes())
         .nest("/notifications", notification_routes())
+        .nest("/file-input", file_input_routes())
 }
 
 // ### Route Handlers ###
@@ -49,6 +51,7 @@ pub fn PlaygroundPgContent() -> String {
         </section>
         <NotificationsPlayground />
         <ModalPlayground />
+        <FileInputPlayground />
         <AuthPlayground />
         <HtmxPlayground />
         <PagePlayground />

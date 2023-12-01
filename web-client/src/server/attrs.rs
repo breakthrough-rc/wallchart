@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use super::opt_attrs::opt_attrs;
+
 #[derive(Default)]
 pub struct Attrs {
     values: HashMap<&'static str, String>,
@@ -78,5 +80,11 @@ impl From<HashMap<&'static str, String>> for Attrs {
             values: html_attrs,
             omit: vec![],
         }
+    }
+}
+
+impl From<Attrs> for String {
+    fn from(attrs: Attrs) -> Self {
+        opt_attrs(attrs.to_hashmap())
     }
 }
