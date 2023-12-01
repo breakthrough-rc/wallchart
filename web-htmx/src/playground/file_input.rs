@@ -1,4 +1,4 @@
-use std::str::from_utf8;
+
 
 use axum::{
     extract::Multipart,
@@ -23,7 +23,7 @@ async fn upload_file(mut multipart: Multipart) -> impl IntoResponse {
     let mut content: String = String::new();
 
     // from: https://docs.rs/axum/latest/axum/extract/struct.Multipart.html
-    while let Some(mut field) = multipart.next_field().await.unwrap() {
+    while let Some(field) = multipart.next_field().await.unwrap() {
         let name = field.name().unwrap().to_string();
         let data = field.bytes().await.unwrap();
 
