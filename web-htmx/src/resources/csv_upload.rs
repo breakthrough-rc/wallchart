@@ -9,7 +9,10 @@ use serde::Deserialize;
 use std::str::from_utf8;
 use worksite_service::csv_upload::CsvUploadInput;
 
-use web_client::server::{card::Card, form::Button};
+use web_client::server::{
+    card::Card,
+    form::{Button, FileInput, Label},
+};
 
 use crate::{
     components::{page::PageLayout, page_content::PageContent},
@@ -55,9 +58,18 @@ async fn get_csv_upload(State(_state): State<WebHtmxState>) -> impl IntoResponse
                         hx-post=routes::csv_upload()
                         hx-target="#form"
                     >
-                        <p>Select a file to upload.</p>
-                        <input type="file" name="file" />
-                        <Button kind="submit">Upload</Button>
+                        <Label for_input="file">
+                            Upload CSV
+                        </Label>
+                        <FileInput
+                            id="file"
+                            name="file"
+                            file_hint_message="CSV up to 10MB"
+                            accept=".csv"
+                        />
+                        <Button class="mt-4" kind="submit">
+                            Submit
+                        </Button>
                     </form>
                 </Card>
             </PageContent>
