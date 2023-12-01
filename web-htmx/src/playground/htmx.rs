@@ -1,4 +1,3 @@
-#![allow(unused_braces)]
 use axum::{response::Html, routing::get, Router};
 use rscx::{component, html, props};
 
