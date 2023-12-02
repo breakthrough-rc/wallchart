@@ -34,7 +34,7 @@ impl WorksiteRepository for InMemoryWorksiteRepository {
 
     async fn get_all(&self) -> Result<Vec<Worksite>, RepositoryFailure> {
         let worksites = self.worksites.read().await;
-        Ok(worksites.clone().into())
+        Ok(worksites.clone())
     }
 
     async fn save(&self, worksite: Worksite) -> Result<(), RepositoryFailure> {
