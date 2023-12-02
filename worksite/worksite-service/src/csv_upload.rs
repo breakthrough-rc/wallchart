@@ -145,7 +145,7 @@ impl CsvUpload {
             let location = locations
                 .get(&(worksite_name.clone(), location_name.clone()))
                 .unwrap();
-            location.add_shift(shift.clone());
+            let location = location.add_shift(shift.clone());
             locations.insert(
                 (worksite_name.clone(), location_name.clone()),
                 location.clone(),
@@ -155,7 +155,7 @@ impl CsvUpload {
         // Add the locations to the worksites
         for ((worksite_name, _), location) in locations.iter_mut() {
             let worksite = worksites.get(worksite_name).unwrap();
-            worksite.add_location(location.clone());
+            let worksite = worksite.add_location(location.clone());
             worksites.insert(worksite_name.clone(), worksite.clone());
         }
 
