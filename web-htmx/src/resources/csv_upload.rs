@@ -6,7 +6,7 @@ use axum::{
 };
 use http::StatusCode;
 use rscx::html;
-use serde::Deserialize;
+
 use std::str::from_utf8;
 use worksite_service::csv_upload::CsvUploadInput;
 
@@ -118,7 +118,7 @@ async fn post_csv_upload(
                 (StatusCode::BAD_REQUEST, parse_failure).into_response()
             }
             worksite_service::csv_upload::CsvUploadFailure::Unknown(e) => {
-                (StatusCode::BAD_REQUEST, e.to_string()).into_response()
+                (StatusCode::BAD_REQUEST, e).into_response()
             }
         },
     }
