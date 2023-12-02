@@ -10,7 +10,7 @@ use rscx::{component, html, props, CollectFragment, CollectFragmentAsync};
 use web_client::server::{
     button::{PrimaryButton, SecondaryButton},
     card::Card,
-    form::{GridCell, GridLayout},
+    form::{GridCell, GridLayout, SelectInput},
     modal::modal_target,
     notification::NotificationFlashes,
 };
@@ -60,9 +60,9 @@ async fn get_worksite(
                 buttons: html! {
                     <GridLayout>
                         <GridCell>
-                            <select
+                            <SelectInput
                                 name="selected_worksite"
-                                hx_get=""
+                                hx_get="/" // Can't be empty or hx_get goes away entirely
                                 hx_target="body"
                                 hx_trigger="change"
                                 hx_on="htmx:configRequest: event.detail.path = this.value"
@@ -78,7 +78,7 @@ async fn get_worksite(
                                     .collect_fragment_async()
                                     .await
                             }
-                            </select>
+                            </SelectInput>
                         </GridCell>
                     </GridLayout>
                     <SecondaryButton
@@ -135,12 +135,12 @@ async fn get_wallchart_page(
                 buttons: html! {
                     <GridLayout>
                         <GridCell>
-                            <select
+                            <SelectInput
                                 name="selected_worksite"
-                                hx-get=""
-                                hx-target="body"
-                                hx-trigger="change"
-                                hx-on="htmx:configRequest: event.detail.path = this.value"
+                                hx_get="/" // Can't be empty or hx_get goes away entirely
+                                hx_target="body"
+                                hx_trigger="change"
+                                hx_on="htmx:configRequest: event.detail.path = this.value"
                             >
                             {
                                 vec!["Scranton", "Stamford", "New York"]
@@ -153,7 +153,7 @@ async fn get_wallchart_page(
                                     .collect_fragment_async()
                                     .await
                             }
-                            </select>
+                            </SelectInput>
                         </GridCell>
                     </GridLayout>
                     <SecondaryButton
