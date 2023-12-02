@@ -5,6 +5,7 @@ use axum::{
     Router,
 };
 use axum_flash::IncomingFlashes;
+use axum_login::axum_sessions::Session;
 use rscx::{component, html, props, CollectFragment, CollectFragmentAsync};
 
 use web_client::server::{
@@ -122,6 +123,7 @@ async fn get_worksite(
 
 async fn get_wallchart_page(
     flashes: IncomingFlashes,
+    session: Session,
     State(WebHtmxState {
         worksite_service, ..
     }): State<WebHtmxState>,
