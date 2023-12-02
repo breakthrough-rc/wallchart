@@ -224,3 +224,9 @@ pub fn assessment(worksite_id: &String, worker_id: &String, assessment_id: &Stri
         worksite_id, worker_id, assessment_id
     )
 }
+
+pub const SELECTED_WORKSITE: &str = "/selected-worksite";
+pub fn selected_worksite() -> String {
+    SELECTED_WORKSITE.into()
+}
+

@@ -11,6 +11,7 @@ use state::WebHtmxState;
 use web_client::routes as client_routes;
 
 //##PLOP USE RESOURCE HOOK##
+use resources::selected_worksite::selected_worksite_routes;
 use components::{not_found_message::NotFoundMessage, page::PageLayout};
 use context::provide_context_layer;
 use resources::assessments::assessments_routes;
@@ -37,6 +38,7 @@ pub fn routes(state: WebHtmxState) -> Router {
     Router::new()
         .with_state(state.clone())
         //##PLOP MERGE ROUTE HOOK##
+.merge(selected_worksite_routes(state.clone()))
         .merge(assessments_routes(state.clone()))
         .merge(csv_upload_routes(state.clone()))
         .merge(shift_assignments_routes(state.clone()))

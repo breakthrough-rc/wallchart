@@ -211,7 +211,11 @@ async fn main() {
             },
         ],
     };
-    let worksite_repository = Arc::new(InMemoryWorksiteRepository::with(vec![worksite]));
+    let other_worksite = Worksite::new("Other Worksite".into());
+    let worksite_repository = Arc::new(InMemoryWorksiteRepository::with(vec![
+        worksite,
+        other_worksite,
+    ]));
     let worksite_service = WorksiteService::new(worksite_repository);
 
     let user_repository = Arc::new(InMemoryUserRepository::empty());
