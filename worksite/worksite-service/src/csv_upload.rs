@@ -58,7 +58,8 @@ pub type CsvUploadOutput = Result<Vec<WorkerRecord>, CsvUploadFailure>;
 impl CsvUpload {
     pub async fn csv_upload(&self, input: CsvUploadInput) -> CsvUploadOutput {
         let mut rdr = csv::Reader::from_reader(input.csv_input.as_bytes());
-        let records: Vec<WorkerRecord> = rdr.deserialize().map(|result| result.unwrap()).collect();
+        let records: Result<Vec<WorkerRecord>, csv::Error> = rdr.deserialize().collect();
+        let records = records.map_err(|e| CsvUploadFailure::ParseFailure(e.to_string()))?;
         let worksites: &mut HashMap<WorksiteName, Worksite> = &mut HashMap::new();
         let workers: &mut HashMap<(WorksiteName, FirstName, LastName, Email), Worker> =
             &mut HashMap::new();
@@ -251,8 +252,8 @@ impl CsvUpload {
 
 #[derive(Error, Debug, PartialEq)]
 pub enum CsvUploadFailure {
-    #[error("Worksite does not exist")]
-    NotFound,
+    #[error("Failed to parse csv")]
+    ParseFailure(String),
     #[error("Something went wrong")]
     Unknown(String),
 }

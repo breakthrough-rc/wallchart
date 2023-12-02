@@ -4,6 +4,7 @@ use axum::{
     routing::get,
     Router,
 };
+use http::StatusCode;
 use rscx::html;
 use serde::Deserialize;
 use std::str::from_utf8;
@@ -77,30 +78,6 @@ async fn get_csv_upload(State(_state): State<WebHtmxState>) -> impl IntoResponse
     })
 }
 
-/**
-* This is an example CSV row. We use this to construct all of the
-* worksites/locations/shifts/workers as needed.
-*
-* There is an enourmous amount of room for improvement but this is a quick and
-* dirty onboarding tool. We should improve this process as we encounter real
-* life usecases.
-*
-* At the moment, this code assumes that worksites, locations, shifts etc. are names that
-* are relatively unique (to their context) so we can create/reuse these resources
-* as needed
-*/
-#[allow(dead_code)]
-#[derive(Debug, Deserialize)]
-struct WorkerRecord {
-    worksite: String,
-    location: String,
-    shift1: String,
-    shift2: String,
-    shift3: String,
-    name: String,
-    email: String,
-    phone: String,
-}
 async fn post_csv_upload(
     State(state): State<WebHtmxState>,
     mut multipart: Multipart,
@@ -125,14 +102,24 @@ async fn post_csv_upload(
      */
     let content: String = content.join("");
 
-    let records = state
+    let result = state
         .worksite_service
         .csv_upload(CsvUploadInput { csv_input: content })
-        .await
-        .unwrap();
+        .await;
 
-    Html(html! {
-        <p>Here is the data we received:</p>
-        <pre>{format!("{:#?}", records)}</pre>
-    })
+    match result {
+        Ok(records) => Html(html! {
+            <p>Here is the data we received:</p>
+            <pre>{format!("{:#?}", records)}</pre>
+        })
+        .into_response(),
+        Err(e) => match e {
+            worksite_service::csv_upload::CsvUploadFailure::ParseFailure(parse_failure) => {
+                (StatusCode::BAD_REQUEST, parse_failure).into_response()
+            }
+            worksite_service::csv_upload::CsvUploadFailure::Unknown(e) => {
+                (StatusCode::BAD_REQUEST, e.to_string()).into_response()
+            }
+        },
+    }
 }
