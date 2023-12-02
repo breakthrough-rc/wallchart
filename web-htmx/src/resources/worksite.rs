@@ -123,7 +123,6 @@ async fn get_worksite(
 
 async fn get_wallchart_page(
     flashes: IncomingFlashes,
-    session: Session,
     State(WebHtmxState {
         worksite_service, ..
     }): State<WebHtmxState>,
