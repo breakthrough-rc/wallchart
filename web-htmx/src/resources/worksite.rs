@@ -72,7 +72,7 @@ async fn get_worksite(
                                     .iter()
                                     .map(|name| async {
                                         html! {
-                                            <option value=routes::worksite(&name.to_string())>{name.clone()}</option>
+                                            <option value=routes::worksite(&name.to_string())>{name.to_string()()}</option>
                                         }
                                     })
                                     .collect_fragment_async()
@@ -147,7 +147,7 @@ async fn get_wallchart_page(
                                     .iter()
                                     .map(|name| async {
                                         html! {
-                                            <option value=routes::worksite(&name.to_string())>{name.clone()}</option>
+                                            <option value=routes::worksite(&name.to_string())>{name.to_string()}</option>
                                         }
                                     })
                                     .collect_fragment_async()
