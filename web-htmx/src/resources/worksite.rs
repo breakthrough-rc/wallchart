@@ -10,6 +10,7 @@ use rscx::{component, html, props, CollectFragment, CollectFragmentAsync};
 use web_client::server::{
     button::{PrimaryButton, SecondaryButton},
     card::Card,
+    form::{GridCell, GridLayout, SelectInput},
     modal::modal_target,
     notification::NotificationFlashes,
 };
@@ -57,6 +58,29 @@ async fn get_worksite(
             header=PageHeader::Toolbar {
                 title: format!("Wallchart: {}", worksite_name),
                 buttons: html! {
+                    <GridLayout>
+                        <GridCell>
+                            <select
+                                name="selected_worksite"
+                                hx_get=""
+                                hx_target="body"
+                                hx_trigger="change"
+                                hx_on="htmx:configRequest: event.detail.path = this.value"
+                            >
+                            {
+                                vec!["Scranton", "Stamford", "New York"]
+                                    .iter()
+                                    .map(|name| async {
+                                        html! {
+                                            <option value=routes::worksite(&name.to_string())>{name.clone()}</option>
+                                        }
+                                    })
+                                    .collect_fragment_async()
+                                    .await
+                            }
+                            </select>
+                        </GridCell>
+                    </GridLayout>
                     <SecondaryButton
                         hx_get=locations_new_modal(&worksite_id)
                         hx_target=modal_target()
@@ -109,6 +133,29 @@ async fn get_wallchart_page(
             header=PageHeader::Toolbar {
                 title: format!("Wallchart: {}", worksite_name),
                 buttons: html! {
+                    <GridLayout>
+                        <GridCell>
+                            <select
+                                name="selected_worksite"
+                                hx-get=""
+                                hx-target="body"
+                                hx-trigger="change"
+                                hx-on="htmx:configRequest: event.detail.path = this.value"
+                            >
+                            {
+                                vec!["Scranton", "Stamford", "New York"]
+                                    .iter()
+                                    .map(|name| async {
+                                        html! {
+                                            <option value=routes::worksite(&name.to_string())>{name.clone()}</option>
+                                        }
+                                    })
+                                    .collect_fragment_async()
+                                    .await
+                            }
+                            </select>
+                        </GridCell>
+                    </GridLayout>
                     <SecondaryButton
                         hx_get=locations_new_modal(&id)
                         hx_target=modal_target()
