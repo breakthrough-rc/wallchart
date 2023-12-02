@@ -20,7 +20,7 @@ impl GetUser {
     pub async fn get_user(&self, input: GetUserInput) -> GetUserOutput {
         let user = self
             .user_repository
-            .get_user(input.user_id)
+            .find_by_id(input.user_id)
             .await
             .map_err(|e| GetUserFailure::Internal(e.to_string()))?;
 

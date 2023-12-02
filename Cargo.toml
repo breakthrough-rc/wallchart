@@ -17,10 +17,10 @@ members = [
 [workspace.dependencies]
 
 async-trait = { version = "0.1.73" }
-axum = { version = "0.6.20" }
-axum-flash = { version = "0.7.0" }
-axum-login = { version = "0.6.0" }
-axum-extra = { version = "0.8.0", features = ["form", "cookie"] }
+axum = { version = "0.7.1" }
+axum-flash = { version = "0.8.0" }
+axum-login = { version = "0.10.2" }
+axum-extra = { version = "0.9.0", features = ["form", "cookie"] }
 axum-macros = { version = "0.4.0" }
 chrono = { version = "0.4.31" }
 csv = { version = "1.3.0" }
@@ -28,8 +28,8 @@ diesel = { version = "2.1.3", features = ["postgres", "chrono"] }
 diesel-async = { version = "0.4.1" }
 diesel_migrations = { version = "2.1.0" }
 futures = { version = "0.3.29" }
-http = { version = "0.2.9" }
-nonempty = { version = "0.8.1" }
+http = { version = "1.0.0" }
+nonempty = { version = "0.9.0" }
 once_cell = { version = "1.18.0" }
 password-auth = { version = "1.0.0" }
 proc-macro2 = { version = "1.0.69" }
@@ -44,8 +44,8 @@ syn = { version = "2.0.38" }
 thiserror = { version = "1.0" }
 tokio = { version = "1.32.0" }
 tower = { version = "0.4.13" }
-tower-http = { version = "0.4.4" }
-tower-livereload = { version = "0.8.1" }
+tower-http = { version = "0.5.0" }
+tower-livereload = { version = "0.9.1" }
 tracing = { version = "0.1.37" }
 tracing-subscriber = { version = "0.3.17" }
 typed-builder = { version = "0.18.0" }

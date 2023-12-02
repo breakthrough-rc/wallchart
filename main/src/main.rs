@@ -1,12 +1,15 @@
 use auth_service::{create_user::CreateUserInput, service::AuthService};
-use axum::{response::IntoResponse, routing::get, Router};
+use axum::{
+    error_handling::HandleErrorLayer, http::StatusCode, response::IntoResponse, routing::get,
+    BoxError, Router,
+};
 use axum_login::{
-    axum_sessions::{async_session::MemoryStore, SessionLayer},
-    AuthLayer,
+    tower_sessions::{MemoryStore, SessionManagerLayer},
+    AuthManagerLayerBuilder,
 };
 use chrono::prelude::*;
-use rand::Rng;
 use std::{net::SocketAddr, sync::Arc};
+use tower::ServiceBuilder;
 
 use in_memory_user_repository::{InMemoryUserRepository, InMemoryUserStore};
 use in_memory_worksite_repository::InMemoryWorksiteRepository;
@@ -246,23 +249,22 @@ async fn main() {
     let app = app.layer(livereload::layer());
 
     // Session and Auth Management
-    let secret = rand::thread_rng().gen::<[u8; 64]>();
-    let session_store = MemoryStore::new();
-    let session_layer = SessionLayer::new(session_store, &secret).with_secure(false);
+    let session_store = MemoryStore::default();
+    let session_layer = SessionManagerLayer::new(session_store).with_secure(false);
     let user_memory_store = InMemoryUserStore {
         users: user_repository.clone(),
     };
-    let auth_layer = AuthLayer::new(user_memory_store, &secret);
+    let auth_layer = ServiceBuilder::new()
+        .layer(HandleErrorLayer::new(|_: BoxError| async {
+            StatusCode::BAD_REQUEST
+        }))
+        .layer(AuthManagerLayerBuilder::new(user_memory_store, session_layer).build());
 
     let app = app.layer(auth_layer);
-    let app = app.layer(session_layer);
 
-    // run our app with hyper
-    // `axum::Server` is a re-export of `hyper::Server`
     let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
-
-    axum::Server::bind(&addr)
-        .serve(app.into_make_service())
+    let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
+    axum::serve(listener, app.into_make_service())
         .await
         .expect("Failed to start server");
 }

@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 async-trait = { workspace = true }
-axum = { features = ["headers"], workspace = true }
+axum = { workspace = true }
 axum-login = { workspace = true }
 password-auth = { workspace = true }
 serde = { workspace = true, features = ["derive"] }

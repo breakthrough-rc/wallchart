@@ -5,8 +5,10 @@ use axum::{
     Form, Router,
 };
 use axum_flash::Flash;
+use axum_login::AuthSession;
 use futures::future::join_all;
 use http::{HeaderMap, StatusCode};
+use in_memory_user_repository::InMemoryUserStore;
 use rscx::{component, html, props};
 use serde::Deserialize;
 
@@ -14,7 +16,6 @@ use auth_service::{
     create_user::CreateUserInput, get_user::GetUserInput, get_user_for_login::GetUserForLoginInput,
 };
 use auth_service::{delete_user::DeleteUserInput, models::User};
-use in_memory_user_repository::AuthContext;
 use web_client::server::{
     attrs::Attrs,
     button::PrimaryButton,
@@ -63,7 +64,7 @@ struct LoginForm {
 
 async fn post_login(
     State(WebHtmxState { auth_service, .. }): State<WebHtmxState>,
-    mut auth: AuthContext,
+    mut auth: AuthSession<InMemoryUserStore>,
     _flash: Flash,
     Form(login_form): Form<LoginForm>,
 ) -> impl IntoResponse {

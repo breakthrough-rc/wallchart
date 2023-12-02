@@ -1,4 +1,4 @@
-use axum_login::{secrecy::SecretVec, AuthUser};
+use axum_login::AuthUser;
 
 #[derive(Debug, Clone)]
 pub struct User {
@@ -10,12 +10,14 @@ pub struct User {
 /**
 * Need to implement this for axum-login
 */
-impl AuthUser<String> for User {
-    fn get_id(&self) -> String {
+impl AuthUser for User {
+    type Id = String;
+
+    fn id(&self) -> Self::Id {
         self.id.clone()
     }
 
-    fn get_password_hash(&self) -> SecretVec<u8> {
-        SecretVec::new(self.hashed_password.clone().into())
+    fn session_auth_hash(&self) -> &[u8] {
+        &self.hashed_password.as_bytes()
     }
 }
