@@ -72,7 +72,7 @@ async fn get_worksite(
                                     .iter()
                                     .map(|name| async {
                                         html! {
-                                            <option value=routes::worksite(&name.to_string())>{name.to_string()()}</option>
+                                            <option value=routes::worksite(&name.to_string())>{name.to_string()}</option>
                                         }
                                     })
                                     .collect_fragment_async()
