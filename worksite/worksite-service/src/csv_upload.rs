@@ -247,8 +247,7 @@ impl CsvUpload {
         }
 
         Ok(worksites
-            .values()
-            .map(|w| w.clone())
+            .values().cloned()
             .collect::<Vec<Worksite>>())
     }
 }
