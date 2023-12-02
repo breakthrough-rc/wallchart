@@ -147,39 +147,37 @@ async fn get_wallchart_page(
             header=PageHeader::Toolbar {
                 title: format!("Wallchart: {}", worksite_name),
                 buttons: html! {
-                    <GridLayout>
-                        <GridCell>
-                            <SelectInput
-                                name="selected_worksite"
-                                hx_get="/" // Can't be empty or hx_get goes away entirely
-                                hx_target="body"
-                                hx_trigger="change"
-                                hx_on="htmx:configRequest: event.detail.path = this.value"
-                            >
-                            {
-                                worksites
-                                    .iter()
-                                    .map(|w| async {
-                                        html! {
-                                            <option
-                                                value=routes::worksite(&w.id)
-                                                {
-                                                    String::from(
-                                                        Attrs::default()
-                                                            .set_if("selected", "true".into(), w.id == id)
-                                                    )
-                                                }
-                                            >
-                                                {w.name.clone()}
-                                            </option>
-                                        }
-                                    })
-                                    .collect_fragment_async()
-                                    .await
-                            }
-                            </SelectInput>
-                        </GridCell>
-                    </GridLayout>
+                    <form hx-put=routes::selected_worksite() hx-trigger="change">
+                        <GridLayout>
+                            <GridCell>
+                                <SelectInput
+                                    name="selected_worksite_id"
+                                >
+                                {
+                                    worksites
+                                        .iter()
+                                        .map(|w| async {
+                                            html! {
+                                                <option
+                                                    value=w.id.clone()
+                                                    {
+                                                        String::from(
+                                                            Attrs::default()
+                                                                .set_if("selected", "true".into(), w.id == id)
+                                                        )
+                                                    }
+                                                >
+                                                    {w.name.clone()}
+                                                </option>
+                                            }
+                                        })
+                                        .collect_fragment_async()
+                                        .await
+                                }
+                                </SelectInput>
+                            </GridCell>
+                        </GridLayout>
+                    </form>
                     <SecondaryButton
                         hx_get=locations_new_modal(&id)
                         hx_target=modal_target()

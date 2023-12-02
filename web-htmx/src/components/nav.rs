@@ -26,7 +26,7 @@ pub fn Nav() -> String {
         ("Tags", routes::tags(&worksite_id)),
         ("Report", "/report".into()),
         ("Users", routes::users()),
-        ("CSV Upload", routes::csv_upload()),
+        ("Import", routes::csv_upload()),
     ];
 
     html! {

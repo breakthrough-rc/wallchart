@@ -1,4 +1,5 @@
 use axum::{extract::State, http::Request, middleware::Next, response::Response};
+use axum_extra::extract::CookieJar;
 use std::future::Future;
 
 use crate::state::WebHtmxState;
@@ -15,12 +16,19 @@ tokio::task_local! {
 
 pub async fn provide_context_layer<B>(
     State(state): State<WebHtmxState>,
+    jar: CookieJar,
     request: Request<B>,
     next: Next<B>,
 ) -> Response {
+    let worksite_id: String = if let Some(id) = jar.get("selected_worksite_id") {
+        id.value().to_string()
+    } else {
+        state.default_worksite_id.clone()
+    };
+
     let context = Context {
         page_url: request.uri().path().to_string(),
-        worksite_id: state.default_worksite_id.clone(),
+        worksite_id,
     };
 
     // Set the context for this request.

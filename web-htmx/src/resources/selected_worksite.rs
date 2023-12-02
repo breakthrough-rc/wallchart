@@ -1,6 +1,7 @@
 use crate::routes;
 use crate::state::WebHtmxState;
 use axum::{response::IntoResponse, routing::put, Form, Router};
+use axum_extra::extract::{cookie::Cookie, CookieJar};
 use http::StatusCode;
 use serde::Deserialize;
 
@@ -15,21 +16,16 @@ struct SetSelectedWorksiteFormData {
     selected_worksite_id: String,
 }
 
-async fn put_selected_worksite(Form(form): Form<SetSelectedWorksiteFormData>) -> impl IntoResponse {
-    let ctx: crate::context::Context =
-        crate::context::context().expect("Unable to retrieve htmx context.");
-    let id = ctx.worksite_id;
-    println!("Before setting worksite id {}", id);
-
-    // crate::context::set_worksite_id(form.selected_worksite_id.clone()).await;
-
-    let ctx: crate::context::Context =
-        crate::context::context().expect("Unable to retrieve htmx context.");
-    let id = ctx.worksite_id;
-    println!("After setting worksite id {}", id);
-
+async fn put_selected_worksite(
+    jar: CookieJar,
+    Form(form): Form<SetSelectedWorksiteFormData>,
+) -> impl IntoResponse {
     (
         StatusCode::OK,
+        jar.add(Cookie::new(
+            "selected_worksite_id",
+            form.selected_worksite_id.clone(),
+        )),
         [
             ("hx-redirect", routes::worksite(&form.selected_worksite_id)),
             ("hx-retarget", "body".into()),

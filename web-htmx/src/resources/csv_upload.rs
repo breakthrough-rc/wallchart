@@ -32,7 +32,7 @@ pub fn csv_upload_routes(state: WebHtmxState) -> Router {
 
 async fn get_csv_upload(State(_state): State<WebHtmxState>) -> impl IntoResponse {
     Html(html! {
-        <PageLayout header="Upload a CSV">
+        <PageLayout header="Import">
             <p><em>Bulk upload data into your worksites.</em></p>
             <PageContent>
                 <Card padded=true>
