@@ -5,7 +5,7 @@ use axum::{
     Router,
 };
 use http::StatusCode;
-use rscx::html;
+use rscx::{html, CollectFragment};
 
 use std::str::from_utf8;
 use worksite_service::csv_upload::CsvUploadInput;
@@ -108,9 +108,15 @@ async fn post_csv_upload(
         .await;
 
     match result {
-        Ok(records) => Html(html! {
-            <p>Here is the data we received:</p>
-            <pre>{format!("{:#?}", records)}</pre>
+        Ok(worksite_ids) => Html(html! {
+            <p>Your new worksites!</p>
+            {
+                worksite_ids.into_iter().map(|worksite_id| {
+                    html! {
+                        <a href=routes::worksite(&worksite_id)>Wallchart - {worksite_id.clone()}</a>
+                    }
+                }).collect_fragment()
+            }
         })
         .into_response(),
         Err(e) => match e {

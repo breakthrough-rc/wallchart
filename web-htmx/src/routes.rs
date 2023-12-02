@@ -43,6 +43,11 @@ pub fn wallchart() -> String {
     WALLCHART.into()
 }
 
+pub const WORKSITE: &str = "/worksites/:worksite_id";
+pub fn worksite(worksite_id: &String) -> String {
+    format!("/worksites/{}", worksite_id)
+}
+
 pub const LOCATIONS: &str = "/worksites/:worksite_id/locations";
 pub fn locations(worksite_id: &String) -> String {
     format!("/worksites/{}/locations", worksite_id)

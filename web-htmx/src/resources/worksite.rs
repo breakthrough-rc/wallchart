@@ -1,5 +1,5 @@
 use axum::{
-    extract::State,
+    extract::{self, State},
     response::{Html, IntoResponse},
     routing::get,
     Router,
@@ -23,14 +23,66 @@ use crate::{
         page::{PageHeader, PageLayout},
         page_content::PageContent,
     },
-    routes::{self, locations_new, locations_new_modal, WALLCHART},
+    routes::{self, locations_new, locations_new_modal, WALLCHART, WORKSITE},
     state::WebHtmxState,
 };
 
 pub fn worksite_routes(state: WebHtmxState) -> Router {
     Router::new()
         .route(WALLCHART, get(get_wallchart_page))
+        .route(WORKSITE, get(get_worksite))
         .with_state(state)
+}
+
+async fn get_worksite(
+    flashes: IncomingFlashes,
+    extract::Path(worksite_id): extract::Path<String>,
+    State(WebHtmxState {
+        worksite_service, ..
+    }): State<WebHtmxState>,
+) -> impl IntoResponse {
+    let worksite = worksite_service
+        .get_worksite(GetWorksiteInput {
+            id: worksite_id.clone(),
+        })
+        .await
+        .unwrap()
+        .ok_or("Worksite not found")
+        .unwrap();
+
+    let worksite_name = worksite.name.clone();
+
+    let html = html! {
+        <PageLayout
+            header=PageHeader::Toolbar {
+                title: format!("Wallchart: {}", worksite_name),
+                buttons: html! {
+                    <SecondaryButton
+                        hx_get=locations_new_modal(&worksite_id)
+                        hx_target=modal_target()
+                        hx_swap="beforeend"
+                        hx_push_url=locations_new(&worksite_id)
+                    >
+                        Add New Location
+                    </SecondaryButton>
+                    <PrimaryButton
+                        onclick="alert('Coming soon!')"
+                    >
+                        Edit Worksite
+                    </PrimaryButton>
+                }
+            }
+        >
+            <NotificationFlashes flashes=flashes.clone() />
+            <PageContent title="Manage your worksite and more">
+                <Card>
+                    <WallchartTable worksite=worksite/>
+                </Card>
+            </PageContent>
+        </PageLayout>
+    };
+
+    (flashes, Html(html))
 }
 
 async fn get_wallchart_page(
