@@ -5,7 +5,7 @@ use axum::{
     Router,
 };
 use axum_flash::IncomingFlashes;
-use axum_login::axum_sessions::Session;
+
 use rscx::{component, html, props, CollectFragment, CollectFragmentAsync};
 
 use web_client::server::{
