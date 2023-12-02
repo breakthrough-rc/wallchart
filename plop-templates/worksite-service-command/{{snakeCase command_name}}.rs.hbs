@@ -27,7 +27,7 @@ impl {{pascalCase command_name}} {
             .map_err(|e| {{pascalCase command_name}}Failure::Unknown(e.to_string()))?
             .ok_or({{pascalCase command_name}}Failure::NotFound)?;
 
-        let worksite = todo!("update the worksite or whatever you like")
+        let worksite = todo!("update the worksite or whatever you like");
 
         self.worksite_repository
             .save(worksite)

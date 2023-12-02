@@ -9,12 +9,7 @@ use crate::{
     assign_tags::{AssignTags, AssignTagsInput, AssignTagsOutput},
     assign_worker::{AssignWorker, AssignWorkerInput, AssignWorkerOutput},
     //##PLOP INSERT COMMAND IMPORTS HOOK##
-    csv_upload::{
-      CsvUpload, CsvUploadInput, CsvUploadOutput, 
-    },
-    remove_assessment::{
-      RemoveAssessment, RemoveAssessmentInput, RemoveAssessmentOutput, 
-    },
+    csv_upload::{CsvUpload, CsvUploadInput, CsvUploadOutput},
     get_assessment::{GetAssessment, GetAssessmentInput, GetAssessmentOutput},
     get_assessments::{GetAssessments, GetAssessmentsInput, GetAssessmentsOutput},
     get_tag::{GetTag, GetTagInput, GetTagOutput},
@@ -22,8 +17,10 @@ use crate::{
     get_worker::{GetWorker, GetWorkerInput, GetWorkerOutput},
     get_workers::{GetWorkers, GetWorkersInput, GetWorkersOutput},
     get_worksite::{GetWorksite, GetWorksiteFailure, GetWorksiteInput},
+    get_worksites::{GetWorksites, GetWorksitesOutput},
     models::Worksite,
     ports::worksite_repository::WorksiteRepository,
+    remove_assessment::{RemoveAssessment, RemoveAssessmentInput, RemoveAssessmentOutput},
     remove_tag::{RemoveTag, RemoveTagInput, RemoveTagOutput},
     remove_worker_from_shift::{
         RemoveWorkerFromShift, RemoveWorkerFromShiftFailure, RemoveWorkerFromShiftInput,
@@ -56,6 +53,7 @@ pub struct WorksiteService {
     pub get_worker: GetWorker,
     pub assign_worker: AssignWorker,
     pub get_worksite: GetWorksite,
+    pub get_worksites: GetWorksites,
     pub remove_worker_from_shift: RemoveWorkerFromShift,
 }
 
@@ -64,12 +62,12 @@ impl WorksiteService {
         Self {
             //##PLOP INSERT COMMAND INSTANTIATION HOOK##
             csv_upload: CsvUpload {
-              // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
-              worksite_repository: worksite_repository.clone(),
+                // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
+                worksite_repository: worksite_repository.clone(),
             },
             remove_assessment: RemoveAssessment {
-              // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
-              worksite_repository: worksite_repository.clone(),
+                // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
+                worksite_repository: worksite_repository.clone(),
             },
             get_assessment: GetAssessment {
                 // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
@@ -132,23 +130,24 @@ impl WorksiteService {
             get_worksite: GetWorksite {
                 worksite_repository: worksite_repository.clone(),
             },
+            get_worksites: GetWorksites {
+                worksite_repository: worksite_repository.clone(),
+            },
             remove_worker_from_shift: RemoveWorkerFromShift {
                 worksite_repository: worksite_repository.clone(),
             },
         }
     }
     //##PLOP INSERT DELEGATE HOOK##
-    pub async fn csv_upload(
-        &self,
-        input: CsvUploadInput,
-    ) -> CsvUploadOutput {
+    pub async fn get_worksites(&self) -> GetWorksitesOutput {
+        self.get_worksites.get_worksites().await
+    }
+
+    pub async fn csv_upload(&self, input: CsvUploadInput) -> CsvUploadOutput {
         self.csv_upload.csv_upload(input).await
     }
 
-    pub async fn remove_assessment(
-        &self,
-        input: RemoveAssessmentInput,
-    ) -> RemoveAssessmentOutput {
+    pub async fn remove_assessment(&self, input: RemoveAssessmentInput) -> RemoveAssessmentOutput {
         self.remove_assessment.remove_assessment(input).await
     }
 

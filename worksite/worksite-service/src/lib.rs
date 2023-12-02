@@ -24,3 +24,4 @@ pub mod update_assessment;
 
 pub mod remove_assessment;
 pub mod csv_upload;
+pub mod get_worksites;

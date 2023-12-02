@@ -8,6 +8,7 @@ use axum_flash::IncomingFlashes;
 use rscx::{component, html, props, CollectFragment, CollectFragmentAsync};
 
 use web_client::server::{
+    attrs::Attrs,
     button::{PrimaryButton, SecondaryButton},
     card::Card,
     form::{GridCell, GridLayout, SelectInput},
@@ -53,6 +54,8 @@ async fn get_worksite(
 
     let worksite_name = worksite.name.clone();
 
+    let worksites = worksite_service.get_worksites().await.unwrap();
+
     let html = html! {
         <PageLayout
             header=PageHeader::Toolbar {
@@ -68,11 +71,21 @@ async fn get_worksite(
                                 hx_on="htmx:configRequest: event.detail.path = this.value"
                             >
                             {
-                                vec!["Scranton", "Stamford", "New York"]
+                                worksites
                                     .iter()
-                                    .map(|name| async {
+                                    .map(|w| async {
                                         html! {
-                                            <option value=routes::worksite(&name.to_string())>{name.to_string()}</option>
+                                            <option
+                                                value=routes::worksite(&w.id)
+                                                {
+                                                    String::from(
+                                                        Attrs::default()
+                                                            .set_if("selected", "true".into(), w.id == worksite_id)
+                                                    )
+                                                }
+                                            >
+                                                {w.name.clone()}
+                                            </option>
                                         }
                                     })
                                     .collect_fragment_async()
@@ -126,6 +139,8 @@ async fn get_wallchart_page(
         .ok_or("Worksite not found")
         .unwrap();
 
+    let worksites = worksite_service.get_worksites().await.unwrap();
+
     let worksite_name = worksite.name.clone();
 
     let html = html! {
@@ -143,11 +158,21 @@ async fn get_wallchart_page(
                                 hx_on="htmx:configRequest: event.detail.path = this.value"
                             >
                             {
-                                vec!["Scranton", "Stamford", "New York"]
+                                worksites
                                     .iter()
-                                    .map(|name| async {
+                                    .map(|w| async {
                                         html! {
-                                            <option value=routes::worksite(&name.to_string())>{name.to_string()}</option>
+                                            <option
+                                                value=routes::worksite(&w.id)
+                                                {
+                                                    String::from(
+                                                        Attrs::default()
+                                                            .set_if("selected", "true".into(), w.id == id)
+                                                    )
+                                                }
+                                            >
+                                                {w.name.clone()}
+                                            </option>
                                         }
                                     })
                                     .collect_fragment_async()
