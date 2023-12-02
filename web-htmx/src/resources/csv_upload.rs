@@ -108,12 +108,12 @@ async fn post_csv_upload(
         .await;
 
     match result {
-        Ok(worksite_ids) => Html(html! {
+        Ok(worksites) => Html(html! {
             <p>Your new worksites!</p>
             {
-                worksite_ids.into_iter().map(|worksite_id| {
+                worksites.into_iter().map(|worksite| {
                     html! {
-                        <a href=routes::worksite(&worksite_id)>Wallchart - {worksite_id.clone()}</a>
+                        <a href=routes::worksite(&worksite.id)>"Wallchart - " {worksite.name}</a>
                     }
                 }).collect_fragment()
             }

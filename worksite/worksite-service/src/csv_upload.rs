@@ -6,7 +6,7 @@ use thiserror::Error;
 use crate::{
     models::{
         Email, FirstName, LastName, Location, LocationName, Shift, ShiftName, Worker, Worksite,
-        WorksiteId, WorksiteName,
+        WorksiteName,
     },
     ports::worksite_repository::WorksiteRepository,
 };
@@ -39,7 +39,7 @@ pub struct WorkerRecord {
 }
 
 // Change the return type, if needed
-pub type CsvUploadOutput = Result<Vec<WorksiteId>, CsvUploadFailure>;
+pub type CsvUploadOutput = Result<Vec<Worksite>, CsvUploadFailure>;
 
 /**
 * This is some gross code that maps the gross CSV formatted data into our domain and then saves
@@ -248,8 +248,8 @@ impl CsvUpload {
 
         Ok(worksites
             .values()
-            .map(|w| w.id.clone())
-            .collect::<Vec<WorksiteId>>())
+            .map(|w| w.clone())
+            .collect::<Vec<Worksite>>())
     }
 }
 
