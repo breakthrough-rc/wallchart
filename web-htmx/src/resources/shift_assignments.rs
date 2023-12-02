@@ -13,7 +13,7 @@ use serde::Deserialize;
 use web_client::server::{
     attrs::Attrs,
     button::SecondaryButton,
-    form::{Button, GridCell, GridLayout, Label, SelectInput},
+    form::{Button, GridCell, GridLayout, Label, Select},
     headers::SecondaryHeader,
     modal::{Modal, ModalSize},
 };
@@ -169,7 +169,7 @@ fn AssignShiftForm(props: AssignShiftFormProps) -> String {
                     <GridLayout class="mt-10">
                         <GridCell>
                             <Label for_input="worker_id">Worker</Label>
-                            <SelectInput name="worker_id" >
+                            <Select name="worker_id" >
                             {
                                 props
                                     .workers
@@ -182,7 +182,7 @@ fn AssignShiftForm(props: AssignShiftFormProps) -> String {
                                     .collect_fragment_async()
                                     .await
                             }
-                            </SelectInput>
+                            </Select>
                         </GridCell>
                         <GridCell>
                             <div class="mt-6 flex items-center justify-end gap-x-6">

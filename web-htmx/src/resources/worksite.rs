@@ -12,7 +12,7 @@ use web_client::server::{
     attrs::Attrs,
     button::{PrimaryButton, SecondaryButton},
     card::Card,
-    form::{GridCell, GridLayout, SelectInput},
+    form::{GridCell, GridLayout, Select},
     modal::modal_target,
     notification::NotificationFlashes,
 };
@@ -65,7 +65,7 @@ async fn get_worksite(
                     <form hx-put=routes::selected_worksite() hx-trigger="change">
                         <GridLayout>
                             <GridCell>
-                                <SelectInput
+                                <Select
                                     name="selected_worksite_id"
                                 >
                                 {
@@ -89,7 +89,7 @@ async fn get_worksite(
                                         .collect_fragment_async()
                                         .await
                                 }
-                                </SelectInput>
+                                </Select>
                             </GridCell>
                         </GridLayout>
                     </form>
@@ -150,7 +150,7 @@ async fn get_wallchart_page(
                     <form hx-put=routes::selected_worksite() hx-trigger="change">
                         <GridLayout>
                             <GridCell>
-                                <SelectInput
+                                <Select
                                     name="selected_worksite_id"
                                 >
                                 {
@@ -174,7 +174,7 @@ async fn get_wallchart_page(
                                         .collect_fragment_async()
                                         .await
                                 }
-                                </SelectInput>
+                                </Select>
                             </GridCell>
                         </GridLayout>
                     </form>
