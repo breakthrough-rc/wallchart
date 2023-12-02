@@ -10,7 +10,7 @@ use rscx::{component, html, props, CollectFragment, CollectFragmentAsync};
 use web_client::server::{
     button::{PrimaryButton, SecondaryButton},
     card::Card,
-    form::{GridCell, GridLayout, SelectInput},
+    form::{GridCell, GridLayout},
     modal::modal_target,
     notification::NotificationFlashes,
 };
