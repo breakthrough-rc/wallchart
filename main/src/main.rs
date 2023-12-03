@@ -8,10 +8,11 @@ use axum_login::{
     AuthManagerLayerBuilder,
 };
 use chrono::prelude::*;
+use environment::load_environment;
+use mongo_user_repository::{MongoUserRepository, MongoUserStore};
 use std::{net::SocketAddr, sync::Arc};
 use tower::ServiceBuilder;
 
-use in_memory_user_repository::{InMemoryUserRepository, InMemoryUserStore};
 use in_memory_worksite_repository::InMemoryWorksiteRepository;
 use web_htmx::{livereload, routes as web_routes, state::WebHtmxState};
 use worksite_service::{
@@ -21,11 +22,15 @@ use worksite_service::{
     service::WorksiteService,
 };
 
+mod environment;
+
 const DEFAULT_WORKSITE_ID: &str = "1";
 const DEFAULT_WORKSITE_NAME: &str = "Dunder Miflin";
 
 #[tokio::main]
 async fn main() {
+    let env = load_environment();
+
     // Create worksite service
     let worksite = Worksite {
         id: DEFAULT_WORKSITE_ID.into(),
@@ -222,7 +227,11 @@ async fn main() {
     ]));
     let worksite_service = WorksiteService::new(worksite_repository);
 
-    let user_repository = Arc::new(InMemoryUserRepository::empty());
+    let user_repository = Arc::new(
+        MongoUserRepository::new(&env.auth_mongo_db_url)
+            .await
+            .expect("Could not create user repository"),
+    );
     let auth_service = AuthService::new(user_repository.clone());
 
     // Create a default user
@@ -258,7 +267,7 @@ async fn main() {
         }))
         .layer(SessionManagerLayer::new(session_store.clone()).with_secure(false));
 
-    let user_memory_store = InMemoryUserStore {
+    let user_memory_store = MongoUserStore {
         users: user_repository.clone(),
     };
     let session_layer = SessionManagerLayer::new(session_store).with_secure(false);
