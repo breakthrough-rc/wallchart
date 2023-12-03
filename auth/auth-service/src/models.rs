@@ -1,6 +1,6 @@
 use axum_login::AuthUser;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct User {
     pub id: String,
     pub email: String,
