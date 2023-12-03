@@ -18,13 +18,13 @@ services:
       - key: OUT_DIR
         value: "out"
           
-  - type: pserv
-    runtime: image
-    image: 
-      url: mongo:7.0.4
-    name: auth-mongo
-    autoDeploy: false
-    disk:
-      name: data
-      mountPath: /data/db
-      sizeGB: 10
+  # - type: pserv
+  #   runtime: image
+  #   image: 
+  #     url: mongo:7.0.4
+  #   name: auth-mongo
+  #   autoDeploy: false
+  #   disk:
+  #     name: data
+  #     mountPath: /data/db
+  #     sizeGB: 10
