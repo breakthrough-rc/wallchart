@@ -20,3 +20,4 @@ tracing = { workspace = true }
 mongo-testcontainer = { path = "../../../libs/mongo-testcontainer" }
 pretty_assertions = { workspace = true }
 testcontainers = { workspace = true }
+fake = { workspace = true }

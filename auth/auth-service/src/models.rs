@@ -7,6 +7,16 @@ pub struct User {
     pub hashed_password: String,
 }
 
+impl User {
+    pub fn new(email: String, hashed_password: String) -> Self {
+        Self {
+            id: uuid::Uuid::new_v4().to_string(),
+            email,
+            hashed_password,
+        }
+    }
+}
+
 /**
 * Need to implement this for axum-login
 */

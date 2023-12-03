@@ -39,11 +39,9 @@ pub struct MongoUserRepository {
 }
 
 // let url = format!("mongodb://127.0.0.1:{host_port}/");
-//
 // let client: Client = Client::with_uri_str(&url).await.unwrap();
 // let db = client.database("some_db");
 // let coll = db.collection("some-coll");
-//
 impl MongoUserRepository {
     pub async fn new(url: &String) -> Result<Self, mongodb::error::Error> {
         Ok(Self {
@@ -101,9 +99,13 @@ impl UserRepository for MongoUserRepository {
     }
 
     async fn save(&self, user: User) -> Result<(), RepositoryFailure> {
+        let filter = doc! {"id": user.id.clone()};
         let record = to_user_record(&user);
+        let options = mongodb::options::ReplaceOptions::builder()
+            .upsert(true)
+            .build();
         self.collection
-            .insert_one(record, None)
+            .replace_one(filter, record, options)
             .await
             .map_err(|e| RepositoryFailure::Unknown(e.to_string()))?;
         Ok(())
@@ -154,6 +156,10 @@ impl AuthnBackend for MongoUserStore {
 #[cfg(test)]
 mod tests {
     use auth_service::ports::user_repository::UserRepository;
+    use fake::{
+        faker::internet::en::{Password, SafeEmail},
+        Fake,
+    };
     use mongo_testcontainer::Mongo;
     use mongodb::Client;
     use pretty_assertions::assert_eq;
@@ -204,6 +210,12 @@ mod tests {
     //         .await
     // }
 
+    fn make_user() -> auth_service::models::User {
+        auth_service::models::User::new(
+            SafeEmail().fake::<String>(),
+            Password(std::ops::Range { start: 10, end: 20 }).fake::<String>(),
+        )
+    }
     #[tokio::test]
     async fn tests() {
         let docker_cli = clients::Cli::default();
@@ -214,18 +226,75 @@ mod tests {
         let repo: MongoUserRepository = MongoUserRepository::from_client(&mongo_client).unwrap();
 
         test_create_and_fetch(&repo).await;
+        test_get_users(&repo).await;
+        test_create_and_find_by_email(&repo).await;
+        test_create_and_delete_user(&repo).await;
+        test_update_user(&repo).await;
     }
 
     async fn test_create_and_fetch(repo: &MongoUserRepository) {
+        let user = make_user();
+
+        repo.save(user.clone()).await.unwrap();
+
+        let result = repo.find_by_id(user.id.clone()).await.unwrap();
+        assert_eq!(result, Some(user));
+    }
+
+    async fn test_create_and_find_by_email(repo: &MongoUserRepository) {
+        let user = make_user();
+
+        repo.save(user.clone()).await.unwrap();
+
+        let result = repo.find_by_email(user.email.clone()).await.unwrap();
+        assert_eq!(result, Some(user));
+    }
+
+    async fn test_create_and_delete_user(repo: &MongoUserRepository) {
+        let user = make_user();
+
+        repo.save(user.clone()).await.unwrap();
+
+        let result = repo.find_by_id(user.id.clone()).await.unwrap();
+        assert_eq!(result, Some(user.clone()));
+
+        repo.delete_by_id(user.id.clone()).await.unwrap();
+
+        let result = repo.find_by_id(user.id.clone()).await.unwrap();
+        assert_eq!(result, None);
+    }
+
+    async fn test_update_user(repo: &MongoUserRepository) {
+        let user = make_user();
+
+        repo.save(user.clone()).await.unwrap();
+
+        let result = repo.find_by_email(user.email.clone()).await.unwrap();
+        assert_eq!(result, Some(user.clone()));
+
         let user = auth_service::models::User {
-            id: "123".to_string(),
-            email: "user@test.com".into(),
-            hashed_password: "hashed_password".to_string(),
+            // New password
+            hashed_password: Password(std::ops::Range { start: 10, end: 20 }).fake::<String>(),
+            ..user.clone()
         };
 
         repo.save(user.clone()).await.unwrap();
 
         let result = repo.find_by_id(user.id.clone()).await.unwrap();
         assert_eq!(result, Some(user));
+    }
+
+    async fn test_get_users(repo: &MongoUserRepository) {
+        // Note that this is a get all, but we are using a single db instance
+        // so our assertions here are going to be weaker so the test is less flaky
+        let user1 = make_user();
+        let user2 = make_user();
+
+        repo.save(user1.clone()).await.unwrap();
+        repo.save(user2.clone()).await.unwrap();
+
+        let result = repo.get_users().await.unwrap();
+        assert!(result.contains(&user1));
+        assert!(result.contains(&user2));
     }
 }
