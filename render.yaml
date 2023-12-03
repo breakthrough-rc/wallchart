@@ -21,7 +21,7 @@ services:
   - type: pserv
     image: docker.io/mongo/mongo:7.0.4
     name: auth-mongo
-    env: docker
+    runtime: image
     autoDeploy: false
     disk:
       name: data
