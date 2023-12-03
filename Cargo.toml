@@ -12,6 +12,7 @@ members = [
           "web-macros",
           "worksite/adapters/in-memory-worksite-repository",
           "worksite/worksite-service",
+          "libs/mongo-testcontainer",
 ]
 
 [workspace.dependencies]
@@ -42,6 +43,7 @@ sha2 = { version = "0.10.8" }
 sha256 = { version = "1.4.0" }
 syn = { version = "2.0.38" }
 thiserror = { version = "1.0" }
+testcontainers = { version = "0.15.0" }
 tokio = { version = "1.32.0" }
 tower = { version = "0.4.13" }
 tower-http = { version = "0.5.0" }

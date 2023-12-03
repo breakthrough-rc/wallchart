@@ -1,22 +1,17 @@
 version: '3'
 services:
-
-  # Postgres
-  db:
-    image: postgres:15-alpine3.18
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+  auth_mongo:
     ports:
-      - "5432:5432"
+      - "27017:27017"
+    container_name: auth-mongo
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mongo
+      - MONGO_INITDB_ROOT_PASSWORD=mongo
+    image: mongo:7.0.4
+    volumes: 
+      - auth_mongo_data:/data/db
 
 volumes:
-    postgres_data:
+  auth_mongo_data:
+      
