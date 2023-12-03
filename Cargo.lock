@@ -2649,7 +2649,7 @@ dependencies = [
  "chrono",
  "futures",
  "http 1.0.0",
- "in-memory-user-repository",
+ "mongo-user-repository",
  "once_cell",
  "rscx",
  "serde",

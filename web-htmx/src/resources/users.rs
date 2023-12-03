@@ -8,7 +8,7 @@ use axum_flash::Flash;
 use axum_login::AuthSession;
 use futures::future::join_all;
 use http::{HeaderMap, StatusCode};
-use in_memory_user_repository::InMemoryUserStore;
+use mongo_user_repository::MongoUserStore;
 use rscx::{component, html, props};
 use serde::Deserialize;
 
@@ -64,7 +64,7 @@ struct LoginForm {
 
 async fn post_login(
     State(WebHtmxState { auth_service, .. }): State<WebHtmxState>,
-    mut auth: AuthSession<InMemoryUserStore>,
+    mut auth: AuthSession<MongoUserStore>,
     _flash: Flash,
     Form(login_form): Form<LoginForm>,
 ) -> impl IntoResponse {

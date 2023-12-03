@@ -1,4 +1,6 @@
-use auth_service::{create_user::CreateUserInput, service::AuthService};
+use auth_service::{
+    create_user::CreateUserInput, get_user_for_login::GetUserForLoginInput, service::AuthService,
+};
 use axum::{
     error_handling::HandleErrorLayer, http::StatusCode, response::IntoResponse, routing::get,
     BoxError, Router,
@@ -235,13 +237,24 @@ async fn main() {
     let auth_service = AuthService::new(user_repository.clone());
 
     // Create a default user
-    auth_service
-        .create_user(CreateUserInput {
+    let existing_user = auth_service
+        .get_user_for_login(GetUserForLoginInput {
             email: "user@yallchart.com".into(),
             password: "password".into(),
         })
-        .await
-        .expect("Failed to create default user");
+        .await;
+    if existing_user.is_ok() {
+        println!("Default user already exists");
+    } else {
+        println!("Creating default user");
+        auth_service
+            .create_user(CreateUserInput {
+                email: "user@yallchart.com".into(),
+                password: "password".into(),
+            })
+            .await
+            .expect("Failed to create default user");
+    }
 
     // Create WebHtmxState
     let web_htmx_state = WebHtmxState {

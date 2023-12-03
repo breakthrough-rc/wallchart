@@ -17,3 +17,17 @@ services:
         value: 18
       - key: OUT_DIR
         value: "out"
+      - key: AUTH_MONGO_DB_URL
+        fromService:
+          type: pserv
+          name: auth-mongo
+          property: connectionString
+          
+  - type: pserv
+    name: auth-mongo
+    env: docker
+    autoDeploy: false
+    disk:
+      name: data
+      mountPath: /data/db
+      sizeGB: 10
