@@ -21,7 +21,7 @@ services:
   - type: pserv
     runtime: image
     image: 
-      url: docker.io/mongo:7.0.4
+      url: mongo:7.0.4
     name: auth-mongo
     autoDeploy: false
     disk:
