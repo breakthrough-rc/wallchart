@@ -1,4 +1,4 @@
-use std::sync::Arc;
+
 
 use axum::{
     middleware,
@@ -28,9 +28,9 @@ use resources::tags::tags_routes;
 use resources::users::users_routes;
 use resources::workers::workers_routes;
 use resources::worksite::worksite_routes;
-use routes::{CLIENT, HOME, HOME_REDIRECT, LOGIN, PLAYGROUND};
+use routes::{CLIENT, HOME, HOME_REDIRECT, PLAYGROUND};
 
-use crate::routes::login;
+
 
 pub mod components;
 pub mod context;
