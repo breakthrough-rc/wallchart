@@ -1,0 +1,19 @@
+[package]
+name = "mongo-user-repository"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+async-trait = { workspace = true }
+auth-service = { path = "../../auth-service" }
+axum-login = { workspace = true }
+mongodb = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true, features = ["full"] }
+tracing = { workspace = true }
+
+[dev-dependencies]
+testcontainers = { workspace = true }
+mongo-testcontainer = { path = "../../../libs/mongo-testcontainer" }

@@ -1151,6 +1151,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "mongo-user-repository"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "auth-service",
+ "axum-login",
+ "mongo-testcontainer",
+ "mongodb",
+ "testcontainers",
+ "thiserror",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
 name = "mongodb"
 version = "2.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
