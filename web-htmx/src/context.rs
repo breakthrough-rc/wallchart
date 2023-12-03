@@ -8,6 +8,7 @@ use crate::state::WebHtmxState;
 pub struct Context {
     pub page_url: String,
     pub worksite_id: String,
+    pub worksite_name: String,
 }
 
 tokio::task_local! {
@@ -26,9 +27,16 @@ pub async fn provide_context_layer(
         .unwrap_or(None)
         .unwrap_or(state.default_worksite_id);
 
+    let worksite_name: String = session
+        .get("selected_worksite_name")
+        .ok()
+        .unwrap_or(None)
+        .unwrap_or(state.default_worksite_name);
+
     let context = Context {
         page_url: request.uri().path().to_string(),
         worksite_id,
+        worksite_name,
     };
 
     // Set the context for this request.

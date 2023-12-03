@@ -22,13 +22,14 @@ use worksite_service::{
 };
 
 const DEFAULT_WORKSITE_ID: &str = "1";
+const DEFAULT_WORKSITE_NAME: &str = "Dunder Miflin";
 
 #[tokio::main]
 async fn main() {
     // Create worksite service
     let worksite = Worksite {
         id: DEFAULT_WORKSITE_ID.into(),
-        name: "Dunder Mifflin".into(),
+        name: DEFAULT_WORKSITE_NAME.into(),
         locations: vec![
             Location {
                 id: "1".into(),
@@ -239,6 +240,7 @@ async fn main() {
         worksite_service: Arc::new(worksite_service),
         flash_config: axum_flash::Config::new(axum_flash::Key::generate()),
         default_worksite_id: DEFAULT_WORKSITE_ID.into(),
+        default_worksite_name: DEFAULT_WORKSITE_NAME.into(),
     };
 
     let app = Router::new()

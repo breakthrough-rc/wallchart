@@ -230,3 +230,7 @@ pub fn selected_worksite() -> String {
     SELECTED_WORKSITE.into()
 }
 
+pub const SELECTED_WORKSITE_MODAL: &str = "/selected-worksite/modal";
+pub fn selected_worksite_modal() -> String {
+    SELECTED_WORKSITE_MODAL.into()
+}

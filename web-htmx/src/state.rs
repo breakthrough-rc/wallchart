@@ -6,6 +6,7 @@ use worksite_service::service::WorksiteService;
 #[derive(Clone)]
 pub struct WebHtmxState {
     pub default_worksite_id: String,
+    pub default_worksite_name: String,
     pub auth_service: Arc<AuthService>,
     pub worksite_service: Arc<WorksiteService>,
     pub flash_config: axum_flash::Config,

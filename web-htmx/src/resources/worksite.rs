@@ -9,10 +9,8 @@ use axum_flash::IncomingFlashes;
 use rscx::{component, html, props, CollectFragment, CollectFragmentAsync};
 
 use web_client::server::{
-    attrs::Attrs,
     button::{PrimaryButton, SecondaryButton},
     card::Card,
-    form::{GridCell, GridLayout, Select},
     modal::modal_target,
     notification::NotificationFlashes,
 };
@@ -55,44 +53,11 @@ async fn get_worksite(
 
     let worksite_name = worksite.name.clone();
 
-    let worksites = worksite_service.get_worksites().await.unwrap();
-
     let html = html! {
         <PageLayout
             header=PageHeader::Toolbar {
                 title: format!("Wallchart: {}", worksite_name),
                 buttons: html! {
-                    <form hx-put=routes::selected_worksite() hx-trigger="change">
-                        <GridLayout>
-                            <GridCell>
-                                <Select
-                                    name="selected_worksite_id"
-                                >
-                                {
-                                    worksites
-                                        .iter()
-                                        .map(|w| async {
-                                            html! {
-                                                <option
-                                                    value=w.id.clone()
-                                                    {
-                                                        String::from(
-                                                            Attrs::default()
-                                                                .set_if("selected", "true".into(), w.id == worksite_id)
-                                                        )
-                                                    }
-                                                >
-                                                    {w.name.clone()}
-                                                </option>
-                                            }
-                                        })
-                                        .collect_fragment_async()
-                                        .await
-                                }
-                                </Select>
-                            </GridCell>
-                        </GridLayout>
-                    </form>
                     <SecondaryButton
                         hx_get=locations_new_modal(&worksite_id)
                         hx_target=modal_target()
@@ -138,8 +103,6 @@ async fn get_wallchart_page(
         .ok_or("Worksite not found")
         .unwrap();
 
-    let worksites = worksite_service.get_worksites().await.unwrap();
-
     let worksite_name = worksite.name.clone();
 
     let html = html! {
@@ -147,37 +110,6 @@ async fn get_wallchart_page(
             header=PageHeader::Toolbar {
                 title: format!("Wallchart: {}", worksite_name),
                 buttons: html! {
-                    <form hx-put=routes::selected_worksite() hx-trigger="change">
-                        <GridLayout>
-                            <GridCell>
-                                <Select
-                                    name="selected_worksite_id"
-                                >
-                                {
-                                    worksites
-                                        .iter()
-                                        .map(|w| async {
-                                            html! {
-                                                <option
-                                                    value=w.id.clone()
-                                                    {
-                                                        String::from(
-                                                            Attrs::default()
-                                                                .set_if("selected", "true".into(), w.id == id)
-                                                        )
-                                                    }
-                                                >
-                                                    {w.name.clone()}
-                                                </option>
-                                            }
-                                        })
-                                        .collect_fragment_async()
-                                        .await
-                                }
-                                </Select>
-                            </GridCell>
-                        </GridLayout>
-                    </form>
                     <SecondaryButton
                         hx_get=locations_new_modal(&id)
                         hx_target=modal_target()

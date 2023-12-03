@@ -1,5 +1,6 @@
 use rscx::{component, html, props, CollectFragment};
 
+use web_client::server::modal::modal_target;
 use web_client::server::popup_menu::{Menu, PopupMenu};
 
 use crate::components::logo::Logo;
@@ -19,6 +20,7 @@ pub fn Nav() -> String {
         crate::context::context().expect("Unable to retrieve htmx context.");
 
     let worksite_id = ctx.worksite_id.clone();
+    let worksite_name = ctx.worksite_name.clone();
 
     let nav_links = [
         ("Wallchart", routes::wallchart()),
@@ -70,14 +72,14 @@ pub fn Nav() -> String {
                         </div>
                     </div>
                     <div class="hidden sm:ml-6 sm:flex sm:items-center">
-                        <button type="button" class="relative rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                            <span class="absolute -inset-1.5"></span>
-                            <span class="sr-only">View notifications</span>
-                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-                            </svg>
-                        </button>
-
+                        <a
+                            hx-get=routes::selected_worksite_modal()
+                            hx-target=modal_target()
+                            hx-swap="beforeend"
+                            class="cursor-pointer text-indigo-600 hover:text-indigo-900 whitespace-pre-line"
+                        >
+                            {worksite_name.clone()} " ⌄"
+                        </a>
                         <ProfileDropdown />
                     </div>
 
