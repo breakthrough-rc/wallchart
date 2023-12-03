@@ -9,7 +9,9 @@ edition = "2021"
 async-trait = { workspace = true }
 auth-service = { path = "../../auth-service" }
 axum-login = { workspace = true }
+futures = { workspace = true }
 mongodb = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
 thiserror = { workspace = true }
 tokio = { workspace = true, features = ["full"] }
 tracing = { workspace = true }
