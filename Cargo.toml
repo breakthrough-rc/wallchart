@@ -19,9 +19,9 @@ members = [
 
 async-trait = { version = "0.1.73" }
 axum = { version = "0.7.1" }
+axum-extra = { version = "0.9.0", features = ["form", "cookie"] }
 axum-flash = { version = "0.8.0" }
 axum-login = { version = "0.10.2" }
-axum-extra = { version = "0.9.0", features = ["form", "cookie"] }
 axum-macros = { version = "0.4.0" }
 chrono = { version = "0.4.31" }
 csv = { version = "1.3.0" }
@@ -30,6 +30,7 @@ diesel-async = { version = "0.4.1" }
 diesel_migrations = { version = "2.1.0" }
 futures = { version = "0.3.29" }
 http = { version = "1.0.0" }
+mongodb = { version = "2.7.1" }
 nonempty = { version = "0.9.0" }
 once_cell = { version = "1.18.0" }
 password-auth = { version = "1.0.0" }
@@ -42,8 +43,8 @@ serde_json = { version = "1.0.107" }
 sha2 = { version = "0.10.8" }
 sha256 = { version = "1.4.0" }
 syn = { version = "2.0.38" }
-thiserror = { version = "1.0" }
 testcontainers = { version = "0.15.0" }
+thiserror = { version = "1.0" }
 tokio = { version = "1.32.0" }
 tower = { version = "0.4.13" }
 tower-http = { version = "0.5.0" }

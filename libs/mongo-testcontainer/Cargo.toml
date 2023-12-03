@@ -9,3 +9,6 @@ edition = "2021"
 async-trait = { workspace = true }
 testcontainers = { workspace = true }
 tokio = { workspace = true, features = ["full"] }
+
+[dev-dependencies]
+mongodb = { workspace = true }
