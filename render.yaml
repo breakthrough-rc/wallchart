@@ -19,10 +19,10 @@ services:
         value: "out"
           
   - type: pserv
-    image: 
-      url: docker.io/mongo/mongo:7.0.4
-    name: auth-mongo
     runtime: image
+    image: 
+      url: docker.io/mongo:7.0.4
+    name: auth-mongo
     autoDeploy: false
     disk:
       name: data
