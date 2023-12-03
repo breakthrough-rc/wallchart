@@ -1,5 +1,5 @@
 use axum::{body::Body, extract::State, http::Request, middleware::Next, response::Response};
-use axum_extra::extract::CookieJar;
+use axum_login::tower_sessions::Session;
 use std::future::Future;
 
 use crate::state::WebHtmxState;
@@ -16,15 +16,15 @@ tokio::task_local! {
 
 pub async fn provide_context_layer(
     State(state): State<WebHtmxState>,
-    jar: CookieJar,
+    session: Session,
     request: Request<Body>,
     next: Next,
 ) -> Response {
-    let worksite_id: String = if let Some(id) = jar.get("selected_worksite_id") {
-        id.value().to_string()
-    } else {
-        state.default_worksite_id.clone()
-    };
+    let worksite_id: String = session
+        .get("selected_worksite_id")
+        .ok()
+        .unwrap_or(None)
+        .unwrap_or(state.default_worksite_id);
 
     let context = Context {
         page_url: request.uri().path().to_string(),

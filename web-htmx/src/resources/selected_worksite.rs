@@ -1,7 +1,7 @@
 use crate::routes;
 use crate::state::WebHtmxState;
 use axum::{response::IntoResponse, routing::put, Form, Router};
-use axum_extra::extract::{cookie::Cookie, CookieJar};
+use axum_login::tower_sessions::Session;
 use http::StatusCode;
 use serde::Deserialize;
 
@@ -17,15 +17,15 @@ struct SetSelectedWorksiteFormData {
 }
 
 async fn put_selected_worksite(
-    jar: CookieJar,
+    session: Session,
     Form(form): Form<SetSelectedWorksiteFormData>,
 ) -> impl IntoResponse {
+    session.insert_value(
+        "selected_worksite_id",
+        form.selected_worksite_id.clone().into(),
+    );
     (
         StatusCode::OK,
-        jar.add(Cookie::new(
-            "selected_worksite_id",
-            form.selected_worksite_id.clone(),
-        )),
         [
             ("hx-redirect", routes::worksite(&form.selected_worksite_id)),
             ("hx-retarget", "body".into()),

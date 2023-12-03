@@ -250,10 +250,16 @@ async fn main() {
 
     // Session and Auth Management
     let session_store = MemoryStore::default();
-    let session_layer = SessionManagerLayer::new(session_store).with_secure(false);
+    let session_service = ServiceBuilder::new()
+        .layer(HandleErrorLayer::new(|_: BoxError| async {
+            StatusCode::BAD_REQUEST
+        }))
+        .layer(SessionManagerLayer::new(session_store.clone()).with_secure(false));
+
     let user_memory_store = InMemoryUserStore {
         users: user_repository.clone(),
     };
+    let session_layer = SessionManagerLayer::new(session_store).with_secure(false);
     let auth_layer = ServiceBuilder::new()
         .layer(HandleErrorLayer::new(|_: BoxError| async {
             StatusCode::BAD_REQUEST
@@ -261,6 +267,7 @@ async fn main() {
         .layer(AuthManagerLayerBuilder::new(user_memory_store, session_layer).build());
 
     let app = app.layer(auth_layer);
+    let app = app.layer(session_service);
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
     let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
