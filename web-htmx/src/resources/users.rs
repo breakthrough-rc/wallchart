@@ -31,20 +31,18 @@ use crate::{
         page::{PageHeader, PageLayout},
         page_content::PageContent,
     },
-    routes::{
-        self, home, login, users, users_new, users_new_modal, LOGIN, USER, USERS, USERS_NEW,
-        USERS_NEW_MODAL,
-    },
+    routes::{self, home, login, users, users_new, users_new_modal},
     state::WebHtmxState,
 };
 
 pub fn users_routes(state: WebHtmxState) -> Router {
     Router::new()
-        .route(LOGIN, get(get_login).post(post_login))
-        .route(USERS, get(get_users).post(post_users))
-        .route(USERS_NEW, get(get_users_form))
-        .route(USER, get(get_user_detail).delete(delete_user))
-        .route(USERS_NEW_MODAL, get(get_users_form_modal))
+        .route(routes::LOGIN, get(get_login).post(post_login))
+        .route(routes::USERS, get(get_users).post(post_users))
+        .route(routes::USERS_NEW, get(get_users_form))
+        .route(routes::USER, get(get_user_detail).delete(delete_user))
+        .route(routes::USER_MODAL, get(get_user_detail_modal))
+        .route(routes::USERS_NEW_MODAL, get(get_users_form_modal))
         .with_state(state)
 }
 
@@ -150,7 +148,7 @@ pub fn UserTableRow(user: User) -> String {
     html! {
         <TableData variant=TDVariant::First>
             <button
-                hx-get=routes::user(&user.id)
+                hx-get=routes::user_modal(&user.id)
                 hx-target=modal_target()
             >
                 {&user.email}
@@ -313,6 +311,30 @@ async fn get_user_detail(
                 role="Organizer"
              />
         </PageLayout>
+    })
+}
+
+async fn get_user_detail_modal(
+    extract::Path(user_id): extract::Path<String>,
+    State(WebHtmxState { auth_service, .. }): State<WebHtmxState>,
+) -> impl IntoResponse {
+    let user = auth_service
+        .get_user(GetUserInput {
+            user_id: user_id.clone(),
+        })
+        .await
+        .expect("Failed to get user")
+        .ok_or("User not found")
+        .expect("User not found");
+
+    Html(html! {
+        <Modal size=ModalSize::MediumScreen>
+            <AddUserForm
+                action=routes::user(&user.id)
+                email=user.email.clone()
+                role="Organizer"
+             />
+        </Modal>
     })
 }
 

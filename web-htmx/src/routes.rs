@@ -203,6 +203,11 @@ pub fn user(user_id: &String) -> String {
     format!("/users/{}", user_id)
 }
 
+pub const USER_MODAL: &str = "/users/:user_id/modal";
+pub fn user_modal(user_id: &String) -> String {
+    format!("/users/{}/modal", user_id)
+}
+
 pub const ASSIGNED_TAGS: &str = "/worksites/:worksite_id/workers/:worker_id/tags";
 pub fn assigned_tags(worksite_id: &String, worker_id: &String) -> String {
     format!("/worksites/{}/workers/{}/tags", worksite_id, worker_id)
