@@ -5,10 +5,7 @@ use axum::{
     error_handling::HandleErrorLayer, http::StatusCode, response::IntoResponse, routing::get,
     BoxError, Router,
 };
-use axum_login::{
-    tower_sessions::{MemoryStore, SessionManagerLayer},
-    AuthManagerLayerBuilder,
-};
+use axum_login::{tower_sessions::SessionManagerLayer, AuthManagerLayerBuilder};
 use chrono::prelude::*;
 use environment::load_environment;
 use mongo_user_repository::{MongoUserRepository, MongoUserStore};
@@ -16,6 +13,7 @@ use std::{net::SocketAddr, sync::Arc};
 use tower::ServiceBuilder;
 
 use in_memory_worksite_repository::InMemoryWorksiteRepository;
+use tower_sessions::{mongodb::Client, MongoDBStore};
 use web_htmx::{livereload, routes as web_routes, state::WebHtmxState};
 use worksite_service::{
     models::{
@@ -273,7 +271,10 @@ async fn main() {
     let app = app.layer(livereload::layer());
 
     // Session and Auth Management
-    let session_store = MemoryStore::default();
+    let client = Client::with_uri_str(&env.auth_mongo_db_url)
+        .await
+        .expect("Failed to create mongo client");
+    let session_store = MongoDBStore::new(client, "sessions".to_string());
     let session_service = ServiceBuilder::new()
         .layer(HandleErrorLayer::new(|_: BoxError| async {
             StatusCode::BAD_REQUEST
