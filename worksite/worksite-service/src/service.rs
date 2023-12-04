@@ -9,6 +9,9 @@ use crate::{
     assign_tags::{AssignTags, AssignTagsInput, AssignTagsOutput},
     assign_worker::{AssignWorker, AssignWorkerInput, AssignWorkerOutput},
     //##PLOP INSERT COMMAND IMPORTS HOOK##
+    create_worksite::{
+      CreateWorksite, CreateWorksiteInput, CreateWorksiteOutput, 
+    },
     csv_upload::{CsvUpload, CsvUploadInput, CsvUploadOutput},
     get_assessment::{GetAssessment, GetAssessmentInput, GetAssessmentOutput},
     get_assessments::{GetAssessments, GetAssessmentsInput, GetAssessmentsOutput},
@@ -33,6 +36,7 @@ use crate::{
 #[derive(Clone)]
 pub struct WorksiteService {
     //##PLOP INSERT COMMAND HOOK##
+    pub create_worksite: CreateWorksite,
     pub csv_upload: CsvUpload,
     pub remove_assessment: RemoveAssessment,
     pub get_assessment: GetAssessment,
@@ -61,6 +65,10 @@ impl WorksiteService {
     pub fn new(worksite_repository: Arc<dyn WorksiteRepository>) -> Self {
         Self {
             //##PLOP INSERT COMMAND INSTANTIATION HOOK##
+            create_worksite: CreateWorksite {
+              // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
+              worksite_repository: worksite_repository.clone(),
+            },
             csv_upload: CsvUpload {
                 // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
                 worksite_repository: worksite_repository.clone(),
@@ -139,6 +147,13 @@ impl WorksiteService {
         }
     }
     //##PLOP INSERT DELEGATE HOOK##
+    pub async fn create_worksite(
+        &self,
+        input: CreateWorksiteInput,
+    ) -> CreateWorksiteOutput {
+        self.create_worksite.create_worksite(input).await
+    }
+
     pub async fn get_worksites(&self) -> GetWorksitesOutput {
         self.get_worksites.get_worksites().await
     }

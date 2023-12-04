@@ -1,20 +1,26 @@
 use axum::{
     extract::{self, State},
-    response::{Html, IntoResponse},
-    routing::get,
-    Router,
+    response::{Html, IntoResponse, Redirect},
+    routing::{get, post},
+    Form, Router,
 };
-use axum_flash::IncomingFlashes;
+use axum_flash::{Flash, IncomingFlashes};
 
+use axum_login::tower_sessions::Session;
+use http::StatusCode;
 use rscx::{component, html, props, CollectFragment, CollectFragmentAsync};
 
+use serde::Deserialize;
 use web_client::server::{
     button::{PrimaryButton, SecondaryButton},
     card::Card,
-    modal::modal_target,
+    form::{Button, GridCell, GridLayout, Label, TextInput},
+    headers::SecondaryHeader,
+    modal::{modal_target, Modal, ModalSize},
     notification::NotificationFlashes,
 };
 use worksite_service::{
+    create_worksite::CreateWorksiteInput,
     get_worksite::GetWorksiteInput,
     models::{Location as LocationModel, Tag, Worker, Worksite},
 };
@@ -24,14 +30,16 @@ use crate::{
         page::{PageHeader, PageLayout},
         page_content::PageContent,
     },
-    routes::{self, locations_new, locations_new_modal, WALLCHART, WORKSITE},
+    routes::{self, locations_new, locations_new_modal},
     state::WebHtmxState,
 };
 
 pub fn worksite_routes(state: WebHtmxState) -> Router {
     Router::new()
-        .route(WALLCHART, get(get_wallchart_page))
-        .route(WORKSITE, get(get_worksite))
+        .route(routes::WALLCHART, get(get_wallchart_page))
+        .route(routes::WORKSITE, get(get_worksite))
+        .route(routes::WORKSITES_MODAL, get(get_new_worksite_modal))
+        .route(routes::WORKSITES, post(post_worksite))
         .with_state(state)
 }
 
@@ -66,6 +74,14 @@ async fn get_worksite(
                     >
                         Add New Location
                     </SecondaryButton>
+                    <SecondaryButton
+                        hx_get=routes::worksites_modal()
+                        hx_target=modal_target()
+                        hx_swap="beforeend"
+                        hx_push_url=routes::worksites_modal()
+                    >
+                        Add New Worksite
+                    </SecondaryButton>
                     <PrimaryButton
                         onclick="alert('Coming soon!')"
                     >
@@ -86,56 +102,12 @@ async fn get_worksite(
     (flashes, Html(html))
 }
 
-async fn get_wallchart_page(
-    flashes: IncomingFlashes,
-    State(WebHtmxState {
-        worksite_service, ..
-    }): State<WebHtmxState>,
-) -> impl IntoResponse {
+async fn get_wallchart_page() -> impl IntoResponse {
     let ctx: crate::context::Context =
         crate::context::context().expect("Unable to retrieve htmx context.");
     let id = ctx.worksite_id.clone();
 
-    let worksite = worksite_service
-        .get_worksite(GetWorksiteInput { id: id.clone() })
-        .await
-        .unwrap()
-        .ok_or("Worksite not found")
-        .unwrap();
-
-    let worksite_name = worksite.name.clone();
-
-    let html = html! {
-        <PageLayout
-            header=PageHeader::Toolbar {
-                title: format!("Wallchart: {}", worksite_name),
-                buttons: html! {
-                    <SecondaryButton
-                        hx_get=locations_new_modal(&id)
-                        hx_target=modal_target()
-                        hx_swap="beforeend"
-                        hx_push_url=locations_new(&id)
-                    >
-                        Add New Location
-                    </SecondaryButton>
-                    <PrimaryButton
-                        onclick="alert('Coming soon!')"
-                    >
-                        Edit Worksite
-                    </PrimaryButton>
-                }
-            }
-        >
-            <NotificationFlashes flashes=flashes.clone() />
-            <PageContent title="Manage your worksite and more">
-                <Card>
-                    <WallchartTable worksite=worksite/>
-                </Card>
-            </PageContent>
-        </PageLayout>
-    };
-
-    (flashes, Html(html))
+    Redirect::temporary(&routes::worksite(&id)).into_response()
 }
 
 #[props]
@@ -347,4 +319,59 @@ pub fn WorkerRow(props: WorkerRowProps) -> String {
             </td>
         </tr>
     }
+}
+
+async fn get_new_worksite_modal() -> impl IntoResponse {
+    Html(html! {
+        <Modal size=ModalSize::MediumScreen>
+            <SecondaryHeader
+                title="Create Worksite"
+                subtitle="Create a new worksite"
+            />
+            <form hx-post=routes::worksites()>
+                <GridLayout>
+                    <GridCell>
+                        <Label for_input="worksite_name">Name</Label>
+                        <TextInput name="worksite_name" />
+                    </GridCell>
+                    <GridCell>
+                        <Button kind="submit">Create</Button>
+                    </GridCell>
+                </GridLayout>
+            </form>
+        </Modal>
+    })
+}
+
+#[derive(Deserialize, Debug, Clone)]
+struct WorksiteFormData {
+    worksite_name: String,
+}
+
+async fn post_worksite(
+    flash: Flash,
+    session: Session,
+    State(WebHtmxState {
+        worksite_service, ..
+    }): State<WebHtmxState>,
+    Form(form): Form<WorksiteFormData>,
+) -> impl IntoResponse {
+    let worksite = worksite_service
+        .create_worksite(CreateWorksiteInput {
+            worksite_name: form.worksite_name,
+        })
+        .await
+        .expect("Failed to create worker");
+
+    session.insert_value("selected_worksite_id", worksite.id.clone().into());
+    session.insert_value("selected_worksite_name", worksite.name.clone().into());
+
+    (
+        StatusCode::OK,
+        flash.success("Worksite created successfully!"),
+        [
+            ("hx-redirect", routes::worksite(&worksite.id)),
+            ("hx-retarget", "body".into()),
+        ],
+    )
 }

@@ -48,6 +48,16 @@ pub fn worksite(worksite_id: &String) -> String {
     format!("/worksites/{}", worksite_id)
 }
 
+pub const WORKSITES: &str = "/worksites";
+pub fn worksites() -> String {
+    WORKSITES.into()
+}
+
+pub const WORKSITES_MODAL: &str = "/worksites/modal";
+pub fn worksites_modal() -> String {
+    WORKSITES_MODAL.into()
+}
+
 pub const LOCATIONS: &str = "/worksites/:worksite_id/locations";
 pub fn locations(worksite_id: &String) -> String {
     format!("/worksites/{}/locations", worksite_id)
