@@ -187,6 +187,9 @@ pub struct UserFormProps {
 
     #[builder(setter(into), default)]
     role: String,
+
+    #[builder(setter(into), default = true)]
+    show_password: bool,
 }
 
 #[component]
@@ -200,10 +203,17 @@ pub fn UserForm(props: UserFormProps) -> String {
                         <TextInput name="email" autocomplete="email" input_type="email" value=props.email/>
                     </GridCell>
 
-                    <GridCell span=3>
-                        <Label for_input="password">Password</Label>
-                        <TextInput name="password" autocomplete="password" input_type="password" />
-                    </GridCell>
+                    {
+                        if props.show_password {
+                            html! {
+                                <GridCell span=3>
+                                    <Label for_input="password">Password</Label>
+                                    <TextInput name="password" autocomplete="password" input_type="password" />
+                                </GridCell>
+                            }
+                        }
+                        else { "".into() }
+                    }
 
                     <GridCell span=3>
                         <Label for_input="role">Role</Label>
@@ -291,6 +301,7 @@ async fn get_user_detail_modal(
                 action=routes::user(&user.id)
                 email=user.email.clone()
                 role="Organizer"
+                show_password=false
              />
         </Modal>
     })
