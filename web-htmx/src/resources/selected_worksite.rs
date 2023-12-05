@@ -11,7 +11,6 @@ use http::StatusCode;
 use rscx::{html, CollectFragmentAsync};
 use serde::Deserialize;
 use web_client::server::{
-    attrs::Attrs,
     form::{Button, GridCell, GridLayout, Select, SelectOption},
     headers::SecondaryHeader,
     modal::{Modal, ModalSize},
