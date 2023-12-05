@@ -111,7 +111,7 @@ pub fn UserTableRow(user: User) -> String {
             </button>
         </TableData>
         <TableData>
-            Organizer
+            {&user.role}
         </TableData>
         <TableData variant=TDVariant::Last>
             <DeleteActionLink
@@ -305,7 +305,7 @@ async fn get_user_detail_modal(
             <UserForm
                 action=routes::user(&user.id)
                 email=user.email.clone()
-                role="Organizer"
+                role=user.role
                 show_password=false
              />
         </Modal>

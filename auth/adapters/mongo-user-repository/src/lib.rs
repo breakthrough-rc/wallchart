@@ -13,6 +13,7 @@ struct UserRecord {
     pub id: String,
     pub email: String,
     pub hashed_password: String,
+    pub role: String,
 }
 
 impl UserRecord {
@@ -21,7 +22,7 @@ impl UserRecord {
             id: self.id.clone(),
             email: self.email.clone(),
             hashed_password: self.hashed_password.clone(),
-            role: "Organizer".to_string(),
+            role: self.role.clone(),
         }
     }
 }
@@ -31,6 +32,7 @@ fn to_user_record(user: &User) -> UserRecord {
         id: user.id.clone(),
         email: user.email.clone(),
         hashed_password: user.hashed_password.clone(),
+        role: user.role.clone(),
     }
 }
 

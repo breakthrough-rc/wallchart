@@ -48,7 +48,7 @@ pub async fn provide_context_layer(
         Some(user) => Some(LoggedInUser {
             id: user.id,
             email: user.email,
-            role: "superadmin".into(), // TODO: get this from the user
+            role: user.role,
         }),
         None => None,
     };
