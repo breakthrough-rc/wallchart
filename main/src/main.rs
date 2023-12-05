@@ -13,7 +13,7 @@ use std::{net::SocketAddr, sync::Arc};
 use tower::ServiceBuilder;
 
 use in_memory_worksite_repository::InMemoryWorksiteRepository;
-use tower_sessions::{mongodb::Client, MongoDBStore};
+use tower_sessions::{cookie::time::Duration, mongodb::Client, Expiry, MongoDBStore};
 use web_htmx::{livereload, routes as web_routes, state::WebHtmxState};
 use worksite_service::{
     models::{
@@ -284,12 +284,21 @@ async fn main() {
     let user_memory_store = MongoUserStore {
         users: user_repository.clone(),
     };
-    let session_layer = SessionManagerLayer::new(session_store).with_secure(false);
+    let session_layer = SessionManagerLayer::new(session_store)
+        .with_secure(false)
+        .with_expiry(Expiry::OnInactivity(Duration::hours(1)));
     let auth_layer = ServiceBuilder::new()
         .layer(HandleErrorLayer::new(|_: BoxError| async {
             StatusCode::BAD_REQUEST
         }))
-        .layer(AuthManagerLayerBuilder::new(user_memory_store, session_layer).build());
+        .layer(
+            AuthManagerLayerBuilder::new(user_memory_store, session_layer)
+                // This data key is where the user is stored in the session.
+                // We give it a known name so we can access it to check if a user is logged in,
+                // later
+                .with_data_key("x.logged.in.user")
+                .build(),
+        );
 
     let app = app.layer(auth_layer);
     let app = app.layer(session_service);

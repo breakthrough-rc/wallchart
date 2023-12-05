@@ -9,6 +9,7 @@ pub struct Context {
     pub page_url: String,
     pub worksite_id: String,
     pub worksite_name: String,
+    pub logged_in: bool,
 }
 
 tokio::task_local! {
@@ -37,6 +38,10 @@ pub async fn provide_context_layer(
         page_url: request.uri().path().to_string(),
         worksite_id,
         worksite_name,
+        // Manual check of a key set in the session by axum-login. See where this is configured in
+        // main.rs. Using get_value instead of get so I dont have to provide the type (instead its
+        // json)
+        logged_in: session.get_value("x.logged.in.user").is_some(),
     };
 
     // Set the context for this request.

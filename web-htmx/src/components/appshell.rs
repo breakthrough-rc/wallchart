@@ -36,9 +36,13 @@ pub struct AppShellProps {
 
 #[component]
 pub fn AppShell(props: AppShellProps) -> String {
+    let ctx: crate::context::Context =
+        crate::context::context().expect("Unable to retrieve htmx context.");
+    let is_logged_in = ctx.logged_in.clone();
+
     html! {
         <div class="min-h-full" data-yc-app>
-            <Nav />
+            { if is_logged_in { html! { <Nav /> } } else { html! {} } }
             <MainContent header=props.header>
                 {props.children}
             </MainContent>
