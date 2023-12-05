@@ -160,7 +160,7 @@ async fn get_users_form(headers: HeaderMap) -> impl IntoResponse {
             partial=headers.contains_key("Hx-Request")
             header="Add User"
         >
-            <AddUserForm action=routes::users() />
+            <UserForm action=routes::users() />
         </PageLayout>
     })
 }
@@ -172,13 +172,13 @@ async fn get_users_form_modal() -> impl IntoResponse {
                 title="Add User"
                 subtitle="Enter user details below."
             />
-            <AddUserForm action=routes::users() />
+            <UserForm action=routes::users() />
         </Modal>
     })
 }
 
 #[props]
-pub struct AddUserFormProps {
+pub struct UserFormProps {
     #[builder(setter(into))]
     action: String,
 
@@ -190,7 +190,7 @@ pub struct AddUserFormProps {
 }
 
 #[component]
-pub fn AddUserForm(props: AddUserFormProps) -> String {
+pub fn UserForm(props: UserFormProps) -> String {
     html! {
         <form hx-post=props.action>
             <div class="pb-12">
@@ -259,7 +259,7 @@ async fn get_user_detail(
 
     Html(html! {
         <PageLayout header=user.email.clone()>
-            <AddUserForm
+            <UserForm
                 action=routes::user(&user.id)
                 email=user.email.clone()
                 role="Organizer"
@@ -283,7 +283,7 @@ async fn get_user_detail_modal(
 
     Html(html! {
         <Modal size=ModalSize::MediumScreen>
-            <AddUserForm
+            <UserForm
                 action=routes::user(&user.id)
                 email=user.email.clone()
                 role="Organizer"
