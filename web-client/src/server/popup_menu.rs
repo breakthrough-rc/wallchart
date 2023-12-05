@@ -19,7 +19,7 @@ pub struct MenuLink {
     #[builder(setter(into))]
     label: String,
 
-    #[builder(setter(into))]
+    #[builder(setter(into), default="".into())]
     sr_suffix: String,
 
     #[builder(default=Attrs::default())]
