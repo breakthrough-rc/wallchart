@@ -1,8 +1,5 @@
 use axum::{body::Body, extract::State, http::Request, middleware::Next, response::Response};
-use axum_login::{
-    tower_sessions::{MongoDBStore, Session},
-    AuthSession,
-};
+use axum_login::{tower_sessions::Session, AuthSession};
 use mongo_user_repository::MongoUserStore;
 use std::future::Future;
 
@@ -50,8 +47,8 @@ pub async fn provide_context_layer(
 
     let current_user = match auth.user {
         Some(user) => Some(LoggedInUser {
-            id: user.id.into(),
-            email: user.email.into(),
+            id: user.id,
+            email: user.email,
             role: "superadmin".into(), // TODO: get this from the user
         }),
         None => None,
