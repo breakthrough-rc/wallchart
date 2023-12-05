@@ -1,4 +1,4 @@
-use auth_service::ports::user_repository;
+
 use rscx::{component, html, props, CollectFragment};
 
 use web_client::server::attrs::Attrs;
@@ -193,7 +193,7 @@ fn ProfileDropdown() -> String {
         >
             <Menu
                 id="user-nav-menu"
-                links=profile_links().into_iter().map(|link| link.into()).collect()
+                links=profile_links().into_iter().collect()
             />
         </PopupMenu>
     }
