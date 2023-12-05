@@ -13,7 +13,7 @@ use serde::Deserialize;
 use web_client::server::{
     attrs::Attrs,
     button::SecondaryButton,
-    form::{Button, GridCell, GridLayout, Label, Select},
+    form::{Button, GridCell, GridLayout, Label, Select, SelectOption},
     headers::SecondaryHeader,
     modal::{Modal, ModalSize},
 };
@@ -176,7 +176,7 @@ fn AssignShiftForm(props: AssignShiftFormProps) -> String {
                                     .iter()
                                     .map(|worker| async {
                                         html! {
-                                            <option value=worker.id>{worker.full_name()}</option>
+                                            <SelectOption value=worker.id.to_string()>{worker.full_name()}</SelectOption>
                                         }
                                     })
                                     .collect_fragment_async()

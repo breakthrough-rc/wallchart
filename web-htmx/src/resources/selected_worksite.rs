@@ -12,7 +12,7 @@ use rscx::{html, CollectFragmentAsync};
 use serde::Deserialize;
 use web_client::server::{
     attrs::Attrs,
-    form::{Button, GridCell, GridLayout, Select},
+    form::{Button, GridCell, GridLayout, Select, SelectOption},
     headers::SecondaryHeader,
     modal::{Modal, ModalSize},
 };
@@ -91,26 +91,19 @@ async fn get_selected_worksite_modal(
                                 .iter()
                                 .map(|w| async {
                                     html! {
-                                        <option
+                                        <SelectOption
                                             value=w.id.clone()
-                                            {
-                                                String::from(
-                                                    Attrs::default()
-                                                        .set_if("selected", "true".into(), w.id == worksite_id)
-                                                )
-                                            }
+                                            selected=w.id == worksite_id
                                         >
                                             {w.name.clone()}
-                                        </option>
+                                        </SelectOption>
                                     }
                                 })
                                 .collect_fragment_async()
                                 .await
                         }
-
                         </Select>
                     </GridCell>
-
                     <GridCell>
                         <Button kind="submit">Go</Button>
                     </GridCell>
