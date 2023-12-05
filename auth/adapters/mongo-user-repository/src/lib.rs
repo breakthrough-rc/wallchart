@@ -130,6 +130,8 @@ pub struct MongoUserStore {
 #[derive(Clone)]
 pub struct Credentials {
     pub user_id: String,
+    // Used to help redirect the user to the page they were trying to access
+    pub next: Option<String>,
 }
 
 /**
@@ -143,7 +145,7 @@ impl AuthnBackend for MongoUserStore {
 
     async fn authenticate(
         &self,
-        Credentials { user_id }: Self::Credentials,
+        Credentials { user_id, .. }: Self::Credentials,
     ) -> Result<Option<Self::User>, Self::Error> {
         self.get_user(&user_id).await
     }

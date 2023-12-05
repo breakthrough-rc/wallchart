@@ -1,6 +1,7 @@
 use crate::state::WebHtmxState;
 use crate::{components::page::PageLayout, routes};
 use auth_service::get_user_for_login::GetUserForLoginInput;
+use axum::extract::Query;
 use axum::{
     extract::State,
     response::{Html, IntoResponse},
@@ -20,10 +21,10 @@ pub fn login_routes(state: WebHtmxState) -> Router {
         .with_state(state)
 }
 
-async fn get_login() -> impl IntoResponse {
+async fn get_login(Query(NextUrl { next }): Query<NextUrl>) -> impl IntoResponse {
     Html(html! {
         <PageLayout header="Login">
-            <LoginForm login_route=routes::login() />
+            <LoginForm login_route=routes::login() next=next/>
         </PageLayout>
     })
 }
@@ -32,6 +33,14 @@ async fn get_login() -> impl IntoResponse {
 struct LoginForm {
     email: String,
     password: String,
+    next: Option<String>,
+}
+
+// This allows us to extract the "next" field from the query string. We use this
+// to redirect after log in.
+#[derive(Debug, Deserialize)]
+pub struct NextUrl {
+    next: Option<String>,
 }
 
 async fn post_login(
@@ -48,14 +57,17 @@ async fn post_login(
 
     match result {
         Ok(user) => match auth.login(&user).await {
-            Ok(_) => (
-                StatusCode::OK,
-                [
-                    ("hx-redirect", routes::home()),
-                    ("hx-retarget", "body".to_string()),
-                ],
-            )
-                .into_response(),
+            Ok(_) => {
+                let next = match login_form.next {
+                    Some(next) => next,
+                    None => routes::home(),
+                };
+                (
+                    StatusCode::OK,
+                    [("hx-redirect", next), ("hx-retarget", "body".to_string())],
+                )
+                    .into_response()
+            }
             Err(_) => (StatusCode::BAD_REQUEST, "Login failed").into_response(),
         },
         Err(_) => (
@@ -70,6 +82,9 @@ async fn post_login(
 struct LoginFormProps {
     #[builder(setter(into))]
     login_route: String,
+
+    #[builder(setter(into))]
+    next: Option<String>,
 }
 
 #[component]
@@ -96,6 +111,14 @@ fn LoginForm(props: LoginFormProps) -> String {
                     </GridCell>
                 </GridLayout>
             </div>
+            {
+                match props.next {
+                    Some(next) => html! {
+                        <input type="hidden" name="next" value=next />
+                    },
+                    None => html! {},
+                }
+            }
         </form>
     }
 }
