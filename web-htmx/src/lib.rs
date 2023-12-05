@@ -1,5 +1,3 @@
-
-
 use axum::{
     middleware,
     response::{Html, Redirect},
@@ -21,6 +19,7 @@ use resources::assessments::assessments_routes;
 use resources::assigned_tags::assigned_tags_routes;
 use resources::csv_upload::csv_upload_routes;
 use resources::locations::locations_routes;
+use resources::login::login_routes;
 use resources::selected_worksite::selected_worksite_routes;
 use resources::shift_assignments::shift_assignments_routes;
 use resources::shifts::shifts_routes;
@@ -29,8 +28,6 @@ use resources::users::users_routes;
 use resources::workers::workers_routes;
 use resources::worksite::worksite_routes;
 use routes::{CLIENT, HOME, HOME_REDIRECT, PLAYGROUND};
-
-
 
 pub mod components;
 pub mod context;
@@ -54,12 +51,13 @@ pub fn routes(state: WebHtmxState) -> Router {
         .merge(worksite_routes(state.clone()))
         .merge(workers_routes(state.clone()))
         .merge(assigned_tags_routes(state.clone()))
+        .merge(users_routes(state.clone()))
         // Anything above this RequireAuth route will require authentication
         .route_layer(login_required!(MongoUserStore, login_url = routes::login()))
+        .merge(login_routes(state.clone()))
         .route(HOME, get(Redirect::temporary(HOME_REDIRECT)))
         .nest(PLAYGROUND, playground::routes())
         .nest_service(CLIENT, client_routes())
-        .merge(users_routes(state.clone()))
         .fallback(fallback)
         .layer(middleware::from_fn_with_state(state, provide_context_layer))
 }
