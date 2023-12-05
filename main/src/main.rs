@@ -291,14 +291,7 @@ async fn main() {
         .layer(HandleErrorLayer::new(|_: BoxError| async {
             StatusCode::BAD_REQUEST
         }))
-        .layer(
-            AuthManagerLayerBuilder::new(user_memory_store, session_layer)
-                // This data key is where the user is stored in the session.
-                // We give it a known name so we can access it to check if a user is logged in,
-                // later
-                .with_data_key("x.logged.in.user")
-                .build(),
-        );
+        .layer(AuthManagerLayerBuilder::new(user_memory_store, session_layer).build());
 
     let app = app.layer(auth_layer);
     let app = app.layer(session_service);

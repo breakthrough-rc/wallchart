@@ -10,7 +10,6 @@ pub struct Context {
     pub page_url: String,
     pub worksite_id: String,
     pub worksite_name: String,
-    pub logged_in: bool,
     pub current_user: Option<LoggedInUser>,
 }
 
@@ -59,7 +58,6 @@ pub async fn provide_context_layer(
         worksite_id,
         worksite_name,
         current_user,
-        logged_in: session.get_value("x.logged.in.user").is_some(),
     };
 
     // Set the context for this request.

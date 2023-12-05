@@ -38,7 +38,8 @@ pub struct AppShellProps {
 pub fn AppShell(props: AppShellProps) -> String {
     let ctx: crate::context::Context =
         crate::context::context().expect("Unable to retrieve htmx context.");
-    let is_logged_in = ctx.logged_in;
+    let is_logged_in = ctx.current_user.is_some();
+    
 
     html! {
         <div class="min-h-full" data-yc-app>
