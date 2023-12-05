@@ -1,4 +1,3 @@
-
 use rscx::{component, html, props, CollectFragment};
 
 use web_client::server::attrs::Attrs;
@@ -19,7 +18,8 @@ fn profile_links() -> Vec<MenuLink> {
                     .label("Your Profile")
                     .attrs(
                         Attrs::with("hx-get", routes::user_modal(&user.id))
-                            .set("hx-target", modal_target()),
+                            .set("hx-target", modal_target())
+                            .set("hx-push-url", routes::user_modal(&user.id)),
                     )
                     .build(),
                 MenuLink::builder().label("Sign out").build(),

@@ -106,6 +106,7 @@ pub fn UserTableRow(user: User) -> String {
             <button
                 hx-get=routes::user_modal(&user.id)
                 hx-target=modal_target()
+                hx-push-url=routes::user_modal(&user.id)
             >
                 {&user.email}
             </button>
