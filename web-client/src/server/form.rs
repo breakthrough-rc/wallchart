@@ -63,6 +63,32 @@ pub fn Select(props: SelectProps) -> String {
 }
 
 #[html_element]
+pub struct SelectOptionProps {
+    #[builder(setter(into), default)]
+    label: String,
+
+    #[builder(default = false)]
+    selected: bool,
+
+    children: String,
+}
+
+#[component]
+pub fn SelectOption(props: SelectOptionProps) -> String {
+    html! {
+        <HtmlElement
+            tag="option"
+            id=props.name.clone()
+            attrs=spread_attrs!(props | omit(id))
+                .set_if("selected", "selected".into(), props.selected)
+                .set_if("label", props.label.clone(), !props.label.is_empty())
+        >
+            {props.children}
+        </HtmlElement>
+    }
+}
+
+#[html_element]
 pub struct ButtonProps {
     #[builder(setter(into), default="button".into())]
     kind: String,
