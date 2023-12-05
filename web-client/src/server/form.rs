@@ -70,6 +70,7 @@ pub struct SelectOptionProps {
     #[builder(default = false)]
     selected: bool,
 
+    #[builder(default)]
     children: String,
 }
 

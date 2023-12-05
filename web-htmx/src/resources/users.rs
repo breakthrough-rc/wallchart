@@ -16,7 +16,7 @@ use web_client::server::{
     attrs::Attrs,
     button::PrimaryButton,
     card::Card,
-    form::{Button, GridCell, GridLayout, Label, TextInput},
+    form::{Button, GridCell, GridLayout, Label, Select, SelectOption, TextInput},
     headers::SecondaryHeader,
     modal::{modal_target, Modal, ModalSize},
     table::{Confirm, DeleteActionLink, TDVariant, Table, TableData, TableHeading},
@@ -169,7 +169,7 @@ async fn get_users_form_modal() -> impl IntoResponse {
     Html(html! {
         <Modal size=ModalSize::MediumScreen>
             <SecondaryHeader
-                title="Add User"
+                title="👤 Add User"
                 subtitle="Enter user details below."
             />
             <UserForm action=routes::users() />
@@ -194,10 +194,6 @@ pub fn UserForm(props: UserFormProps) -> String {
     html! {
         <form hx-post=props.action>
             <div class="pb-12">
-                <p class="mt-1 text-sm leading-6 text-gray-600">
-                    "Please enter the user's information."
-                </p>
-
                 <GridLayout class="mt-10">
                     <GridCell span=3>
                         <Label for_input="email">Email</Label>
@@ -211,7 +207,11 @@ pub fn UserForm(props: UserFormProps) -> String {
 
                     <GridCell span=3>
                         <Label for_input="role">Role</Label>
-                        <TextInput name="role" input_type="text" value=props.role />
+                        <Select name="role">
+                            <SelectOption selected=props.role == "Organizer">Organizer</SelectOption>
+                            <SelectOption selected=props.role == "Admin">Admin</SelectOption>
+                            <SelectOption selected=props.role == "SuperAdmin">SuperAdmin</SelectOption>
+                        </Select>
                     </GridCell>
                 </GridLayout>
             </div>
@@ -283,6 +283,10 @@ async fn get_user_detail_modal(
 
     Html(html! {
         <Modal size=ModalSize::MediumScreen>
+            <SecondaryHeader
+                title="👤 Edit User"
+                subtitle="Make changes to the user below."
+            />
             <UserForm
                 action=routes::user(&user.id)
                 email=user.email.clone()
