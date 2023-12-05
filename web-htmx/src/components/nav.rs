@@ -1,17 +1,35 @@
+use auth_service::ports::user_repository;
 use rscx::{component, html, props, CollectFragment};
 
+use web_client::server::attrs::Attrs;
 use web_client::server::modal::modal_target;
-use web_client::server::popup_menu::{Menu, PopupMenu};
+use web_client::server::popup_menu::{Menu, MenuLink, PopupMenu};
 
 use crate::components::logo::Logo;
 use crate::routes;
 
-fn profile_links() -> Vec<(String, String)> {
-    vec![
-        ("Your Profile".into(), "#".into()),
-        ("Settings".into(), "#".into()),
-        ("Sign out".into(), "#".into()),
-    ]
+fn profile_links() -> Vec<MenuLink> {
+    let ctx: crate::context::Context =
+        crate::context::context().expect("Unable to retrieve htmx context.");
+
+    match ctx.current_user {
+        Some(user) => {
+            vec![
+                MenuLink::builder()
+                    .label("Your Profile")
+                    .attrs(
+                        Attrs::with("hx-get", routes::user_modal(&user.id))
+                            .set("hx-target", modal_target()),
+                    )
+                    .build(),
+                MenuLink::builder().label("Sign out").build(),
+            ]
+        }
+        None => vec![MenuLink::builder()
+            .label("Sign in")
+            .attrs(Attrs::with("href", routes::login()))
+            .build()],
+    }
 }
 
 #[component]
@@ -150,14 +168,7 @@ pub fn Nav() -> String {
                         </button>
                     </div>
                     <div class="mt-3 space-y-1">
-                        {
-                            profile_links()
-                                .into_iter()
-                                .map(|(label, href)| html! {
-                                    <a href=href class="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800">{label}</a>
-                                })
-                                .collect_fragment()
-                        }
+                        // TODO! User Profile Links
                     </div>
                 </div>
             </div>
