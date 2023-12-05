@@ -37,6 +37,7 @@ impl CreateUser {
             id: uuid::Uuid::new_v4().to_string(),
             email: input.email,
             hashed_password,
+            role: "Organizer".to_string(),
         };
         self.user_repository
             .save(new_user.clone())

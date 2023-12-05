@@ -5,6 +5,7 @@ pub struct User {
     pub id: String,
     pub email: String,
     pub hashed_password: String,
+    pub role: String,
 }
 
 impl User {
@@ -13,6 +14,7 @@ impl User {
             id: uuid::Uuid::new_v4().to_string(),
             email,
             hashed_password,
+            role: "Organizer".to_string(),
         }
     }
 }
