@@ -21,6 +21,7 @@ impl UserRecord {
             id: self.id.clone(),
             email: self.email.clone(),
             hashed_password: self.hashed_password.clone(),
+            role: "Organizer".to_string(),
         }
     }
 }

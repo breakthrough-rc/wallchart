@@ -10,7 +10,9 @@ use http::{HeaderMap, StatusCode};
 use rscx::{component, html, props};
 use serde::Deserialize;
 
-use auth_service::{create_user::CreateUserInput, get_user::GetUserInput};
+use auth_service::{
+    create_user::CreateUserInput, get_user::GetUserInput, update_user::UpdateUserInput,
+};
 use auth_service::{delete_user::DeleteUserInput, models::User};
 use web_client::server::{
     attrs::Attrs,
@@ -35,7 +37,10 @@ pub fn users_routes(state: WebHtmxState) -> Router {
     Router::new()
         .route(routes::USERS, get(get_users).post(post_users))
         .route(routes::USERS_NEW, get(get_users_form))
-        .route(routes::USER, get(get_user_detail).delete(delete_user))
+        .route(
+            routes::USER,
+            get(get_user_detail).post(update_user).delete(delete_user),
+        )
         .route(routes::USER_MODAL, get(get_user_detail_modal))
         .route(routes::USERS_NEW_MODAL, get(get_users_form_modal))
         .with_state(state)
@@ -305,4 +310,34 @@ async fn get_user_detail_modal(
              />
         </Modal>
     })
+}
+
+#[derive(Deserialize, Debug)]
+struct UpdateUserFormData {
+    email: String,
+    role: String,
+}
+
+async fn update_user(
+    extract::Path(user_id): extract::Path<String>,
+    State(WebHtmxState { auth_service, .. }): State<WebHtmxState>,
+    flash: Flash,
+    Form(form): Form<UpdateUserFormData>,
+) -> impl IntoResponse {
+    auth_service
+        .update_user(UpdateUserInput {
+            user_id,
+            email: form.email,
+            role: form.role,
+        })
+        .await
+        .expect("Failed to update user");
+    (
+        StatusCode::OK,
+        flash.success("Updated user successfully!"),
+        [
+            ("hx-redirect", routes::users()),
+            ("hx-retarget", "body".into()),
+        ],
+    )
 }

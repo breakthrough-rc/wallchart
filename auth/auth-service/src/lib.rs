@@ -6,3 +6,5 @@ pub mod get_users;
 pub mod models;
 pub mod ports;
 pub mod service;
+
+pub mod update_user;

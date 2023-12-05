@@ -17,6 +17,14 @@ impl User {
             role: "Organizer".to_string(),
         }
     }
+    pub fn update(&self, email: String, role: String) -> Self {
+        Self {
+            id: self.id.clone(),
+            email,
+            hashed_password: self.hashed_password.clone(),
+            role,
+        }
+    }
 }
 
 /**

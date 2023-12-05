@@ -3,6 +3,9 @@ use std::sync::Arc;
 use crate::{
     create_user::{CreateUser, CreateUserInput, CreateUserOutput},
     //##PLOP INSERT COMMAND IMPORTS HOOK##
+    update_user::{
+      UpdateUser, UpdateUserInput, UpdateUserOutput, 
+    },
     get_user::{
       GetUser, GetUserInput, GetUserOutput, 
     },
@@ -15,6 +18,7 @@ use crate::{
 #[derive(Clone)]
 pub struct AuthService {
     //##PLOP INSERT COMMAND HOOK##
+    pub update_user: UpdateUser,
     pub get_user: GetUser,
     pub delete_user: DeleteUser,
     pub get_users: GetUsers,
@@ -26,6 +30,10 @@ impl AuthService {
     pub fn new(user_repository: Arc<dyn UserRepository>) -> Self {
         Self {
             //##PLOP INSERT COMMAND INSTANTIATION HOOK##
+            update_user: UpdateUser {
+              // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
+              user_repository: user_repository.clone(),
+            },
             get_user: GetUser {
               // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
               user_repository: user_repository.clone(),
@@ -43,6 +51,13 @@ impl AuthService {
         }
     }
     //##PLOP INSERT DELEGATE HOOK##
+    pub async fn update_user(
+        &self,
+        input: UpdateUserInput,
+    ) -> UpdateUserOutput {
+        self.update_user.update_user(input).await
+    }
+
     pub async fn get_user(
         &self,
         input: GetUserInput,
