@@ -1,5 +1,9 @@
 use axum::{body::Body, extract::State, http::Request, middleware::Next, response::Response};
-use axum_login::tower_sessions::Session;
+use axum_login::{
+    tower_sessions::{MongoDBStore, Session},
+    AuthSession,
+};
+use mongo_user_repository::MongoUserStore;
 use std::future::Future;
 
 use crate::state::WebHtmxState;
@@ -10,6 +14,15 @@ pub struct Context {
     pub worksite_id: String,
     pub worksite_name: String,
     pub logged_in: bool,
+    pub current_user: Option<LoggedInUser>,
+}
+
+#[derive(Clone)]
+
+pub struct LoggedInUser {
+    pub id: String,
+    pub email: String,
+    pub role: String,
 }
 
 tokio::task_local! {
@@ -19,6 +32,7 @@ tokio::task_local! {
 pub async fn provide_context_layer(
     State(state): State<WebHtmxState>,
     session: Session,
+    auth: AuthSession<MongoUserStore>,
     request: Request<Body>,
     next: Next,
 ) -> Response {
@@ -34,13 +48,20 @@ pub async fn provide_context_layer(
         .unwrap_or(None)
         .unwrap_or(state.default_worksite_name);
 
+    let current_user = match auth.user {
+        Some(user) => Some(LoggedInUser {
+            id: user.id.into(),
+            email: user.email.into(),
+            role: "superadmin".into(), // TODO: get this from the user
+        }),
+        None => None,
+    };
+
     let context = Context {
         page_url: request.uri().path().to_string(),
         worksite_id,
         worksite_name,
-        // Manual check of a key set in the session by axum-login. See where this is configured in
-        // main.rs. Using get_value instead of get so I dont have to provide the type (instead its
-        // json)
+        current_user,
         logged_in: session.get_value("x.logged.in.user").is_some(),
     };
 
