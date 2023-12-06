@@ -287,7 +287,7 @@ pub fn WorkerRow(props: WorkerRowProps) -> String {
                   </button>
             </td>
             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{props.worker.last_assessment().map(|assessment| assessment.value).unwrap_or(0)}</td>
-            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{props.tags.into_iter().map(|tag| tag.icon).collect_fragment()}</td>
+            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{props.tags.into_iter().map(|tag| html! { <span title=tag.name class="cursor-pointer">{tag.icon}</span> }).collect_fragment()}</td>
             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 text-right">
                 <div class="inline-flex align-right gap-4">
                     <a

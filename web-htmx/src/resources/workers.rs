@@ -316,7 +316,12 @@ pub fn WorkerTableRow(props: WorkerTableRowProps) -> String {
             {props.worker.last_assessment().map(|assessment| assessment.value).unwrap_or(0)}
         </TableData>
         <TableData variant=TDVariant::LastNonEmptyHeading>
-            {props.tags.into_iter().map(|tag| tag.icon).collect_fragment()}
+            {
+                props.tags
+                    .into_iter()
+                    .map(|tag| html! { <span title=tag.name class="cursor-pointer">{tag.icon}</span> })
+                    .collect_fragment()
+            }
         </TableData>
     }
 }
