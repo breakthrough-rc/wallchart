@@ -1,6 +1,6 @@
 use axum::{
     extract::{self, State},
-    response::{Html, IntoResponse},
+    response::{Html, IntoResponse, Response},
     routing::{get, post},
     Form, Router,
 };
@@ -8,6 +8,7 @@ use axum_flash::{Flash, IncomingFlashes};
 use futures::future::join_all;
 use http::{HeaderMap, StatusCode};
 use rscx::{component, html, props, CollectFragment};
+use validator::Validate;
 
 use web_client::server::{
     attrs::Attrs,
@@ -200,7 +201,11 @@ async fn post_worker(
     flash: Flash,
     extract::Path(wallchart_id): extract::Path<String>,
     Form(form): Form<WorkerProfileFormData>,
-) -> impl IntoResponse {
+) -> Response {
+    if let Err(e) = form.validate() {
+        return (StatusCode::BAD_REQUEST, format!("Invalid form. {}", e)).into_response();
+    }
+
     worksite_service
         .add_worker(AddWorkerInput {
             worksite_id: wallchart_id.clone(),
@@ -223,6 +228,7 @@ async fn post_worker(
             ("hx-retarget", "body".into()),
         ],
     )
+        .into_response()
 }
 
 async fn post_worker_profile_form(
@@ -326,9 +332,6 @@ fn WorkerForm(props: WorkerFormProps) -> String {
     html! {
         <form hx-post=props.action>
             <div class="pb-12">
-                <p class="mt-1 text-sm leading-6 text-gray-600">
-                    "Please enter the worker's information."
-                </p>
                 <WorkerProfileFieldset />
             </div>
             <div class="mt-6 flex items-center justify-end gap-x-6">

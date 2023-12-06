@@ -1,17 +1,29 @@
 use rscx::{component, html, props};
 use serde::Deserialize;
+use validator::{Validate, ValidationError};
 
 use web_client::server::form::{CellSpan, GridCell, GridLayout, Label, TextInput};
 
-#[derive(Default, Deserialize, Debug, Clone)]
+#[derive(Clone, Debug, Default, Deserialize, Validate)]
 pub struct WorkerProfileFormData {
+    #[validate(custom = "is_not_empty")]
     pub first_name: String,
+    #[validate(custom = "is_not_empty")]
     pub last_name: String,
+    #[validate(email)]
     pub email: String,
     pub street_address: String,
     pub city: String,
     pub region: String,
     pub postal_code: String,
+}
+
+fn is_not_empty(s: &str) -> Result<(), ValidationError> {
+    if s.is_empty() {
+        Err(ValidationError::new("Field can not be empty."))
+    } else {
+        Ok(())
+    }
 }
 
 #[props]
