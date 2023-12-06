@@ -4,6 +4,7 @@ use rscx::{component, html, props};
 
 use auth::AuthPlayground;
 use file_input::{file_input_routes, FileInputPlayground};
+use form::FormPlayground;
 use html_element::HtmlElementPlayground;
 use htmx::{htmx_routes, HtmxPlayground};
 use modal::{modal_routes, ModalPlayground};
@@ -12,6 +13,7 @@ use page::{page_routes, PagePlayground};
 
 pub mod auth;
 pub mod file_input;
+pub mod form;
 pub mod html_element;
 pub mod htmx;
 pub mod modal;
@@ -52,6 +54,7 @@ pub fn PlaygroundPgContent() -> String {
         <NotificationsPlayground />
         <ModalPlayground />
         <FileInputPlayground />
+        <FormPlayground />
         <AuthPlayground />
         <HtmxPlayground />
         <PagePlayground />

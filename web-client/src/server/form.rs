@@ -9,17 +9,26 @@ use crate::server::yc_control::YcControl;
 pub struct TextInputProps {
     #[builder(setter(into), default="text".into())]
     input_type: String,
+
+    #[builder(setter(into), default=None)]
+    error: Option<String>,
 }
 
 #[component]
 pub fn TextInput(props: TextInputProps) -> String {
+    let class = match props.error {
+        Some(_) => "bg-red-50 ring-red-500 text-red-500 placeholder-red-700 focus:ring-red-500 focus:border-red-500",
+        None => "text-gray-900 ring-gray-300 placeholder:text-gray-400 focus:ring-indigo-600",
+    };
+
     html! {
         <HtmlElement
             tag="input"
             id=props.name.clone()
-            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            class=format!("block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 {}", class)
             attrs=spread_attrs!(props | omit(id, class)).set("type", props.input_type)
         />
+        <ErrorMessage message=props.error />
     }
 }
 
@@ -28,14 +37,23 @@ pub struct LabelProps {
     #[builder(setter(into))]
     for_input: String,
     children: String,
+
+    #[builder(default = false)]
+    error: bool,
 }
 
 #[component]
 pub fn Label(props: LabelProps) -> String {
+    let color = if props.error {
+        "text-red-600 dark:text-red-500"
+    } else {
+        "text-gray-900"
+    };
+
     html! {
         <HtmlElement
             tag="label"
-            class=format!("block text-sm font-medium leading-6 text-gray-900 {}", props.class).trim()
+            class=format!("block text-sm font-medium leading-6 {} {}", color, props.class).trim()
             attrs=spread_attrs!(props | omit(class)).set("for", props.for_input)
         >
             {props.children}
@@ -46,19 +64,27 @@ pub fn Label(props: LabelProps) -> String {
 #[html_element]
 pub struct SelectProps {
     children: String,
+
+    #[builder(setter(into), default=None)]
+    error: Option<String>,
 }
 
 #[component]
 pub fn Select(props: SelectProps) -> String {
+    let class = match props.error {
+        Some(_) => "bg-red-50 ring-red-500 text-red-500 placeholder-red-700 focus:ring-red-500 focus:border-red-500",
+        None => "text-gray-900 ring-gray-300 focus:ring-indigo-600",
+    };
     html! {
         <HtmlElement
             tag="select"
             id=props.name.clone()
-            class=format!("block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6 {}", props.class).trim()
+            class=format!("block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6 {} {}", class, props.class).trim()
             attrs=spread_attrs!(props | omit(id, class))
         >
             {props.children}
         </HtmlElement>
+        <ErrorMessage message=props.error />
     }
 }
 
@@ -86,6 +112,17 @@ pub fn SelectOption(props: SelectOptionProps) -> String {
         >
             {props.children}
         </HtmlElement>
+    }
+}
+
+#[component]
+fn ErrorMessage(message: Option<String>) -> String {
+    if let Some(message) = message {
+        html! {
+            <p class="text-sm text-red-600 dark:text-red-500">{message}</p>
+        }
+    } else {
+        String::new()
     }
 }
 
