@@ -374,12 +374,12 @@ fn AssessmentFormFields(props: AssessmentFormFieldsProps) -> String {
             </GridCell>
             <GridCell span=6>
                 <Label for_input="notes">Notes</Label>
-                <textarea
+                <TextInput
+                    input_type="textarea"
                     class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     name="notes"
-                >
-                    {&props.form_data.notes}
-                </textarea>
+                    value=&props.form_data.notes
+                />
             </GridCell>
         </GridLayout>
     }
