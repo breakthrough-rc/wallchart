@@ -518,6 +518,7 @@ mod tests {
             ],
         }
     }
+
     #[tokio::test]
     async fn tests() {
         let docker_cli = clients::Cli::default();
