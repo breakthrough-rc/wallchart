@@ -168,13 +168,13 @@ fn to_worksite_record(worksite: &Worksite) -> WorksiteRecord {
         locations: worksite
             .locations
             .iter()
-            .map(|l| to_location_record(l))
+            .map(to_location_record)
             .collect(),
-        tags: worksite.tags.iter().map(|t| to_tag_record(t)).collect(),
+        tags: worksite.tags.iter().map(to_tag_record).collect(),
         workers: worksite
             .workers
             .iter()
-            .map(|w| to_worker_record(w))
+            .map(to_worker_record)
             .collect(),
     }
 }
@@ -187,11 +187,11 @@ fn to_worker_record(worker: &Worker) -> WorkerRecord {
         assessments: worker
             .assessments
             .iter()
-            .map(|a| to_assessment_record(a))
+            .map(to_assessment_record)
             .collect(),
         tags: worker.tags.iter().map(|t| t.0.clone()).collect(),
         email: worker.email.clone(),
-        address: worker.address.as_ref().map(|a| to_address_record(a)),
+        address: worker.address.as_ref().map(to_address_record),
     }
 }
 
@@ -227,7 +227,7 @@ fn to_location_record(location: &Location) -> LocationRecord {
     LocationRecord {
         id: location.id.clone(),
         name: location.name.clone(),
-        shifts: location.shifts.iter().map(|s| to_shift_record(s)).collect(),
+        shifts: location.shifts.iter().map(to_shift_record).collect(),
     }
 }
 
