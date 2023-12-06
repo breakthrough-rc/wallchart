@@ -12,6 +12,7 @@ members = [
           "web-htmx",
           "web-macros",
           "worksite/adapters/in-memory-worksite-repository",
+          "worksite/adapters/mongo-worksite-repository",
           "worksite/worksite-service",
           "libs/mongo-testcontainer",
 ]
@@ -59,4 +60,3 @@ tracing-subscriber = { version = "0.3.17" }
 typed-builder = { version = "0.18.0" }
 uuid = { version = "1.4.1" }
 validator = { version = "0.16.1", features = ["derive"] }
-

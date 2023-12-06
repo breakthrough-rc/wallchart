@@ -1,0 +1,23 @@
+[package]
+name = "mongo-worksite-repository"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+async-trait = { workspace = true }
+axum-login = { workspace = true }
+futures = { workspace = true }
+mongodb = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+thiserror = { workspace = true }
+tokio = { workspace = true, features = ["full"] }
+tracing = { workspace = true }
+worksite-service = { path = "../../worksite-service" }
+
+[dev-dependencies]
+mongo-testcontainer = { path = "../../../libs/mongo-testcontainer" }
+pretty_assertions = { workspace = true }
+testcontainers = { workspace = true }
+fake = { workspace = true }
