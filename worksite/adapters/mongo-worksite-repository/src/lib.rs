@@ -159,7 +159,7 @@ impl ShiftRecord {
     }
 }
 
-fn to_worksite_record(worksite: &Worksite) -> WorksiteRecord {
+fn to_worksite_record(_worksite: &Worksite) -> WorksiteRecord {
     todo!()
 }
 
