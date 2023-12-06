@@ -32,6 +32,10 @@ pub fn FormPlayground() -> String {
                         <SelectOption>Green</SelectOption>
                     </Select>
                 </GridCell>
+                <GridCell span=3>
+                    <Label for_input="notes">Notes</Label>
+                    <TextInput input_type="textarea" name="notes" value="Some bogus notes" />
+                </GridCell>
             </GridLayout>
         </section>
     }

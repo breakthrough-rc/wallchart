@@ -21,12 +21,18 @@ pub fn TextInput(props: TextInputProps) -> String {
         None => "text-gray-900 ring-gray-300 placeholder:text-gray-400 focus:ring-indigo-600",
     };
 
+    let (tag, children) = match props.input_type.as_str() {
+        "textarea" => ("textarea", props.value.clone()),
+        _ => ("input", "".to_string()),
+    };
+
     html! {
         <HtmlElement
-            tag="input"
+            tag=tag
             id=props.name.clone()
             class=format!("block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 {}", class)
-            attrs=spread_attrs!(props | omit(id, class)).set("type", props.input_type)
+            attrs=spread_attrs!(props | omit(id, class)).set("type", props.input_type.clone())
+            children=children
         />
         <ErrorMessage message=props.error />
     }
