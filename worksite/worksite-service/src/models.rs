@@ -6,7 +6,7 @@ pub type WorkerId = String;
 pub type LocationId = String;
 pub type ShiftId = String;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Worksite {
     pub id: WorksiteId,
     pub name: WorksiteName,
@@ -240,7 +240,7 @@ impl Worksite {
 
 pub type LocationName = String;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Location {
     pub id: String,
     pub name: LocationName,
@@ -268,7 +268,7 @@ impl Location {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ShiftWorker(pub String);
 
 impl ShiftWorker {
@@ -279,7 +279,7 @@ impl ShiftWorker {
 
 pub type ShiftName = String;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Shift {
     pub id: String,
     pub name: ShiftName,
@@ -312,7 +312,7 @@ impl Shift {
     }
 }
 
-#[derive(Debug, Default, Clone)]
+#[derive(Default, Debug, Clone, PartialEq, Eq)]
 pub struct Address {
     pub street_address: String,
     pub city: String,
@@ -320,7 +320,7 @@ pub struct Address {
     pub postal_code: String,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Worker {
     pub id: String,
     pub first_name: String,
@@ -417,7 +417,7 @@ impl Worker {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Assessment {
     pub id: String,
     pub value: u8,
@@ -427,14 +427,14 @@ pub struct Assessment {
     pub assessor: String,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Tag {
     pub id: String,
     pub name: String,
     pub icon: String,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AssignedTag(pub String);
 
 impl AssignedTag {
