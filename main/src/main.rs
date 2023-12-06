@@ -9,16 +9,17 @@ use axum_login::{tower_sessions::SessionManagerLayer, AuthManagerLayerBuilder};
 use chrono::prelude::*;
 use environment::load_environment;
 use mongo_user_repository::{MongoUserRepository, MongoUserStore};
+use mongo_worksite_repository::MongoWorksiteRepository;
 use std::{net::SocketAddr, sync::Arc};
 use tower::ServiceBuilder;
 
-use in_memory_worksite_repository::InMemoryWorksiteRepository;
 use tower_sessions::{cookie::time::Duration, mongodb::Client, Expiry, MongoDBStore};
 use web_htmx::{livereload, routes as web_routes, state::WebHtmxState};
 use worksite_service::{
     models::{
         Address, Assessment, AssignedTag, Location, Shift, ShiftWorker, Tag, Worker, Worksite,
     },
+    ports::worksite_repository::WorksiteRepository,
     service::WorksiteService,
 };
 
@@ -220,13 +221,27 @@ async fn main() {
             },
         ],
     };
-    let other_worksite = Worksite::new("Other Worksite".into());
-    let worksite_repository = Arc::new(InMemoryWorksiteRepository::with(vec![
-        worksite,
-        other_worksite,
-    ]));
-    let worksite_service = WorksiteService::new(worksite_repository);
+    let worksite_repository = Arc::new(
+        MongoWorksiteRepository::new(&env.auth_mongo_db_url)
+            .await
+            .expect("Could not create worksite repository"),
+    );
+    let worksite_service = WorksiteService::new(worksite_repository.clone());
 
+    let existing_worksite = worksite_repository
+        .get_worksite(DEFAULT_WORKSITE_ID.into())
+        .await
+        .expect("Couldn't fetch from worksite repo on load");
+
+    if existing_worksite.is_some() {
+        println!("Default worksite already exists");
+    } else {
+        println!("Creating default worksite");
+        worksite_repository
+            .save(worksite)
+            .await
+            .expect("Failed to create default worksite");
+    }
     let user_repository = Arc::new(
         MongoUserRepository::new(&env.auth_mongo_db_url)
             .await

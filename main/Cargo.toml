@@ -12,7 +12,7 @@ axum-flash = { workspace = true }
 axum-login = { workspace = true }
 chrono = { workspace = true }
 dotenvy = { workspace = true }
-in-memory-worksite-repository = { path = "../worksite/adapters/in-memory-worksite-repository" }
+mongo-worksite-repository = { path = "../worksite/adapters/mongo-worksite-repository" }
 mongo-user-repository = { path = "../auth/adapters/mongo-user-repository" }
 rand = { workspace = true, features = ["min_const_gen"] }
 serde = { workspace = true }
