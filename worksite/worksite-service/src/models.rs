@@ -269,7 +269,7 @@ impl Location {
 }
 
 #[derive(Debug, Clone)]
-pub struct ShiftWorker(String);
+pub struct ShiftWorker(pub String);
 
 impl ShiftWorker {
     pub fn new(id: String) -> Self {
@@ -435,7 +435,7 @@ pub struct Tag {
 }
 
 #[derive(Debug, Clone)]
-pub struct AssignedTag(String);
+pub struct AssignedTag(pub String);
 
 impl AssignedTag {
     pub fn new(id: String) -> Self {

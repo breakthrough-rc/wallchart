@@ -4,7 +4,9 @@ use futures::TryStreamExt;
 use mongodb::bson::doc;
 use serde::{Deserialize, Serialize};
 use worksite_service::{
-    models::{Address, Assessment, AssignedTag, Shift, ShiftWorker, Tag, Worker, Worksite},
+    models::{
+        Address, Assessment, AssignedTag, Location, Shift, ShiftWorker, Tag, Worker, Worksite,
+    },
     ports::worksite_repository::{RepositoryFailure, WorksiteRepository},
 };
 
@@ -159,8 +161,82 @@ impl ShiftRecord {
     }
 }
 
-fn to_worksite_record(_worksite: &Worksite) -> WorksiteRecord {
-    todo!()
+fn to_worksite_record(worksite: &Worksite) -> WorksiteRecord {
+    WorksiteRecord {
+        id: worksite.id.clone(),
+        name: worksite.name.clone(),
+        locations: worksite
+            .locations
+            .iter()
+            .map(|l| to_location_record(l))
+            .collect(),
+        tags: worksite.tags.iter().map(|t| to_tag_record(t)).collect(),
+        workers: worksite
+            .workers
+            .iter()
+            .map(|w| to_worker_record(w))
+            .collect(),
+    }
+}
+
+fn to_worker_record(worker: &Worker) -> WorkerRecord {
+    WorkerRecord {
+        id: worker.id.clone(),
+        first_name: worker.first_name.clone(),
+        last_name: worker.last_name.clone(),
+        assessments: worker
+            .assessments
+            .iter()
+            .map(|a| to_assessment_record(a))
+            .collect(),
+        tags: worker.tags.iter().map(|t| t.0.clone()).collect(),
+        email: worker.email.clone(),
+        address: worker.address.as_ref().map(|a| to_address_record(a)),
+    }
+}
+
+fn to_address_record(address: &Address) -> AddressRecord {
+    AddressRecord {
+        street_address: address.street_address.clone(),
+        city: address.city.clone(),
+        region: address.region.clone(),
+        postal_code: address.postal_code.clone(),
+    }
+}
+
+fn to_assessment_record(assessment: &Assessment) -> AssessmentRecord {
+    AssessmentRecord {
+        id: assessment.id.clone(),
+        value: assessment.value,
+        notes: assessment.notes.clone(),
+        created_at: assessment.created_at,
+        updated_at: assessment.updated_at,
+        assessor: assessment.assessor.clone(),
+    }
+}
+
+fn to_tag_record(tag: &Tag) -> TagRecord {
+    TagRecord {
+        id: tag.id.clone(),
+        name: tag.name.clone(),
+        icon: tag.icon.clone(),
+    }
+}
+
+fn to_location_record(location: &Location) -> LocationRecord {
+    LocationRecord {
+        id: location.id.clone(),
+        name: location.name.clone(),
+        shifts: location.shifts.iter().map(|s| to_shift_record(s)).collect(),
+    }
+}
+
+fn to_shift_record(shift: &Shift) -> ShiftRecord {
+    ShiftRecord {
+        id: shift.id.clone(),
+        name: shift.name.clone(),
+        workers: shift.workers.iter().map(|w| w.0.clone()).collect(),
+    }
 }
 
 #[derive(Clone, Debug)]
