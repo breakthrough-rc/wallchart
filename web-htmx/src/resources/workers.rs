@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use axum::{
     extract::{self, State},
     response::{Html, IntoResponse, Response},
@@ -8,7 +10,7 @@ use axum_flash::{Flash, IncomingFlashes};
 use futures::future::join_all;
 use http::{HeaderMap, StatusCode};
 use rscx::{component, html, props, CollectFragment};
-use validator::Validate;
+use validator::{Validate, ValidationErrorsKind};
 
 use web_client::server::{
     attrs::Attrs,
@@ -202,29 +204,31 @@ async fn post_worker(
     extract::Path(wallchart_id): extract::Path<String>,
     Form(form): Form<WorkerProfileFormData>,
 ) -> Response {
-    if let Err(_e) = form.validate() {
+    if let Err(e) = form.validate() {
+        let profile_form_data = WorkerProfileFormData {
+            first_name: form.first_name.clone(),
+            last_name: form.last_name.clone(),
+            email: form.email.clone(),
+            street_address: form.street_address.clone(),
+            city: form.city.clone(),
+            region: form.region.clone(),
+            postal_code: form.postal_code.clone(),
+        };
+
         return (
             StatusCode::BAD_REQUEST,
             Html(html! {
-                <div class="mt-6 rounded-md bg-red-50 p-4">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
-                            </svg>
-                        </div>
-                        <div class="ml-3">
-                            <h3 class="text-sm font-medium text-red-800">There were 2 errors with your submission</h3>
-                            <div class="mt-2 text-sm text-red-700">
-                            <ul role="list" class="list-disc space-y-1 pl-5">
-                                <li>Your password must be at least 8 characters</li>
-                                <li>Your password must include at least one pro wrestling finishing move</li>
-                            </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <WorkerForm action=workers_new(&wallchart_id) />
+                <Alert
+                    title="Oops! There was a problem with your submission."
+                />
+                // <pre>
+                //     {format!("{:#?}", e)}
+                // </pre>
+                <WorkerForm
+                    action=workers_new(&wallchart_id)
+                    form_data=profile_form_data
+                    errors=e.errors().to_owned()
+                />
             }),
         )
             .into_response();
@@ -354,6 +358,12 @@ pub fn WorkerTableRow(props: WorkerTableRowProps) -> String {
 struct WorkerFormProps {
     #[builder(setter(into))]
     action: String,
+
+    #[builder(default=WorkerProfileFormData::default())]
+    form_data: WorkerProfileFormData,
+
+    #[builder(default=HashMap::new())]
+    errors: HashMap<&'static str, ValidationErrorsKind>,
 }
 
 #[component]
@@ -366,7 +376,10 @@ fn WorkerForm(props: WorkerFormProps) -> String {
             hx-target-4xx="this"
         >
             <div class="pb-12">
-                <WorkerProfileFieldset />
+                <WorkerProfileFieldset
+                    form=props.form_data
+                    errors=props.errors
+                />
             </div>
             <div class="mt-6 flex items-center justify-end gap-x-6">
                 <Button
@@ -444,6 +457,40 @@ pub fn SectionDivider() -> String {
             </div>
             <div class="relative flex justify-center">
                 <span class="bg-white px-2 text-sm text-gray-500">Continue</span>
+            </div>
+        </div>
+    }
+}
+
+// TODO: Move this to a shared component
+
+#[props]
+struct AlertProps {
+    #[builder(setter(into))]
+    title: String,
+
+    #[builder(default)]
+    children: String,
+}
+
+#[component]
+fn Alert(props: AlertProps) -> String {
+    html! {
+        <div class="mt-6 rounded-md bg-red-50 p-4">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium text-red-800">{props.title}</h3>
+                    {if props.children.is_empty() {
+                        String::new()
+                    } else {
+                        html! { <div class="mt-2 text-sm text-red-700">{props.children}</div> }
+                    }}
+                </div>
             </div>
         </div>
     }
