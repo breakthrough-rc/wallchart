@@ -34,6 +34,7 @@ pub fn PageLayout(props: PageLayoutProps) -> String {
                         crossorigin="anonymous"
                     ></script>
                     <script src="https://unpkg.com/htmx.org/dist/ext/loading-states.js"></script>
+                    <script src="https://unpkg.com/htmx.org/dist/ext/response-targets.js"></script>
                     <script>{
                         r#"
                         htmx.on("htmx:sendError", function() {
