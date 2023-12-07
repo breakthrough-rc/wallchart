@@ -202,7 +202,7 @@ async fn post_worker(
     extract::Path(wallchart_id): extract::Path<String>,
     Form(form): Form<WorkerProfileFormData>,
 ) -> Response {
-    if let Err(e) = form.validate() {
+    if let Err(_e) = form.validate() {
         return (
             StatusCode::BAD_REQUEST,
             Html(html! {
