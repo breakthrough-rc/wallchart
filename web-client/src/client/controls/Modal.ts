@@ -37,7 +37,7 @@ const Modal = {
     const tpl = query(document, "#tpl-confirm-delete-modal") as HTMLTemplateElement;
     const modalElement = tpl.content.cloneNode(true) as HTMLElement;
 
-    const Elements = query.all(modalElement, {
+    const Elements = query.bulk(modalElement, {
       title: "[data-confirm-delete-title]",
       message: "[data-confirm-delete-message]",
     });
