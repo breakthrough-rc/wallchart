@@ -13,6 +13,7 @@ use crate::{
       CreateWorksite, CreateWorksiteInput, CreateWorksiteOutput, 
     },
     csv_upload::{CsvUpload, CsvUploadInput, CsvUploadOutput},
+    filter_workers::{FilterWorkers, FilterWorkersInput, FilterWorkersOutput},
     get_assessment::{GetAssessment, GetAssessmentInput, GetAssessmentOutput},
     get_assessments::{GetAssessments, GetAssessmentsInput, GetAssessmentsOutput},
     get_tag::{GetTag, GetTagInput, GetTagOutput},
@@ -48,6 +49,7 @@ pub struct WorksiteService {
     pub update_tag: UpdateTag,
     pub add_tag: AddTag,
     pub assign_tags: AssignTags,
+    pub filter_workers: FilterWorkers,
     pub get_tags: GetTags,
     pub add_worker: AddWorker,
     pub get_workers: GetWorkers,
@@ -111,6 +113,9 @@ impl WorksiteService {
             },
             assign_tags: AssignTags {
                 // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
+                worksite_repository: worksite_repository.clone(),
+            },
+            filter_workers: FilterWorkers {
                 worksite_repository: worksite_repository.clone(),
             },
             get_tags: GetTags {
@@ -200,6 +205,10 @@ impl WorksiteService {
 
     pub async fn assign_tags(&self, input: AssignTagsInput) -> AssignTagsOutput {
         self.assign_tags.assign_tags(input).await
+    }
+
+    pub async fn filter_workers(&self, input: FilterWorkersInput) -> FilterWorkersOutput {
+        self.filter_workers.filter_workers(input).await
     }
 
     pub async fn get_tags(&self, input: GetTagsInput) -> GetTagsOutput {

@@ -6,10 +6,12 @@ use axum::{
     routing::{get, post},
     Form, Router,
 };
+use axum_macros::debug_handler;
 use axum_flash::{Flash, IncomingFlashes};
 use futures::future::join_all;
 use http::{HeaderMap, StatusCode};
 use rscx::{component, html, props, CollectFragment};
+use serde::Deserialize;
 use validator::{Validate, ValidationErrorsKind};
 
 use web_client::server::{
@@ -27,6 +29,7 @@ use worksite_service::{
     add_worker::AddWorkerInput,
     get_worker::GetWorkerInput,
     get_workers::GetWorkersInput,
+    filter_workers::FilterWorkersInput,
     get_worksite::GetWorksiteInput,
     models::{Tag, Worker, Worksite},
     update_worker::UpdateWorkerInput,
@@ -42,17 +45,55 @@ use crate::{
         self, worker, worker_profile, workers, workers_new, workers_new_modal, WORKER, WORKERS,
         WORKERS_NEW, WORKERS_NEW_MODAL, WORKER_PROFILE,
     },
-    state::WebHtmxState,
+    state::WebHtmxState, playground::form,
 };
 
 pub fn workers_routes(state: WebHtmxState) -> Router {
     Router::new()
         .route(WORKERS, get(get_workers))
+        .route(WORKERS, post(filter_workers))
         .route(WORKER, get(get_worker_details))
         .route(WORKER_PROFILE, post(post_worker_profile_form))
         .route(WORKERS_NEW, get(get_worker_form).post(post_worker))
         .route(WORKERS_NEW_MODAL, get(get_worker_form_modal))
         .with_state(state)
+}
+
+#[derive(Deserialize)]
+struct FilterWorkersFormData{
+    filter: String,
+}
+
+#[debug_handler]
+async fn filter_workers(
+    State(state): State<WebHtmxState>,
+    extract::Path(worksite_id): extract::Path<String>,
+    Form(form_data): Form<FilterWorkersFormData>,
+) -> impl IntoResponse {
+    let worksite = state
+        .worksite_service
+        .get_worksite(GetWorksiteInput {
+            id: worksite_id.to_string(),
+        })
+        .await
+        .unwrap()
+        .ok_or("Worksite not found")
+        .unwrap();
+
+    let workers = state
+        .worksite_service
+        .filter_workers(FilterWorkersInput {
+            worksite_id: worksite_id.clone(),
+            filter: form_data.filter,
+        })
+        .await
+        .expect("Failed to get worker");
+
+    Html(html! {
+        <Card>
+            <WorkersTable worksite=worksite workers=workers/>
+        </Card>
+    })
 }
 
 async fn get_workers(
@@ -98,6 +139,11 @@ async fn get_workers(
         >
             <NotificationFlashes flashes=flashes.clone() />
             <PageContent title=format!("Manage all workers for {}", worksite_name)>
+                <input class="form-control" type="search" 
+                    name="filter" placeholder="Search..." 
+                    hx-post=""
+                    hx-trigger="input changed delay:500ms, filter" 
+                    hx-target=".divide-y">
                 <Card>
                     <WorkersTable worksite=worksite workers=workers/>
                 </Card>

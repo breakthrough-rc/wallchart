@@ -1,4 +1,4 @@
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Utc, Datelike};
 
 pub type WorksiteName = String;
 pub type WorksiteId = String;
@@ -414,6 +414,22 @@ impl Worker {
             .retain(|assessment| assessment.id != assessment_id);
 
         updated_worker
+    }
+    pub fn matches_filter(&self, filter: &String) -> bool {
+        self.first_name.to_lowercase().contains(filter) | 
+        self.last_name.to_lowercase().contains(filter) | 
+        self.email.to_lowercase().contains(filter) |
+        match &self.address {
+            Some(address) => address.city.to_lowercase().contains(filter) |
+                (address.postal_code.to_lowercase().contains(filter) && (filter.len() > 1)) |
+                address.region.to_lowercase().contains(filter) |
+                (address.street_address.to_lowercase().contains(filter) && (filter.len() > 1)),
+            None    => false,
+        } | 
+        self.assessments.iter().any(|assessment| assessment.assessor.to_lowercase().contains(filter) |
+            (assessment.created_at.format("%B %Y").to_string().to_lowercase().contains(filter) && (filter.len() > 1)) |
+            (assessment.updated_at.format("%B %Y").to_string().to_lowercase().contains(filter) && (filter.len() > 1)) |
+            assessment.value.to_string().to_lowercase().contains(filter))
     }
 }
 

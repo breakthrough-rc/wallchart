@@ -4,6 +4,7 @@ pub mod add_tag;
 pub mod add_worker;
 pub mod assign_tags;
 pub mod assign_worker;
+pub mod filter_workers;
 pub mod get_tag;
 pub mod get_tags;
 pub mod get_worker;
