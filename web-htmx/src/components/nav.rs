@@ -44,7 +44,6 @@ pub fn Nav() -> String {
         ("Wallchart", routes::wallchart()),
         ("Workers", routes::workers(&worksite_id)),
         ("Tags", routes::tags(&worksite_id)),
-        ("Report", "/report".into()),
         ("Users", routes::users()),
         ("Import", routes::csv_upload()),
     ];
