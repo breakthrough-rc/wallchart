@@ -48,6 +48,11 @@ pub fn worksite(worksite_id: &String) -> String {
     format!("/worksites/{}", worksite_id)
 }
 
+pub const WORKSITE_EDIT_FORM: &str = "/worksites/:worksite_id/edit-form";
+pub fn worksite_edit_form(worksite_id: &String) -> String {
+    format!("/worksites/{}/edit-form", worksite_id)
+}
+
 pub const WORKSITES: &str = "/worksites";
 pub fn worksites() -> String {
     WORKSITES.into()

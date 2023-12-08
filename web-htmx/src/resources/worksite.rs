@@ -38,6 +38,10 @@ pub fn worksite_routes(state: WebHtmxState) -> Router {
     Router::new()
         .route(routes::WALLCHART, get(get_wallchart_page))
         .route(routes::WORKSITE, get(get_worksite))
+        .route(
+            routes::WORKSITE_EDIT_FORM,
+            get(get_worksite_edit_form).post(post_worksite_edit_form),
+        )
         .route(routes::WORKSITES_MODAL, get(get_new_worksite_modal))
         .route(routes::WORKSITES, post(post_worksite))
         .with_state(state)
@@ -108,6 +112,64 @@ async fn get_wallchart_page() -> impl IntoResponse {
     let id = ctx.worksite_id;
 
     Redirect::temporary(&routes::worksite(&id)).into_response()
+}
+
+#[derive(Deserialize, Debug, Clone)]
+struct WorksiteFormData {
+    worksite_name: String,
+}
+
+async fn post_worksite(
+    flash: Flash,
+    session: Session,
+    State(WebHtmxState {
+        worksite_service, ..
+    }): State<WebHtmxState>,
+    Form(form): Form<WorksiteFormData>,
+) -> impl IntoResponse {
+    let worksite = worksite_service
+        .create_worksite(CreateWorksiteInput {
+            worksite_name: form.worksite_name,
+        })
+        .await
+        .expect("Failed to create worker");
+
+    session.insert_value("selected_worksite_id", worksite.id.clone().into());
+    session.insert_value("selected_worksite_name", worksite.name.clone().into());
+
+    (
+        StatusCode::OK,
+        flash.success("Worksite created successfully!"),
+        [
+            ("hx-redirect", routes::worksite(&worksite.id)),
+            ("hx-retarget", "body".into()),
+        ],
+    )
+}
+
+async fn get_worksite_edit_form(
+    extract::Path(worksite_id): extract::Path<String>,
+    State(WebHtmxState { .. }): State<WebHtmxState>,
+) -> impl IntoResponse {
+    Html(html! {
+        <h1>{format!("Edit Worksite: {}", &worksite_id)}</h1>
+    })
+}
+
+async fn post_worksite_edit_form(
+    extract::Path(worksite_id): extract::Path<String>,
+    flash: Flash,
+    State(WebHtmxState { .. }): State<WebHtmxState>,
+    Form(_form): Form<WorksiteFormData>,
+) -> impl IntoResponse {
+    (
+        StatusCode::OK,
+        flash.success("Worksite update successfully!"),
+        [
+            ("hx-redirect", routes::worksite(&worksite_id)),
+            ("hx-retarget", "body".into()),
+        ],
+    )
 }
 
 #[props]
@@ -341,37 +403,4 @@ async fn get_new_worksite_modal() -> impl IntoResponse {
             </form>
         </Modal>
     })
-}
-
-#[derive(Deserialize, Debug, Clone)]
-struct WorksiteFormData {
-    worksite_name: String,
-}
-
-async fn post_worksite(
-    flash: Flash,
-    session: Session,
-    State(WebHtmxState {
-        worksite_service, ..
-    }): State<WebHtmxState>,
-    Form(form): Form<WorksiteFormData>,
-) -> impl IntoResponse {
-    let worksite = worksite_service
-        .create_worksite(CreateWorksiteInput {
-            worksite_name: form.worksite_name,
-        })
-        .await
-        .expect("Failed to create worker");
-
-    session.insert_value("selected_worksite_id", worksite.id.clone().into());
-    session.insert_value("selected_worksite_name", worksite.name.clone().into());
-
-    (
-        StatusCode::OK,
-        flash.success("Worksite created successfully!"),
-        [
-            ("hx-redirect", routes::worksite(&worksite.id)),
-            ("hx-retarget", "body".into()),
-        ],
-    )
 }
