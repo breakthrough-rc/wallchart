@@ -45,7 +45,7 @@ use crate::{
         self, worker, worker_profile, workers, workers_new, workers_new_modal, WORKER, WORKERS,
         WORKERS_NEW, WORKERS_NEW_MODAL, WORKER_PROFILE,
     },
-    state::WebHtmxState, playground::form,
+    state::WebHtmxState,
 };
 
 pub fn workers_routes(state: WebHtmxState) -> Router {

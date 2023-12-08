@@ -52,7 +52,7 @@ async fn put_selected_worksite(
         "selected_worksite_id",
         form.selected_worksite_id.clone().into(),
     );
-    session.insert_value("selected_worksite_name", worksite.name.clone().into());
+    session.insert_value("selected_worksite_name", worksite.name.into());
 
     (
         StatusCode::OK,

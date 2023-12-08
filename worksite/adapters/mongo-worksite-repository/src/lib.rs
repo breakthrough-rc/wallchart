@@ -98,7 +98,7 @@ impl WorkerRecord {
                 .map(|t| AssignedTag::new(t.clone()))
                 .collect(),
             email: self.email.clone(),
-            address: self.address.as_ref().map(|a| a.to_address()).clone(),
+            address: self.address.as_ref().map(|a| a.to_address()),
         }
     }
 }

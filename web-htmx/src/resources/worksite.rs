@@ -105,7 +105,7 @@ async fn get_worksite(
 async fn get_wallchart_page() -> impl IntoResponse {
     let ctx: crate::context::Context =
         crate::context::context().expect("Unable to retrieve htmx context.");
-    let id = ctx.worksite_id.clone();
+    let id = ctx.worksite_id;
 
     Redirect::temporary(&routes::worksite(&id)).into_response()
 }

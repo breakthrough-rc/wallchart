@@ -29,8 +29,7 @@ impl FilterWorkers {
 
         let filtered_workers:Vec<Worker> = 
             worksite.workers.iter()                     
-            .filter(|worker| worker.matches_filter(&input.filter.to_lowercase()))
-            .map(|worker | worker.clone())
+            .filter(|worker| worker.matches_filter(&input.filter.to_lowercase())).cloned()
             .collect();
         Ok(filtered_workers)
     }
