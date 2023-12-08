@@ -7,6 +7,7 @@ use axum::{
 use axum_flash::{Flash, IncomingFlashes};
 
 use axum_login::tower_sessions::Session;
+use axum_macros::debug_handler;
 use http::StatusCode;
 use rscx::{component, html, props, CollectFragment, CollectFragmentAsync};
 
@@ -23,12 +24,14 @@ use worksite_service::{
     create_worksite::CreateWorksiteInput,
     get_worksite::GetWorksiteInput,
     models::{Location as LocationModel, Tag, Worker, Worksite},
+    update_worksite::UpdateWorksiteInput,
 };
 
 use crate::{
     components::{
         page::{PageHeader, PageLayout},
         page_content::PageContent,
+        simple_form::{SimpleForm, SimpleFormData},
     },
     routes::{self, locations_new, locations_new_modal},
     state::WebHtmxState,
@@ -87,7 +90,10 @@ async fn get_worksite(
                         Add New Worksite
                     </SecondaryButton>
                     <PrimaryButton
-                        onclick="alert('Coming soon!')"
+                        hx_get=routes::worksite_edit_form(&worksite_id)
+                        hx_target=modal_target()
+                        hx_swap="beforeend"
+                        hx_push_url=routes::worksite_edit_form(&worksite_id)
                     >
                         Edit Worksite
                     </PrimaryButton>
@@ -149,19 +155,53 @@ async fn post_worksite(
 
 async fn get_worksite_edit_form(
     extract::Path(worksite_id): extract::Path<String>,
-    State(WebHtmxState { .. }): State<WebHtmxState>,
+    State(WebHtmxState {
+        worksite_service, ..
+    }): State<WebHtmxState>,
 ) -> impl IntoResponse {
+    let worksite = worksite_service
+        .get_worksite(GetWorksiteInput {
+            id: worksite_id.clone(),
+        })
+        .await
+        .unwrap()
+        .ok_or("Worksite not found")
+        .unwrap();
+
     Html(html! {
-        <h1>{format!("Edit Worksite: {}", &worksite_id)}</h1>
+        <Modal>
+            <SecondaryHeader
+                title="🧑‍🏭 Edit Worksite"
+                subtitle="Edit details below."
+            />
+            <SimpleForm
+                action=routes::worksite_edit_form(&worksite_id)
+                submit_button_text="Update"
+                data=SimpleFormData {
+                    name: worksite.name.into(),
+                }
+            />
+        </Modal>
     })
 }
 
+#[debug_handler]
 async fn post_worksite_edit_form(
     extract::Path(worksite_id): extract::Path<String>,
     flash: Flash,
-    State(WebHtmxState { .. }): State<WebHtmxState>,
-    Form(_form): Form<WorksiteFormData>,
+    State(WebHtmxState {
+        worksite_service, ..
+    }): State<WebHtmxState>,
+    Form(form): Form<SimpleFormData>,
 ) -> impl IntoResponse {
+    worksite_service
+        .update_worksite(UpdateWorksiteInput {
+            worksite_id: worksite_id.clone(),
+            worksite_name: form.name,
+        })
+        .await
+        .expect("Failed to create worker");
+
     (
         StatusCode::OK,
         flash.success("Worksite update successfully!"),
