@@ -178,7 +178,7 @@ async fn get_worksite_edit_form(
                 action=routes::worksite_edit_form(&worksite_id)
                 submit_button_text="Update"
                 data=SimpleFormData {
-                    name: worksite.name.into(),
+                    name: worksite.name,
                 }
             />
         </Modal>
