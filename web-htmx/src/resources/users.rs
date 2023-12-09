@@ -147,7 +147,7 @@ struct UserVM {
 }
 
 #[component]
-pub fn UserTableRow(user: UserVM) -> String {
+fn UserTableRow(user: UserVM) -> String {
     html! {
         <TableData variant=TDVariant::First>
             <button
