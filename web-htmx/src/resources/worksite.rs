@@ -22,9 +22,7 @@ use web_client::server::{
     notification::NotificationFlashes,
 };
 use worksite_service::{
-    create_worksite::CreateWorksiteInput,
-    get_worksite::GetWorksiteInput,
-    models::{Worksite},
+    create_worksite::CreateWorksiteInput, get_worksite::GetWorksiteInput, models::Worksite,
     update_worksite::UpdateWorksiteInput,
 };
 

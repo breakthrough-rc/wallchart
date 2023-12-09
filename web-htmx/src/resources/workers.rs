@@ -267,9 +267,6 @@ async fn post_worker(
                 <Alert
                     title="Oops! There was a problem with your submission."
                 />
-                // <pre>
-                //     {format!("{:#?}", e)}
-                // </pre>
                 <WorkerForm
                     action=workers_new(&wallchart_id)
                     form_data=profile_form_data

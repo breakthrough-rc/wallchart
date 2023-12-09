@@ -53,6 +53,9 @@ async fn get_users(State(state): State<WebHtmxState>) -> impl IntoResponse {
         .await
         .expect("Failed to get users");
 
+    let presenter = UsersTablePresenter::new(users);
+    let view_model: UsersTableProps = presenter.into();
+
     Html(html! {
         <PageLayout
             header=PageHeader::Toolbar {
@@ -71,15 +74,47 @@ async fn get_users(State(state): State<WebHtmxState>) -> impl IntoResponse {
         >
             <PageContent title="Add, edit, remove Users">
                 <Card>
-                    <UsersTable users=users />
+                    <UsersTable users=view_model.users />
                 </Card>
             </PageContent>
         </PageLayout>
     })
 }
 
+struct UsersTablePresenter {
+    users: Vec<User>, // TODO This should be the out model not domain model
+}
+
+impl UsersTablePresenter {
+    fn new(users: Vec<User>) -> Self {
+        Self { users }
+    }
+}
+
+impl From<UsersTablePresenter> for UsersTableProps {
+    fn from(presenter: UsersTablePresenter) -> Self {
+        Self {
+            users: presenter
+                .users
+                .into_iter()
+                .map(|user| UserVM {
+                    get_detail_url: routes::user_modal(&user.id),
+                    delete_url: routes::user(&user.id),
+                    email: user.email,
+                    role: user.role,
+                })
+                .collect(),
+        }
+    }
+}
+
+#[props]
+struct UsersTableProps {
+    users: Vec<UserVM>,
+}
+
 #[component]
-fn UsersTable(users: Vec<User>) -> String {
+fn UsersTable(props: UsersTableProps) -> String {
     html! {
         <Table
             headings=vec![
@@ -87,11 +122,12 @@ fn UsersTable(users: Vec<User>) -> String {
                 TableHeading::title("Role"),
                 TableHeading::empty("Actions"),
             ]
-            body=join_all(users
-                .iter()
+            body=join_all(props
+                .users
+                .into_iter()
                 .map(|user| async {
                     html! {
-                        <UserTableRow user=user.clone() />
+                        <UserTableRow user=user />
                     }
                 }))
                 .await
@@ -99,14 +135,25 @@ fn UsersTable(users: Vec<User>) -> String {
     }
 }
 
+#[derive(Debug, Clone, PartialEq)]
+struct UserVM {
+    // routes::user_modal(&user.id)
+    get_detail_url: String,
+
+    // routes::user(&user.id)
+    delete_url: String,
+    email: String,
+    role: String,
+}
+
 #[component]
-pub fn UserTableRow(user: User) -> String {
+pub fn UserTableRow(user: UserVM) -> String {
     html! {
         <TableData variant=TDVariant::First>
             <button
-                hx-get=routes::user_modal(&user.id)
+                hx-get=user.get_detail_url
                 hx-target=modal_target()
-                hx-push-url=routes::user_modal(&user.id)
+                hx-push-url=user.get_detail_url
             >
                 {&user.email}
             </button>
@@ -116,7 +163,7 @@ pub fn UserTableRow(user: User) -> String {
         </TableData>
         <TableData variant=TDVariant::Last>
             <DeleteActionLink
-                hx_delete=routes::user(&user.id)
+                hx_delete=user.delete_url
                 hx_swap="outerHTML swap:1s"
                 hx_target="closest tr"
                 confirm=Confirm {
