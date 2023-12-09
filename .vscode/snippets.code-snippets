@@ -1,6 +1,6 @@
 {
     "snippet": {
-        "prefix": "snippet",
+        "prefix": "yc:snippet",
         "body": [
             "\"$1\": {",
             "    \"prefix\": \"$1\",",
@@ -11,7 +11,7 @@
         "description": "Create a snippet"
     },
     "presenter": {
-        "prefix": "presenter",
+        "prefix": "yc:presenter",
         "body": [
             "struct $1Presenter {",
             "    model: $1,",
@@ -31,7 +31,7 @@
         "scope": "rust"
     },
     "component": {
-        "prefix": "component",
+        "prefix": "yc:component",
         "body": [
             "#[props]",
             "struct $1Props {",
