@@ -1,0 +1,47 @@
+{
+    "snippet": {
+        "prefix": "snippet",
+        "body": [
+"\"$1\": {"
+"    \"prefix\": \"$1\","
+"    \"body\": [],"
+"    \"description\": \"Create a $1\","
+},
+        ],
+        "description": "Create a snippet",
+    },
+    "presenter": {
+        "prefix": "presenter",
+        "body": [
+"struct $1Presenter {"
+"    model: $1,"
+"}"
+
+"impl $1Presenter {"
+"    fn new(model: $1) -> Self {"
+"        Self { model }"
+"    }"
+"}"
+
+"impl From<$1Presenter> for $2Props {"
+"    fn from(presenter: $1Presenter) -> Self { todo!(\"Implement mapping\") }"
+"}"
+        ]
+        "description": "Create the presenter boilerplate",
+    },
+    "component": {
+        "prefix": "component",
+        "body": [
+"#[props]"
+"struct $1Props {"
+"    #[builder(setter(into))]"
+"    name: String,"
+"}"
+
+"#[component]"
+"fn $1(props: $1Props) -> String {"
+"    html! { <div>Hello, {props.name}!</div>  }"
+"}"
+        ],
+        "description": "Create a component",
+}
