@@ -24,7 +24,7 @@ use web_client::server::{
 use worksite_service::{
     create_worksite::CreateWorksiteInput,
     get_worksite::GetWorksiteInput,
-    models::{Location as LocationModel, Tag, Worker, Worksite},
+    models::{Worksite},
     update_worksite::UpdateWorksiteInput,
 };
 
