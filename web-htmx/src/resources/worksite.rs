@@ -5,11 +5,12 @@ use axum::{
     Form, Router,
 };
 use axum_flash::{Flash, IncomingFlashes};
-
 use axum_login::tower_sessions::Session;
 use axum_macros::debug_handler;
 use http::StatusCode;
-use rscx::{component, html, props, CollectFragment, CollectFragmentAsync};
+use rscx::{
+    component, html, props, typed_builder::TypedBuilder, CollectFragment, CollectFragmentAsync,
+};
 
 use serde::Deserialize;
 use web_client::server::{
@@ -50,6 +51,96 @@ pub fn worksite_routes(state: WebHtmxState) -> Router {
         .with_state(state)
 }
 
+struct WorksitePresenter {
+    worksite: Worksite, // TODO This should be the out model not domain model
+}
+
+impl WorksitePresenter {
+    fn new(worksite: Worksite) -> Self {
+        Self { worksite }
+    }
+
+    pub fn get_worksite_name(&self) -> String {
+        self.worksite.name.clone()
+    }
+}
+
+impl From<WorksitePresenter> for WallchartTableProps {
+    fn from(presenter: WorksitePresenter) -> Self {
+        let worksite_id = presenter.worksite.id.clone();
+        let worksite = presenter.worksite;
+        let locations = worksite.locations.clone();
+
+        let locations = locations
+            .into_iter()
+            .map(|location| {
+                let location_id = location.id.clone();
+
+                let add_shift_url = routes::shifts_new(&worksite_id, &location_id);
+
+                let shifts = location
+                    .shifts
+                    .into_iter()
+                    .map(|shift| {
+                        let shift_id = shift.id.clone();
+
+                        let workers = worksite.get_workers_for_shift(shift_id.clone());
+
+                        let workers = workers
+                            .into_iter()
+                            .map(|worker| {
+                                let tags = worksite.get_tags_for_worker(worker.clone());
+                                let worker_id = worker.id.clone();
+
+                                let assignment_url = routes::shift_assignment(
+                                    &worksite_id,
+                                    &location_id,
+                                    &shift_id,
+                                    &worker_id,
+                                );
+
+                                let details_url = routes::worker_profile(&worksite_id, &worker_id);
+
+                                WorkerRowWorker {
+                                    full_name: worker.full_name(),
+                                    last_assessment: worker
+                                        .last_assessment()
+                                        .map(|a| a.value.to_string()),
+                                    shift_assignment_url: assignment_url,
+                                    tags: tags
+                                        .into_iter()
+                                        .map(|tag| WorkerRowTag {
+                                            name: tag.name,
+                                            icon: tag.icon,
+                                        })
+                                        .collect(),
+                                    details_url,
+                                }
+                            })
+                            .collect();
+
+                        ShiftRowShift {
+                            name: shift.name,
+                            workers,
+                        }
+                    })
+                    .collect();
+
+                LocationRowLocation {
+                    name: location.name,
+                    add_shift_url,
+                    shifts,
+                }
+            })
+            .collect();
+
+        Self {
+            new_worker_url: routes::workers_new_modal(&worksite_id),
+            locations,
+        }
+    }
+}
+
 async fn get_worksite(
     flashes: IncomingFlashes,
     extract::Path(worksite_id): extract::Path<String>,
@@ -66,7 +157,9 @@ async fn get_worksite(
         .ok_or("Worksite not found")
         .unwrap();
 
-    let worksite_name = worksite.name.clone();
+    let presenter = WorksitePresenter::new(worksite);
+    let worksite_name = presenter.get_worksite_name();
+    let view_model: WallchartTableProps = presenter.into();
 
     let html = html! {
         <PageLayout
@@ -103,7 +196,10 @@ async fn get_worksite(
             <NotificationFlashes flashes=flashes.clone() />
             <PageContent title="Manage your worksite and more">
                 <Card>
-                    <WallchartTable worksite=worksite/>
+                    <WallchartTable
+                        new_worker_url=view_model.new_worker_url
+                        locations=view_model.locations
+                    />
                 </Card>
             </PageContent>
         </PageLayout>
@@ -213,14 +309,13 @@ async fn post_worksite_edit_form(
 }
 
 #[props]
-pub struct WallchartTableProps {
-    #[builder(setter(into))]
-    worksite: Worksite,
+struct WallchartTableProps {
+    new_worker_url: String,
+    locations: Vec<LocationRowLocation>,
 }
 
 #[component]
-pub fn WallchartTable(props: WallchartTableProps) -> String {
-    let worksite = props.worksite.clone();
+fn WallchartTable(props: WallchartTableProps) -> String {
     html! {
         <table class="min-w-full">
             <thead class="bg-white">
@@ -233,13 +328,13 @@ pub fn WallchartTable(props: WallchartTableProps) -> String {
             </thead>
             <tbody class="bg-white">
                 {
-                    &worksite.locations
-                        .iter()
+                    props.locations
+                        .into_iter()
                         .map(|location| async {
                             html! {
                                 <LocationRow
-                                    location=location.clone()
-                                    worksite=worksite.clone()
+                                    location=location
+                                    new_worker_url=props.new_worker_url.clone()
                                 />
                             }
                         })
@@ -251,17 +346,33 @@ pub fn WallchartTable(props: WallchartTableProps) -> String {
     }
 }
 
-#[props]
-pub struct LocationRowProps {
+#[derive(Clone)]
+struct ShiftRowShift {
+    name: String,
+    workers: Vec<WorkerRowWorker>,
+}
+
+#[derive(Clone, TypedBuilder)]
+struct LocationRowLocation {
     #[builder(setter(into))]
-    location: LocationModel,
+    name: String,
 
     #[builder(setter(into))]
-    worksite: Worksite,
+    add_shift_url: String,
+
+    shifts: Vec<ShiftRowShift>,
+}
+
+#[props]
+struct LocationRowProps {
+    location: LocationRowLocation,
+
+    #[builder(setter(into))]
+    new_worker_url: String,
 }
 
 #[component]
-pub fn LocationRow(props: LocationRowProps) -> String {
+fn LocationRow(props: LocationRowProps) -> String {
     html! {
         <tr class="border-t border-gray-200">
             <th colspan="3" scope="colgroup" class="bg-gray-200 py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
@@ -269,8 +380,8 @@ pub fn LocationRow(props: LocationRowProps) -> String {
             </th>
             <th colspan="3" scope="colgroup" class="bg-gray-200 py-2 pl-4 pr-3 text-right text-sm font-semibold text-gray-900 sm:pl-3">
                 <SecondaryButton
-                    hx_get=routes::shifts_new_modal(&props.worksite.id, &props.location.id)
-                    hx_push_url=routes::shifts_new(&props.worksite.id, &props.location.id)
+                    hx_get=props.location.add_shift_url.clone()
+                    hx_push_url=props.location.add_shift_url.clone()
                     hx_target=modal_target()
                     hx_swap="beforeend"
                 >
@@ -285,13 +396,9 @@ pub fn LocationRow(props: LocationRowProps) -> String {
                 .map(|shift| async {
                     html! {
                         <ShiftRow
-                            shift_id=shift.id.clone()
+                            new_worker_url=props.new_worker_url.clone()
                             shift_name=shift.name.clone()
-                            workers=props.worksite.get_workers_for_shift(shift.id.clone())
-                            worksite=props.worksite.clone()
-                            new_worker_action=routes::shift_assignments_new_modal(&props.worksite.id, &props.location.id, &shift.id)
-                            new_worker_push_url=routes::shift_assignments_new(&props.worksite.id, &props.location.id, &shift.id)
-                            location_id=props.location.id.clone()
+                            workers=shift.workers.clone()
                         />
                     }
                 })
@@ -302,28 +409,18 @@ pub fn LocationRow(props: LocationRowProps) -> String {
 }
 
 #[props]
-pub struct ShiftRowProps {
+struct ShiftRowProps {
     #[builder(setter(into))]
-    shift_id: String,
+    new_worker_url: String,
 
     #[builder(setter(into))]
     shift_name: String,
 
-    workers: Vec<Worker>,
-    worksite: Worksite,
-
-    #[builder(setter(into))]
-    location_id: String,
-
-    #[builder(setter(into))]
-    new_worker_action: String,
-
-    #[builder(setter(into))]
-    new_worker_push_url: String,
+    workers: Vec<WorkerRowWorker>,
 }
 
 #[component]
-pub fn ShiftRow(props: ShiftRowProps) -> String {
+fn ShiftRow(props: ShiftRowProps) -> String {
     html! {
         <tr class="border-t border-gray-200">
             <th colspan="3" scope="colgroup" class="bg-gray-50 py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
@@ -331,10 +428,10 @@ pub fn ShiftRow(props: ShiftRowProps) -> String {
             </th>
             <th colspan="3" scope="colgroup" class="bg-gray-50 py-2 pl-4 pr-3 text-right text-sm font-semibold text-gray-900 sm:pl-3">
                 <SecondaryButton
-                    hx_get=props.new_worker_action
+                    hx_get=props.new_worker_url.clone()
                     hx_target=modal_target()
                     hx_swap="beforeend"
-                    hx_push_url=props.new_worker_push_url
+                    hx_push_url=props.new_worker_url.clone()
                 >
                     "Add Worker to Shift"
                 </SecondaryButton>
@@ -347,9 +444,6 @@ pub fn ShiftRow(props: ShiftRowProps) -> String {
                 .map(|worker| async {
                     html! {
                         <WorkerRow
-                            tags=props.worksite.get_tags_for_worker(worker.clone())
-                            worker_action=routes::worker(&props.worksite.id, &worker.clone().id)
-                            shift_assignment_action=routes::shift_assignment(&props.worksite.id, &props.location_id, &props.shift_id, &worker.clone().id)
                             worker=worker
                             shift_name=props.shift_name.clone()
                         />
@@ -361,52 +455,75 @@ pub fn ShiftRow(props: ShiftRowProps) -> String {
     }
 }
 
+#[derive(Clone)]
+struct WorkerRowTag {
+    name: String,
+    icon: String,
+}
+
+#[derive(Clone, TypedBuilder)]
+struct WorkerRowWorker {
+    #[builder(setter(into))]
+    full_name: String,
+
+    last_assessment: Option<String>,
+
+    #[builder(setter(into))]
+    shift_assignment_url: String,
+
+    tags: Vec<WorkerRowTag>,
+
+    #[builder(setter(into))]
+    details_url: String,
+}
+
 #[props]
-pub struct WorkerRowProps {
-    worker: Worker,
-    tags: Vec<Tag>,
-
+struct WorkerRowProps {
     #[builder(setter(into))]
-    worker_action: String,
-
-    #[builder(setter(into))]
-    shift_assignment_action: String,
-
     shift_name: String,
+
+    #[builder(setter(into))]
+    worker: WorkerRowWorker,
 }
 
 #[component]
-pub fn WorkerRow(props: WorkerRowProps) -> String {
+fn WorkerRow(props: WorkerRowProps) -> String {
     html! {
         <tr class="border-t border-gray-300" data-loading-states>
             <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
                   <button
-                      hx-get=props.worker_action.clone()
+                      hx-get=props.worker.details_url.clone()
                       hx-target=modal_target()
                       hx-swap="beforeend"
                   >
-                      {format!("{} {}", props.worker.first_name, props.worker.last_name)}
+                        {&props.worker.full_name}
                   </button>
             </td>
-            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{props.worker.last_assessment().map(|assessment| assessment.value).unwrap_or(0)}</td>
-            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{props.tags.into_iter().map(|tag| html! { <span title=tag.name class="cursor-pointer">{tag.icon}</span> }).collect_fragment()}</td>
+            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                {props.worker.last_assessment}
+            </td>
+            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{
+                props.worker.tags.into_iter().map(|tag| html! {
+                    <span title=tag.name class="cursor-pointer">{tag.icon}</span> }).collect_fragment()
+                }
+            </td>
             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 text-right">
                 <div class="inline-flex align-right gap-4">
                     <a
-                        hx-get=props.worker_action.clone()
+                        hx-get=props.worker.details_url.clone()
                         hx-target=modal_target()
                         hx-swap="beforeend"
                         class="cursor-pointer text-indigo-600 hover:text-indigo-900"
                     >
-                        Edit<span class="sr-only">, {format!("{}", &props.worker.full_name())}</span>
+                        Edit<span class="sr-only">, {&props.worker.full_name}</span>
                     </a>
                     <a
-                        hx-delete=props.shift_assignment_action
+                        hx-delete=props.worker.shift_assignment_url
                         hx-swap="outerHTML swap:1s"
                         hx-target="closest tr"
                         data-loading-disable
                         hx-confirm="Remove Worker"
-                        data-confirm-message=format!("Are you sure you want to remove {} from shift: {}?", &props.worker.full_name(), &props.shift_name)
+                        data-confirm-message=format!("Are you sure you want to remove {} from shift: {}?", &props.worker.full_name, &props.shift_name)
                         class="cursor-pointer text-indigo-600 hover:text-indigo-900"
                     >
                         <div
@@ -415,7 +532,7 @@ pub fn WorkerRow(props: WorkerRowProps) -> String {
                             <span class="inline h-3 w-3 rounded-full bg-white hover:bg-gray-50"></span>
                         </div>
 
-                        Remove<span class="sr-only">, {format!("{}", &props.worker.full_name())}</span>
+                        Remove<span class="sr-only">, {format!("{}", &props.worker.full_name)}</span>
                     </a>
                 </div>
             </td>
