@@ -136,7 +136,7 @@ fn UsersTable(props: UsersTableProps) -> String {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-struct UserVM {
+pub struct UserVM {
     // routes::user_modal(&user.id)
     get_detail_url: String,
 
