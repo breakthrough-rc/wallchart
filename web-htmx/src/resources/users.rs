@@ -146,31 +146,36 @@ struct UserVM {
     role: String,
 }
 
+#[props]
+pub struct UserTableRowProps {
+    user: UserVM,
+}
+
 #[component]
-fn UserTableRow(user: UserVM) -> String {
+fn UserTableRow(props: UserTableRowProps) -> String {
     html! {
         <TableData variant=TDVariant::First>
             <button
-                hx-get=user.get_detail_url
+                hx-get=props.user.get_detail_url
                 hx-target=modal_target()
-                hx-push-url=user.get_detail_url
+                hx-push-url=props.user.get_detail_url
             >
-                {&user.email}
+                {&props.user.email}
             </button>
         </TableData>
         <TableData>
-            {&user.role}
+            {&props.user.role}
         </TableData>
         <TableData variant=TDVariant::Last>
             <DeleteActionLink
-                hx_delete=user.delete_url
+                hx_delete=props.user.delete_url
                 hx_swap="outerHTML swap:1s"
                 hx_target="closest tr"
                 confirm=Confirm {
                     title: "Remove User".into(),
-                    message: format!("Are you sure you want to remove this user: {}?", &user.email),
+                    message: format!("Are you sure you want to remove this user: {}?", &props.user.email),
                 }
-                sr_text=&user.email
+                sr_text=&props.user.email
                 show_loader_on_delete=true
             >
                 Remove
