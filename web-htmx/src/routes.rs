@@ -86,6 +86,15 @@ pub fn shifts(worksite_id: &String, location_id: &String) -> String {
     )
 }
 
+pub const SHIFTS_NEW_MODAL: &str =
+    "/worksites/:worksite_id/locations/:location_id/shifts/new-modal";
+pub fn shifts_new_modal(worksite_id: &String, location_id: &String) -> String {
+    format!(
+        "/worksites/{}/locations/{}/shifts/new-modal",
+        worksite_id, location_id
+    )
+}
+
 pub const _SHIFTS_NEW: &str = "/worksites/:worksite_id/locations/:location_id/shifts/new";
 pub fn shifts_new(worksite_id: &String, location_id: &String) -> String {
     format!(
@@ -103,6 +112,19 @@ pub fn shift_assignments_new(
 ) -> String {
     format!(
         "/worksites/{}/locations/{}/shifts/{}/workers/new",
+        worksite_id, location_id, shift_id
+    )
+}
+
+pub const SHIFT_ASSIGNMENTS_NEW_MODAL: &str =
+    "/worksites/:worksite_id/locations/:location_id/shifts/:shift_id/workers/new-modal";
+pub fn shift_assignments_new_modal(
+    worksite_id: &String,
+    location_id: &String,
+    shift_id: &String,
+) -> String {
+    format!(
+        "/worksites/{}/locations/{}/shifts/{}/workers/new-modal",
         worksite_id, location_id, shift_id
     )
 }
