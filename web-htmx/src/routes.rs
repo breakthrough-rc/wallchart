@@ -96,7 +96,7 @@ pub fn shifts_new_modal(worksite_id: &String, location_id: &String) -> String {
 }
 
 pub const _SHIFTS_NEW: &str = "/worksites/:worksite_id/locations/:location_id/shifts/new";
-pub fn shifts_new(worksite_id: &String, location_id: &String) -> String {
+pub fn _shifts_new(worksite_id: &String, location_id: &String) -> String {
     format!(
         "/worksites/{}/locations/{}/shifts/new",
         worksite_id, location_id

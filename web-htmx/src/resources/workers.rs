@@ -6,8 +6,8 @@ use axum::{
     routing::{get, post},
     Form, Router,
 };
-use axum_macros::debug_handler;
 use axum_flash::{Flash, IncomingFlashes};
+use axum_macros::debug_handler;
 use futures::future::join_all;
 use http::{HeaderMap, StatusCode};
 use rscx::{component, html, props, CollectFragment};
@@ -27,9 +27,9 @@ use web_client::server::{
 };
 use worksite_service::{
     add_worker::AddWorkerInput,
+    filter_workers::FilterWorkersInput,
     get_worker::GetWorkerInput,
     get_workers::GetWorkersInput,
-    filter_workers::FilterWorkersInput,
     get_worksite::GetWorksiteInput,
     models::{Tag, Worker, Worksite},
     update_worker::UpdateWorkerInput,
@@ -60,7 +60,7 @@ pub fn workers_routes(state: WebHtmxState) -> Router {
 }
 
 #[derive(Deserialize)]
-struct FilterWorkersFormData{
+struct FilterWorkersFormData {
     filter: String,
 }
 
@@ -139,10 +139,10 @@ async fn get_workers(
         >
             <NotificationFlashes flashes=flashes.clone() />
             <PageContent title=format!("Manage all workers for {}", worksite_name)>
-                <input class="form-control" type="search" 
-                    name="filter" placeholder="Search..." 
+                <input class="form-control" type="search"
+                    name="filter" placeholder="Search..."
                     hx-post=""
-                    hx-trigger="input changed delay:500ms, filter" 
+                    hx-trigger="input changed delay:500ms, filter"
                     hx-target=".divide-y">
                 <Card>
                     <WorkersTable worksite=worksite workers=workers/>
@@ -267,9 +267,6 @@ async fn post_worker(
                 <Alert
                     title="Oops! There was a problem with your submission."
                 />
-                // <pre>
-                //     {format!("{:#?}", e)}
-                // </pre>
                 <WorkerForm
                     action=workers_new(&wallchart_id)
                     form_data=profile_form_data
