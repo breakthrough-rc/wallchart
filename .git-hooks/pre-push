@@ -18,6 +18,7 @@ function popTempStash() {
 pushTempStash
 
 echo "Checking that the app builds (Wow great CI)"
+cargo check
 cargo test
 
 BUILD_EXIT_CODE=$?

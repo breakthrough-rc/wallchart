@@ -168,8 +168,8 @@ async fn get_worksite(
                             <EmptyState
                                 hx_target=modal_target()
                                 hx_swap="beforeend"
-                                hx_push_url=routes::worksites_modal()
-                                hx_get=routes::worksites_modal()
+                                hx_push_url=routes::worksites_create_form()
+                                hx_get=routes::worksites_create_form()
                                 button_label="Add new worksite"
                             />
                         </Card>
