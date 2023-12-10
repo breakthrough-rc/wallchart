@@ -269,6 +269,7 @@ async fn post_worker(
             StatusCode::BAD_REQUEST,
             Html(html! {
                 <Alert
+                    class="mt-4"
                     title="Oops! There was a problem with your submission."
                 />
                 <WorkerForm

@@ -15,6 +15,9 @@ pub struct AlertProps {
     #[builder(setter(into))]
     title: String,
 
+    #[builder(setter(into), default)]
+    class: String,
+
     #[builder(default)]
     children: String,
 }
@@ -29,7 +32,7 @@ pub fn Alert(props: AlertProps) -> String {
     };
 
     html! {
-        <div class=format!("mt-6 rounded-md {} p-4", bg_color)>
+        <div class=format!("rounded-md {} p-4 {}", bg_color, props.class).trim()>
             <div class="flex">
                 <div class="flex-shrink-0">
                     <AlertIcon kind=props.kind />
