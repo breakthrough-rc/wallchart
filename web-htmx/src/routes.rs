@@ -167,14 +167,9 @@ pub fn users() -> String {
     USERS.into()
 }
 
-pub const USERS_NEW: &str = "/users/new";
-pub fn users_new() -> String {
-    USERS_NEW.into()
-}
-
-pub const USERS_NEW_MODAL: &str = "/users/new-modal";
-pub fn users_new_modal() -> String {
-    USERS_NEW_MODAL.into()
+pub const USERS_CREATE_FORM: &str = "/users/create-form";
+pub fn users_create_form() -> String {
+    USERS_CREATE_FORM.into()
 }
 
 pub const USER: &str = "/users/:user_id";
@@ -182,9 +177,9 @@ pub fn user(user_id: &String) -> String {
     format!("/users/{}", user_id)
 }
 
-pub const USER_MODAL: &str = "/users/:user_id/modal";
-pub fn user_modal(user_id: &String) -> String {
-    format!("/users/{}/modal", user_id)
+pub const USER_EDIT_FORM: &str = "/users/:user_id/edit-form";
+pub fn user_edit_form(user_id: &String) -> String {
+    format!("/users/{}/edit-form", user_id)
 }
 
 pub const ASSIGNED_TAGS: &str = "/worksites/:worksite_id/workers/:worker_id/tags";

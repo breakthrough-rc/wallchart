@@ -1,7 +1,7 @@
 use axum::{
     extract::{self, State},
     response::{Html, IntoResponse},
-    routing::get,
+    routing::{delete, get},
     Form, Router,
 };
 use axum_flash::Flash;
@@ -35,14 +35,16 @@ use crate::{
 
 pub fn users_routes(state: WebHtmxState) -> Router {
     Router::new()
-        .route(routes::USERS, get(get_users).post(post_users))
-        .route(routes::USERS_NEW, get(get_users_form))
+        .route(routes::USERS, get(get_users))
         .route(
-            routes::USER,
-            get(get_user_detail).post(update_user).delete(delete_user),
+            routes::USERS_CREATE_FORM,
+            get(get_create_form).post(post_create_form),
         )
-        .route(routes::USER_MODAL, get(get_user_detail_modal))
-        .route(routes::USERS_NEW_MODAL, get(get_users_form_modal))
+        .route(
+            routes::USER_EDIT_FORM,
+            get(get_edit_form).post(post_edit_form),
+        )
+        .route(routes::USER, delete(delete_user))
         .with_state(state)
 }
 
@@ -62,10 +64,10 @@ async fn get_users(State(state): State<WebHtmxState>) -> impl IntoResponse {
                 title: "Users".into(),
                 buttons: html! {
                     <PrimaryButton
-                        hx_get=routes::users_new_modal()
+                        hx_get=routes::users_create_form()
                         hx_target=modal_target()
                         hx_swap="beforeend"
-                        hx_push_url=routes::users_new()
+                        hx_push_url=routes::page_modal_from(routes::users_create_form())
                     >
                         Add New User
                     </PrimaryButton>
@@ -98,7 +100,7 @@ impl From<UsersTablePresenter> for UsersTableProps {
                 .users
                 .into_iter()
                 .map(|user| UserVM {
-                    get_detail_url: routes::user_modal(&user.id),
+                    edit_form_url: routes::user_edit_form(&user.id),
                     delete_url: routes::user(&user.id),
                     email: user.email,
                     role: user.role,
@@ -137,8 +139,8 @@ fn UsersTable(props: UsersTableProps) -> String {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct UserVM {
-    // routes::user_modal(&user.id)
-    get_detail_url: String,
+    // routes::user_edit_form(&user.id)
+    edit_form_url: String,
 
     // routes::user(&user.id)
     delete_url: String,
@@ -156,9 +158,9 @@ fn UserTableRow(props: UserTableRowProps) -> String {
     html! {
         <TableData variant=TDVariant::First>
             <button
-                hx-get=props.user.get_detail_url
+                hx-get=props.user.edit_form_url
                 hx-target=modal_target()
-                hx-push-url=props.user.get_detail_url
+                hx-push-url=routes::page_modal_from(props.user.edit_form_url.clone())
             >
                 {&props.user.email}
             </button>
@@ -190,7 +192,7 @@ struct AddUserFormData {
     password: String,
 }
 
-async fn post_users(
+async fn post_create_form(
     State(WebHtmxState { auth_service, .. }): State<WebHtmxState>,
     flash: Flash,
     Form(form): Form<AddUserFormData>,
@@ -212,26 +214,20 @@ async fn post_users(
     )
 }
 
-async fn get_users_form(headers: HeaderMap) -> impl IntoResponse {
+async fn get_create_form(headers: HeaderMap) -> impl IntoResponse {
     Html(html! {
         <PageLayout
             partial=headers.contains_key("Hx-Request")
             header="Add User"
         >
-            <UserForm action=routes::users() />
+            <Modal size=ModalSize::MediumScreen>
+                <SecondaryHeader
+                    title="👤 Add User"
+                    subtitle="Enter user details below."
+                />
+                <UserForm action=routes::users_create_form() />
+            </Modal>
         </PageLayout>
-    })
-}
-
-async fn get_users_form_modal() -> impl IntoResponse {
-    Html(html! {
-        <Modal size=ModalSize::MediumScreen>
-            <SecondaryHeader
-                title="👤 Add User"
-                subtitle="Enter user details below."
-            />
-            <UserForm action=routes::users() />
-        </Modal>
     })
 }
 
@@ -312,9 +308,10 @@ async fn delete_user(
     }
 }
 
-async fn get_user_detail(
+async fn get_edit_form(
     extract::Path(user_id): extract::Path<String>,
     State(WebHtmxState { auth_service, .. }): State<WebHtmxState>,
+    headers: HeaderMap,
 ) -> impl IntoResponse {
     let user = auth_service
         .get_user(GetUserInput {
@@ -326,42 +323,23 @@ async fn get_user_detail(
         .expect("User not found");
 
     Html(html! {
-        <PageLayout header=user.email.clone()>
-            <UserForm
-                action=routes::user(&user.id)
-                email=user.email.clone()
-                role="Organizer"
-             />
+        <PageLayout
+            partial=headers.contains_key("Hx-Request")
+            header="Edit User"
+        >
+            <Modal size=ModalSize::MediumScreen>
+                <SecondaryHeader
+                    title="👤 Edit User"
+                    subtitle="Make changes to the user below."
+                />
+                <UserForm
+                    action=routes::user_edit_form(&user.id)
+                    email=user.email.clone()
+                    role=user.role
+                    show_password=false
+                />
+            </Modal>
         </PageLayout>
-    })
-}
-
-async fn get_user_detail_modal(
-    extract::Path(user_id): extract::Path<String>,
-    State(WebHtmxState { auth_service, .. }): State<WebHtmxState>,
-) -> impl IntoResponse {
-    let user = auth_service
-        .get_user(GetUserInput {
-            user_id: user_id.clone(),
-        })
-        .await
-        .expect("Failed to get user")
-        .ok_or("User not found")
-        .expect("User not found");
-
-    Html(html! {
-        <Modal size=ModalSize::MediumScreen>
-            <SecondaryHeader
-                title="👤 Edit User"
-                subtitle="Make changes to the user below."
-            />
-            <UserForm
-                action=routes::user(&user.id)
-                email=user.email.clone()
-                role=user.role
-                show_password=false
-             />
-        </Modal>
     })
 }
 
@@ -371,7 +349,7 @@ struct UpdateUserFormData {
     role: String,
 }
 
-async fn update_user(
+async fn post_edit_form(
     extract::Path(user_id): extract::Path<String>,
     State(WebHtmxState { auth_service, .. }): State<WebHtmxState>,
     flash: Flash,
