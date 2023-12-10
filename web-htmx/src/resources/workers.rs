@@ -19,7 +19,7 @@ use web_client::server::{
     button::PrimaryButton,
     card::{Card, CardContent, CardFooter},
     flyout::Flyout,
-    form::{Button, TextInput, GridCell},
+    form::{Button, GridCell, TextInput},
     headers::SecondaryHeader,
     modal::{modal_target, Modal, ModalSize},
     notification::NotificationFlashes,
@@ -127,10 +127,10 @@ async fn get_workers(
                 title: "Workers".into(),
                 buttons: html! {
                     <GridCell>
-                        <TextInput class="form-control py-1.5" input_type="search" 
-                            name="filter" placeholder="Search..." 
+                        <TextInput class="form-control py-1.5" input_type="search"
+                            name="filter" placeholder="Search..."
                             hx_post=routes::workers(&worksite_id)
-                            hx_trigger="input changed delay:500ms, filter" 
+                            hx_trigger="input changed delay:500ms, filter"
                             hx_target="table">
                         </TextInput>
                     </GridCell>
