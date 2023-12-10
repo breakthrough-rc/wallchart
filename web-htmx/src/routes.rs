@@ -58,9 +58,9 @@ pub fn worksites() -> String {
     WORKSITES.into()
 }
 
-pub const WORKSITES_MODAL: &str = "/worksites/modal";
-pub fn worksites_modal() -> String {
-    WORKSITES_MODAL.into()
+pub const WORKSITES_CREATE_FORM: &str = "/worksites/create-form";
+pub fn worksites_create_form() -> String {
+    WORKSITES_CREATE_FORM.into()
 }
 
 pub const LOCATIONS: &str = "/worksites/:worksite_id/locations";
@@ -255,7 +255,11 @@ pub fn page_modal_from(modal_resource_uri: String) -> String {
         crate::context::context().expect("Unable to retrieve htmx context.");
 
     let page_url = format!("{}/", &ctx.page_url);
-    let query = modal_resource_uri.replace(&page_url, "?modal=");
 
-    format!("{}{}", &ctx.page_url, query)
+    if modal_resource_uri.starts_with(&page_url) {
+        let query = modal_resource_uri.replace(&page_url, "?modal=");
+        format!("{}{}", &ctx.page_url, query)
+    } else {
+        format!("{}?modal={}", &ctx.page_url, modal_resource_uri)
+    }
 }
