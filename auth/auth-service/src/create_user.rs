@@ -3,7 +3,7 @@ use std::sync::Arc;
 use password_auth::generate_hash;
 use thiserror::Error;
 
-use crate::{models::User, ports::user_repository::UserRepository};
+use crate::{models::{User, UserRole}, ports::user_repository::UserRepository,};
 
 #[derive(Clone)]
 pub struct CreateUser {
@@ -37,7 +37,7 @@ impl CreateUser {
             id: uuid::Uuid::new_v4().to_string(),
             email: input.email,
             hashed_password,
-            role: "Organizer".to_string(),
+            role: UserRole::Organizer,
         };
         self.user_repository
             .save(new_user.clone())

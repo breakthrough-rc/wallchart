@@ -14,6 +14,8 @@ pub trait UserRepository: Send + Sync + 'static {
 
 #[derive(Error, Debug, PartialEq)]
 pub enum RepositoryFailure {
+    #[error("Unknown user role")]
+    UnknownUserRole,
     #[error("Failed to get connection from pool")]
     FailedToGetConnectionFromPool,
     #[error("Something went wrong")]

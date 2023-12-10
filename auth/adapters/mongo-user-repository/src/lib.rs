@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use async_trait::async_trait;
-use auth_service::models::User;
+use auth_service::models::{User, UserRole};
 use auth_service::ports::user_repository::{RepositoryFailure, UserRepository};
 use axum_login::{AuthnBackend, UserId};
 use futures::stream::TryStreamExt;
@@ -16,14 +16,29 @@ struct UserRecord {
     pub role: String,
 }
 
+const ORGANIZER_STRING: &str = "Organizer";
+
+fn to_user_role(string_role: String) -> Result<UserRole, RepositoryFailure> {
+    match string_role.as_str() {
+        ORGANIZER_STRING => Ok(UserRole::Organizer),
+        _ => Err(RepositoryFailure::UnknownUserRole)
+    }
+}
+
+fn user_role_to_string(user_role: UserRole) -> String {
+    match user_role {
+        UserRole::Organizer => ORGANIZER_STRING.to_string()
+    }
+}
+
 impl UserRecord {
-    pub fn to_user(&self) -> User {
-        User {
+    pub fn to_user(&self) -> Result<User, RepositoryFailure> {
+        Ok(User {
             id: self.id.clone(),
             email: self.email.clone(),
             hashed_password: self.hashed_password.clone(),
-            role: self.role.clone(),
-        }
+            role: to_user_role(self.role.clone())?,
+        })
     }
 }
 
@@ -32,7 +47,7 @@ fn to_user_record(user: &User) -> UserRecord {
         id: user.id.clone(),
         email: user.email.clone(),
         hashed_password: user.hashed_password.clone(),
-        role: user.role.clone(),
+        role: user_role_to_string(user.role.clone()),
     }
 }
 
@@ -70,8 +85,10 @@ impl UserRepository for MongoUserRepository {
             .find_one(filter, None)
             .await
             .map_err(|e| RepositoryFailure::Unknown(e.to_string()))?;
-
-        Ok(maybe_user.map(|u| u.to_user()))
+        match maybe_user {
+            Some(u) => u.to_user().map(|u| Some(u)),
+            None => Ok(None)
+        }
     }
 
     async fn get_users(&self) -> Result<Vec<User>, RepositoryFailure> {
@@ -87,7 +104,7 @@ impl UserRepository for MongoUserRepository {
             .await
             .map_err(|e| RepositoryFailure::Unknown(e.to_string()))?;
 
-        Ok(users.iter().map(|u| u.to_user()).collect())
+        Ok(users.iter().map(|u| u.to_user()).filter_map(|u| u.ok()).collect())
     }
 
     async fn find_by_email(&self, email: String) -> Result<Option<User>, RepositoryFailure> {
@@ -97,8 +114,10 @@ impl UserRepository for MongoUserRepository {
             .find_one(filter, None)
             .await
             .map_err(|e| RepositoryFailure::Unknown(e.to_string()))?;
-
-        Ok(maybe_user.map(|u| u.to_user()))
+        match maybe_user {
+            Some(u) => u.to_user().map(|u| Some(u)),
+            None => Ok(None)
+        }
     }
 
     async fn save(&self, user: User) -> Result<(), RepositoryFailure> {

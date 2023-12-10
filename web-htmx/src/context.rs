@@ -24,7 +24,18 @@ pub struct Context {
 pub struct LoggedInUser {
     pub id: String,
     pub email: String,
-    pub role: String,
+    pub role: UserRole,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum UserRole {
+    Organizer,
+}
+
+fn to_user_role(user_role: auth_service::models::UserRole) -> UserRole {
+    match user_role {
+        auth_service::models::UserRole::Organizer => UserRole::Organizer
+    }
 }
 
 tokio::task_local! {
@@ -57,7 +68,7 @@ pub async fn provide_context_layer(
         Some(user) => Some(LoggedInUser {
             id: user.id,
             email: user.email,
-            role: user.role,
+            role: to_user_role(user.role),
         }),
         None => None,
     };

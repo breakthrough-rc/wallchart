@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use thiserror::Error;
 
-use crate::ports::user_repository::UserRepository;
+use crate::{ports::user_repository::UserRepository, models::UserRole};
 
 #[derive(Clone)]
 pub struct UpdateUser {
@@ -14,7 +14,20 @@ pub struct UpdateUserInput {
     // Put input fields here
     pub user_id: String,
     pub email: String,
-    pub role: String,
+    pub role: UserRoleInput,
+}
+
+#[derive(Clone, Debug)]
+pub enum UserRoleInput {
+    Organizer,
+}
+
+impl From<UserRoleInput> for UserRole {
+    fn from(value: UserRoleInput) -> Self {
+        match value {
+            UserRoleInput::Organizer => UserRole::Organizer,
+        }
+    }
 }
 
 // Change the return type, if needed
@@ -29,7 +42,7 @@ impl UpdateUser {
             .map_err(|e| UpdateUserFailure::Internal(e.to_string()))?;
 
         let user = user
-            .map(|u| u.update(input.email, input.role))
+            .map(|u| u.update(input.email, input.role.into()))
             .ok_or(UpdateUserFailure::NotFound)?;
 
         self.user_repository
