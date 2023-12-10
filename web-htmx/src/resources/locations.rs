@@ -16,7 +16,7 @@ pub fn locations_routes(state: WebHtmxState) -> Router {
     Router::new()
         // Worksite locations
         .route(routes::LOCATIONS, post(post_location))
-        .route(routes::LOCATIONS_NEW_MODAL, get(get_location_form_modal))
+        .route(routes::LOCATIONS_CREATE_FORM, get(get_location_form_modal))
         .with_state(state)
 }
 

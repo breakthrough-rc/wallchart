@@ -11,8 +11,8 @@ use http::StatusCode;
 use rscx::{
     component, html, props, typed_builder::TypedBuilder, CollectFragment, CollectFragmentAsync,
 };
-
 use serde::Deserialize;
+
 use web_client::server::{
     button::{PrimaryButton, SecondaryButton},
     card::Card,
@@ -32,7 +32,7 @@ use crate::{
         page_content::PageContent,
         simple_form::{SimpleForm, SimpleFormData},
     },
-    routes::{self, locations_new, locations_new_modal},
+    routes,
     state::WebHtmxState,
 };
 
@@ -168,10 +168,10 @@ async fn get_worksite(
                 title: format!("Wallchart: {}", worksite_name),
                 buttons: html! {
                     <SecondaryButton
-                        hx_get=locations_new_modal(&worksite_id)
+                        hx_get=routes::locations_create_form(&worksite_id)
                         hx_target=modal_target()
                         hx_swap="beforeend"
-                        hx_push_url=locations_new(&worksite_id)
+                        hx_push_url=routes::page_modal_from(routes::locations_create_form(&worksite_id))
                     >
                         Add New Location
                     </SecondaryButton>

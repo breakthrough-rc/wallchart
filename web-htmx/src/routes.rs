@@ -68,9 +68,9 @@ pub fn locations(worksite_id: &String) -> String {
     format!("/worksites/{}/locations", worksite_id)
 }
 
-pub const LOCATIONS_NEW_MODAL: &str = "/worksites/:worksite_id/locations/new-modal";
-pub fn locations_new_modal(worksite_id: &String) -> String {
-    format!("/worksites/{}/locations/new-modal", worksite_id)
+pub const LOCATIONS_CREATE_FORM: &str = "/worksites/:worksite_id/locations/create-form";
+pub fn locations_create_form(worksite_id: &String) -> String {
+    format!("/worksites/{}/locations/create-form", worksite_id)
 }
 
 pub const _LOCATIONS_NEW: &str = "/worksites/:worksite_id/locations/new";
@@ -253,4 +253,14 @@ pub fn selected_worksite() -> String {
 pub const SELECTED_WORKSITE_MODAL: &str = "/selected-worksite/modal";
 pub fn selected_worksite_modal() -> String {
     SELECTED_WORKSITE_MODAL.into()
+}
+
+pub fn page_modal_from(modal_resource_uri: String) -> String {
+    let ctx: crate::context::Context =
+        crate::context::context().expect("Unable to retrieve htmx context.");
+
+    let page_url = format!("{}/", &ctx.page_url);
+    let query = modal_resource_uri.replace(&page_url, "?modal=");
+
+    format!("{}{}", &ctx.page_url, query)
 }
