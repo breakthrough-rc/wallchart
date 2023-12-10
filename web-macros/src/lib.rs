@@ -6,7 +6,7 @@ use syn::{
     FieldsNamed, Ident, ItemStruct, Token, ParenthesizedGenericArguments,
 };
 
-const ATTRS_LEN: usize = 46;
+const ATTRS_LEN: usize = 47;
 const HTML_ELEMENT_ATTRS: [&str; ATTRS_LEN] = [
     "id",
     "class",
@@ -18,6 +18,7 @@ const HTML_ELEMENT_ATTRS: [&str; ATTRS_LEN] = [
     "name",
     "autocomplete",
     "value",
+    "placeholder",
 
     // https://htmx.org/reference/#attributes
     "hx-boost",

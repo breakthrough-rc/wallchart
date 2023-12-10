@@ -311,7 +311,7 @@ async fn main() {
     let app = app.layer(auth_layer);
     let app = app.layer(session_service);
 
-    let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
+    let addr = SocketAddr::from(([0, 0, 0, 0], 3015));
     let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
     axum::serve(listener, app.into_make_service())
         .await

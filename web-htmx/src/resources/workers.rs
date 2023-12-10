@@ -19,7 +19,7 @@ use web_client::server::{
     button::PrimaryButton,
     card::{Card, CardContent, CardFooter},
     flyout::Flyout,
-    form::Button,
+    form::{Button, TextInput, GridCell},
     headers::SecondaryHeader,
     modal::{modal_target, Modal, ModalSize},
     notification::NotificationFlashes,
@@ -126,6 +126,14 @@ async fn get_workers(
             header=PageHeader::Toolbar {
                 title: "Workers".into(),
                 buttons: html! {
+                    <GridCell>
+                        <TextInput class="form-control py-1.5" input_type="search" 
+                            name="filter" placeholder="Search..." 
+                            hx_post=routes::workers(&worksite_id)
+                            hx_trigger="input changed delay:500ms, filter" 
+                            hx_target="table">
+                        </TextInput>
+                    </GridCell>
                     <PrimaryButton
                         hx_get=workers_new_modal(&worksite_id)
                         hx_target=modal_target()
@@ -139,11 +147,6 @@ async fn get_workers(
         >
             <NotificationFlashes flashes=flashes.clone() />
             <PageContent title=format!("Manage all workers for {}", worksite_name)>
-                <input class="form-control" type="search" 
-                    name="filter" placeholder="Search..." 
-                    hx-post=""
-                    hx-trigger="input changed delay:500ms, filter" 
-                    hx-target=".divide-y">
                 <Card>
                     <WorkersTable worksite=worksite workers=workers/>
                 </Card>
