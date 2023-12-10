@@ -1,4 +1,5 @@
 pub mod appshell;
+pub mod empty_state;
 pub mod logo;
 pub mod nav;
 pub mod not_found_message;

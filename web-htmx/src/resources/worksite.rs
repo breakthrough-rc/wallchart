@@ -14,6 +14,7 @@ use rscx::{
 use serde::Deserialize;
 
 use web_client::server::{
+    attrs::Attrs,
     button::{PrimaryButton, SecondaryButton},
     card::Card,
     form::{Button, GridCell, GridLayout, Label, TextInput},
@@ -28,6 +29,7 @@ use worksite_service::{
 
 use crate::{
     components::{
+        empty_state::EmptyState,
         page::{PageHeader, PageLayout},
         page_content::PageContent,
         simple_form::{SimpleForm, SimpleFormData},
@@ -154,9 +156,30 @@ async fn get_worksite(
             id: worksite_id.clone(),
         })
         .await
-        .unwrap()
-        .ok_or("Worksite not found")
         .unwrap();
+
+    let worksite = match worksite {
+        Some(worksite) => worksite,
+        None => {
+            let empty_state_content = Html(html! {
+                <PageLayout header=PageHeader::Title("Not Found".to_string()) >
+                    <PageContent>
+                        <Card>
+                            <EmptyState
+                                hx_target=modal_target()
+                                hx_swap="beforeend"
+                                hx_push_url=routes::worksites_modal()
+                                hx_get=routes::worksites_modal()
+                                button_label="Add new worksite"
+                            />
+                        </Card>
+                    </PageContent>
+                </PageLayout>
+            });
+
+            return (flashes, empty_state_content);
+        }
+    };
 
     let presenter = WorksitePresenter::new(worksite);
     let worksite_name = presenter.get_worksite_name();
@@ -556,7 +579,6 @@ async fn get_new_worksite_modal() -> impl IntoResponse {
         <Modal size=ModalSize::MediumScreen>
             <SecondaryHeader
                 title="Create Worksite"
-                subtitle="Create a new worksite"
             />
             <form hx-post=routes::worksites()>
                 <GridLayout>
@@ -565,6 +587,12 @@ async fn get_new_worksite_modal() -> impl IntoResponse {
                         <TextInput name="worksite_name" />
                     </GridCell>
                     <GridCell>
+                        <Button
+                            onclick="history.go(-1)"
+                            attrs=Attrs::with("data-toggle-action", "close".into())
+                        >
+                            Cancel
+                        </Button>
                         <Button kind="submit">Create</Button>
                     </GridCell>
                 </GridLayout>
