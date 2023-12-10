@@ -94,10 +94,10 @@ impl From<WorksitePresenter> for WallchartTableProps {
                                     &worksite_id,
                                     &location_id,
                                     &shift_id,
-                                    &worker_id,
+                                    worker_id,
                                 );
 
-                                let details_url = routes::worker_profile(&worksite_id, &worker_id);
+                                let details_url = routes::worker_profile(&worksite_id, worker_id);
 
                                 WorkerRowWorker {
                                     full_name: worker.full_name(),
