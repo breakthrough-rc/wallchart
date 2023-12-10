@@ -88,7 +88,7 @@ impl From<WorksitePresenter> for WallchartTableProps {
                             .into_iter()
                             .map(|worker| {
                                 let tags = worksite.get_tags_for_worker(worker.clone());
-                                let worker_id = worker.id.clone();
+                                let worker_id = worker.id;
 
                                 let assignment_url = routes::shift_assignment(
                                     &worksite_id,
