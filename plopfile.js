@@ -77,6 +77,11 @@ module.exports = function(plop) {
         name: "resource_name",
         message: "Resource name (plural): ",
       },
+      {
+        type: "input",
+        name: "resource_name_singular",
+        message: "Resource name (singular, I know, we still need both): ",
+      },
     ],
     actions: [
       {
