@@ -6,7 +6,7 @@ use axum::{
 };
 use axum_flash::Flash;
 use futures::future::join_all;
-use http::StatusCode;
+use http::{HeaderMap, StatusCode};
 use rscx::{component, html, props};
 use serde::Deserialize;
 
@@ -69,7 +69,7 @@ async fn get_tags(
                         hx_get=tags_create_form(&worksite_id)
                         hx_target=modal_target()
                         hx_swap="beforeend"
-                        hx_push_url=tags_create_form(&worksite_id)
+                        hx_push_url=routes::page_modal_from(tags_create_form(&worksite_id))
                     >
                         Add Tag
                     </PrimaryButton>
@@ -93,6 +93,7 @@ async fn get_edit_form(
     State(WebHtmxState {
         worksite_service, ..
     }): State<WebHtmxState>,
+    headers: HeaderMap,
 ) -> impl IntoResponse {
     let tag = worksite_service
         .get_tag(GetTagInput {
@@ -105,19 +106,24 @@ async fn get_edit_form(
         .expect("Tag not found");
 
     Html(html! {
-        <Modal>
-            <SecondaryHeader
-                title="🏷️ Edit Tag"
-                subtitle="Edit details below."
-            />
-            <TagForm
-                action=tag_edit_form(&worksite_id, &tag_id)
-                data=TagFormData {
-                    name: tag.name,
-                    icon: tag.icon,
-                }
-            />
-        </Modal>
+        <PageLayout
+            partial=headers.contains_key("Hx-Request")
+            header="Edit Tag"
+        >
+            <Modal>
+                <SecondaryHeader
+                    title="🏷️ Edit Tag"
+                    subtitle="Edit details below."
+                />
+                <TagForm
+                    action=tag_edit_form(&worksite_id, &tag_id)
+                    data=TagFormData {
+                        name: tag.name,
+                        icon: tag.icon,
+                    }
+                />
+            </Modal>
+        </PageLayout>
     })
 }
 
@@ -137,7 +143,7 @@ async fn post_edit_form(
             icon: form.icon,
         })
         .await
-        .expect("Failed to add new tag");
+        .expect("Failed to update tag");
 
     (
         StatusCode::OK,
@@ -177,17 +183,23 @@ async fn delete_tag(
 async fn get_create_form(
     extract::Path(worksite_id): extract::Path<String>,
     State(_): State<WebHtmxState>,
+    headers: HeaderMap,
 ) -> impl IntoResponse {
     Html(html! {
-        <Modal>
-            <SecondaryHeader
-                title="🏷️ Add Tag"
-                subtitle="Add a new tag to this worksite."
-            />
-            <TagForm
-                action=tags_create_form(&worksite_id)
-            />
-        </Modal>
+        <PageLayout
+            partial=headers.contains_key("Hx-Request")
+            header="Add Tag"
+        >
+            <Modal>
+                <SecondaryHeader
+                    title="🏷️ Add Tag"
+                    subtitle="Add a new tag to this worksite."
+                />
+                <TagForm
+                    action=tags_create_form(&worksite_id)
+                />
+            </Modal>
+        </PageLayout>
     })
 }
 
@@ -273,7 +285,7 @@ fn TagsTable(props: TagsTableProps) -> String {
                             hx_get=tag_edit_form(&props.worksite_id, &tag.id)
                             hx_target=modal_target()
                             hx_swap="beforeend"
-                            hx_push_url=tag_edit_form(&props.worksite_id, &tag.id)
+                            hx_push_url=routes::page_modal_from(tag_edit_form(&props.worksite_id, &tag.id))
                             sr_text=&tag.name
                         >
                             Edit
