@@ -86,7 +86,7 @@ impl UserRepository for MongoUserRepository {
             .await
             .map_err(|e| RepositoryFailure::Unknown(e.to_string()))?;
         match maybe_user {
-            Some(u) => u.to_user().map(|u| Some(u)),
+            Some(u) => u.to_user().map(Some),
             None => Ok(None)
         }
     }
@@ -115,7 +115,7 @@ impl UserRepository for MongoUserRepository {
             .await
             .map_err(|e| RepositoryFailure::Unknown(e.to_string()))?;
         match maybe_user {
-            Some(u) => u.to_user().map(|u| Some(u)),
+            Some(u) => u.to_user().map(Some),
             None => Ok(None)
         }
     }
