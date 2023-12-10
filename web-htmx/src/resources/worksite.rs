@@ -426,7 +426,7 @@ fn LocationRow(props: LocationRowProps) -> String {
                 .map(|shift| async {
                     html! {
                         <ShiftRow
-                            assign_worker_url=routes::shift_assignments_new_modal(
+                            assign_worker_url=routes::shift_assignments_create_form(
                                 &props.worksite_id,
                                 &props.location.id,
                                 &shift.id,
@@ -465,7 +465,7 @@ fn ShiftRow(props: ShiftRowProps) -> String {
                     hx_get=props.assign_worker_url.clone()
                     hx_target=modal_target()
                     hx_swap="beforeend"
-                    hx_push_url=props.assign_worker_url.clone()
+                    hx_push_url=routes::page_modal_from(props.assign_worker_url.clone())
                 >
                     "Add Worker to Shift"
                 </SecondaryButton>

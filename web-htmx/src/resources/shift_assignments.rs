@@ -6,7 +6,7 @@ use axum::{
     Form, Router,
 };
 use axum_flash::Flash;
-use http::StatusCode;
+use http::{HeaderMap, StatusCode};
 use rscx::{component, html, props, CollectFragmentAsync};
 use serde::Deserialize;
 
@@ -25,12 +25,8 @@ use worksite_service::{
 pub fn shift_assignments_routes(state: WebHtmxState) -> Router {
     Router::new()
         .route(
-            routes::SHIFT_ASSIGNMENTS_NEW,
-            get(get_shift_assignment_form).post(post_shift_assignment),
-        )
-        .route(
-            routes::SHIFT_ASSIGNMENTS_NEW_MODAL,
-            get(get_shift_assignment_form_modal),
+            routes::SHIFT_ASSIGNMENTS_CREATE_FORM,
+            get(get_shift_assignment_create_form).post(post_shift_assignment),
         )
         .route(routes::SHIFT_ASSIGNMENT, delete(delete_worker_from_shift))
         .with_state(state)
@@ -65,9 +61,10 @@ async fn delete_worker_from_shift(
     }
 }
 
-async fn get_shift_assignment_form_modal(
+async fn get_shift_assignment_create_form(
     extract::Path((wallchart_id, location_id, shift_id)): extract::Path<(String, String, String)>,
     State(state): State<WebHtmxState>,
+    headers: HeaderMap,
 ) -> impl IntoResponse {
     let workers = state
         .worksite_service
@@ -78,39 +75,21 @@ async fn get_shift_assignment_form_modal(
         .expect("Failed to get worker");
 
     Html(html! {
-        <Modal size=ModalSize::MediumScreen>
-            <SecondaryHeader
-                title="Assign a Shift"
-                subtitle="Assign a worker to this shift."
-            />
-            <AssignShiftForm
-                workers=workers
-                action=routes::shift_assignments_new(&wallchart_id, &location_id, &shift_id)
-                create_worker_action=routes::workers_new(&wallchart_id)
-            />
-        </Modal>
-    })
-}
-
-async fn get_shift_assignment_form(
-    extract::Path((wallchart_id, location_id, shift_id)): extract::Path<(String, String, String)>,
-    State(state): State<WebHtmxState>,
-) -> impl IntoResponse {
-    let workers = state
-        .worksite_service
-        .get_workers(GetWorkersInput {
-            worksite_id: wallchart_id.clone(),
-        })
-        .await
-        .expect("Failed to get worker");
-
-    Html(html! {
-        <PageLayout header="Assign Shift">
-            <AssignShiftForm
-                workers=workers
-                action=routes::shift_assignments_new(&wallchart_id, &location_id, &shift_id)
-                create_worker_action=routes::workers_new(&wallchart_id)
-            />
+        <PageLayout
+            partial=headers.contains_key("Hx-Request")
+            header="Assign a Shift"
+        >
+            <Modal size=ModalSize::MediumScreen>
+                <SecondaryHeader
+                    title="👤 Assign a Shift"
+                    subtitle="Assign a worker to this shift."
+                />
+                <AssignShiftForm
+                    workers=workers
+                    action=routes::shift_assignments_create_form(&wallchart_id, &location_id, &shift_id)
+                    create_worker_action=routes::workers_new(&wallchart_id)
+                />
+            </Modal>
         </PageLayout>
     })
 }

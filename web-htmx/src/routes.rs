@@ -90,28 +90,15 @@ pub fn shifts_create_form(worksite_id: &String, location_id: &String) -> String 
     )
 }
 
-pub const SHIFT_ASSIGNMENTS_NEW: &str =
-    "/worksites/:worksite_id/locations/:location_id/shifts/:shift_id/workers/new";
-pub fn shift_assignments_new(
+pub const SHIFT_ASSIGNMENTS_CREATE_FORM: &str =
+    "/worksites/:worksite_id/locations/:location_id/shifts/:shift_id/workers/create-form";
+pub fn shift_assignments_create_form(
     worksite_id: &String,
     location_id: &String,
     shift_id: &String,
 ) -> String {
     format!(
-        "/worksites/{}/locations/{}/shifts/{}/workers/new",
-        worksite_id, location_id, shift_id
-    )
-}
-
-pub const SHIFT_ASSIGNMENTS_NEW_MODAL: &str =
-    "/worksites/:worksite_id/locations/:location_id/shifts/:shift_id/workers/new-modal";
-pub fn shift_assignments_new_modal(
-    worksite_id: &String,
-    location_id: &String,
-    shift_id: &String,
-) -> String {
-    format!(
-        "/worksites/{}/locations/{}/shifts/{}/workers/new-modal",
+        "/worksites/{}/locations/{}/shifts/{}/workers/create-form",
         worksite_id, location_id, shift_id
     )
 }
