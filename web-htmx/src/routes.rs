@@ -73,11 +73,6 @@ pub fn locations_create_form(worksite_id: &String) -> String {
     format!("/worksites/{}/locations/create-form", worksite_id)
 }
 
-pub const _LOCATIONS_NEW: &str = "/worksites/:worksite_id/locations/new";
-pub fn locations_new(worksite_id: &String) -> String {
-    format!("/worksites/{}/locations/new", worksite_id)
-}
-
 pub const SHIFTS: &str = "/worksites/:worksite_id/locations/:location_id/shifts";
 pub fn shifts(worksite_id: &String, location_id: &String) -> String {
     format!(
