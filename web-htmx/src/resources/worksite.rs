@@ -44,7 +44,7 @@ pub fn worksite_routes(state: WebHtmxState) -> Router {
             routes::WORKSITE_EDIT_FORM,
             get(get_worksite_edit_form).post(post_worksite_edit_form),
         )
-        .route(routes::WORKSITES_MODAL, get(get_new_worksite_modal))
+        .route(routes::WORKSITES_CREATE_FORM, get(get_new_worksite_modal))
         .route(routes::WORKSITES, post(post_worksite))
         .with_state(state)
 }
@@ -176,10 +176,10 @@ async fn get_worksite(
                         Add New Location
                     </SecondaryButton>
                     <SecondaryButton
-                        hx_get=routes::worksites_modal()
+                        hx_get=routes::worksites_create_form()
                         hx_target=modal_target()
                         hx_swap="beforeend"
-                        hx_push_url=routes::worksites_modal()
+                        hx_push_url=routes::page_modal_from(routes::worksites_create_form())
                     >
                         Add New Worksite
                     </SecondaryButton>
@@ -187,7 +187,7 @@ async fn get_worksite(
                         hx_get=routes::worksite_edit_form(&worksite_id)
                         hx_target=modal_target()
                         hx_swap="beforeend"
-                        hx_push_url=routes::worksite_edit_form(&worksite_id)
+                        hx_push_url=routes::page_modal_from(routes::worksite_edit_form(&worksite_id))
                     >
                         Edit Worksite
                     </PrimaryButton>

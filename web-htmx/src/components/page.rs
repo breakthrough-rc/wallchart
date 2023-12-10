@@ -90,7 +90,11 @@ fn ModalProxy() -> String {
 
     match modal {
         Some(Some(modal)) => {
-            let modal_url = format!("{}/{}", &ctx.page_url, &modal);
+            let modal_url = if modal.starts_with("/") {
+                modal.to_owned()
+            } else {
+                format!("{}/{}", &ctx.page_url, &modal)
+            };
 
             html! {
                 <div hx-get=modal_url hx-trigger="load" />
