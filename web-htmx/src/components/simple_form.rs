@@ -1,10 +1,11 @@
 use rscx::{component, html, props};
+use serde::Deserialize;
 use web_client::server::{
     attrs::Attrs,
     form::{Button, GridCell, GridLayout, Label, TextInput},
 };
 
-#[derive(Default, Debug)]
+#[derive(Default, Deserialize, Debug)]
 pub struct SimpleFormData {
     pub name: String,
 }
@@ -28,6 +29,9 @@ pub struct SimpleFormProps {
 
     #[builder(default=SimpleFormData::default())]
     data: SimpleFormData,
+
+    #[builder(setter(into), default="Add".into())]
+    submit_button_text: String,
 }
 
 #[component]
@@ -60,7 +64,7 @@ pub fn SimpleForm(props: SimpleFormProps) -> String {
                                 >
                                     Cancel
                                 </Button>
-                                <Button kind="submit">Add</Button>
+                                <Button kind="submit">{props.submit_button_text}</Button>
                             </div>
                         </GridCell>
                     </GridLayout>

@@ -48,6 +48,11 @@ pub fn worksite(worksite_id: &String) -> String {
     format!("/worksites/{}", worksite_id)
 }
 
+pub const WORKSITE_EDIT_FORM: &str = "/worksites/:worksite_id/edit-form";
+pub fn worksite_edit_form(worksite_id: &String) -> String {
+    format!("/worksites/{}/edit-form", worksite_id)
+}
+
 pub const WORKSITES: &str = "/worksites";
 pub fn worksites() -> String {
     WORKSITES.into()
@@ -91,7 +96,7 @@ pub fn shifts_new_modal(worksite_id: &String, location_id: &String) -> String {
 }
 
 pub const _SHIFTS_NEW: &str = "/worksites/:worksite_id/locations/:location_id/shifts/new";
-pub fn shifts_new(worksite_id: &String, location_id: &String) -> String {
+pub fn _shifts_new(worksite_id: &String, location_id: &String) -> String {
     format!(
         "/worksites/{}/locations/{}/shifts/new",
         worksite_id, location_id
