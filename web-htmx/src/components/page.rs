@@ -90,7 +90,7 @@ fn ModalProxy() -> String {
 
     match modal {
         Some(Some(modal)) => {
-            let modal_url = if modal.starts_with("/") {
+            let modal_url = if modal.starts_with('/') {
                 modal.to_owned()
             } else {
                 format!("{}/{}", &ctx.page_url, &modal)
