@@ -39,7 +39,7 @@ pub async fn provide_context_layer(
     next: Next,
 ) -> Response {
     let Query(query_params): Query<HashMap<String, String>> =
-        Query::try_from_uri(&request.uri()).unwrap();
+        Query::try_from_uri(request.uri()).unwrap();
 
     let worksite_id: String = session
         .get("selected_worksite_id")
