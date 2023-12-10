@@ -1,20 +1,26 @@
-use axum::{body::Body, extract::State, http::Request, middleware::Next, response::Response};
+use axum::{
+    body::Body,
+    extract::{Query, State},
+    http::Request,
+    middleware::Next,
+    response::Response,
+};
 use axum_login::{tower_sessions::Session, AuthSession};
 use mongo_user_repository::MongoUserStore;
-use std::future::Future;
+use std::{collections::HashMap, future::Future};
 
 use crate::state::WebHtmxState;
 
 #[derive(Clone)]
 pub struct Context {
     pub page_url: String,
+    pub page_query_params: HashMap<String, String>,
     pub worksite_id: String,
     pub worksite_name: String,
     pub current_user: Option<LoggedInUser>,
 }
 
 #[derive(Clone)]
-
 pub struct LoggedInUser {
     pub id: String,
     pub email: String,
@@ -32,6 +38,9 @@ pub async fn provide_context_layer(
     request: Request<Body>,
     next: Next,
 ) -> Response {
+    let Query(query_params): Query<HashMap<String, String>> =
+        Query::try_from_uri(&request.uri()).unwrap();
+
     let worksite_id: String = session
         .get("selected_worksite_id")
         .ok()
@@ -55,6 +64,7 @@ pub async fn provide_context_layer(
 
     let context = Context {
         page_url: request.uri().path().to_string(),
+        page_query_params: query_params,
         worksite_id,
         worksite_name,
         current_user,

@@ -68,10 +68,34 @@ pub fn PageLayout(props: PageLayoutProps) -> String {
                     {props.children}
                 </main>
             </AppShell>
+            <ModalProxy />
             <div hx-history-elt>
                 <NotificationLiveRegion />
                 <ModalLiveRegion />
             </div>
         </HtmlLayout>
+    }
+}
+
+#[component]
+fn ModalProxy() -> String {
+    let ctx: crate::context::Context =
+        crate::context::context().expect("Unable to retrieve htmx context.");
+
+    let query_params = ctx.page_query_params;
+
+    let modal = query_params
+        .get("modal")
+        .map(|s| if s.is_empty() { None } else { Some(s) });
+
+    match modal {
+        Some(Some(modal)) => {
+            let modal_url = format!("{}/{}", &ctx.page_url, &modal);
+
+            html! {
+                <div hx-get=modal_url hx-trigger="load" />
+            }
+        }
+        _ => html! { <></> },
     }
 }
