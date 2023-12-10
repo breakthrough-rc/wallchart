@@ -16,7 +16,7 @@ use worksite_service::add_shift::AddShiftInput;
 pub fn shifts_routes(state: WebHtmxState) -> Router {
     Router::new()
         .route(routes::SHIFTS, post(post_shifts))
-        .route(routes::SHIFTS_NEW_MODAL, get(get_shift_form_modal))
+        .route(routes::SHIFTS_CREATE_FORM, get(get_shift_form_modal))
         .with_state(state)
 }
 
@@ -27,7 +27,7 @@ async fn get_shift_form_modal(
     Html(html! {
         <Modal>
             <SecondaryHeader
-                title="Add Shift"
+                title="🕗 Add Shift"
                 subtitle="Add a new shift to this location."
             />
             <ShiftForm action=routes::shifts(&worksite_id, &location_id) />

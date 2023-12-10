@@ -76,7 +76,7 @@ impl From<WorksitePresenter> for WallchartTableProps {
             .map(|location| {
                 let location_id = location.id.clone();
 
-                let add_shift_url = routes::shifts_new_modal(&worksite_id, &location_id);
+                let add_shift_url = routes::shifts_create_form(&worksite_id, &location_id);
 
                 let shifts = location
                     .shifts
@@ -411,7 +411,7 @@ fn LocationRow(props: LocationRowProps) -> String {
             <th colspan="3" scope="colgroup" class="bg-gray-200 py-2 pl-4 pr-3 text-right text-sm font-semibold text-gray-900 sm:pl-3">
                 <SecondaryButton
                     hx_get=props.location.add_shift_url.clone()
-                    hx_push_url=props.location.add_shift_url.clone()
+                    hx_push_url=routes::page_modal_from(props.location.add_shift_url.clone())
                     hx_target=modal_target()
                     hx_swap="beforeend"
                 >
