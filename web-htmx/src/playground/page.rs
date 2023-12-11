@@ -17,7 +17,7 @@ async fn get_test_render() -> Html<String> {
             <section>
                 <h1>Test Render</h1>
                 <p>
-                    "If you are viewing this page at the url `test-render`
+                    "If you are viewing this page at the url `/playground/page/render`
                     you should see the full render (header and footer)"
                 </p>
                 <p>
@@ -48,7 +48,7 @@ pub fn PagePlayground() -> String {
                 <li>
                     <a
                         class="text-blue-600 hover:underline"
-                        hx-get="/playground/render"
+                        hx-get="/playground/page/render"
                         hx-target=".partial-rendered-content"
                     >
                         "See a partial render."
