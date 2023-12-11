@@ -8,7 +8,6 @@ pub mod users;
 pub mod workers;
 pub mod worksite;
 
-
 pub mod assessments;
+pub mod auth;
 pub mod selected_worksite;
-pub mod login;
