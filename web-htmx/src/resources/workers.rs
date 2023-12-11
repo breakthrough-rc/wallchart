@@ -1,5 +1,5 @@
 use axum::{
-    extract::{self, State},
+    extract::{self, Query, State},
     response::{Html, IntoResponse, Response},
     routing::{get, post},
     Form, Router,
@@ -42,8 +42,8 @@ use crate::{
         worker_profile_fieldset::{WorkerProfileFieldset, WorkerProfileFormData},
     },
     routes::{
-        self, worker, worker_profile, workers, workers_new, workers_new_modal, WORKER, WORKERS,
-        WORKERS_NEW, WORKERS_NEW_MODAL, WORKER_PROFILE,
+        self, worker, worker_profile, workers, workers_create_form, WORKER, WORKERS,
+        WORKERS_CREATE_FORM, WORKER_PROFILE,
     },
     state::WebHtmxState,
 };
@@ -54,8 +54,10 @@ pub fn workers_routes(state: WebHtmxState) -> Router {
         .route(WORKERS, post(filter_workers))
         .route(WORKER, get(get_worker_details))
         .route(WORKER_PROFILE, post(post_worker_profile_form))
-        .route(WORKERS_NEW, get(get_worker_form).post(post_worker))
-        .route(WORKERS_NEW_MODAL, get(get_worker_form_modal))
+        .route(
+            WORKERS_CREATE_FORM,
+            get(get_worker_create_form).post(post_worker),
+        )
         .with_state(state)
 }
 
@@ -127,18 +129,20 @@ async fn get_workers(
                 title: "Workers".into(),
                 buttons: html! {
                     <GridCell>
-                        <TextInput class="form-control py-1.5" input_type="search"
+                        <TextInput
+                            class="form-control py-1.5"
+                            input_type="search"
                             name="filter" placeholder="Search..."
                             hx_post=routes::workers(&worksite_id)
                             hx_trigger="input changed delay:500ms, filter"
-                            hx_target="table">
-                        </TextInput>
+                            hx_target="table"
+                        />
                     </GridCell>
                     <PrimaryButton
-                        hx_get=workers_new_modal(&worksite_id)
+                        hx_get=workers_create_form(&worksite_id)
                         hx_target=modal_target()
                         hx_swap="beforeend"
-                        hx_push_url=workers_new(&worksite_id)
+                        hx_push_url=routes::page_modal_from(workers_create_form(&worksite_id))
                     >
                         Add New Worker
                     </PrimaryButton>
@@ -217,28 +221,42 @@ async fn get_worker_details(
     })
 }
 
-async fn get_worker_form_modal(
+#[derive(Deserialize)]
+struct CreateFormQuery {
+    content: Option<String>,
+}
+
+async fn get_worker_create_form(
     extract::Path(wallchart_id): extract::Path<String>,
+    Query(query): Query<CreateFormQuery>,
 ) -> impl IntoResponse {
     Html(html! {
-        <Modal size=ModalSize::MediumScreen>
-            <SecondaryHeader
-                title="👤 Add Worker"
-                subtitle="Add a new worker to this worksite."
-            />
-            <WorkerForm action=workers_new(&wallchart_id) />
-        </Modal>
+        <PageLayout header="Add Worker">
+            <ConditionalCreateFormModal disabled=query.content.is_some()>
+                <WorkerForm action=workers_create_form(&wallchart_id) />
+            </ConditionalCreateFormModal>
+        </PageLayout>
     })
 }
 
-async fn get_worker_form(extract::Path(wallchart_id): extract::Path<String>) -> impl IntoResponse {
-    Html(html! {
-        <PageLayout
-            header="Add Worker"
-        >
-            <WorkerForm action=workers_new(&wallchart_id) />
-        </PageLayout>
-    })
+// This component is needed as we have to support both add worker form modal
+// as well as the form swap when we create a new worker when assigning a worker to a shift.
+#[component]
+fn ConditionalCreateFormModal(disabled: bool, children: String) -> String {
+    if disabled {
+        // Do not render Modal.
+        children
+    } else {
+        html! {
+            <Modal size=ModalSize::MediumScreen>
+                <SecondaryHeader
+                    title="👤 Add Worker"
+                    subtitle="Add a new worker to this worksite."
+                />
+                {children}
+            </Modal>
+        }
+    }
 }
 
 async fn post_worker(
@@ -268,7 +286,7 @@ async fn post_worker(
                     title="Oops! There was a problem with your submission."
                 />
                 <WorkerForm
-                    action=workers_new(&wallchart_id)
+                    action=workers_create_form(&wallchart_id)
                     form_data=profile_form_data
                     errors=e.errors().to_owned()
                 />

@@ -142,14 +142,12 @@ pub fn workers(worksite_id: &String) -> String {
     format!("/worksites/{}/workers", worksite_id)
 }
 
-pub const WORKERS_NEW: &str = "/worksites/:worksite_id/workers/new";
-pub fn workers_new(worksite_id: &String) -> String {
-    format!("/worksites/{}/workers/new", worksite_id)
+pub const WORKERS_CREATE_FORM: &str = "/worksites/:worksite_id/workers/create-form";
+pub fn workers_create_form(worksite_id: &String) -> String {
+    format!("/worksites/{}/workers/create-form", worksite_id)
 }
-
-pub const WORKERS_NEW_MODAL: &str = "/worksites/:worksite_id/workers/new-modal";
-pub fn workers_new_modal(worksite_id: &String) -> String {
-    format!("/worksites/{}/workers/new-modal", worksite_id)
+pub fn workers_create_form_content(worksite_id: &String) -> String {
+    format!("{}?content", workers_create_form(worksite_id))
 }
 
 pub const WORKER: &str = "/worksites/:worksite_id/workers/:worker_id";

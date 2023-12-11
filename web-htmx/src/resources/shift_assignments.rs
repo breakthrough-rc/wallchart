@@ -85,7 +85,7 @@ async fn get_shift_assignment_create_form(
                 <AssignShiftForm
                     workers=workers
                     action=routes::shift_assignments_create_form(&wallchart_id, &location_id, &shift_id)
-                    create_worker_action=routes::workers_new(&wallchart_id)
+                    create_worker_action=routes::workers_create_form_content(&wallchart_id)
                 />
             </Modal>
         </PageLayout>

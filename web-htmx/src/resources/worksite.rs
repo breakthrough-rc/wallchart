@@ -137,7 +137,7 @@ impl From<WorksitePresenter> for WallchartTableProps {
             .collect();
 
         Self {
-            new_worker_url: routes::workers_new_modal(&worksite_id),
+            new_worker_url: routes::workers_create_form(&worksite_id),
             worksite_id,
             locations,
         }
