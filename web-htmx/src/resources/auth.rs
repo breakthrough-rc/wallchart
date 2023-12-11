@@ -1,3 +1,4 @@
+use crate::routes::LOGIN;
 use crate::state::WebHtmxState;
 use crate::{components::page::PageLayout, routes};
 use auth_service::get_user_for_login::GetUserForLoginInput;
@@ -5,7 +6,7 @@ use axum::extract::Query;
 use axum::{
     extract::State,
     response::{Html, IntoResponse},
-    routing::get,
+    routing::{get, post},
     Form, Router,
 };
 use axum_login::AuthSession;
@@ -18,6 +19,7 @@ use web_client::server::form::{Button, GridCell, GridLayout, Label, TextInput};
 pub fn login_routes(state: WebHtmxState) -> Router {
     Router::new()
         .route(routes::LOGIN, get(get_login).post(post_login))
+        .route(routes::LOGOUT, post(post_logout))
         .with_state(state)
 }
 
@@ -120,5 +122,16 @@ fn LoginForm(props: LoginFormProps) -> String {
                 }
             }
         </form>
+    }
+}
+
+async fn post_logout(mut auth: AuthSession<MongoUserStore>) -> impl IntoResponse {
+    match auth.logout() {
+        Ok(_) => (
+            StatusCode::OK,
+            [("hx-redirect", LOGIN), ("hx-retarget", "body")],
+        )
+            .into_response(),
+        Err(_) => (StatusCode::BAD_REQUEST, "Login failed").into_response(),
     }
 }

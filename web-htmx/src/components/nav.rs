@@ -22,7 +22,10 @@ fn profile_links() -> Vec<MenuLink> {
                             .set("hx-push-url", routes::user_edit_form(&user.id)),
                     )
                     .build(),
-                MenuLink::builder().label("Sign out").build(),
+                MenuLink::builder()
+                    .label("Sign out")
+                    .attrs(Attrs::with("hx-post", routes::logout()))
+                    .build(),
             ]
         }
         None => vec![MenuLink::builder()

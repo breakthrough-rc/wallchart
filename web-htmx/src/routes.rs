@@ -38,6 +38,11 @@ pub fn login() -> String {
     LOGIN.into()
 }
 
+pub const LOGOUT: &str = "/logout";
+pub fn logout() -> String {
+    LOGOUT.into()
+}
+
 pub const WALLCHART: &str = "/wallchart";
 pub fn wallchart() -> String {
     WALLCHART.into()

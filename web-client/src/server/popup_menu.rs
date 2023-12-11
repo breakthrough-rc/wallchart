@@ -151,7 +151,7 @@ pub fn Menu(props: MenuProps) -> String {
             )| {
                 html! {
                     <a
-                        class="block px-4 py-2 text-sm text-gray-700"
+                        class="block px-4 py-2 text-sm text-gray-700 cursor-pointer hover:bg-gray-50"
                         role="menuitem"
                         tabindex="-1"
                         id={format!("{}-item-{}", &props.id, i)}
