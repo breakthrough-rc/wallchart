@@ -6,7 +6,7 @@ use axum::{
     Form, Router,
 };
 use axum_flash::Flash;
-use http::{HeaderMap, StatusCode};
+use http::StatusCode;
 use rscx::{component, html, props, CollectFragmentAsync};
 use serde::Deserialize;
 
@@ -64,7 +64,6 @@ async fn delete_worker_from_shift(
 async fn get_shift_assignment_create_form(
     extract::Path((wallchart_id, location_id, shift_id)): extract::Path<(String, String, String)>,
     State(state): State<WebHtmxState>,
-    headers: HeaderMap,
 ) -> impl IntoResponse {
     let workers = state
         .worksite_service
@@ -76,7 +75,6 @@ async fn get_shift_assignment_create_form(
 
     Html(html! {
         <PageLayout
-            partial=headers.contains_key("Hx-Request")
             header="Assign a Shift"
         >
             <Modal size=ModalSize::MediumScreen>

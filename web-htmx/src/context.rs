@@ -18,6 +18,7 @@ pub struct Context {
     pub worksite_id: String,
     pub worksite_name: String,
     pub current_user: Option<LoggedInUser>,
+    pub is_partial_request: bool,
 }
 
 #[derive(Clone)]
@@ -34,7 +35,7 @@ pub enum UserRole {
 
 fn to_user_role(user_role: auth_service::models::UserRole) -> UserRole {
     match user_role {
-        auth_service::models::UserRole::Organizer => UserRole::Organizer
+        auth_service::models::UserRole::Organizer => UserRole::Organizer,
     }
 }
 
@@ -51,6 +52,8 @@ pub async fn provide_context_layer(
 ) -> Response {
     let Query(query_params): Query<HashMap<String, String>> =
         Query::try_from_uri(request.uri()).unwrap();
+
+    let is_partial_request = request.headers().contains_key("Hx-Request");
 
     let worksite_id: String = session
         .get("selected_worksite_id")
@@ -79,6 +82,7 @@ pub async fn provide_context_layer(
         worksite_id,
         worksite_name,
         current_user,
+        is_partial_request,
     };
 
     // Set the context for this request.

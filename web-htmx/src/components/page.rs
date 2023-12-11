@@ -9,16 +9,16 @@ pub struct PageLayoutProps {
     #[builder(setter(into), default = "Page".into())]
     header: PageHeader,
 
-    #[builder(default = false)]
-    partial: bool,
-
     #[builder(default)]
     children: String,
 }
 
 #[component]
 pub fn PageLayout(props: PageLayoutProps) -> String {
-    if props.partial {
+    let ctx: crate::context::Context =
+        crate::context::context().expect("Unable to retrieve htmx context.");
+
+    if ctx.is_partial_request {
         return props.children;
     }
 

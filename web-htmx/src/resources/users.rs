@@ -6,12 +6,15 @@ use axum::{
 };
 use axum_flash::Flash;
 use futures::future::join_all;
-use http::{HeaderMap, StatusCode};
+use http::StatusCode;
 use rscx::{component, html, props};
 use serde::Deserialize;
 
 use auth_service::{
-    create_user::CreateUserInput, get_user::GetUserInput, update_user::{UpdateUserInput, UserRoleInput}, models::UserRole,
+    create_user::CreateUserInput,
+    get_user::GetUserInput,
+    models::UserRole,
+    update_user::{UpdateUserInput, UserRoleInput},
 };
 use auth_service::{delete_user::DeleteUserInput, models::User};
 use web_client::server::{
@@ -97,7 +100,7 @@ const ORGANIZER_STRING: &str = "Organizer";
 
 fn user_role_to_string(user_role: UserRole) -> String {
     match user_role {
-        UserRole::Organizer => ORGANIZER_STRING.to_string()
+        UserRole::Organizer => ORGANIZER_STRING.to_string(),
     }
 }
 
@@ -222,10 +225,9 @@ async fn post_create_form(
     )
 }
 
-async fn get_create_form(headers: HeaderMap) -> impl IntoResponse {
+async fn get_create_form() -> impl IntoResponse {
     Html(html! {
         <PageLayout
-            partial=headers.contains_key("Hx-Request")
             header="Add User"
         >
             <Modal size=ModalSize::MediumScreen>
@@ -319,7 +321,6 @@ async fn delete_user(
 async fn get_edit_form(
     extract::Path(user_id): extract::Path<String>,
     State(WebHtmxState { auth_service, .. }): State<WebHtmxState>,
-    headers: HeaderMap,
 ) -> impl IntoResponse {
     let user = auth_service
         .get_user(GetUserInput {
@@ -332,7 +333,6 @@ async fn get_edit_form(
 
     Html(html! {
         <PageLayout
-            partial=headers.contains_key("Hx-Request")
             header="Edit User"
         >
             <Modal size=ModalSize::MediumScreen>
@@ -360,7 +360,7 @@ struct UpdateUserFormData {
 fn to_user_role_input(string_role: String) -> UserRoleInput {
     match string_role.as_str() {
         ORGANIZER_STRING => UserRoleInput::Organizer,
-        _ => panic!("User role does not exist")
+        _ => panic!("User role does not exist"),
     }
 }
 

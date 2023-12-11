@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use axum::{
     extract::{self, State},
     response::{Html, IntoResponse, Response},
@@ -9,9 +7,10 @@ use axum::{
 use axum_flash::{Flash, IncomingFlashes};
 use axum_macros::debug_handler;
 use futures::future::join_all;
-use http::{HeaderMap, StatusCode};
+use http::StatusCode;
 use rscx::{component, html, props, CollectFragment};
 use serde::Deserialize;
+use std::collections::HashMap;
 use validator::{Validate, ValidationErrorsKind};
 
 use web_client::server::{
@@ -232,13 +231,9 @@ async fn get_worker_form_modal(
     })
 }
 
-async fn get_worker_form(
-    extract::Path(wallchart_id): extract::Path<String>,
-    headers: HeaderMap,
-) -> impl IntoResponse {
+async fn get_worker_form(extract::Path(wallchart_id): extract::Path<String>) -> impl IntoResponse {
     Html(html! {
         <PageLayout
-            partial=headers.contains_key("Hx-Request")
             header="Add Worker"
         >
             <WorkerForm action=workers_new(&wallchart_id) />

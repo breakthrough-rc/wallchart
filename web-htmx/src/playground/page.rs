@@ -1,6 +1,5 @@
 #![allow(unused_braces)]
 use axum::{response::Html, routing::get, Router};
-use http::HeaderMap;
 use rscx::{component, html, props};
 
 use crate::components::page::PageLayout;
@@ -12,11 +11,9 @@ pub fn page_routes() -> Router {
 // ### Route Handlers ###
 
 // Test to see if we can partial render a component that includes PageLayout.
-async fn get_test_render(headers: HeaderMap) -> Html<String> {
+async fn get_test_render() -> Html<String> {
     Html(html! {
-        <PageLayout
-            partial=headers.contains_key("Hx-Request")
-        >
+        <PageLayout>
             <section>
                 <h1>Test Render</h1>
                 <p>

@@ -6,7 +6,7 @@ use axum::{
 };
 use axum_flash::Flash;
 use futures::future::join_all;
-use http::{HeaderMap, StatusCode};
+use http::StatusCode;
 use rscx::{component, html, props};
 use serde::Deserialize;
 
@@ -93,7 +93,6 @@ async fn get_edit_form(
     State(WebHtmxState {
         worksite_service, ..
     }): State<WebHtmxState>,
-    headers: HeaderMap,
 ) -> impl IntoResponse {
     let tag = worksite_service
         .get_tag(GetTagInput {
@@ -107,7 +106,6 @@ async fn get_edit_form(
 
     Html(html! {
         <PageLayout
-            partial=headers.contains_key("Hx-Request")
             header="Edit Tag"
         >
             <Modal>
@@ -183,11 +181,9 @@ async fn delete_tag(
 async fn get_create_form(
     extract::Path(worksite_id): extract::Path<String>,
     State(_): State<WebHtmxState>,
-    headers: HeaderMap,
 ) -> impl IntoResponse {
     Html(html! {
         <PageLayout
-            partial=headers.contains_key("Hx-Request")
             header="Add Tag"
         >
             <Modal>
