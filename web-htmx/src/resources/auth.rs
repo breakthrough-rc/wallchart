@@ -20,6 +20,7 @@ pub fn login_routes(state: WebHtmxState) -> Router {
     Router::new()
         .route(routes::LOGIN, get(get_login).post(post_login))
         .route(routes::LOGOUT, post(post_logout))
+        .route(routes::FORBIDDEN, get(get_forbidden))
         .with_state(state)
 }
 
@@ -134,4 +135,12 @@ async fn post_logout(mut auth: AuthSession<MongoUserStore>) -> impl IntoResponse
             .into_response(),
         Err(_) => (StatusCode::BAD_REQUEST, "Login failed").into_response(),
     }
+}
+
+async fn get_forbidden() -> impl IntoResponse {
+    Html(html! {
+        <PageLayout header="Forbidden">
+            <p>"You are not authorized to view this page"</p>
+        </PageLayout>
+    })
 }

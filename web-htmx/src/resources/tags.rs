@@ -277,29 +277,60 @@ fn TagsTable(props: TagsTableProps) -> String {
                 <TableData>{&tag.icon}</TableData>
                 <TableData variant=TDVariant::Last>
                     <TableDataActions>
-                        <ActionLink
-                            hx_get=tag_edit_form(&props.worksite_id, &tag.id)
-                            hx_target=modal_target()
-                            hx_swap="beforeend"
-                            hx_push_url=routes::page_modal_from(tag_edit_form(&props.worksite_id, &tag.id))
-                            sr_text=&tag.name
-                        >
-                            Edit
-                        </ActionLink>
-                        <DeleteActionLink
-                            hx_delete=routes::tag(&props.worksite_id, &tag.id)
-                            confirm=Confirm {
-                                title: "Delete Tag".into(),
-                                message: format!("Are you sure you want to delete tag: {}", &tag.name),
-                            }
-                            sr_text=&tag.name
-                        >
-                            Remove
-                        </DeleteActionLink>
+                        <PermissionRequired permission="user.update" no_access_view="No Edit Bro">
+                            <ActionLink
+                                hx_get=tag_edit_form(&props.worksite_id, &tag.id)
+                                hx_target=modal_target()
+                                hx_swap="beforeend"
+                                hx_push_url=routes::page_modal_from(tag_edit_form(&props.worksite_id, &tag.id))
+                                sr_text=&tag.name
+                            >
+                                Edit
+                            </ActionLink>
+                        </PermissionRequired>
+                        <PermissionRequired permission="user.delete" no_access_view="No Delete Sis">
+                            <DeleteActionLink
+                                hx_delete=routes::tag(&props.worksite_id, &tag.id)
+                                confirm=Confirm {
+                                    title: "Delete Tag".into(),
+                                    message: format!("Are you sure you want to delete tag: {}", &tag.name),
+                                }
+                                sr_text=&tag.name
+                            >
+                                Remove
+                            </DeleteActionLink>
+                        </PermissionRequired>
                     </TableDataActions>
                 </TableData>
             }}))
             .await
         />
+    }
+}
+
+#[props]
+struct PermissionRequiredProps {
+    #[builder(setter(into))]
+    permission: String,
+
+    #[builder(setter(into), default)]
+    no_access_view: String,
+
+    children: String,
+}
+
+#[component]
+fn PermissionRequired(props: PermissionRequiredProps) -> String {
+    let user = crate::context::context()
+        .expect("Unable to retrieve htmx context.")
+        .current_user
+        .expect("No current user");
+
+    let has_permission = user.has_perm(props.permission.as_str().into()).await;
+
+    if has_permission {
+        props.children
+    } else {
+        props.no_access_view
     }
 }

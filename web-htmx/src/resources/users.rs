@@ -5,8 +5,10 @@ use axum::{
     Form, Router,
 };
 use axum_flash::Flash;
+use axum_login::permission_required;
 use futures::future::join_all;
 use http::StatusCode;
+use mongo_user_repository::MongoUserStore;
 use rscx::{component, html, props};
 use serde::Deserialize;
 
@@ -49,6 +51,11 @@ pub fn users_routes(state: WebHtmxState) -> Router {
         )
         .route(routes::USER, delete(delete_user))
         .with_state(state)
+        .route_layer(permission_required!(
+            MongoUserStore,
+            login_url = "/forbidden",
+            "user.create",
+        ))
 }
 
 async fn get_users(State(state): State<WebHtmxState>) -> impl IntoResponse {

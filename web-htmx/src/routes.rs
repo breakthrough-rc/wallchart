@@ -43,6 +43,11 @@ pub fn logout() -> String {
     LOGOUT.into()
 }
 
+pub const FORBIDDEN: &str = "/forbidden";
+pub fn forbidden() -> String {
+    FORBIDDEN.into()
+}
+
 pub const WALLCHART: &str = "/wallchart";
 pub fn wallchart() -> String {
     WALLCHART.into()

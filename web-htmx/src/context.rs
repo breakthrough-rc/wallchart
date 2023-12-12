@@ -5,7 +5,7 @@ use axum::{
     middleware::Next,
     response::Response,
 };
-use axum_login::{tower_sessions::Session, AuthSession};
+use axum_login::{tower_sessions::Session, AuthSession, AuthzBackend};
 use mongo_user_repository::MongoUserStore;
 use std::{collections::HashMap, future::Future};
 
@@ -26,6 +26,19 @@ pub struct LoggedInUser {
     pub id: String,
     pub email: String,
     pub role: UserRole,
+
+    auth_session: AuthSession<MongoUserStore>,
+    user: auth_service::models::User,
+}
+
+impl LoggedInUser {
+    pub async fn has_perm(&self, perm: mongo_user_repository::UserPermissions) -> bool {
+        self.auth_session
+            .backend
+            .has_perm(&self.user, perm)
+            .await
+            .unwrap_or(false)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -67,11 +80,16 @@ pub async fn provide_context_layer(
         .unwrap_or(None)
         .unwrap_or(state.default_worksite_name);
 
+    // TODO! Is this the best way to do this?
+    let auth1 = auth.clone();
+
     let current_user = match auth.user {
         Some(user) => Some(LoggedInUser {
-            id: user.id,
-            email: user.email,
-            role: to_user_role(user.role),
+            id: user.id.clone(),
+            email: user.email.clone(),
+            role: to_user_role(user.role.clone()),
+            auth_session: auth1,
+            user: user,
         }),
         None => None,
     };
