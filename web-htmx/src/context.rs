@@ -89,7 +89,7 @@ pub async fn provide_context_layer(
             email: user.email.clone(),
             role: to_user_role(user.role.clone()),
             auth_session: auth1,
-            user: user,
+            user,
         }),
         None => None,
     };
