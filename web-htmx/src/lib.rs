@@ -23,6 +23,7 @@ use resources::locations::locations_routes;
 use resources::selected_worksite::selected_worksite_routes;
 use resources::shift_assignments::shift_assignments_routes;
 use resources::shifts::shifts_routes;
+use resources::support::support_routes;
 use resources::tags::tags_routes;
 use resources::users::users_routes;
 use resources::workers::workers_routes;
@@ -41,6 +42,7 @@ pub fn routes(state: WebHtmxState) -> Router {
     Router::new()
         .with_state(state.clone())
         //##PLOP MERGE ROUTE HOOK##
+        .merge(support_routes())
         .merge(selected_worksite_routes(state.clone()))
         .merge(assessments_routes(state.clone()))
         .merge(csv_upload_routes(state.clone()))

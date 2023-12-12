@@ -6,12 +6,15 @@ pub struct CardProps {
 
     #[builder(default = false)]
     padded: bool,
+
+    #[builder(setter(into), default)]
+    class: String,
 }
 
 #[component]
 pub fn Card(props: CardProps) -> String {
     html! {
-        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+        <div class=format!("overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg {}", props.class).trim()>
             <CardContent padded=props.padded>
                 {props.children}
             </CardContent>

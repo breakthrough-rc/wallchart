@@ -240,3 +240,8 @@ pub fn page_modal_from(modal_resource_uri: String) -> String {
         format!("{}?modal={}", &ctx.page_url, modal_resource_uri)
     }
 }
+
+pub const SUPPORT: &str = "/support";
+pub fn support() -> String {
+    SUPPORT.into()
+}
