@@ -23,6 +23,10 @@ fn profile_links() -> Vec<MenuLink> {
                     )
                     .build(),
                 MenuLink::builder()
+                    .label("Support")
+                    .attrs(Attrs::with("href", routes::support()))
+                    .build(),
+                MenuLink::builder()
                     .label("Sign out")
                     .attrs(Attrs::with("hx-post", routes::logout()))
                     .build(),
