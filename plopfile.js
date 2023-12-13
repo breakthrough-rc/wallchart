@@ -118,6 +118,16 @@ module.exports = function(plop) {
         template: "pub fn {{snakeCase resource_name}}() -> String { todo!(\"Return hydrated route here\") }",
         type: "append",
       },
+      {
+        path: "web-htmx/src/routes.rs",
+        template: "pub const {{constantCase resource_name}}_CREATE_FORM: &str = todo!(\"Add route here\");",
+        type: "append",
+      },
+      {
+        path: "web-htmx/src/routes.rs",
+        template: "pub fn {{snakeCase resource_name}}_create_form() -> String { todo!(\"Return hydrated route here\") }",
+        type: "append",
+      },
     ],
   });
 
