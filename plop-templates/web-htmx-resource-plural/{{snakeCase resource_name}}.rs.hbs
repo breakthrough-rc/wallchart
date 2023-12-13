@@ -1,9 +1,11 @@
 use crate::state::WebHtmxState;
 use crate::routes;
+use http::{HeaderMap, StatusCode};
+use rscx::{component, html, props};
 use axum::{
     extract::{self, State},
-    response::IntoResponse,
-    routing::get,
+    response::{Html, IntoResponse},
+    routing::{delete, get},
     Form, Router,
 };
 use serde::Deserialize;
@@ -35,7 +37,7 @@ async fn get_create_form(headers: HeaderMap) -> impl IntoResponse {
         >
             <Modal size=ModalSize::MediumScreen>
                 <SecondaryHeader
-                    title="Add {{pascalCase resource_name_singular}}}}"
+                    title="Add {{pascalCase resource_name_singular}}}"
                     subtitle="Enter details below."
                 />
                 <{{pascalCase resource_name_singular}}Form action=routes::{{snakeCase resource_name}}_create_form() />
