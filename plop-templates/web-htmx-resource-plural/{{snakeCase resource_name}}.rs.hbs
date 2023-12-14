@@ -1,28 +1,25 @@
 use http::{HeaderMap, StatusCode};
 use rscx::{component, html, props};
 use axum::{
-    extract::{self, State},
+    extract::State,
     response::{Html, IntoResponse},
-    routing::{delete, get},
+    routing::get,
     Form, Router,
 };
+use axum_flash::Flash;
 use serde::Deserialize;
 use crate::{
     components::{
-        page::{PageHeader, PageLayout},
-        page_content::PageContent,
+        page::PageLayout,
     },
     routes,
     state::WebHtmxState,
 };
 use web_client::server::{
     attrs::Attrs,
-    button::PrimaryButton,
-    card::Card,
     form::{Button, GridCell, GridLayout, Label, Select, SelectOption, TextInput},
     headers::SecondaryHeader,
-    modal::{modal_target, Modal, ModalSize},
-    table::{Confirm, DeleteActionLink, TDVariant, Table, TableData, TableHeading},
+    modal::{Modal, ModalSize},
 };
 
 pub fn {{snakeCase resource_name}}_routes(state: WebHtmxState) -> Router {
