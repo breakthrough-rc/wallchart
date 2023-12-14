@@ -27,14 +27,10 @@ jobs:
         with:
           toolchain: "1.74.0"
           override: true
-          components: rustfmt, clippy
       #
       # Cache
       #
       - uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: |
-            voter-registration-server
       #
       # Run our lint check
       # https://github.com/actions-rs/clippy-check
