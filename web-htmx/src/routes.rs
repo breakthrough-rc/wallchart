@@ -245,3 +245,5 @@ pub const SUPPORT: &str = "/support";
 pub fn support() -> String {
     SUPPORT.into()
 }
+
+pub const FORBIDDEN: &str = "/forbidden";
