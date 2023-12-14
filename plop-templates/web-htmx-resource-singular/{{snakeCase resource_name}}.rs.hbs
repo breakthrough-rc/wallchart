@@ -1,40 +1,20 @@
 use axum::{
     extract::{self, State},
     response::{Html, IntoResponse},
-    routing::{delete, get},
+    routing::get,
     Form, Router,
 };
 use axum_flash::Flash;
-use futures::future::join_all;
 use http::StatusCode;
-use rscx::{component, html, props};
+use rscx::html;
 use serde::Deserialize;
 
-use auth_service::{
-    create_user::CreateUserInput,
-    get_user::GetUserInput,
-    models::UserRole,
-    update_user::{UpdateUserInput, UserRoleInput},
-};
-use auth_service::{delete_user::DeleteUserInput, models::User};
 use web_client::server::{
-    attrs::Attrs,
-    button::PrimaryButton,
-    card::Card,
-    form::{Button, GridCell, GridLayout, Label, Select, SelectOption, TextInput},
     headers::SecondaryHeader,
-    modal::{modal_target, Modal, ModalSize},
-    table::{Confirm, DeleteActionLink, TDVariant, Table, TableData, TableHeading},
+    modal::{Modal, ModalSize},
 };
 
-use crate::{
-    components::{
-        page::{PageHeader, PageLayout},
-        page_content::PageContent,
-    },
-    routes,
-    state::WebHtmxState,
-};
+use crate::{components::page::PageLayout, routes, state::WebHtmxState};
 
 pub fn {{snakeCase resource_name}}_routes(state: WebHtmxState) -> Router {
     Router::new()
