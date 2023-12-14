@@ -5,7 +5,7 @@ use mongodb::bson::doc;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 
-use auth_service::models::{User, UserPermissions, UserRole};
+use auth_service::models::{User, UserPermission, UserRole};
 use auth_service::ports::user_repository::{RepositoryFailure, UserRepository};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -183,7 +183,7 @@ impl AuthnBackend for MongoUserStore {
 
 #[async_trait]
 impl AuthzBackend for MongoUserStore {
-    type Permission = UserPermissions;
+    type Permission = UserPermission;
 
     async fn has_perm(
         &self,

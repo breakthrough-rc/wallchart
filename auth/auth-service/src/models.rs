@@ -25,7 +25,7 @@ impl User {
             role,
         }
     }
-    pub fn has_perm(&self, permission: UserPermissions) -> bool {
+    pub fn has_perm(&self, permission: UserPermission) -> bool {
         self.role.has_perm(permission)
     }
 }
@@ -51,27 +51,27 @@ pub enum UserRole {
 }
 
 impl UserRole {
-    pub fn has_perm(&self, permission: UserPermissions) -> bool {
+    pub fn has_perm(&self, permission: UserPermission) -> bool {
         match self {
             Self::Organizer => match permission {
-                UserPermissions::CreateUser => false,
-                UserPermissions::ReadUser => false,
-                UserPermissions::UpdateUser => false,
-                UserPermissions::DeleteUser => false,
+                UserPermission::CreateUser => false,
+                UserPermission::ReadUser => false,
+                UserPermission::UpdateUser => false,
+                UserPermission::DeleteUser => false,
             },
         }
     }
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
-pub enum UserPermissions {
+pub enum UserPermission {
     CreateUser,
     ReadUser,
     UpdateUser,
     DeleteUser,
 }
 
-impl From<&str> for UserPermissions {
+impl From<&str> for UserPermission {
     fn from(permission: &str) -> Self {
         match permission {
             "user.create" => Self::CreateUser,
