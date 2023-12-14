@@ -1,9 +1,9 @@
 use std::sync::Arc;
 
 use async_trait::async_trait;
-use auth_service::models::{User, UserRole};
+use auth_service::models::{User, UserPermissions, UserRole};
 use auth_service::ports::user_repository::{RepositoryFailure, UserRepository};
-use axum_login::{AuthnBackend, UserId};
+use axum_login::{AuthnBackend, AuthzBackend, UserId};
 use futures::stream::TryStreamExt;
 use mongodb::bson::doc;
 use serde::{Deserialize, Serialize};
@@ -21,13 +21,13 @@ const ORGANIZER_STRING: &str = "Organizer";
 fn to_user_role(string_role: String) -> Result<UserRole, RepositoryFailure> {
     match string_role.as_str() {
         ORGANIZER_STRING => Ok(UserRole::Organizer),
-        _ => Err(RepositoryFailure::UnknownUserRole)
+        _ => Err(RepositoryFailure::UnknownUserRole),
     }
 }
 
 fn user_role_to_string(user_role: UserRole) -> String {
     match user_role {
-        UserRole::Organizer => ORGANIZER_STRING.to_string()
+        UserRole::Organizer => ORGANIZER_STRING.to_string(),
     }
 }
 
@@ -87,7 +87,7 @@ impl UserRepository for MongoUserRepository {
             .map_err(|e| RepositoryFailure::Unknown(e.to_string()))?;
         match maybe_user {
             Some(u) => u.to_user().map(Some),
-            None => Ok(None)
+            None => Ok(None),
         }
     }
 
@@ -104,7 +104,11 @@ impl UserRepository for MongoUserRepository {
             .await
             .map_err(|e| RepositoryFailure::Unknown(e.to_string()))?;
 
-        Ok(users.iter().map(|u| u.to_user()).filter_map(|u| u.ok()).collect())
+        Ok(users
+            .iter()
+            .map(|u| u.to_user())
+            .filter_map(|u| u.ok())
+            .collect())
     }
 
     async fn find_by_email(&self, email: String) -> Result<Option<User>, RepositoryFailure> {
@@ -116,7 +120,7 @@ impl UserRepository for MongoUserRepository {
             .map_err(|e| RepositoryFailure::Unknown(e.to_string()))?;
         match maybe_user {
             Some(u) => u.to_user().map(Some),
-            None => Ok(None)
+            None => Ok(None),
         }
     }
 
@@ -175,6 +179,11 @@ impl AuthnBackend for MongoUserStore {
     async fn get_user(&self, user_id: &UserId<Self>) -> Result<Option<Self::User>, Self::Error> {
         self.users.find_by_id(user_id.to_string()).await
     }
+}
+
+#[async_trait]
+impl AuthzBackend for MongoUserStore {
+    type Permission = UserPermissions;
 }
 
 #[cfg(test)]

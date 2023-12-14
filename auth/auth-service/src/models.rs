@@ -8,12 +8,6 @@ pub struct User {
     pub role: UserRole,
 }
 
-#[derive(Debug, Clone, PartialEq)]
-
-pub enum UserRole {
-    Organizer,
-}
-
 impl User {
     pub fn new(email: String, hashed_password: String) -> Self {
         Self {
@@ -45,5 +39,28 @@ impl AuthUser for User {
 
     fn session_auth_hash(&self) -> &[u8] {
         self.hashed_password.as_bytes()
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum UserRole {
+    Organizer,
+}
+
+#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+pub enum UserPermissions {
+    CreateUser,
+    UpdateUser,
+    DeleteUser,
+}
+
+impl From<&str> for UserPermissions {
+    fn from(permission: &str) -> Self {
+        match permission {
+            "user.create" => Self::CreateUser,
+            "user.update" => Self::UpdateUser,
+            "user.delete" => Self::DeleteUser,
+            _ => panic!("Permission does not exist"),
+        }
     }
 }
