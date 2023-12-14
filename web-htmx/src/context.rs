@@ -1,3 +1,4 @@
+use auth_service::models::{self, User, UserPermission};
 use axum::{
     body::Body,
     extract::{Query, State},
@@ -26,6 +27,14 @@ pub struct LoggedInUser {
     pub id: String,
     pub email: String,
     pub role: UserRole,
+
+    user: User,
+}
+
+impl LoggedInUser {
+    pub fn has_perm(&self, perm: UserPermission) -> bool {
+        self.user.has_perm(perm)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -33,9 +42,9 @@ pub enum UserRole {
     Organizer,
 }
 
-fn to_user_role(user_role: auth_service::models::UserRole) -> UserRole {
+fn to_user_role(user_role: models::UserRole) -> UserRole {
     match user_role {
-        auth_service::models::UserRole::Organizer => UserRole::Organizer,
+        models::UserRole::Organizer => UserRole::Organizer,
     }
 }
 
@@ -69,9 +78,10 @@ pub async fn provide_context_layer(
 
     let current_user = match auth.user {
         Some(user) => Some(LoggedInUser {
-            id: user.id,
-            email: user.email,
-            role: to_user_role(user.role),
+            id: user.id.clone(),
+            email: user.email.clone(),
+            role: to_user_role(user.role.clone()),
+            user,
         }),
         None => None,
     };
