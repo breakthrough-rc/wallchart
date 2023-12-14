@@ -25,6 +25,9 @@ impl User {
             role,
         }
     }
+    pub fn has_perm(&self, permission: UserPermissions) -> bool {
+        self.role.has_perm(permission)
+    }
 }
 
 /**
@@ -47,9 +50,23 @@ pub enum UserRole {
     Organizer,
 }
 
+impl UserRole {
+    pub fn has_perm(&self, permission: UserPermissions) -> bool {
+        match self {
+            Self::Organizer => match permission {
+                UserPermissions::CreateUser => false,
+                UserPermissions::ReadUser => false,
+                UserPermissions::UpdateUser => false,
+                UserPermissions::DeleteUser => false,
+            },
+        }
+    }
+}
+
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub enum UserPermissions {
     CreateUser,
+    ReadUser,
     UpdateUser,
     DeleteUser,
 }
@@ -58,6 +75,7 @@ impl From<&str> for UserPermissions {
     fn from(permission: &str) -> Self {
         match permission {
             "user.create" => Self::CreateUser,
+            "user.read" => Self::ReadUser,
             "user.update" => Self::UpdateUser,
             "user.delete" => Self::DeleteUser,
             _ => panic!("Permission does not exist"),

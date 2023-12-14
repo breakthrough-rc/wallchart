@@ -1,12 +1,12 @@
-use std::sync::Arc;
-
 use async_trait::async_trait;
-use auth_service::models::{User, UserPermissions, UserRole};
-use auth_service::ports::user_repository::{RepositoryFailure, UserRepository};
 use axum_login::{AuthnBackend, AuthzBackend, UserId};
 use futures::stream::TryStreamExt;
 use mongodb::bson::doc;
 use serde::{Deserialize, Serialize};
+use std::sync::Arc;
+
+use auth_service::models::{User, UserPermissions, UserRole};
+use auth_service::ports::user_repository::{RepositoryFailure, UserRepository};
 
 #[derive(Debug, Serialize, Deserialize)]
 struct UserRecord {
@@ -184,6 +184,14 @@ impl AuthnBackend for MongoUserStore {
 #[async_trait]
 impl AuthzBackend for MongoUserStore {
     type Permission = UserPermissions;
+
+    async fn has_perm(
+        &self,
+        user: &Self::User,
+        perm: Self::Permission,
+    ) -> Result<bool, Self::Error> {
+        Ok(user.has_perm(perm))
+    }
 }
 
 #[cfg(test)]
