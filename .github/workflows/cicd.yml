@@ -60,5 +60,5 @@ jobs:
       - name: Deploy
         uses: fjogeleit/http-request-action@v1
         with:
-          url: ${{ secrets.PROD_DEPLOY_HOOK }}?ref=${{ github.sha }}
+          url: ${{ secrets.PROD_DEPLOY_HOOK }}&ref=${{ github.sha }}
           method: 'POST'
