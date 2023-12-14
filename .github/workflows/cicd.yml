@@ -15,7 +15,7 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  vr-server-build-and-test:
+  cicd:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -63,5 +63,5 @@ jobs:
       - name: Deploy
         uses: fjogeleit/http-request-action@v1
         with:
-          url: ${{ secrets.PROD_DEPLOY_HOOK }}?ref=${{ github.ref }}
+          url: ${{ secrets.PROD_DEPLOY_HOOK }}?ref=${{ github.sha }}
           method: 'POST'
