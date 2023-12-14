@@ -1,4 +1,3 @@
-use auth_service::models::{self, User, UserPermission};
 use axum::{
     body::Body,
     extract::{Query, State},
@@ -9,6 +8,8 @@ use axum::{
 use axum_login::{tower_sessions::Session, AuthSession};
 use mongo_user_repository::MongoUserStore;
 use std::{collections::HashMap, future::Future};
+
+use auth_service::models::{self, User, UserPermission};
 
 use crate::state::WebHtmxState;
 
