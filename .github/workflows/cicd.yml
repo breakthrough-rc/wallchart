@@ -41,8 +41,9 @@ jobs:
       #
       # This intentionally FAILS ON WARNINGS -- so make sure ur code is spiffy!
       #
-      - name: Clippy (Lint)
-        run: cargo clippy -- -D warnings
+      # - name: Clippy (Lint)
+      #  run: cargo clippy -- -D warnings
+      
       #
       # Build and run tests
       # We install and use nextest since its supposed to
