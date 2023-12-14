@@ -1,20 +1,50 @@
-use crate::state::WebHtmxState;
-use crate::routes;
 use axum::{
     extract::{self, State},
-    response::IntoResponse,
-    routing::get,
+    response::{Html, IntoResponse},
+    routing::{delete, get},
     Form, Router,
 };
+use axum_flash::Flash;
+use futures::future::join_all;
+use http::StatusCode;
+use rscx::{component, html, props};
 use serde::Deserialize;
+
+use auth_service::{
+    create_user::CreateUserInput,
+    get_user::GetUserInput,
+    models::UserRole,
+    update_user::{UpdateUserInput, UserRoleInput},
+};
+use auth_service::{delete_user::DeleteUserInput, models::User};
+use web_client::server::{
+    attrs::Attrs,
+    button::PrimaryButton,
+    card::Card,
+    form::{Button, GridCell, GridLayout, Label, Select, SelectOption, TextInput},
+    headers::SecondaryHeader,
+    modal::{modal_target, Modal, ModalSize},
+    table::{Confirm, DeleteActionLink, TDVariant, Table, TableData, TableHeading},
+};
+
+use crate::{
+    components::{
+        page::{PageHeader, PageLayout},
+        page_content::PageContent,
+    },
+    routes,
+    state::WebHtmxState,
+};
 
 pub fn {{snakeCase resource_name}}_routes(state: WebHtmxState) -> Router {
     Router::new()
         .route(
             routes::{{constantCase resource_name}}, 
             get(get_{{snakeCase resource_name}})
-                .put(put_{{snakeCase resource_name}})
-                .delete(delete_{{snakeCase resource_name}})
+        )
+        .route(
+            routes::{{constantCase resource_name}}_EDIT_FORM,
+            get(get_edit_form).post(post_edit_form),
         )
         .with_state(state)
 }
@@ -28,24 +58,42 @@ async fn get_{{snakeCase resource_name}}(
   todo!()
 }
 
+async fn get_edit_form(
+    extract::Path(id): extract::Path<String>,
+    State(state): State<WebHtmxState>,
+) -> impl IntoResponse {
+    Html(html! {
+        <PageLayout
+            header="Edit User"
+        >
+            <Modal size=ModalSize::MediumScreen>
+                <SecondaryHeader
+                    title="Edit {{pascalCase resource_name}}"
+                    subtitle="Make changes to the {{pascalCase resource_name}} below."
+                />
+                <p>Add form here!</p>
+            </Modal>
+        </PageLayout>
+    })
+}
+
 #[derive(Deserialize, Debug)]
-struct ExampleForm {
-    foo: String,
-    bar: String,
+struct Update{{pascalCase resource_name}}FormData {
+    foo: String
 }
 
-async fn put_{{snakeCase resource_name}}(
+async fn post_edit_form(
+    extract::Path(id): extract::Path<String>,
     State(state): State<WebHtmxState>,
-    Form(example_form): Form<ExampleForm>,
+    flash: Flash,
+    Form(form): Form<Update{{pascalCase resource_name}}FormData>,
 ) -> impl IntoResponse {
-  todo!()
-}
-
-async fn delete_{{snakeCase resource_name}}(
-    extract::Path((id)): extract::Path<(
-        String,
-    )>,
-    State(state): State<WebHtmxState>,
-) -> impl IntoResponse {
-  todo!()
+    (
+        StatusCode::OK,
+        flash.success("Updated {{pascalCase resource_name}} successfully!"),
+        [
+            ("hx-redirect", routes::{{snakeCase resource_name_plural}}()),
+            ("hx-retarget", "body".into()),
+        ],
+    )
 }

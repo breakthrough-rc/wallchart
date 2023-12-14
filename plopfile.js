@@ -30,6 +30,11 @@ module.exports = function(plop) {
         name: "resource_name",
         message: "Resource name (singular): ",
       },
+      {
+        type: "input",
+        name: "resource_name_plural",
+        message: "Resource name (plural) (we need it for a redirect route): ",
+      },
     ],
     actions: [
       {
@@ -64,6 +69,16 @@ module.exports = function(plop) {
       {
         path: "web-htmx/src/routes.rs",
         template: "pub fn {{snakeCase resource_name}}() -> String { todo!(\"Return hydrated route here\") }",
+        type: "append",
+      },
+      {
+        path: "web-htmx/src/routes.rs",
+        template: "pub const {{constantCase resource_name}}_EDIT_FORM: &str = todo!(\"Add route here\");",
+        type: "append",
+      },
+      {
+        path: "web-htmx/src/routes.rs",
+        template: "pub fn {{snakeCase resource_name}}_edit_form() -> String { todo!(\"Return hydrated route here\") }",
         type: "append",
       },
     ],
