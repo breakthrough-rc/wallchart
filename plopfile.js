@@ -77,6 +77,11 @@ module.exports = function(plop) {
         name: "resource_name",
         message: "Resource name (plural): ",
       },
+      {
+        type: "input",
+        name: "resource_name_singular",
+        message: "Resource name (singular, I know, we still need both): ",
+      },
     ],
     actions: [
       {
@@ -111,6 +116,16 @@ module.exports = function(plop) {
       {
         path: "web-htmx/src/routes.rs",
         template: "pub fn {{snakeCase resource_name}}() -> String { todo!(\"Return hydrated route here\") }",
+        type: "append",
+      },
+      {
+        path: "web-htmx/src/routes.rs",
+        template: "pub const {{constantCase resource_name}}_CREATE_FORM: &str = todo!(\"Add route here\");",
+        type: "append",
+      },
+      {
+        path: "web-htmx/src/routes.rs",
+        template: "pub fn {{snakeCase resource_name}}_create_form() -> String { todo!(\"Return hydrated route here\") }",
         type: "append",
       },
     ],

@@ -1,19 +1,36 @@
-use crate::state::WebHtmxState;
-use crate::routes;
+use http::{HeaderMap, StatusCode};
+use rscx::{component, html, props};
 use axum::{
-    extract::{self, State},
-    response::IntoResponse,
+    extract::State,
+    response::{Html, IntoResponse},
     routing::get,
     Form, Router,
 };
+use axum_flash::Flash;
 use serde::Deserialize;
+use crate::{
+    components::{
+        page::PageLayout,
+    },
+    routes,
+    state::WebHtmxState,
+};
+use web_client::server::{
+    attrs::Attrs,
+    form::{Button, GridCell, GridLayout, Label, TextInput},
+    headers::SecondaryHeader,
+    modal::{Modal, ModalSize},
+};
 
 pub fn {{snakeCase resource_name}}_routes(state: WebHtmxState) -> Router {
     Router::new()
         .route(
             routes::{{constantCase resource_name}}, 
             get(get_{{snakeCase resource_name}})
-                .post(post_{{snakeCase resource_name}})
+        )
+        .route(
+            routes::{{constantCase resource_name}}_CREATE_FORM,
+            get(get_create_form).post(post_create_form),
         )
         .with_state(state)
 }
@@ -24,17 +41,73 @@ async fn get_{{snakeCase resource_name}}(
   todo!()
 }
 
+async fn get_create_form(headers: HeaderMap) -> impl IntoResponse {
+    Html(html! {
+        <PageLayout
+            partial=headers.contains_key("Hx-Request")
+            header="Add {{pascalCase resource_name}}"
+        >
+            <Modal size=ModalSize::MediumScreen>
+                <SecondaryHeader
+                    title="Add {{pascalCase resource_name_singular}}"
+                    subtitle="Enter details below."
+                />
+                <{{pascalCase resource_name_singular}}Form action=routes::{{snakeCase resource_name}}_create_form() />
+            </Modal>
+        </PageLayout>
+    })
+}
+
+#[props]
+pub struct {{pascalCase resource_name_singular}}FormProps {
+    #[builder(setter(into))]
+    action: String,
+
+    #[builder(setter(into), default)]
+    name: String,
+}
+
+#[component]
+pub fn {{pascalCase resource_name_singular}}Form(props: {{pascalCase resource_name_singular}}FormProps) -> String {
+    html! {
+        <form hx-post=props.action>
+            <div class="pb-12">
+                <GridLayout class="mt-10">
+                    <GridCell span=3>
+                        <Label for_input="name">Name</Label>
+                        <TextInput name="name" input_type="name" value=props.name/>
+                    </GridCell>
+                </GridLayout>
+            </div>
+            <div class="mt-6 flex items-center justify-end gap-x-6">
+                <Button
+                    onclick="history.go(-1)"
+                    attrs=Attrs::with("data-toggle-action", "close".into())
+                >
+                    Cancel
+                </Button>
+                <Button kind="submit">Save</Button>
+            </div>
+        </form>
+    }
+}
 
 #[derive(Deserialize, Debug)]
-struct ExampleForm {
-    foo: String,
-    bar: String,
+struct Add{{pascalCase resource_name_singular}}FormData {
+    name: String,
 }
 
-async fn post_{{snakeCase resource_name}}(
+async fn post_create_form(
     State(state): State<WebHtmxState>,
-    Form(example_form): Form<ExampleForm>,
+    flash: Flash,
+    Form(form): Form<Add{{pascalCase resource_name_singular}}FormData>,
 ) -> impl IntoResponse {
-  todo!()
+    (
+        StatusCode::OK,
+        flash.success("{{pascalCase resource_name_singular}} added successfully!"),
+        [
+            ("hx-redirect", routes::{{snakeCase resource_name}}()),
+            ("hx-retarget", "body".into()),
+        ],
+    )
 }
-
