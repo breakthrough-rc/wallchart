@@ -1,5 +1,3 @@
-use crate::state::WebHtmxState;
-use crate::routes;
 use http::{HeaderMap, StatusCode};
 use rscx::{component, html, props};
 use axum::{
@@ -8,7 +6,6 @@ use axum::{
     routing::{delete, get},
     Form, Router,
 };
-use axum_flash::Flash;
 use serde::Deserialize;
 use crate::{
     components::{
@@ -108,7 +105,6 @@ async fn post_create_form(
     flash: Flash,
     Form(form): Form<Add{{pascalCase resource_name_singular}}FormData>,
 ) -> impl IntoResponse {
-    todo!(format!("Add{{pascalCase resource_name_singular}}FormData: {:?}", form));
     (
         StatusCode::OK,
         flash.success("{{pascalCase resource_name_singular}} added successfully!"),
