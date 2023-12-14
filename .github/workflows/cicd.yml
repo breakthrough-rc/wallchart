@@ -1,0 +1,67 @@
+name: Rust
+
+on:
+  push:
+    branches: ["main"]
+
+# Only allow one of this workflow to run at a time.
+# If another one starts, cancel the previous one (trying to save some compute time!)
+# Note, this probably doesn't scale, but should be good for a while!
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+  
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  vr-server-build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          # By default actions/checkout checks out a merge commit. Check out the PR head instead.
+          # https://github.com/actions/checkout#checkout-pull-request-head-commit-instead-of-merge-commit
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: "1.74.0"
+          override: true
+          components: rustfmt, clippy
+      #
+      # Cache
+      #
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            voter-registration-server
+      #
+      # Run our lint check
+      # https://github.com/actions-rs/clippy-check
+      #
+      # This intentionally FAILS ON WARNINGS -- so make sure ur code is spiffy!
+      #
+      - name: Clippy (Lint)
+        run: cargo clippy -- -D warnings
+      #
+      # Build and run tests
+      # We install and use nextest since its supposed to
+      # be way faster
+      # https://nexte.st/book/pre-built-binaries.html
+      #
+      - name: Build
+        run: cargo build
+      - name: Install latest nextest release
+        uses: taiki-e/install-action@nextest
+      - name: Test with latest nextest release
+        run: cargo nextest run
+
+      #
+      # Trigger render deploy by webhook
+      # https://render.com/docs/deploy-a-commit#deploying-a-commit-via-webhook
+      #
+      - name: Deploy
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: ${{ secrets.PROD_DEPLOY_HOOK }}?ref=${{ github.ref }}
+          method: 'POST'
