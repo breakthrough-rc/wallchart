@@ -13,8 +13,7 @@ use serde::Deserialize;
 use auth_service::{
     create_user::CreateUserInput,
     get_user::GetUserInput,
-    models::UserRole,
-    update_user::{UpdateUserInput, UserRoleInput},
+    update_user::{UpdateUserInput},
 };
 use auth_service::{delete_user::DeleteUserInput, models::User};
 use web_client::server::{
