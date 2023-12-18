@@ -96,14 +96,6 @@ impl UsersTablePresenter {
     }
 }
 
-const ORGANIZER_STRING: &str = "Organizer";
-
-fn user_role_to_string(user_role: UserRole) -> String {
-    match user_role {
-        UserRole::Organizer => ORGANIZER_STRING.to_string(),
-    }
-}
-
 impl From<UsersTablePresenter> for UsersTableProps {
     fn from(presenter: UsersTablePresenter) -> Self {
         Self {
@@ -114,7 +106,7 @@ impl From<UsersTablePresenter> for UsersTableProps {
                     edit_form_url: routes::user_edit_form(&user.id),
                     delete_url: routes::user(&user.id),
                     email: user.email,
-                    role: user_role_to_string(user.role),
+                    role: user.role.to_string(),
                 })
                 .collect(),
         }
@@ -343,7 +335,7 @@ async fn get_edit_form(
                 <UserForm
                     action=routes::user_edit_form(&user.id)
                     email=user.email.clone()
-                    role=user_role_to_string(user.role)
+                    role=user.role.to_string()
                     show_password=false
                 />
             </Modal>
@@ -357,13 +349,6 @@ struct UpdateUserFormData {
     role: String,
 }
 
-fn to_user_role_input(string_role: String) -> UserRoleInput {
-    match string_role.as_str() {
-        ORGANIZER_STRING => UserRoleInput::Organizer,
-        _ => panic!("User role does not exist"),
-    }
-}
-
 async fn post_edit_form(
     extract::Path(user_id): extract::Path<String>,
     State(WebHtmxState { auth_service, .. }): State<WebHtmxState>,
@@ -374,7 +359,7 @@ async fn post_edit_form(
         .update_user(UpdateUserInput {
             user_id,
             email: form.email,
-            role: to_user_role_input(form.role),
+            role: form.role,
         })
         .await
         .expect("Failed to update user");

@@ -9,7 +9,7 @@ use axum_login::{tower_sessions::Session, AuthSession};
 use mongo_user_repository::MongoUserStore;
 use std::{collections::HashMap, future::Future};
 
-use auth_service::models::{self, User, UserPermission};
+use auth_service::models::{User, UserPermission, UserRole};
 
 use crate::state::WebHtmxState;
 
@@ -35,17 +35,6 @@ pub struct LoggedInUser {
 impl LoggedInUser {
     pub fn has_perm(&self, perm: UserPermission) -> bool {
         self.user.has_perm(perm)
-    }
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub enum UserRole {
-    Organizer,
-}
-
-fn to_user_role(user_role: models::UserRole) -> UserRole {
-    match user_role {
-        models::UserRole::Organizer => UserRole::Organizer,
     }
 }
 
@@ -81,7 +70,7 @@ pub async fn provide_context_layer(
         Some(user) => Some(LoggedInUser {
             id: user.id.clone(),
             email: user.email.clone(),
-            role: to_user_role(user.role.clone()),
+            role: user.role.clone(),
             user,
         }),
         None => None,

@@ -47,7 +47,9 @@ impl AuthUser for User {
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum UserRole {
+    Admin,
     Organizer,
+    SuperAdmin,
 }
 
 impl UserRole {
@@ -59,6 +61,20 @@ impl UserRole {
                 UserPermission::UpdateUser => false,
                 UserPermission::DeleteUser => false,
             },
+            Self::Admin => match permission {
+                UserPermission::CreateUser => false,
+                UserPermission::ReadUser => false,
+                UserPermission::UpdateUser => false,
+                UserPermission::DeleteUser => false,
+            },
+            Self::SuperAdmin => true,
+        }
+    }
+    pub fn to_string(&self) -> String {
+        match self {
+            Self::Organizer => "Organizer".to_string(),
+            Self::Admin => "Admin".to_string(),
+            Self::SuperAdmin => "SuperAdmin".to_string(),
         }
     }
 }

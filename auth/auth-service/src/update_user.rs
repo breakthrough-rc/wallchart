@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use thiserror::Error;
 
-use crate::{ports::user_repository::UserRepository, models::UserRole};
+use crate::{models::UserRole, ports::user_repository::UserRepository};
 
 #[derive(Clone)]
 pub struct UpdateUser {
@@ -11,10 +11,9 @@ pub struct UpdateUser {
 
 #[derive(Clone, Debug)]
 pub struct UpdateUserInput {
-    // Put input fields here
     pub user_id: String,
     pub email: String,
-    pub role: UserRoleInput,
+    pub role: String,
 }
 
 #[derive(Clone, Debug)]
@@ -22,11 +21,12 @@ pub enum UserRoleInput {
     Organizer,
 }
 
-impl From<UserRoleInput> for UserRole {
-    fn from(value: UserRoleInput) -> Self {
-        match value {
-            UserRoleInput::Organizer => UserRole::Organizer,
-        }
+fn map_role(value: String) -> Result<UserRole, UpdateUserFailure> {
+    match value.as_str() {
+        "Organizer" => Ok(UserRole::Organizer),
+        "SuperAdmin" => Ok(UserRole::SuperAdmin),
+        "Admin" => Ok(UserRole::Admin),
+        _ => Err(UpdateUserFailure::UnknownRole(value)),
     }
 }
 
@@ -41,8 +41,10 @@ impl UpdateUser {
             .await
             .map_err(|e| UpdateUserFailure::Internal(e.to_string()))?;
 
+        let role = map_role(input.role)?;
+
         let user = user
-            .map(|u| u.update(input.email, input.role.into()))
+            .map(|u| u.update(input.email, role))
             .ok_or(UpdateUserFailure::NotFound)?;
 
         self.user_repository
@@ -58,6 +60,8 @@ impl UpdateUser {
 pub enum UpdateUserFailure {
     #[error("Internal Error")]
     Internal(String),
+    #[error("UserRole not recongized")]
+    UnknownRole(String),
     #[error("Something went wrong")]
     Unknown(String),
     #[error("user does not exist")]
