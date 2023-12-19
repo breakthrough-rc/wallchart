@@ -61,7 +61,7 @@ pub fn Nav() -> String {
     .filter_map(|(label, href, permission)| match permission {
         Some(permission) => {
             current_user.as_ref()?;
-            let current_user = current_user.as_ref().unwrap();
+            let current_user = current_user.unwrap();
 
             let has_permission = current_user.has_perm(permission);
             if has_permission {
