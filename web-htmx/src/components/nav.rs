@@ -1,3 +1,5 @@
+use auth_service::models::UserPermission;
+use futures::future::join_all;
 use rscx::{component, html, props, CollectFragment};
 
 use web_client::server::attrs::Attrs;
@@ -46,14 +48,33 @@ pub fn Nav() -> String {
 
     let worksite_id = ctx.worksite_id.clone();
     let worksite_name = ctx.worksite_name.clone();
+    let current_user = ctx.current_user.clone();
 
-    let nav_links = [
-        ("Wallchart", routes::wallchart()),
-        ("Workers", routes::workers(&worksite_id)),
-        ("Tags", routes::tags(&worksite_id)),
-        ("Users", routes::users()),
-        ("Import", routes::csv_upload()),
-    ];
+    let nav_links: Vec<(&str, String)> = [
+        ("Wallchart", routes::wallchart(), None),
+        ("Workers", routes::workers(&worksite_id), None),
+        ("Tags", routes::tags(&worksite_id), None),
+        ("Users", routes::users(), Some(UserPermission::CreateUser)),
+        ("Import", routes::csv_upload(), None),
+    ]
+    .into_iter()
+    .filter_map(|(label, href, permission)| match permission {
+        Some(permission) => {
+            if current_user.is_none() {
+                return None;
+            }
+            let current_user = current_user.as_ref().unwrap();
+
+            let has_permission = current_user.has_perm(permission);
+            if has_permission {
+                Some((label, href.clone()))
+            } else {
+                None
+            }
+        }
+        None => Some((label, href)),
+    })
+    .collect();
 
     html! {
         <nav class="border-b border-gray-200 bg-white">

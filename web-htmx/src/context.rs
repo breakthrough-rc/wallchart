@@ -76,12 +76,6 @@ pub async fn provide_context_layer(
         None => None,
     };
 
-    println!("email: {:?}", current_user.clone().unwrap().email);
-    println!(
-        "current_user role: {:?}",
-        current_user.clone().unwrap().role
-    );
-
     let context = Context {
         page_url: request.uri().path().to_string(),
         page_query_params: query_params,
