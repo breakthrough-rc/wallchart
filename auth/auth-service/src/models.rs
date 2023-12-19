@@ -1,4 +1,5 @@
 use axum_login::AuthUser;
+use std::fmt::Display;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct User {
@@ -78,12 +79,16 @@ impl UserRole {
             Self::SuperAdmin => true,
         }
     }
-    pub fn to_string(&self) -> String {
-        match self {
-            Self::Organizer => "Organizer".to_string(),
-            Self::Admin => "Admin".to_string(),
-            Self::SuperAdmin => "SuperAdmin".to_string(),
-        }
+}
+
+impl Display for UserRole {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let role = match self {
+            Self::Organizer => "Organizer",
+            Self::Admin => "Admin",
+            Self::SuperAdmin => "SuperAdmin",
+        };
+        write!(f, "{}", role)
     }
 }
 

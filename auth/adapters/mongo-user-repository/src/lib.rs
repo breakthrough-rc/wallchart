@@ -16,26 +16,13 @@ struct UserRecord {
     pub role: String,
 }
 
-const ORGANIZER: &str = "Organizer";
-const ADMIN: &str = "Admin";
-const SUPER_ADMIN: &str = "SuperAdmin";
-
-fn to_user_role(string_role: String) -> Result<UserRole, RepositoryFailure> {
-    match string_role.as_str() {
-        ORGANIZER => Ok(UserRole::Organizer),
-        ADMIN => Ok(UserRole::Admin),
-        SUPER_ADMIN => Ok(UserRole::SuperAdmin),
-        _ => Err(RepositoryFailure::UnknownUserRole),
-    }
-}
-
 impl UserRecord {
     pub fn to_user(&self) -> Result<User, RepositoryFailure> {
         Ok(User {
             id: self.id.clone(),
             email: self.email.clone(),
             hashed_password: self.hashed_password.clone(),
-            role: to_user_role(self.role.clone())?,
+            role: UserRole::new(self.role.clone()).ok_or(RepositoryFailure::UnknownUserRole)?,
         })
     }
 }
