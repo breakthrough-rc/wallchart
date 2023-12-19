@@ -1,5 +1,5 @@
 use auth_service::models::UserPermission;
-use futures::future::join_all;
+
 use rscx::{component, html, props, CollectFragment};
 
 use web_client::server::attrs::Attrs;
@@ -60,9 +60,7 @@ pub fn Nav() -> String {
     .into_iter()
     .filter_map(|(label, href, permission)| match permission {
         Some(permission) => {
-            if current_user.is_none() {
-                return None;
-            }
+            current_user.as_ref()?;
             let current_user = current_user.as_ref().unwrap();
 
             let has_permission = current_user.has_perm(permission);
