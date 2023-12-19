@@ -16,20 +16,6 @@ pub struct UpdateUserInput {
     pub role: String,
 }
 
-#[derive(Clone, Debug)]
-pub enum UserRoleInput {
-    Organizer,
-}
-
-fn map_role(value: String) -> Result<UserRole, UpdateUserFailure> {
-    match value.as_str() {
-        "Organizer" => Ok(UserRole::Organizer),
-        "SuperAdmin" => Ok(UserRole::SuperAdmin),
-        "Admin" => Ok(UserRole::Admin),
-        _ => Err(UpdateUserFailure::UnknownRole(value)),
-    }
-}
-
 // Change the return type, if needed
 pub type UpdateUserOutput = Result<(), UpdateUserFailure>;
 
@@ -41,7 +27,8 @@ impl UpdateUser {
             .await
             .map_err(|e| UpdateUserFailure::Internal(e.to_string()))?;
 
-        let role = map_role(input.role)?;
+        let role =
+            UserRole::new(&input.role).ok_or(UpdateUserFailure::UnknownRole(input.role.clone()))?;
 
         let user = user
             .map(|u| u.update(input.email, role))

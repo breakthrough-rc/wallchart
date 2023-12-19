@@ -3,7 +3,10 @@ use std::sync::Arc;
 use password_auth::generate_hash;
 use thiserror::Error;
 
-use crate::{models::{User, UserRole}, ports::user_repository::UserRepository,};
+use crate::{
+    models::{User, UserRole},
+    ports::user_repository::UserRepository,
+};
 
 #[derive(Clone)]
 pub struct CreateUser {
@@ -14,6 +17,7 @@ pub struct CreateUser {
 pub struct CreateUserInput {
     pub email: String,
     pub password: String,
+    pub role: String,
 }
 
 pub type CreateUserOutput = Result<User, CreateUserFailure>;
@@ -37,7 +41,8 @@ impl CreateUser {
             id: uuid::Uuid::new_v4().to_string(),
             email: input.email,
             hashed_password,
-            role: UserRole::Organizer,
+            role: UserRole::new(&input.role)
+                .ok_or(CreateUserFailure::InvalidUserRole(input.role))?,
         };
         self.user_repository
             .save(new_user.clone())
@@ -52,6 +57,8 @@ impl CreateUser {
 pub enum CreateUserFailure {
     #[error("User already exists!")]
     UserAlreadyExists(String),
+    #[error("Role not recognized")]
+    InvalidUserRole(String),
     #[error("Internal Error")]
     Internal(String),
     #[error("Something went wrong")]

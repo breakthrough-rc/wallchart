@@ -264,9 +264,19 @@ async fn main() {
             .create_user(CreateUserInput {
                 email: "user@yallchart.com".into(),
                 password: "password".into(),
+                role: "Organizer".into(),
             })
             .await
             .expect("Failed to create default user");
+
+        auth_service
+            .create_user(CreateUserInput {
+                email: "superadminuser@yallchart.com".into(),
+                password: "superpassword".into(),
+                role: "SuperAdmin".into(),
+            })
+            .await
+            .expect("Failed to create default super admin user");
     }
 
     // Create WebHtmxState

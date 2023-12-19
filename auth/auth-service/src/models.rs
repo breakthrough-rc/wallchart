@@ -53,6 +53,14 @@ pub enum UserRole {
 }
 
 impl UserRole {
+    pub fn new<T: AsRef<str>>(role: T) -> Option<Self> {
+        match role.as_ref() {
+            "Organizer" => Some(Self::Organizer),
+            "SuperAdmin" => Some(Self::SuperAdmin),
+            "Admin" => Some(Self::Admin),
+            _ => None,
+        }
+    }
     pub fn has_perm(&self, permission: UserPermission) -> bool {
         match self {
             Self::Organizer => match permission {

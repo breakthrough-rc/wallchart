@@ -2,17 +2,13 @@ use std::sync::Arc;
 
 use crate::{
     create_user::{CreateUser, CreateUserInput, CreateUserOutput},
-    //##PLOP INSERT COMMAND IMPORTS HOOK##
-    update_user::{
-      UpdateUser, UpdateUserInput, UpdateUserOutput, 
-    },
-    get_user::{
-      GetUser, GetUserInput, GetUserOutput, 
-    },
     delete_user::{DeleteUser, DeleteUserInput, DeleteUserOutput},
+    get_user::{GetUser, GetUserInput, GetUserOutput},
     get_user_for_login::{GetUserForLogin, GetUserForLoginInput, GetUserForLoginOutput},
     get_users::{GetUsers, GetUsersOutput},
     ports::user_repository::UserRepository,
+    //##PLOP INSERT COMMAND IMPORTS HOOK##
+    update_user::{UpdateUser, UpdateUserInput, UpdateUserOutput},
 };
 
 #[derive(Clone)]
@@ -31,12 +27,12 @@ impl AuthService {
         Self {
             //##PLOP INSERT COMMAND INSTANTIATION HOOK##
             update_user: UpdateUser {
-              // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
-              user_repository: user_repository.clone(),
+                // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
+                user_repository: user_repository.clone(),
             },
             get_user: GetUser {
-              // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
-              user_repository: user_repository.clone(),
+                // Add any dependencies for the command here. They should be passed into this function and supplied by main.rs.
+                user_repository: user_repository.clone(),
             },
             delete_user: DeleteUser {
                 user_repository: user_repository.clone(),
@@ -50,18 +46,13 @@ impl AuthService {
             create_user: CreateUser { user_repository },
         }
     }
+
     //##PLOP INSERT DELEGATE HOOK##
-    pub async fn update_user(
-        &self,
-        input: UpdateUserInput,
-    ) -> UpdateUserOutput {
+    pub async fn update_user(&self, input: UpdateUserInput) -> UpdateUserOutput {
         self.update_user.update_user(input).await
     }
 
-    pub async fn get_user(
-        &self,
-        input: GetUserInput,
-    ) -> GetUserOutput {
+    pub async fn get_user(&self, input: GetUserInput) -> GetUserOutput {
         self.get_user.get_user(input).await
     }
 

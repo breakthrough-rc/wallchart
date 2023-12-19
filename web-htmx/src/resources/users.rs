@@ -5,17 +5,17 @@ use axum::{
     Form, Router,
 };
 use axum_flash::Flash;
+use axum_login::permission_required;
 use futures::future::join_all;
 use http::StatusCode;
 use rscx::{component, html, props};
 use serde::Deserialize;
 
 use auth_service::{
-    create_user::CreateUserInput,
-    get_user::GetUserInput,
-    update_user::{UpdateUserInput},
+    create_user::CreateUserInput, get_user::GetUserInput, update_user::UpdateUserInput,
 };
 use auth_service::{delete_user::DeleteUserInput, models::User};
+use mongo_user_repository::MongoUserStore;
 use web_client::server::{
     attrs::Attrs,
     button::PrimaryButton,
@@ -48,6 +48,14 @@ pub fn users_routes(state: WebHtmxState) -> Router {
         )
         .route(routes::USER, delete(delete_user))
         .with_state(state)
+        .route_layer(permission_required!(
+            MongoUserStore,
+            login_url = "/forbidden",
+            "user.create",
+            "user.read",
+            "user.update",
+            "user.delete",
+        ))
 }
 
 async fn get_users(State(state): State<WebHtmxState>) -> impl IntoResponse {
@@ -192,6 +200,7 @@ fn UserTableRow(props: UserTableRowProps) -> String {
 struct AddUserFormData {
     email: String,
     password: String,
+    role: String,
 }
 
 async fn post_create_form(
@@ -203,6 +212,7 @@ async fn post_create_form(
         .create_user(CreateUserInput {
             email: form.email,
             password: form.password,
+            role: form.role,
         })
         .await
         .expect("Failed to add user");
