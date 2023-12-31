@@ -6,10 +6,12 @@ use axum::{
     Form, Router,
 };
 use axum_flash::Flash;
+use axum_login::permission_required;
 use http::StatusCode;
 use rscx::{component, html, props, CollectFragmentAsync};
 use serde::Deserialize;
 
+use mongo_user_repository::MongoUserStore;
 use web_client::server::{
     attrs::Attrs,
     button::SecondaryButton,
@@ -24,11 +26,16 @@ use worksite_service::{
 
 pub fn shift_assignments_routes(state: WebHtmxState) -> Router {
     Router::new()
+        .route(routes::SHIFT_ASSIGNMENT, delete(delete_worker_from_shift))
+        .route_layer(permission_required!(
+            MongoUserStore,
+            login_url = "/forbidden",
+            "assigned_worker.delete",
+        ))
         .route(
             routes::SHIFT_ASSIGNMENTS_CREATE_FORM,
             get(get_shift_assignment_create_form).post(post_shift_assignment),
         )
-        .route(routes::SHIFT_ASSIGNMENT, delete(delete_worker_from_shift))
         .with_state(state)
 }
 
