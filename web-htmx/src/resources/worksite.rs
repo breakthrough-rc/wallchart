@@ -13,6 +13,7 @@ use rscx::{
 };
 use serde::Deserialize;
 
+use auth_service::models::UserPermission;
 use web_client::server::{
     attrs::Attrs,
     button::{PrimaryButton, SecondaryButton},
@@ -32,6 +33,7 @@ use crate::{
         empty_state::EmptyState,
         page::{PageHeader, PageLayout},
         page_content::PageContent,
+        permission_required::PermissionRequired,
         simple_form::{SimpleForm, SimpleFormData},
     },
     routes,
@@ -551,23 +553,25 @@ fn WorkerRow(props: WorkerRowProps) -> String {
                     >
                         Edit<span class="sr-only">, {&props.worker.full_name}</span>
                     </a>
-                    <a
-                        hx-delete=props.worker.shift_assignment_url
-                        hx-swap="outerHTML swap:1s"
-                        hx-target="closest tr"
-                        data-loading-disable
-                        hx-confirm="Remove Worker"
-                        data-confirm-message=format!("Are you sure you want to remove {} from shift: {}?", &props.worker.full_name, &props.shift_name)
-                        class="cursor-pointer text-indigo-600 hover:text-indigo-900"
-                    >
-                        <div
-                            class="htmx-indicator inline-flex animate-spin mr-2 items-center justify-center rounded-full w-4 h-4 bg-gradient-to-tr from-gray-500 to-white"
+                    <PermissionRequired permission=UserPermission::DeleteAssignedWorker>
+                        <a
+                            hx-delete=props.worker.shift_assignment_url
+                            hx-swap="outerHTML swap:1s"
+                            hx-target="closest tr"
+                            data-loading-disable
+                            hx-confirm="Remove Worker"
+                            data-confirm-message=format!("Are you sure you want to remove {} from shift: {}?", &props.worker.full_name, &props.shift_name)
+                            class="cursor-pointer text-indigo-600 hover:text-indigo-900"
                         >
-                            <span class="inline h-3 w-3 rounded-full bg-white hover:bg-gray-50"></span>
-                        </div>
+                            <div
+                                class="htmx-indicator inline-flex animate-spin mr-2 items-center justify-center rounded-full w-4 h-4 bg-gradient-to-tr from-gray-500 to-white"
+                            >
+                                <span class="inline h-3 w-3 rounded-full bg-white hover:bg-gray-50"></span>
+                            </div>
 
-                        Remove<span class="sr-only">, {format!("{}", &props.worker.full_name)}</span>
-                    </a>
+                            Remove<span class="sr-only">, {format!("{}", &props.worker.full_name)}</span>
+                        </a>
+                    </PermissionRequired>
                 </div>
             </td>
         </tr>
