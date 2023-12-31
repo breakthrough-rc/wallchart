@@ -1,9 +1,9 @@
 use auth_service::models::UserPermission;
 
-use rscx::{component, html, props};
+use rscx::{component, props};
 
 #[props]
-struct PermissionRequiredProps {
+pub struct PermissionRequiredProps {
     #[builder(setter(into))]
     permission: UserPermission,
 
@@ -14,13 +14,13 @@ struct PermissionRequiredProps {
 }
 
 #[component]
-fn PermissionRequired(props: PermissionRequiredProps) -> String {
+pub fn PermissionRequired(props: PermissionRequiredProps) -> String {
     let user = crate::context::context()
         .expect("Unable to retrieve htmx context.")
         .current_user
         .expect("No current user");
 
-    let has_permission = user.has_perm(props.permission).await;
+    let has_permission = user.has_perm(props.permission);
 
     if has_permission {
         props.children
