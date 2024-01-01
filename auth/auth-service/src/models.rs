@@ -70,6 +70,7 @@ impl UserRole {
                 UserPermission::UpdateUser => false,
                 UserPermission::DeleteUser => false,
                 UserPermission::DeleteAssignedWorker => false,
+                UserPermission::DeleteTag => false,
             },
             Self::Admin => match permission {
                 UserPermission::CreateUser => false,
@@ -77,6 +78,7 @@ impl UserRole {
                 UserPermission::UpdateUser => false,
                 UserPermission::DeleteUser => false,
                 UserPermission::DeleteAssignedWorker => true,
+                UserPermission::DeleteTag => true,
             },
             Self::SuperAdmin => true,
         }
@@ -101,6 +103,7 @@ pub enum UserPermission {
     UpdateUser,
     DeleteUser,
     DeleteAssignedWorker,
+    DeleteTag,
 }
 
 impl From<&str> for UserPermission {
@@ -111,6 +114,7 @@ impl From<&str> for UserPermission {
             "user.update" => Self::UpdateUser,
             "user.delete" => Self::DeleteUser,
             "assigned_worker.delete" => Self::DeleteAssignedWorker,
+            "tag.delete" => Self::DeleteTag,
             _ => panic!("Permission does not exist"),
         }
     }

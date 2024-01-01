@@ -5,11 +5,14 @@ use axum::{
     Form, Router,
 };
 use axum_flash::Flash;
+use axum_login::permission_required;
 use futures::future::join_all;
 use http::StatusCode;
+use mongo_user_repository::MongoUserStore;
 use rscx::{component, html, props};
 use serde::Deserialize;
 
+use auth_service::models::UserPermission;
 use web_client::server::{
     button::PrimaryButton,
     card::Card,
@@ -30,6 +33,7 @@ use crate::{
     components::{
         page::{PageHeader, PageLayout},
         page_content::PageContent,
+        permission_required::PermissionRequired,
         simple_form::{SimpleForm, SimpleFormData},
     },
     routes::{self, tag_edit_form, tags_create_form, TAG, TAGS, TAGS_CREATE_FORM, TAG_EDIT_FORM},
@@ -38,13 +42,18 @@ use crate::{
 
 pub fn tags_routes(state: WebHtmxState) -> Router {
     Router::new()
+        .route(TAG, delete(delete_tag))
+        .route_layer(permission_required!(
+            MongoUserStore,
+            login_url = "/forbidden",
+            "tag.delete",
+        ))
         .route(TAGS, get(get_tags))
         .route(
             TAGS_CREATE_FORM,
             get(get_create_form).post(post_create_form),
         )
         .route(TAG_EDIT_FORM, get(get_edit_form).post(post_edit_form))
-        .route(TAG, delete(delete_tag))
         .with_state(state)
 }
 
@@ -286,16 +295,20 @@ fn TagsTable(props: TagsTableProps) -> String {
                         >
                             Edit
                         </ActionLink>
-                        <DeleteActionLink
-                            hx_delete=routes::tag(&props.worksite_id, &tag.id)
-                            confirm=Confirm {
-                                title: "Delete Tag".into(),
-                                message: format!("Are you sure you want to delete tag: {}", &tag.name),
-                            }
-                            sr_text=&tag.name
+                        <PermissionRequired
+                            permission=UserPermission::DeleteTag
                         >
-                            Remove
-                        </DeleteActionLink>
+                            <DeleteActionLink
+                                hx_delete=routes::tag(&props.worksite_id, &tag.id)
+                                confirm=Confirm {
+                                    title: "Delete Tag".into(),
+                                    message: format!("Are you sure you want to delete tag: {}", &tag.name),
+                                }
+                                sr_text=&tag.name
+                            >
+                                Remove
+                            </DeleteActionLink>
+                        </PermissionRequired>
                     </TableDataActions>
                 </TableData>
             }}))
