@@ -342,12 +342,12 @@ fn PopupMenuButton(props: PopupMenuButtonProps) -> String {
             <MenuItem
                 title="Remove"
                 sr_suffix=", Assessment"
-                hx_get=props.route.clone()
+                hx_delete=props.route.clone()
                 hx_target=modal_target()
                 hx_swap="beforeend"
                 hx_confirm="Delete Assessment"
                 attrs=Attrs::with(
-                    "data-confirm-title", "Are you sure you want to delete this assessment?".into()
+                    "data-confirm-message", "Are you sure you want to delete this assessment?".into()
                 )
             />
         </PopupMenu>
