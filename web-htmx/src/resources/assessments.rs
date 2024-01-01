@@ -1,14 +1,17 @@
+use auth_service::models::UserPermission;
 use axum::{
     extract::{self, State},
     response::IntoResponse,
-    routing::get,
+    routing::{delete, get},
     Form, Router,
 };
 use axum_flash::Flash;
+use axum_login::permission_required;
 use http::StatusCode;
 use rscx::{component, html, props, CollectFragmentAsync};
 use serde::Deserialize;
 
+use mongo_user_repository::MongoUserStore;
 use web_client::server::{
     attrs::Attrs,
     button::PrimaryButton,
@@ -24,19 +27,23 @@ use worksite_service::{
     remove_assessment::RemoveAssessmentInput, update_assessment::UpdateAssessmentInput,
 };
 
-use crate::{routes, state::WebHtmxState};
+use crate::{components::permission_required::PermissionRequired, routes, state::WebHtmxState};
 
 pub fn assessments_routes(state: WebHtmxState) -> Router {
     Router::new()
+        .route(routes::ASSESSMENT, delete(delete_assessment))
+        .route_layer(permission_required!(
+            MongoUserStore,
+            login_url = "/forbidden",
+            "assessment.delete",
+        ))
         .route(
             routes::ASSESSMENTS,
             get(get_assessments).post(post_assessments),
         )
         .route(
             routes::ASSESSMENT,
-            get(get_assessment_form)
-                .put(put_assessment)
-                .delete(delete_assessment),
+            get(get_assessment_form).put(put_assessment),
         )
         .with_state(state)
 }
@@ -339,17 +346,21 @@ fn PopupMenuButton(props: PopupMenuButtonProps) -> String {
                 hx_target=modal_target()
                 hx_swap="beforeend"
             />
-            <MenuItem
-                title="Remove"
-                sr_suffix=", Assessment"
-                hx_delete=props.route.clone()
-                hx_target=modal_target()
-                hx_swap="beforeend"
-                hx_confirm="Delete Assessment"
-                attrs=Attrs::with(
-                    "data-confirm-message", "Are you sure you want to delete this assessment?".into()
-                )
-            />
+            <PermissionRequired
+                permission=UserPermission::DeleteAssessment
+            >
+                <MenuItem
+                    title="Remove"
+                    sr_suffix=", Assessment"
+                    hx_delete=props.route.clone()
+                    hx_target=modal_target()
+                    hx_swap="beforeend"
+                    hx_confirm="Delete Assessment"
+                    attrs=Attrs::with(
+                        "data-confirm-message", "Are you sure you want to delete this assessment?".into()
+                    )
+                />
+            </PermissionRequired>
         </PopupMenu>
     }
 }
