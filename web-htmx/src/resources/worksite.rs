@@ -221,20 +221,11 @@ async fn get_worksite(
         >
             <NotificationFlashes flashes=flashes.clone() />
             <PageContent title="Manage your worksite and more">
-                <Card>
                     <WallchartTableAlt
                         worksite_id=view_model.worksite_id.clone()
                         new_worker_url=view_model.new_worker_url.clone()
                         locations=view_model.locations.clone()
                     />
-                </Card>
-                <Card>
-                    <WallchartTable
-                        worksite_id=view_model.worksite_id.clone()
-                        new_worker_url=view_model.new_worker_url.clone()
-                        locations=view_model.locations.clone()
-                    />
-                </Card>
             </PageContent>
         </PageLayout>
     };
@@ -383,10 +374,10 @@ struct LocationRowAltProps {
 fn LocationRowAlt(props: LocationRowAltProps) -> String {
     html! {
         <div>
-            <div colspan="3" scope="colgroup" class="bg-gray-200 py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
+            <div colspan="3" scope="colgroup" class="bg-white py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
                 {props.location.name}
             </div>
-            <div colspan="3" scope="colgroup" class="bg-gray-200 py-2 pl-4 pr-3 text-right text-sm font-semibold text-gray-900 sm:pl-3">
+            <div colspan="3" scope="colgroup" class="bg-white py-2 pl-4 pr-3 text-right text-sm font-semibold text-gray-900 sm:pl-3">
                 <SecondaryButton
                     hx_get=props.location.add_shift_url.clone()
                     hx_push_url=routes::page_modal_from(props.location.add_shift_url.clone())
