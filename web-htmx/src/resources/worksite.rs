@@ -139,7 +139,6 @@ impl From<WorksitePresenter> for WallchartTableProps {
             .collect();
 
         Self {
-            new_worker_url: routes::workers_create_form(&worksite_id),
             worksite_id,
             locations,
         }
@@ -221,13 +220,10 @@ async fn get_worksite(
         >
             <NotificationFlashes flashes=flashes.clone() />
             <PageContent title="Manage your worksite and more">
-                <Card>
                     <WallchartTable
-                        worksite_id=view_model.worksite_id
-                        new_worker_url=view_model.new_worker_url
-                        locations=view_model.locations
+                        worksite_id=view_model.worksite_id.clone()
+                        locations=view_model.locations.clone()
                     />
-                </Card>
             </PageContent>
         </PageLayout>
     };
@@ -338,39 +334,81 @@ async fn post_worksite_edit_form(
 #[props]
 struct WallchartTableProps {
     worksite_id: String,
-    new_worker_url: String,
     locations: Vec<LocationRowLocation>,
 }
 
 #[component]
 fn WallchartTable(props: WallchartTableProps) -> String {
     html! {
-        <table class="min-w-full">
-            <thead class="bg-white">
-                <tr>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">Name</th>
-                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Last Assessment</th>
-                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Tags</th>
-                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"></th>
-                </tr>
-            </thead>
-            <tbody class="bg-white">
-                {
-                    props.locations
-                        .into_iter()
-                        .map(|location| async {
-                            html! {
-                                <LocationRow
-                                    worksite_id=props.worksite_id.clone()
-                                    location=location
+        <div>
+            {
+                props.locations
+                    .into_iter()
+                    .map(|location| async {
+                        html! {
+                            <LocationRow
+                                worksite_id=props.worksite_id.clone()
+                                location=location
+                            />
+                        }
+                    })
+                    .collect_fragment_async()
+                    .await
+            }
+        </div>
+    }
+}
+
+#[props]
+struct LocationRowProps {
+    location: LocationRowLocation,
+
+    #[builder(setter(into))]
+    worksite_id: String,
+}
+
+#[component]
+fn LocationRow(props: LocationRowProps) -> String {
+    html! {
+        <GridLayout>
+            <GridCell span=5 class="bg-white py-2 pl-4 px-3 text-left text-xl font-bold text-gray-900">
+                {props.location.name}
+            </GridCell>
+            <GridCell span=1 class="bg-white py-2 pl-4 pr-3 text-right text-sm font-semibold text-gray-900 sm:pl-3">
+                <SecondaryButton
+                    hx_get=props.location.add_shift_url.clone()
+                    hx_push_url=routes::page_modal_from(props.location.add_shift_url.clone())
+                    hx_target=modal_target()
+                    hx_swap="beforeend"
+                >
+                    "Add Shift"
+                </SecondaryButton>
+            </GridCell>
+        </GridLayout>
+        <ul role="list" class="grid grid-cols-2 gap-6 cols-4 lg:grid-cols-4 m-3">
+            {
+                props.location
+                    .shifts
+                    .iter()
+                    .map(|shift| async {
+                        html! {
+                            <li class="col-span-2 flex flex-col divide-y divide-gray-200 rounded-lg bg-white text-center shadow">
+                                <ShiftRow
+                                    assign_worker_url=routes::shift_assignments_create_form(
+                                        &props.worksite_id,
+                                        &props.location.id,
+                                        &shift.id,
+                                    )
+                                    shift_name=shift.name.clone()
+                                    workers=shift.workers.clone()
                                 />
-                            }
-                        })
-                        .collect_fragment_async()
-                        .await
-                }
-            </tbody>
-        </table>
+                            </li>
+                        }
+                    })
+                    .collect_fragment_async()
+                    .await
+            }
+        </ul>
     }
 }
 
@@ -396,55 +434,6 @@ struct LocationRowLocation {
 }
 
 #[props]
-struct LocationRowProps {
-    location: LocationRowLocation,
-
-    #[builder(setter(into))]
-    worksite_id: String,
-}
-
-#[component]
-fn LocationRow(props: LocationRowProps) -> String {
-    html! {
-        <tr class="border-t border-gray-200">
-            <th colspan="3" scope="colgroup" class="bg-gray-200 py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
-                {props.location.name}
-            </th>
-            <th colspan="3" scope="colgroup" class="bg-gray-200 py-2 pl-4 pr-3 text-right text-sm font-semibold text-gray-900 sm:pl-3">
-                <SecondaryButton
-                    hx_get=props.location.add_shift_url.clone()
-                    hx_push_url=routes::page_modal_from(props.location.add_shift_url.clone())
-                    hx_target=modal_target()
-                    hx_swap="beforeend"
-                >
-                    "Add Shift"
-                </SecondaryButton>
-            </th>
-        </tr>
-        {
-            props.location
-                .shifts
-                .iter()
-                .map(|shift| async {
-                    html! {
-                        <ShiftRow
-                            assign_worker_url=routes::shift_assignments_create_form(
-                                &props.worksite_id,
-                                &props.location.id,
-                                &shift.id,
-                            )
-                            shift_name=shift.name.clone()
-                            workers=shift.workers.clone()
-                        />
-                    }
-                })
-                .collect_fragment_async()
-                .await
-        }
-    }
-}
-
-#[props]
 struct ShiftRowProps {
     #[builder(setter(into))]
     assign_worker_url: String,
@@ -458,36 +447,38 @@ struct ShiftRowProps {
 #[component]
 fn ShiftRow(props: ShiftRowProps) -> String {
     html! {
-        <tr class="border-t border-gray-200">
-            <th colspan="3" scope="colgroup" class="bg-gray-50 py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
-                {&props.shift_name}
-            </th>
-            <th colspan="3" scope="colgroup" class="bg-gray-50 py-2 pl-4 pr-3 text-right text-sm font-semibold text-gray-900 sm:pl-3">
-                <SecondaryButton
-                    hx_get=props.assign_worker_url.clone()
-                    hx_target=modal_target()
-                    hx_swap="beforeend"
-                    hx_push_url=routes::page_modal_from(props.assign_worker_url.clone())
-                >
-                    "Add Worker to Shift"
-                </SecondaryButton>
-            </th>
-        </tr>
-        {
-            props
-                .workers
-                .into_iter()
-                .map(|worker| async {
-                    html! {
-                        <WorkerRow
-                            worker=worker
-                            shift_name=props.shift_name.clone()
-                        />
-                    }
-                })
-                .collect_fragment_async()
-                .await
-        }
+        <table>
+            <tr class="border-t border-gray-200">
+                <th colspan="3" scope="colgroup" class="bg-gray-50 py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
+                    {&props.shift_name}
+                </th>
+                <th colspan="3" scope="colgroup" class="bg-gray-50 py-2 pl-4 pr-3 text-right text-sm font-semibold text-gray-900 sm:pl-3">
+                    <SecondaryButton
+                        hx_get=props.assign_worker_url.clone()
+                        hx_target=modal_target()
+                        hx_swap="beforeend"
+                        hx_push_url=routes::page_modal_from(props.assign_worker_url.clone())
+                    >
+                        "Add Worker to Shift"
+                    </SecondaryButton>
+                </th>
+            </tr>
+            {
+                props
+                    .workers
+                    .into_iter()
+                    .map(|worker| async {
+                        html! {
+                            <WorkerRow
+                                worker=worker
+                                shift_name=props.shift_name.clone()
+                            />
+                        }
+                    })
+                    .collect_fragment_async()
+                    .await
+            }
+        </table>
     }
 }
 
