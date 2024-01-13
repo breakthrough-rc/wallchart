@@ -373,11 +373,11 @@ struct LocationRowAltProps {
 #[component]
 fn LocationRowAlt(props: LocationRowAltProps) -> String {
     html! {
-        <div>
-            <div colspan="3" scope="colgroup" class="bg-white py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
+        <GridLayout>
+            <GridCell span=5 class="bg-white py-2 pl-4 px-3 text-left text-xl font-bold text-gray-900">
                 {props.location.name}
-            </div>
-            <div colspan="3" scope="colgroup" class="bg-white py-2 pl-4 pr-3 text-right text-sm font-semibold text-gray-900 sm:pl-3">
+            </GridCell>
+            <GridCell span=1 class="bg-white py-2 pl-4 pr-3 text-right text-sm font-semibold text-gray-900 sm:pl-3">
                 <SecondaryButton
                     hx_get=props.location.add_shift_url.clone()
                     hx_push_url=routes::page_modal_from(props.location.add_shift_url.clone())
@@ -386,9 +386,9 @@ fn LocationRowAlt(props: LocationRowAltProps) -> String {
                 >
                     "Add Shift"
                 </SecondaryButton>
-            </div>
-        </div>
-        <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 m-3">
+            </GridCell>
+        </GridLayout>
+        <ul role="list" class="grid grid-cols-2 gap-6 cols-4 lg:grid-cols-4 m-3">
             {
                 props.location
                     .shifts
